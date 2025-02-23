@@ -1,8 +1,6 @@
 "use client"
 import { Box, Typography, useTheme } from "@mui/material";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
-// import useTranslation from "../utilFunction/useTranslation";
 
 interface IPropsPositionText {
     t:any
@@ -10,8 +8,6 @@ interface IPropsPositionText {
 const PositionText:React.FC<IPropsPositionText> = ({t}) => {
   const theme = useTheme();
   const pathname = usePathname();
-//   const { t } = useTranslation();
-//   console.log("router path split()", pathname.split("/"));
   return (
     <Box >
       {pathname?.split("/")?.map((item: string, index: number) => {

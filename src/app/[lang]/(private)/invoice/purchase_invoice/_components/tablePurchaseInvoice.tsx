@@ -100,7 +100,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
   };
 
   const sumBillFunction = (filterItems: any[]) => {
-    console.log("filteritems", filterItems);
     const initialValue = 0;
     let consumptionPrice = 0;
     let price = 0;
@@ -262,7 +261,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
     // }
     if (name === "consumption") {
       totalPrice = (buyPrice + value) * amount;
-      console.log("value", value > 0);
       selectedMeasure[measureIndex] = {
         ...selectedMeasure?.[measureIndex],
         [name]: value > 0 ? value : 0,
@@ -366,7 +364,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
           <Typography variant="overline">{t?.invoice?.actions}</Typography>
         </Box>
         {productBilState?.map((item: any, index: number) => {
-          console.log("item", item);
           return (
             <Box
               key={item?._id}

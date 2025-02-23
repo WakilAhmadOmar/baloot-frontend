@@ -42,7 +42,6 @@ const ApolloManager: React.FC<any> = (props) => {
   let isRefreshing = false;
   let pendingRequests: any = [];
   const getTokenFunction = async () => {
-    console.log("get token ");
     // try {
     //   const variables = {
     //     refreshToken: localStorage.getItem(REFRESH_TOKEN_KEY),

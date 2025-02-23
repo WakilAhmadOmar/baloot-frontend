@@ -69,7 +69,7 @@ const CreatePurchaseInvoicePage:React.FC<IPropsCreatePurchaseInvoice> = ({t}) =>
   );
   const handleSelectCurrency = useCallback(
     (selectedCurrency: any) => {
-      console.log("currency" , currency)
+
       setCurrency(selectedCurrency);
     },
     [currency]

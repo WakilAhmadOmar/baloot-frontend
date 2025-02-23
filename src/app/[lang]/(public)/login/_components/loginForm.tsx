@@ -1,19 +1,30 @@
-"use client"
+"use client";
 import { useApolloClient } from "@apollo/client";
-import { Button, TextField } from "@mui/material";
-import { Box } from "@mui/system";
-import { useState } from "react";
-import {SIGN_IN} from "../../../../../graphql/mutation/SING_IN"
-
+import { Button, Card, InputLabel, TextField, Typography } from "@mui/material";
+import { Box, grid } from "@mui/system";
+import { useContext, useState } from "react";
+import { SIGN_IN } from "../../../../../graphql/mutation/SING_IN";
+import { LogoIcon } from "@/icons";
 import { useFormik } from "formik";
-import { schemaLoginForm } from "./schemas";
+
 import { createSession } from "@/utils/createSession";
 import { ACCESS_TOKEN_KEY } from "@/libs/constants";
+import { AppContext } from "@/provider/appContext";
+import useSchemaLoginForm from "./schemas";
+import LoginImage from "@/assets/images/login_image.png"
 
-const LoginForm = () => {
+interface IPropsLoginForm {
+  t: any;
+}
+
+const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
   const client = useApolloClient();
-const onSubmit = async (data: any) => {
+  const { setHandleError } = useContext(AppContext);
+  const [loadingPage, setLoadingPage] = useState(false);
+  const schemaLoginForm = useSchemaLoginForm(t)
+  const onSubmit = async (data: any) => {
 
+    setLoadingPage(true);
     try {
       const variables = {
         ...data,
@@ -24,14 +35,14 @@ const onSubmit = async (data: any) => {
         mutation: SIGN_IN,
         variables,
       });
-      console.log("singIn", signIn);
-      await createSession( ACCESS_TOKEN_KEY , signIn?.accessToken  )
+
       if (signIn?.accessToken) {
+        await createSession(ACCESS_TOKEN_KEY, signIn?.accessToken)
         setLoadingPage(false);
+        window.location.reload()
       }
     } catch (error: any) {
       setLoadingPage(false);
-      console.log("error" , error)
       setHandleError({
         open: true,
         status: "error",
@@ -39,26 +50,15 @@ const onSubmit = async (data: any) => {
       });
     }
   };
-const {  handleChange , handleSubmit } = useFormik({
-    initialValues:{
-        email:"",
-        password:""
+  const { handleChange, handleSubmit , errors} = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
     },
+    validationSchema: schemaLoginForm,
     onSubmit,
-    validationSchema:schemaLoginForm
-})
-  const [loadingPage, setLoadingPage] = useState(false);
-  const [handleError, setHandleError] = useState<{
-    open: boolean;
-    status: "success" | "info" | "warning" | "error";
-    message: string;
-  }>({
-    open: false,
-    message: "",
-    status: "error",
   });
-  
-  const handleCloseFunction = () => {};
+
   return (
     <Box
       sx={{
@@ -67,28 +67,60 @@ const {  handleChange , handleSubmit } = useFormik({
         justifyContent: "center",
         alignContent: "center",
         display: "grid",
+        backgroundImage:`url(${LoginImage?.src})`,
+        backgroundPosition:"center",
+        backgroundSize:"cover",
+        backgroundRepeat:"no-repeat"
       }}
     >
-
-      <form onSubmit={handleSubmit}>
-      <label>Email</label>
-      <TextField
-        placeholder="email"
-        name="email"
-        type="email"
-        onChange={handleChange}
-      />
-      <label>Password</label>
-      <TextField
-        placeholder="password"
-        name="password"
-        type="password"
-        onChange={handleChange}
-      />
-      <Button variant="contained" size="large" type="submit">
-        Login{" "}
-      </Button>
-      </form>
+      <Card sx={{ p: 5, boxShadow: "none", width: "450px" }}>
+      <Box display={"flex"} justifyContent={"center"}>
+        <LogoIcon height={100} />
+      </Box>
+      <Box mb={5}>
+        <Typography variant="h5" textAlign={"center"}>
+          {t?.pages?.login?.welcome_to_alpha_accounting_software}
+        </Typography>
+      </Box>
+        <form onSubmit={handleSubmit}>
+          <Box rowGap={1} display={"grid"}>
+            <InputLabel>{t?.pages?.login?.email}</InputLabel>
+            <TextField
+              placeholder={t?.pages?.login?.enter_your_email}
+              name="email"
+              type="email"
+              onChange={handleChange}
+              size="small"
+              fullWidth
+              error={errors?.email ? true: false}
+            />
+            <Typography variant="body2" color="error">{errors?.email}</Typography>
+          </Box>
+          <Box mt={3} rowGap={1} display={"grid"}>
+            <InputLabel>{t?.pages?.login?.password}</InputLabel>
+            <TextField
+              placeholder={t?.pages?.login?.enter_your_password}
+              name="password"
+              type="password"
+              onChange={handleChange}
+              size="small"
+              fullWidth
+              error={errors?.password ? true : false}
+            />
+             <Typography variant="body2" color="error">{errors?.password}</Typography>
+          </Box>
+          <Box display={"grid"} mt={5}>
+            <Button
+              variant="contained"
+              size="large"
+              type="submit"
+              loading={loadingPage}
+            >
+              {t?.pages?.login?.continue}
+            </Button>
+          </Box>
+        </form>
+      </Card>
     </Box>
   );
 };

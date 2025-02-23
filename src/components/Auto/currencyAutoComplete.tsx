@@ -9,10 +9,12 @@ interface IPropsUserCurrencies {
 
   defaultValue?: string;
   onSelected?: (currencyId: any) => void;
+  register?: any;
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
   onSelected,
+  register
 }) => {
   const client = useApolloClient();
   const {setHandleError} = useContext(AppContext)
@@ -63,6 +65,7 @@ const getUserCurrenciesFunction = async () => {
           name="currencyId"
           defaultValue={defaultValue || userCurrenciesState?.[0]?._id}
           onChange={handleChange}
+          {...register("currencyId")}
         >
           {userCurrenciesState?.map((item) => {
             return (

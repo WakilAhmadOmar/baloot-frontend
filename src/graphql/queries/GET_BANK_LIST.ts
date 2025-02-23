@@ -3,21 +3,23 @@ import { gql } from "@apollo/client";
 const GET_BANK_LIST = gql`
   query ($page: Int, $searchTerm: String) {
     getBankList(page: $page, searchTerm: $searchTerm) {
-      bank {
-        _id
-        name
-        accountNumber
-        bankPhoneNumber
-        cridet {
-          amount
-          currencyId {
-            _id
-            name
-          }
+     bank{
+      _id
+      credit{
+        creditType
+        amount
+        currencyId{
+          _id
+          name
+          symbol
         }
-        createdAt
       }
-      count
+      name
+      accountNumber
+      bankPhoneNumber
+      
+    }
+    count
     }
   }
 `;
