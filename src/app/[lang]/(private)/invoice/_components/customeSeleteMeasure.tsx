@@ -57,7 +57,7 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
       target: { value },
     } = event;
 
-    console.log("value", value);
+
     setPersonName(value as string[]);
     let measure: any = [];
     for (let index = 0; index < value.length; index++) {
@@ -68,7 +68,7 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
     }
     if (getDataSelect) getDataSelect(measure, idNumber);
   };
-  console.log("getDataSelect", data);
+
   return (
     <Select
       multiple

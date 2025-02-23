@@ -1,7 +1,15 @@
-import * as yup from "yup";
+import * as Yup from "yup";
 
-// Yup schema to validate the form
-export const schemaLoginForm = yup.object().shape({
-    email: yup.string().required().email(),
-    password: yup.string().required().min(7),
+const useSchemaLoginForm = (t:any) => {
+ 
+
+  return Yup.object().shape({
+    email: Yup.string()
+      .email(t.pages?.login?.validate_email)
+      .required(t?.pages?.login?.enter_your_email),
+    password: Yup.string()
+      .required(t?.enter_your_password),
   });
+};
+
+export default useSchemaLoginForm;

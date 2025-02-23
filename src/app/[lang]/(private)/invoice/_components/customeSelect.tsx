@@ -63,7 +63,7 @@ const SelectComponent: React.FC<IPropsSelect> = ({
       target: { value },
     } = event;
 
-    console.log("value", value);
+
     const selecteValue = data?.filter(
       (item: any) => item?.measure?._id === value
     );

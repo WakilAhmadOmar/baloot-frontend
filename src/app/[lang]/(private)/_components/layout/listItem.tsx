@@ -76,7 +76,7 @@ const ListItemComponent: React.FC<IPropsListItem> = ({
       sx={{
         display: "block",
         background:
-          pathname?.split("/")?.[2] === "definitions"
+          pathname?.split("/")?.[2] === name
             ? `linear-gradient(90deg,${
                 t.home.dir === "rtl"
                   ? "rgba(33,191,172,1) 0% , rgba(33,191,172,0.15) 1%"

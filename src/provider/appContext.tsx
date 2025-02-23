@@ -7,6 +7,7 @@ export const AppContext = createContext<any>({});
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [translate , setTranslate]= useState()
   const [handleError, setHandleError] = useState<{
     status: "success" | "info" | "warning" | "error";
     open: boolean;
@@ -28,7 +29,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
   },[handleError?.open])
   return (
     <AppContext.Provider
-      value={{ isDarkMode, setIsDarkMode, handleError, setHandleError }}
+      value={{ isDarkMode, setIsDarkMode, handleError, setHandleError, translate , setTranslate }}
     >
       <SnackbarComponent
         status={handleError?.status}
