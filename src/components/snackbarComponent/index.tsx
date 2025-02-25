@@ -19,13 +19,12 @@ const SnackbarComponent: React.FC<IPropsSnackbar> = ({
       autoHideDuration={6000}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      dir="ltr"
     >
       <Alert
         onClose={handleClose}
         variant={"standard"}
         severity={status}
-        sx={{ width: "100%" }}
+        sx={{ width: "100%", fontSize:"1.3rem" }}
       >
         {message}
       </Alert>

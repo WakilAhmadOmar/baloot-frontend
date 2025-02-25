@@ -1,3 +1,4 @@
+"use client"
 import {
     Box,
     Button,
@@ -145,6 +146,7 @@ import {
         open: false,
       }));
     };
+
   
     return (
       <Box>
@@ -177,9 +179,9 @@ import {
               <CloseSquare />
             </IconButton>
           </DialogTitle>
-          <DialogContent>
+          <DialogContent >
             <form onSubmit={handleSubmit(onSubmitFunction)}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} mt={"1rem"}>
                 <Grid item md={6} xs={12}>
                   <InputLabel sx={{ paddingBottom: "5px" }} required>
                     <Typography variant="subtitle2" component={"samp"}>
@@ -221,6 +223,12 @@ import {
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
+                <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    required
+                  >
+                    {t?.pages?.partner?.currency}
+                  </InputLabel>
                   <UserCurrenciesComponent
                     register={register}
                     defaultValue={item?.invest?.currencyId?._id}
@@ -264,7 +272,7 @@ import {
               {t?.pages?.partner?.save}
             </Button>
             <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t?.pages?.partner}
+              {t?.pages?.partner?.cancel}
             </Button>
           </DialogActions>
         </Dialog>

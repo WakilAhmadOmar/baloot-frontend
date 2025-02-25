@@ -157,7 +157,7 @@ import {
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir="rtl"
+          dir={t?.home?.dir}
           fullWidth
         >
           <DialogTitle
@@ -268,6 +268,12 @@ import {
                   />
                 </Grid>
                 <Grid item xs={4}>
+                <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    required
+                  >
+                    {t?.pages?.employee?.currency}
+                  </InputLabel>
                   <UserCurrenciesComponent
                     register={register}
                     defaultValue={item?.salary?.currencyId?._id}
@@ -319,16 +325,16 @@ import {
             >
               {t?.pages?.employee?.save}
             </Button>
-            <Button variant="outlined">لغو</Button>
+            <Button variant="outlined"  onClick={handleOpenDialogFunction}>{t?.pages?.employee?.cancel}</Button>
           </DialogActions>
         </Dialog>
         {isEmptyPage ? (
           <Box className={"empty_page_content"}>
             <EmptyPage
               icon={<EmptyProductPageIcon />}
-              title={t.product.no_product_yet_title}
-              discription={t.product.no_product_yet_discription}
-              buttonText={t.product.add_new_product}
+              title={t.pages?.employee.no_product_yet_title}
+              discription={t.pages?.employee.no_product_yet_discription}
+              buttonText={t.pages?.employee.add_new_employee}
               onClick={handleOpenDialogFunction}
             />
           </Box>

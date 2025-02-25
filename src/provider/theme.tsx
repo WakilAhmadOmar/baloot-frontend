@@ -142,6 +142,7 @@ const themeLight = createTheme({
       fontWeight: 400,
       fontSize: "1.4rem",
     },
+
   },
   components: {
     MuiTableContainer: {
@@ -172,6 +173,7 @@ const themeLight = createTheme({
         
       },
     },
+
   },
 });
 const themeDark = createTheme({

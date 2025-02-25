@@ -8,6 +8,11 @@ const GET_CUSTOMER_LIST = gql`
         fullName
         address
         contactNumber
+        creditLimit {
+          amount
+          
+        }
+        createdAt
       }
       count
     }

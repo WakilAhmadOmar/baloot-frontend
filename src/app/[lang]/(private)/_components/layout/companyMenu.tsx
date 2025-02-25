@@ -1,8 +1,11 @@
 // import useTranslation from "@/components/utilFunction/useTranslation";
+import { ACCESS_TOKEN_KEY } from "@/libs/constants";
+import { deleteSession } from "@/utils/deleteSession";
 import {
   Avatar,
   Box,
   MenuItem,
+  Paper,
   Popover,
   Typography,
   useTheme,
@@ -17,7 +20,7 @@ interface IPropsCompanyMenu {
 
 const CompanyMenuComponent:React.FC<IPropsCompanyMenu> = ({t}) => {
   const router = useRouter();
-//   const { t } = useTranslation();
+
 const pathname = usePathname()
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -33,6 +36,11 @@ const pathname = usePathname()
   };
 
   const open = Boolean(anchorEl);
+
+  const handleLogout = async () => {
+    await deleteSession(ACCESS_TOKEN_KEY)
+    router.push("/login")
+  }
   return (
     <Box>
       <Avatar
@@ -73,11 +81,11 @@ const pathname = usePathname()
             <Avatar variant="circular" sx={{ width: 70, height: 70 }} />
           </Box>
           <Box py={2} px={4}>
-            <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
+            {/* <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
-                    {t?.home?.company_prfile}
+                    {t?.home?.company_profile}
                   </Typography>
                 </MenuItem>
               </Link>
@@ -108,28 +116,28 @@ const pathname = usePathname()
                   </Typography>
                 </MenuItem>
               </Link>
-            </Box>
+            </Box> */}
             <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
-                <MenuItem>
+                <MenuItem onClick={handleLogout}>
                   <Typography variant="subtitle2">{t?.home?.logout}</Typography>
                 </MenuItem>
               </Link>
             </Box>
           </Box>
-          <Box
+          {/* <Box
             sx={{
               position: "absolute",
               top: "-12px",
               height: "30px",
               width: "30px",
-              backgroundColor: "#FFF",
+              backgroundColor: theme.palette.background?.default,
               zIndex: 1000,
               transform: "rotate(45deg)",
               borderRadius: "8px",
               ...(t?.home?.dir === "rtl" ? { left: "20px" } : { right: "20px" }),
             }}
-          ></Box>
+          ></Box> */}
         </Box>
       </Popover>
     </Box>

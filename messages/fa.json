@@ -119,6 +119,8 @@
     "expirationDate": "تاریخ انقضاء",
     "no_product_yet_title": "هیچ محصولی ثبت نشده است",
     "no_product_yet_discription": "شما هیچ محصولی در سیستم ما ندارید. برای افزودن یا وارد کردن محصولات خود روی دکمه زیر کلیک کنید.",
+    "no_product_yet_title_category": "هیچ کتگوری ثبت نشده است",
+    "no_product_yet_discription_category": "شما هیچ کتگوری در سیستم ما ندارید. برای افزودن یا وارد کردن کتگوری خود روی دکمه زیر کلیک کنید.",
     "add_new_product": " افزودن جنس جدید",
     "categories": "دسته بندی ها",
     "are_you_sure_you_want_to_delete_this_category": "آیا مطمئیند این دسته بندی را حذف کنید؟",
@@ -130,13 +132,16 @@
     "yes": "بله",
     "add_new_category": "افزودن دسته بندی جدید",
     "create_title": "تعریف جنس",
-    "product_name":"نام محصول",
-    "count":"تعداد",
-    "in_one":"در یک",
-    "product_list":"لیست اجناس",
-    "nothing_found":"چیزی یافت نشد",
-    "product_quantity":"موجودی محصولات",
-    "currency":"ارز"
+    "product_name": "نام محصول",
+    "count": "تعداد",
+    "in_one": "در یک",
+    "product_list": "لیست اجناس",
+    "nothing_found": "چیزی یافت نشد",
+    "product_quantity": "موجودی محصولات",
+    "currency": "ارز",
+    "choose_unit_from_largest": "واحد از بزرگ به کوچک انتخاب کنید",
+    "delete_title": "آیا مطمئیند این جنس را حذف کنید؟",
+    "delete_description": "این جنس حذف شود دوباره به آن دسترسی نخواهید داشت."
   },
   "position_link": {
     "": "صحفه اصلی",
@@ -180,7 +185,11 @@
       "Cancel": "لغو",
       "Currency": "ارز",
       "Create_new_Bank": "افزودن بانک جدید",
-      "Nothing_Found": "چیزی یافت نشد"
+      "Nothing_Found": "چیزی یافت نشد",
+      "delete_title": "آیا مطمئیند این بانک را حذف کنید؟",
+      "delete_description": "این بانک حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "no_product_yet_title": "هیچ بانک ثبت نشده است",
+      "no_product_yet_discription": "شما هیچ بانک در سیستم ما ندارید. برای افزودن یا وارد کردن بانک ها خود روی دکمه زیر کلیک کنید."
     },
     "cashbox": {
       "New_Cashbox_Information": "مشخصات صندوق جدید",
@@ -193,7 +202,11 @@
       "Currency": "ارز",
       "Create_new_Cashbox": "افزودن صندوق جدید",
       "Cashboxes": "صندوق ها",
-      "Nothing_Found": "چیزی یافت نشد"
+      "Nothing_Found": "چیزی یافت نشد",
+      "delete_title": "آیا مطمئیند این صندق را حذف کنید؟",
+      "delete_description": "این صندق حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "no_product_yet_title": "هیچ صندوق ثبت نشده است",
+      "no_product_yet_discription": "شما هیچ صندوق در سیستم ما ندارید. برای افزودن یا وارد کردن صندوق ها خود روی دکمه زیر کلیک کنید."
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -204,8 +217,8 @@
       "Add_New_Expense": "افزودن مصرف جدید",
       "No_Expenses_Recorded": "هیچ مصرف ثبت نشده است",
       "You_have_no_expenses": "شما هیچ مصرف در سیستم ما ندارید. برای افزودن یا وارد کردن مصرف خود روی دکمه زیر کلیک کنید.",
-      "Are_you_sure_you_want_to_delete_this_item": "آیا مطمئیند این کار را حذف کنید؟",
-      "Once_this_item_is_deleted": "این محصول حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "Are_you_sure_you_want_to_delete_this_item": "آیا مطمئیند این مصرف را حذف کنید؟",
+      "Once_this_item_is_deleted": "این مصرف حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "yes": "بله"
     },
     "Customers": {
@@ -223,7 +236,12 @@
       "save": "ذخیره",
       "cancel": "لغو",
       "amount_due": "مقدار طلب",
-      "currency": "ارز"
+      "currency": "ارز",
+      "delete_title": "آیا مطمئیند این مشتری را حذف کنید؟",
+      "delete_description": "این مشتری حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "no_product_yet_title": "هیچ مشتری ثبت نشده است",
+      "no_product_yet_discription": "شما هیچ مشتری در سیستم ما ندارید. برای افزودن یا وارد کردن مشتریان خود روی دکمه زیر کلیک کنید."
+
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -254,59 +272,73 @@
       "address": "آدرس",
       "cancel": "لغو",
       "more_info": "اطلاعات بیشتر",
-      "add_new_employee":"افزودن کارمند جدید",
-      "name":"نام کامل",
-      "employees":"کارمندان",
-      "nothing_found":"چیزی یافت نشد"
-      
+      "add_new_employee": "افزودن کارمند جدید",
+      "name": "نام کامل",
+      "employees": "کارمندان",
+      "nothing_found": "چیزی یافت نشد",
+      "delete_title": "آیا مطمئیند این کارمند را حذف کنید؟",
+      "delete_description": "این کارمند حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "currency": "ارز",
+      "save": "ذخیره",
+      "no_product_yet_title": "هیچ کامند ثبت نشده است",
+      "no_product_yet_discription": "شما هیچ کارمند در سیستم ما ندارید. برای افزودن یا وارد کردن کارمندان خود روی دکمه زیر کلیک کنید."
+
     },
-    "income":{
+    "income": {
       "new_income": "عوایید جدید",
       "income_name": "نام عواید",
       "save": "ذخیره",
       "cancel": "لغو",
       "add_new_external_income": "افزودن عوایید بیرونی جدید",
       "no_external_income_recorded": "هیچ عوایید بیرونی ثبت نشده است",
-      "no_income_description": "شما هیچ عوایید بیرونی در سیستم ما ندارید. برای افزودن یا وارد کردن عواید بیرونی جدید خود روی دکمه زیر کلیک کنید."
+      "no_income_description": "شما هیچ عوایید بیرونی در سیستم ما ندارید. برای افزودن یا وارد کردن عواید بیرونی جدید خود روی دکمه زیر کلیک کنید.",
+      "delete_title": "آیا مطمئیند این عوایید را حذف کنید؟",
+      "delete_description": "این عوایید حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "external_income": "عواید بیرونی"
     },
     "partner": {
-    "new_partner_details": "مشخصات شریک جدید",
-    "first_name": "نام",
-    "last_name": "تخلص",
-    "investment_amount": "مقدار سرمایه به مبلغ",
-    "investment_percentage": "مقدار سرمایه به فیصدی",
-    "phone_number": "شماره تماس",
-    "save": "ذخیره",
-    "cancel": "لغو",
-    "add_new_partner": "افزودن شریک جدید",
-    "no_partner_yet_title": "هنوز هیچ شریکی وجود ندارد",
-    "no_partner_yet_description": "شما هنوز هیچ شریکی اضافه نکرده‌اید.",
-    "add_new_partner_button": "افزودن شریک جدید",
-    "partners":"شرکاه",
-    "nothing_found":"چیزی یافت نشد",
-    "percentage_of_equity":"مقدار فیصدی سرمایه",
-    "amount_of_money_in_cash":"مقدار سرمایه به پول"
-  },
-  "warehouse":{
-    "initial_period_registration": "ثبت اول دوره",
-    "product_name": "نام جنس",
-    "units": "واحدات",
-    "quantity": "تعداد",
-    "warehouse_name": "نام گدام",
-    "warehouse_responsible": "مسئول گدام",
-    "product_quantity": "موجودی محصولات",
-    "warehouse_address": "آدرس گدام",
-    "register_initial_batch_of_products": "ثبت اول دوره اجناس",
-    "cancel": "لغو",
-    "save": "ذخیره",
-    "warehouses":" گدام ها",
-    "add_warehouse": "افزودن گدام جدید",
-    "no_warehouse": "شما هیچ گدام در سیستم ما ندارید. برای افزودن یا وارد کردن گدام خود روی دکمه زیر کلیک کنید.",
-    "no_warehouse_registered": "هیچ گدام ثبت نشده است",
-    "add_new_warehouse": "افزودن گدام جدید",
-    "nothing_found":"چیزی یافت نشد"
-  }
-    
+      "new_partner_details": "مشخصات شریک جدید",
+      "first_name": "نام",
+      "last_name": "تخلص",
+      "investment_amount": "مقدار سرمایه به مبلغ",
+      "investment_percentage": "مقدار سرمایه به فیصدی",
+      "phone_number": "شماره تماس",
+      "save": "ذخیره",
+      "cancel": "لغو",
+      "add_new_partner": "افزودن شریک جدید",
+      "no_partner_yet_title": "هنوز هیچ شریکی وجود ندارد",
+      "no_partner_yet_description": "شما هنوز هیچ شریکی اضافه نکرده‌اید.",
+      "add_new_partner_button": "افزودن شریک جدید",
+      "partners": "شرکاه",
+      "nothing_found": "چیزی یافت نشد",
+      "percentage_of_equity": "مقدار فیصدی سرمایه",
+      "amount_of_money_in_cash": "مقدار سرمایه به پول",
+      "delete_title": "آیا مطمئیند این شریک را حذف کنید؟",
+      "delete_description": "این شریک حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "currency": "ارز"
+    },
+    "warehouse": {
+      "initial_period_registration": "ثبت اول دوره",
+      "product_name": "نام جنس",
+      "units": "واحدات",
+      "quantity": "تعداد",
+      "warehouse_name": "نام گدام",
+      "warehouse_responsible": "مسئول گدام",
+      "product_quantity": "موجودی محصولات",
+      "warehouse_address": "آدرس گدام",
+      "register_initial_batch_of_products": "ثبت اول دوره اجناس",
+      "cancel": "لغو",
+      "save": "ذخیره",
+      "warehouses": " گدام ها",
+      "add_warehouse": "افزودن گدام جدید",
+      "no_warehouse": "شما هیچ گدام در سیستم ما ندارید. برای افزودن یا وارد کردن گدام خود روی دکمه زیر کلیک کنید.",
+      "no_warehouse_registered": "هیچ گدام ثبت نشده است",
+      "add_new_warehouse": "افزودن گدام جدید",
+      "nothing_found": "چیزی یافت نشد",
+      "address": "آدرس",
+      "delete_title": "آیا مطمئیند این گدام را حذف کنید؟",
+      "delete_description": "این گدام حذف شود دوباره به آن دسترسی نخواهید داشت."
+    }
   },
   "numberToWord": {
     "zero": " صفر",

@@ -20,6 +20,7 @@ import {
     defaultValue: any[];
     index?: number;
     showLabel?: boolean;
+    t:any
   }
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -45,6 +46,7 @@ import {
     defaultValue,
     index,
     showLabel,
+    t
   }) => {
     const cleint = useApolloClient();
     const theme = useTheme();
@@ -80,6 +82,7 @@ import {
         getDefaultDataProduct();
       }
       if (defaultValue?.length > 0) {
+        console.log("defaultValue" , defaultValue)
         setPersonName(defaultValue?.map((item) => item.name));
       }
     }, [defaultValue?.length]);
@@ -97,7 +100,7 @@ import {
           return {
             measure: productM?.[0]?._id,
             name: productM?.[0]?.name,
-            boughtPrice: 0,
+            buyPrice: 0,
             salePrice: 0,
           };
         });
@@ -113,7 +116,7 @@ import {
       <Box>
         {!showLabel && (
           <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} required>
-            واحد از بزرگ به کوچک انتخاب کنید
+            {t?.product?.choose_unit_from_largest}
           </InputLabel>
         )}
         <Select

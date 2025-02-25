@@ -75,14 +75,15 @@ const ListItemComponent: React.FC<IPropsListItem> = ({
       id={name}
       sx={{
         display: "block",
-        background:
-          pathname?.split("/")?.[2] === name
-            ? `linear-gradient(90deg,${
-                t.home.dir === "rtl"
-                  ? "rgba(33,191,172,1) 0% , rgba(33,191,172,0.15) 1%"
-                  : "rgba(33,191,172,0.15) 99%, rgba(33,191,172,1) 1%"
-              } )`
-            : "",
+        backgroundColor:pathname?.split("/")?.[2] === name ? "rgba(33,191,172,0.15)":""
+        // background:
+        //   pathname?.split("/")?.[2] === name
+        //     ? `linear-gradient(90deg,${
+        //         t.home.dir === "rtl"
+        //           ? "rgba(33,191,172,1) 0% , rgba(33,191,172,0.15) 1%"
+        //           : "rgba(33,191,172,0.15) 99%, rgba(33,191,172,1) 1%"
+        //       } )`
+        //     : "",
       }}
     >
       <ListItemButton sx={ListItemButtonCss}>

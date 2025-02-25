@@ -107,6 +107,9 @@ import {
               id={item?._id}
               getIdToAddAction={handleDelteProductFunction}
               updateProductFunction={handleUpdateProuct}
+              t={t}
+              messageDescription={t?.pages?.employee?.delete_description}
+              messageTitle={t?.pages?.employee?.delete_title}
             >
               <Grid container spacing={2}>
                 <Grid item xs={9} display="grid">

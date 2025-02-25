@@ -101,13 +101,13 @@ import {
         setLoadingPage(true);
         if (isUpdate) {
           const {
-            data: { updateExternalIncometype },
+            data: { updateExternalIncomeType },
           } = await cleint.mutate({
             mutation: UPDATE_EXTERNAL_INCOME_TYPE,
             variables,
           });
-          if (updateExternalIncometype?._id && getProductUpdated) {
-            getProductUpdated(updateExternalIncometype);
+          if (updateExternalIncomeType?._id && getProductUpdated) {
+            getProductUpdated(updateExternalIncomeType);
             setLoadingPage(false);
             setOpenDialog(false);
           }
@@ -155,7 +155,7 @@ import {
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir="rtl"
+          dir={t?.home?.dir}
           fullWidth
         >
           <DialogTitle
@@ -199,7 +199,7 @@ import {
             >
               {t?.pages?.income?.save}
             </Button>
-            <Button variant="outlined">لغو</Button>
+            <Button variant="outlined"  onClick={handleOpenDialogFunction}>لغو</Button>
           </DialogActions>
         </Dialog>
         {isEmptyPage ? (

@@ -10,9 +10,6 @@ export default async function Home({params}:{ params: Promise<{ lang: 'en' | 'fa
       <main >
        {tra.home.company_profile} journal page
       </main>
-      <footer >
-
-      </footer>
     </div>
   );
 }

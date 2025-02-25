@@ -4,33 +4,36 @@ const UPDATE_PRODUCT = gql`
   mutation ($productId: ID!, $productObject: ProductObjectInput!) {
     updateProduct(productId: $productId, productObject: $productObject) {
       _id
-      name
-      productCode
-      image
-      measures {
-        measure {
-          _id
-          name
-          description
-          createdAt
-        }
-        measureSize
-        buyPrice
-        sellPrice
-      }
-      measuresExchange {
-        from
-        to
-        amount
-      }
-      category {
+         name
+    productCode
+    measures{
+      measureId{
         _id
         name
-        description
-        userId
+        
       }
-      expirationDate
-      barcode
+      buyPrice
+      sellPrice
+    }
+    baseMeasureAmount
+    measuresExchange{
+      powerMeasureId{
+        _id
+        name
+      }
+    }
+    category{
+      _id
+      name
+      
+    }
+    expirationDate
+    barcode
+    currencyId{
+      _id
+      name
+    }
+    createdAt
     }
   }
 `;

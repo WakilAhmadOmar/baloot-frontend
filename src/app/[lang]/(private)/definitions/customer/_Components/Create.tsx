@@ -69,6 +69,7 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
       setOpenDialog(!openDialog);
     };
     useEffect(() => {
+
       if (item?._id) {
         setValue("fullName", item?.fullName);
         setValue("fathersName", item?.fathersName);
@@ -91,10 +92,14 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
         ...(isUpdate ? { customerId: item?._id } : {}),
         customerObject: {
           ...data,
-          pastBilling: {
+          creditLimit:{
+            amount:parseFloat(data?.creditLimit),
+            currencyId: data?.currencyId,
+          },
+          credit: {
             amount: parseInt(data?.amount),
-            currency: data?.currencyId,
-            type: data.type,
+            currencyId: data?.currencyId,
+            creditType: data.type,
           },
         },
       };
@@ -103,10 +108,11 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
       delete variables.customerObject.type;
       delete variables.customerObject.customerCode;
 
-  
+  console.log(variables)
       try {
         setLoadingPage(true);
         if (isUpdate) {
+          delete variables.customerObject.credit;
           const {
             data: { updateCustomer },
           } = await cleint.mutate({
@@ -187,7 +193,7 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                     name="fullName"
                   />
                 </Grid>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.customer_code}
                   </InputLabel>
@@ -197,7 +203,7 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                     {...register("customerCode", { required: true })}
                     name="customerCode"
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.contact_number}
@@ -216,11 +222,11 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("credibility", { required: true })}
-                    name="credibility"
+                    {...register("creditLimit", { required: true })}
+                    name="creditLimit"
                   />
                 </Grid>
-                <Grid item xs={8}>
+               {!isUpdate && <Grid item xs={8}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.previous_account}
                   </InputLabel>
@@ -233,8 +239,8 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                       { name: t?.pages?.Customers?.debit, value: "Debit" },
                     ]}
                   />
-                </Grid>
-                <Grid item xs={4}>
+                </Grid>}
+                <Grid item xs={isUpdate ? 6 : 4}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.currency}
                   </InputLabel>
@@ -271,9 +277,9 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
           <Box className={"empty_page_content"}>
             <EmptyPage
               icon={<EmptyProductPageIcon />}
-              title={t.product.no_product_yet_title}
-              discription={t.product.no_product_yet_discription}
-              buttonText={t.product.add_new_product}
+              title={t.pages?.Customers.no_product_yet_title}
+              discription={t.pages?.Customers.no_product_yet_discription}
+              buttonText={t.pages?.Customers.add_new_customer}
               onClick={handleOpenDialogFunction}
             />
           </Box>

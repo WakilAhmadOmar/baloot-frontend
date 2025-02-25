@@ -13,8 +13,9 @@ import ThemeToggle from "./ThemeToggle";
 
  interface IPropsCustomToolbar {
     t:any
+    lang:string
  }
-const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t}) => {
+const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t , lang}) => {
     const theme = useTheme()
     const [open, setOpen] = useState(true);
 
@@ -42,7 +43,7 @@ const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t}) => {
               columnGap={2}
             >
               <Box>
-                <Language t={t} />
+                <Language t={t} lang={lang}/>
               </Box>
               <Box>
               <ThemeToggle />

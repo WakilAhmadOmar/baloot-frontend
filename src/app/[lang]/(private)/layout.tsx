@@ -49,7 +49,7 @@ export default async function MiniDrawer({
     >
       <CssBaseline />
       <AppBar position="fixed" open={true} drawerwidth={drawerWidth} >
-        <CustomToolbar t={tra} />
+        <CustomToolbar t={tra} lang={lang}/>
       </AppBar>
       <Drawer
         variant="permanent"

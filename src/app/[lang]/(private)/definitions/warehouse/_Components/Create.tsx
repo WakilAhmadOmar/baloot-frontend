@@ -206,7 +206,7 @@ import {
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.warehouse?.warehouse}
+                  {t?.pages?.warehouse?.warehouses}
                   </InputLabel>
                   <TextField
                     fullWidth

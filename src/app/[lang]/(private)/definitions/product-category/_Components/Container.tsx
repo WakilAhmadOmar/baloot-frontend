@@ -110,7 +110,7 @@ const CategoryProductPage:React.FC<IProps> = ({t}) => {
           mutation: ADD_CATEGORY,
           variables,
         });
-        setProductUnits([addCategory, ...productUnits]);
+        setProductUnits([variables, ...productUnits]);
         setLoadingPage(false);
         setOpenDialog(false);
       }
@@ -284,9 +284,9 @@ const CategoryProductPage:React.FC<IProps> = ({t}) => {
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title}
-            discription={t.product.no_product_yet_discription}
-            buttonText={t.product.add_new_product}
+            title={t.product.no_product_yet_title_category}
+            discription={t.product.no_product_yet_discription_category}
+            buttonText={t.product.add_new_category}
             onClick={handleOpenDialogFunction}
           />
         </Box>

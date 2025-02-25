@@ -109,6 +109,9 @@ import {
               getIdToAddAction={handleDelteProductFunction}
               updateProductFunction={handleUpdateProuct}
               height="150px"
+              t={t}
+              messageTitle={t?.pages?.Customers?.delete_title}
+              messageDescription={t?.pages?.Customers?.delete_description}
             >
               <Grid container spacing={2}>
                 <Grid
