@@ -101,6 +101,9 @@ const ProductList: React.FC<IProps> = ({
             id={item?._id}
             getIdToAddAction={handleDelteProductFunction}
             updateProductFunction={handleUpdateProuct}
+            t={t}
+            messageDescription={t.product?.delete_description}
+            messageTitle={t.product?.delete_title}
           >
             <Grid container spacing={2}>
               <Grid

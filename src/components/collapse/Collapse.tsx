@@ -28,6 +28,9 @@ interface IProps {
   updateProductFunction?: (id: string) => void;
   id?: string;
   height?: string;
+  messageTitle:string,
+  messageDescription:string,
+  t:any
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -46,6 +49,9 @@ const CollapseComponent: React.FC<IProps> = ({
   getIdToAddAction,
   updateProductFunction,
   height,
+  t,
+  messageDescription,
+  messageTitle
 }) => {
   const theme = useTheme();
   const [handleCollapseState, setHandleCollapseState] = useState(false);
@@ -76,27 +82,27 @@ const CollapseComponent: React.FC<IProps> = ({
         keepMounted
         onClose={handleDeleteFunction}
         aria-describedby="alert-dialog-slide-description"
-        dir="rtl"
+        dir={t?.home?.dir}
       >
-        <DialogTitle className="dialogTitleDelete">
+        <DialogTitle className="dialogTitleDelete" display={"flex"} gap={1} alignItems={"center"}justifyContent={"space-between"}>
+          <Typography variant="h5">{messageTitle}</Typography>
           <InfoCircle size="32" color={theme.palette.warning.main} />
-          <Typography variant="h5">آیا مطمئیند این کار را حذف کنید؟</Typography>
         </DialogTitle>
         <DialogContent className="dialogContentDelete">
           <DialogContentText id="alert-dialog-slide-description">
             <Typography variant="body1">
-              این محصول حذف شود دوباره به آن دسترسی نخواهید داشت.
+              {messageDescription}
             </Typography>
           </DialogContentText>
         </DialogContent>
         <DialogActions className="dialogActionDelete">
-          <Button onClick={handleDeleteFunction}>خیر</Button>
+          <Button onClick={handleDeleteFunction} variant="outlined">{t?.product?.cancel}</Button>
           <Button
             onClick={handleDeleteThisItem}
             variant="contained"
             color="primary"
           >
-            بلی
+            {t?.product?.yes}
           </Button>
         </DialogActions>
       </Dialog>

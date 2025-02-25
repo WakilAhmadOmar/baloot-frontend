@@ -252,6 +252,9 @@ import {
               id={item?._id}
               getIdToAddAction={handleDelteProductFunction}
               updateProductFunction={handleUpdateProuct}
+              messageTitle={t?.pages?.warehouse?.delete_title}
+              messageDescription={t?.pages?.warehouse?.delete_description}
+              t={t}
             >
               <Grid container spacing={2}>
                 <Grid

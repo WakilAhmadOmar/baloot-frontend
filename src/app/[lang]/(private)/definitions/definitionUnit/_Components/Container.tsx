@@ -22,9 +22,10 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, InfoCircle } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { getProductMeansureFunction } from "@/components/util/getProductMeansureFunction";
+import { AppContext } from "@/provider/appContext";
 
 interface IProps {
     t:any
@@ -38,18 +39,10 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
   } = useForm();
   const theme = useTheme();
   const client = useApolloClient();
+  const {setHandleError} = useContext(AppContext)
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
 
   const [productUnits, setProductUnits] = useState<any[]>([]);
   const [idItemShouldDelete, setIdItemShouldDelete] = useState("");
@@ -147,14 +140,6 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
     }
   };
 
-  const handleCloseError = () => {
-    setHandleError({
-      open: false,
-      message: "",
-      status: "success",
-    });
-  };
-
   return (
     <Box>
       {loadingPage && <CircularProgressComponent />}
@@ -163,12 +148,7 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
           {t?.pages?.unit.define_units}
         </Typography>
       )}
-      <SnackbarComponent
-        status={handleError?.status}
-        open={handleError?.open}
-        message={handleError?.message}
-        handleClose={handleCloseError}
-      />
+      
       <Dialog
         open={openDialogDelete}
         onClose={handleOpenDialogDeleteFunction}
@@ -276,7 +256,7 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
            {t?.pages?.unit?.save} 
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-          {t?.pages?.unit?.cancel}  لغو
+          {t?.pages?.unit?.cancel} 
           </Button>
         </DialogActions>
       </Dialog>

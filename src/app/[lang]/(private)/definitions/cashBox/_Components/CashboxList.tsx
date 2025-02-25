@@ -105,20 +105,23 @@ import {
               getIdToAddAction={handleDelteProductFunction}
               updateProductFunction={handleUpdateProuct}
               height="150px"
+              t={t}
+              messageDescription={t?.pages?.cashbox?.delete_description}
+              messageTitle={t?.pages?.cashbox?.delete_title}
             >
               <Box display={"grid"} gridTemplateColumns={"20rem auto"} mb={1}>
-                <Typography variant="caption">صندوق دار </Typography>
+                <Typography variant="caption">{t?.pages?.cashbox?.Cashier} </Typography>
                 <Typography variant="caption">{item?.cashier?.name}</Typography>
               </Box>
               <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
-                <Typography variant="caption">مبلغ موجودی</Typography>
+                <Typography variant="caption"> {t?.pages?.cashbox?.Current_Balance}</Typography>
                 <Typography variant="caption">
                   {item?.cridet?.[0]?.amount}{" "}
                   {item?.cridet?.[0]?.currencyId?.name}
                 </Typography>
               </Box>
               <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
-                <Typography variant="caption"> شماره تماس صندوق دار</Typography>
+                <Typography variant="caption"> {t?.pages?.cashbox?.Cashier_Contact_Number}</Typography>
                 <Typography variant="caption">
                   {item?.cashier?.phoneNumber}{" "}
                 </Typography>

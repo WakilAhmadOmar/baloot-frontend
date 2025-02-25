@@ -107,6 +107,9 @@ const BankList: React.FC<IProps> = ({
             id={item?._id}
             getIdToAddAction={handleDelteProductFunction}
             updateProductFunction={handleUpdateProuct}
+            t={t}
+            messageTitle={t?.pages?.bank?.delete_title}
+            messageDescription={t?.pages?.bank?.delete_description}
           >
             <Grid container spacing={2}>
               <Grid

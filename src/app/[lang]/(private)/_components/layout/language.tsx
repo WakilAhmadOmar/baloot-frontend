@@ -14,11 +14,12 @@ import Link from "next/link";
 
 interface IPropsLanguage {
     t:any
+    lang:string
 }
 
-  const Language:React.FC<IPropsLanguage> = ({t}) => {
+  const Language:React.FC<IPropsLanguage> = ({t , lang}) => {
     const pathname = usePathname()
-    const [language, setLanguage] = useState<string | null>("en");
+    const [language, setLanguage] = useState<string | null>(lang);
 
     const handleChange = (event: any) => {
       const local = event.target.value;

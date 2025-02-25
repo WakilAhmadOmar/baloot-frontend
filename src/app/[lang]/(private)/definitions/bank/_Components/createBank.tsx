@@ -290,9 +290,9 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title}
-            discription={t.product.no_product_yet_discription}
-            buttonText={t.product.add_new_product}
+            title={t.pages?.bank?.no_product_yet_title}
+            discription={t.pages?.bank?.no_product_yet_discription}
+            buttonText={t.pages?.bank?.Create_new_Bank}
             onClick={handleOpenDialogFunction}
           />
         </Box>

@@ -11,7 +11,7 @@ import { createSession } from "@/utils/createSession";
 import { ACCESS_TOKEN_KEY } from "@/libs/constants";
 import { AppContext } from "@/provider/appContext";
 import useSchemaLoginForm from "./schemas";
-import LoginImage from "@/assets/images/login_image.png"
+import LoginImage from "@/assets/images/image_for_login_page.jpg"
 
 interface IPropsLoginForm {
   t: any;

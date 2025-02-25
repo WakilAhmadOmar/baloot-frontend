@@ -287,9 +287,9 @@ import {
           <Box className={"empty_page_content"}>
             <EmptyPage
               icon={<EmptyProductPageIcon />}
-              title={t.product.no_product_yet_title}
-              discription={t.product.no_product_yet_discription}
-              buttonText={t.product.add_new_product}
+              title={t.pages?.cashbox.no_product_yet_title}
+              discription={t.pages?.cashbox.no_product_yet_discription}
+              buttonText={t.pages?.cashbox?.Create_new_Cashbox}
               onClick={handleOpenDialogFunction}
             />
           </Box>

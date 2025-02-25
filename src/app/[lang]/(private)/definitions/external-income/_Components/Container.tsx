@@ -92,7 +92,7 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
       {loadingPage && <CircularProgressComponent />}
       {(productsState?.products?.length > 0 || loadingPage) && (
         <Typography variant="h3" mb={2}>
-          عواید بیرونی
+          {t?.pages?.income?.external_income}
         </Typography>
       )}
       <Box

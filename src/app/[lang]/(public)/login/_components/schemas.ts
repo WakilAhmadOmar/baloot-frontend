@@ -8,7 +8,7 @@ const useSchemaLoginForm = (t:any) => {
       .email(t.pages?.login?.validate_email)
       .required(t?.pages?.login?.enter_your_email),
     password: Yup.string()
-      .required(t?.enter_your_password),
+      .required(t?.pages?.login?.enter_your_password),
   });
 };
 

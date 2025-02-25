@@ -89,19 +89,19 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
     if (item?._id) {
       setValue("name", item?.name);
       setSelectedUnitProduct(
-        item?.measures?.map((item: any) => {
-          setValue("buyPrice " + item?.measure?.name, item?.buyPrice);
-          setValue("sellPrice " + item?.measure?.name, item?.sellPrice);
+        item?.measures?.map((it: any) => {
+          setValue("buyPrice " + it?.measureId?.name, it?.buyPrice);
+          setValue("sellPrice " + it?.measureId?.name, it?.sellPrice);
           return {
-            measure: item?.measure?._id,
-            name: item?.measure?.name,
-            boughtPrice: item?.boughtPrice,
-            sellPrice: item?.sellPrice,
+            measure: it?.measureId?._id,
+            name: it?.measureId?.name,
+            boughtPrice: it?.boughtPrice,
+            sellPrice: it?.sellPrice,
           };
         })
       );
       setValue("category", item?.category?._id);
-      setValue("expirationDate", item?.expirationDate.slice(0, 10));
+      setValue("expirationDate", item?.expirationDate?.slice(0, 10));
       setValue("barcode", item?.barcode);
       setValue("amount", item?.amount);
       setValue(
@@ -281,7 +281,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                   <Grid item mt={2} xs={8}>
                     <InputLabel sx={{ paddingBottom: "5px" }} required>
                       <Typography variant="subtitle2" component={"samp"}>
-                        {t?.product?.name}
+                        {t?.product?.product_name}
                       </Typography>
                     </InputLabel>
                     <TextField
@@ -294,6 +294,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                       register={register}
                       getDataSelect={handleGetMeasureFunction}
                       defaultValue={selectedUnitProduct}
+                      t={t}
                     />
                   </Grid>
                 </Grid>
