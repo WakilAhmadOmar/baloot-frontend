@@ -132,7 +132,7 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
           {/* <LinkLayout href={ lang +"/definitions/definitionUnit"} lang={lang} open={true} t={t} text={t?.layout?.customers_accounts}  />
           <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.employees_accounts}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_fund_balances}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_bank_balances}  /> */}
+          <LinkLayout href={"/" + lang +"/accounts/banks"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_bank_balances}  /> */}
         </List>
       </Collapse>
       <ListItemComponent
@@ -156,9 +156,9 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
             t={t}
             text={t?.layout?.purchase_invoice}
           />
-          {/* <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.return_from_purchase}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.sales_invoice}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.return_from_sale}  />
+           {/* <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.return_from_purchase}  /> */}
+          {/* <LinkLayout href={"/"+ lang +"/invoice/sales-invoice"} lang={lang} open={true} t={t} text={t?.layout?.sales_invoice}  /> */}
+          {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.return_from_sale}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.pre_purchase_invoice}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.pre_sales_invoice}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.rating_factor}  /> */}

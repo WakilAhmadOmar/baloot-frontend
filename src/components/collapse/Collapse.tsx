@@ -95,7 +95,7 @@ const CollapseComponent: React.FC<IProps> = ({
             </Typography>
           </DialogContentText>
         </DialogContent>
-        <DialogActions className="dialogActionDelete">
+        <DialogActions className="dialogActionDelete" sx={{ display:"flex" , gap:"1rem"}}>
           <Button onClick={handleDeleteFunction} variant="outlined">{t?.product?.cancel}</Button>
           <Button
             onClick={handleDeleteThisItem}

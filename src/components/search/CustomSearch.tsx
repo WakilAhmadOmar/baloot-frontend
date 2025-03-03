@@ -1,3 +1,4 @@
+"use client"
 import { InputAdornment, TextField, Divider, useTheme } from "@mui/material";
 import { SearchNormal1 } from "iconsax-react";
 import { debounce } from "lodash";
