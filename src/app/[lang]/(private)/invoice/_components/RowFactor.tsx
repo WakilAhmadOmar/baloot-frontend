@@ -34,13 +34,13 @@ const RowFactor = () => {
           </Typography>
           <Box>
             <IconButton>
-              <Trash color={theme.palette.primary.main} />
+              <Trash color={theme.palette.primary.main}  size={22}/>
             </IconButton>
             <IconButton>
-              <Edit color={theme.palette.primary.main} />
+              <Edit color={theme.palette.primary.main}  size={22}/>
             </IconButton>
             <IconButton>
-              <Eye color={theme.palette.primary.main} />{" "}
+              <Eye color={theme.palette.primary.main} size={22}/>{" "}
             </IconButton>
           </Box>
         </Box>

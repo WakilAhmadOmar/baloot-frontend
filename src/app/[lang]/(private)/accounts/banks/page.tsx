@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import Container from "./_components/Container";
+import BankContainer from "./_Components/Container";
 import { getDictionary } from "@/dictionaries";
 
 export default async function BankPage({
@@ -11,7 +11,7 @@ export default async function BankPage({
   const tra = await getDictionary(lang);
   return (
     <Box>
-      <Container t={tra} />
+      {/* <BankContainer t={tra} /> */}
     </Box>
   );
 }

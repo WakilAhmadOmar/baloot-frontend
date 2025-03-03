@@ -164,6 +164,29 @@
     "employees": "ثبت حساب کارمندان"
   },
   "pages": {
+    "currency":{
+      "message_title_delete":"آیا مطمئیند این ارز را حذف کنید؟",
+      "message_description_delete":" این ارز حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "cancel":"خیر",
+      "yes":"بله",
+      "add_new_currency":"افزودن ارز جدید",
+      "currency_name":"نام ارز",
+      "currency_name_is_required":"نام ارز حتمی است",
+      "symbol":"سمبول",
+      "symbol_is_required":"  سمبول حتمی است",
+      "set_daily_price":"تعیین قیمت روز",
+      "daily_rate":"نرخ روز",
+      "rate_is_required":"  نرخ حتمی است",
+      "base_currency":"ارز معیاری",
+      "to":"به",
+      "base_currency_is_required":" ارز معیاری حتمی است",
+      "save":"ذخیره",
+      "you_have_no_currency":"شما هیچ ارزی در سیستم ما ندارید. برای افزودن یا وارد کردن ارز خود روی دکمه زیر کلیک کنید.",
+      "no_currency_registered":"هیچ ارزی ثبت نشده است",
+      "define_currency":"تعریف ارز",
+      "current_rate_in_base_currency":" قیمت روز به ارز معیاری"
+    
+    },
     "login": {
       "welcome_to_alpha_accounting_software": "به برنامه حسابداری آلفا خوش آمدید",
       "email": "ایمیل",

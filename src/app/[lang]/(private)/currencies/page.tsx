@@ -1,5 +1,6 @@
 
 import { getDictionary } from "@/dictionaries";
+import Container from "./_Components/Container"
 
 export default async function CurrenciesPage({params}:{ params: Promise<{ lang: 'en' | 'fa' }>}) {
   const lang = (await params).lang
@@ -7,7 +8,7 @@ export default async function CurrenciesPage({params}:{ params: Promise<{ lang: 
   return (
     <div >
       <main >
-       {tra.home.company_profile}
+      <Container t={tra}/>
       </main>
     </div>
   );

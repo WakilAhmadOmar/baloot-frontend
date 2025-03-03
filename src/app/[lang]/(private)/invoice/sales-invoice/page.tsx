@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import Container from "./_components/Container";
 import { getDictionary } from "@/dictionaries";
 
-export default async function BankPage({
+export default async function SalesInvoicePage({
   params,
 }: {
   params: Promise<{ lang: "en" | "fa" }>;
