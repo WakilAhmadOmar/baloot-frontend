@@ -5,13 +5,16 @@ import { GET_CONSUMPTION_TYPE_LIST } from "@/graphql/queries/GET_CONSUMPTION_TYP
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useApolloClient } from "@apollo/client";
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "@/provider/appContext";
+import { DELETE_CONSUMPTION } from "@/graphql/mutation/DELETE_CONSUMPTION";
 
 interface IProps {
   t:any
 }  
 const ConsumptionPage:React.FC<IProps> = ({t}) => {
   const client = useApolloClient();
+  const {setHandleError} = useContext(AppContext)
   const [productsState, setProductsState] = useState<{
     products: any[];
     count: number;
@@ -85,7 +88,37 @@ const ConsumptionPage:React.FC<IProps> = ({t}) => {
     }));
     canceleUpdateProduct();
   };
-  const handleDeleteItem = (id: string) => {};
+  const handleDeleteItem = async (id: string) => {
+    setLoadingPage(true)
+    try{
+      const variables =  {
+        consumptionId:id
+      }
+      const {data : { deleteConsumption }} = await client.mutate({
+        mutation:DELETE_CONSUMPTION,
+        variables
+      })
+      if (deleteConsumption?.message){
+        setHandleError({
+          message:deleteConsumption?.message,
+          type:"success",
+          open:true
+        })
+        setProductsState((prevState) => ({
+          ...prevState,
+          products: prevState?.products?.filter((item) => item?._id !== id)
+        }))
+      }
+      setLoadingPage(false)
+    }catch(error:any){
+      setLoadingPage(false)
+      setHandleError({
+        type:"error",
+        message:error?.message,
+        open:true
+      })
+    }
+  };
   return (
     <Box>
       {loadingPage && <CircularProgressComponent />}

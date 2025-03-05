@@ -273,12 +273,12 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item mt={2} xs={4}>
-                    {/* <UploadComponent /> */}
-                  </Grid>
-                  <Grid item mt={2} xs={8}>
+              <Grid item xs={12} mt={2}>
+                {/* <Grid container spacing={2}> */}
+                  {/* <Grid item mt={2} xs={4}>
+                    <UploadComponent />
+                  </Grid> */}
+                  {/* <Grid item mt={12} xs={18}> */}
                     <InputLabel sx={{ paddingBottom: "5px" }} required>
                       <Typography variant="subtitle2" component={"samp"}>
                         {t?.product?.product_name}
@@ -296,8 +296,8 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                       defaultValue={selectedUnitProduct}
                       t={t}
                     />
-                  </Grid>
-                </Grid>
+                  {/* </Grid> */}
+                {/* </Grid> */}
               </Grid>
               {selectedUnitProduct?.length > 1 &&
                 selectedUnitProduct?.map((item, index: number) => {

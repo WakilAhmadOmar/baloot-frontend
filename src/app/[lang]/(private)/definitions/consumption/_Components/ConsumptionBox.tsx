@@ -69,13 +69,13 @@ import {
           dir={t?.home?.dir}
         >
           <DialogTitle className="dialogTitleDelete" display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-            <Typography variant="h5">{t?.pages?.income?.delete_title}</Typography>
+            <Typography variant="h5">{t?.pages?.Expenses?.Are_you_sure_you_want_to_delete_this_item}</Typography>
             <InfoCircle size="32" color={theme.palette.warning.main} />
           </DialogTitle>
           <DialogContent className="dialogContentDelete">
             <DialogContentText id="alert-dialog-slide-description">
               <Typography variant="body1">
-                {t?.pages?.income?.delete_description}
+                {t?.pages?.Expenses?.Once_this_item_is_deleted}
               </Typography>
             </DialogContentText>
           </DialogContent>

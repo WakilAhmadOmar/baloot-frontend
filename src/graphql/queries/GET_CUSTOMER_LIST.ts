@@ -10,8 +10,21 @@ const GET_CUSTOMER_LIST = gql`
         contactNumber
         creditLimit {
           amount
-          
+          currencyId{
+          _id
+          name
+          symbol
+          }
         }
+          credit {
+        amount
+        creditType
+        currencyId {
+          _id
+          name
+          symbol
+        }
+      }
         createdAt
       }
       count

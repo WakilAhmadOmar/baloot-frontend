@@ -15,7 +15,7 @@ import { getAuthUser } from "@/utils/getAuthUser";
 
 
 const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL
-console.log("graphqlEndPoint" , graphqlEndPoint)
+
 
 const ApolloManager: React.FC<any> = (props) => {
 

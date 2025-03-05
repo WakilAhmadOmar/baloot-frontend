@@ -160,6 +160,7 @@ const themeLight = createTheme({
           weight: 500,
           size: "1.2rem",
           borderRadius: "8px",
+          color:"#FFF"
         },
         outlined: {
           paddingInlineStart: "40px",

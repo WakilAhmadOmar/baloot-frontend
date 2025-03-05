@@ -46,7 +46,12 @@
     "cancel": "Cancel",
     "print_invoice": "Print Invoice",
     "print_warehouse_receipt": "Print Warehouse Receipt",
-    "reset": "Reset"
+    "reset": "Reset",
+    "sales_invoice": "Sales Invoice",
+    "add_new_sales_invoice": "Add New Sales Invoice",
+    "customer_name": "Customer Name",
+    "amount": "Quantity",
+    "consumption":"Consumption"
   },
   "layout": {
     "dashboard": "Dashboard",

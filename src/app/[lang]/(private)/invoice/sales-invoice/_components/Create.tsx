@@ -25,19 +25,30 @@ interface IProps{
 }
 
 const CreateSalesInvoice:React.FC<IProps> = ({t}) => {
-    const {customer} = useContext(InvoiceContext)
+    const {customer , setCustomer,
+      warehouse,
+      setWarehouse,
+      currency,
+      setCurrency,} = useContext(InvoiceContext)
+ 
     const [openDialog , setOpenDialog] = useState(false)
     const theme = useTheme()
     const handleOpenDialogBox = () => {
         setOpenDialog(!openDialog)
     }
-    const handleGetCustomer = () =>{}
-    const handleGetWarehouse = () => {}
-    const handleSelectCurrency = () => {}
+    const handleGetCustomer = (data:any) =>{
+      setCustomer(data)
+    }
+    const handleGetWarehouse = (data:any) => {
+      setWarehouse(data)
+    }
+    const handleSelectCurrency = (data:any) => {
+      setCurrency(data)
+    }
     return(
         <Box>
             <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
-        {t?.invoice?.New_Purchase_Invoice}
+        {t?.invoice?.add_new_sales_invoice}
       </Button>
       <Dialog
         fullScreen
@@ -57,7 +68,7 @@ const CreateSalesInvoice:React.FC<IProps> = ({t}) => {
         >
           <Toolbar>
             <Typography component="div" variant="button" sx={{ flex: 1 }}>
-             {t?.invoice?.Purchase_Invoice}
+             {t?.invoice?.sales_invoice}
             </Typography>
 
             <IconButton
@@ -73,7 +84,7 @@ const CreateSalesInvoice:React.FC<IProps> = ({t}) => {
         <DialogContent>
           <Grid2 container columnSpacing={3} rowSpacing={3}>
             <Grid2 size={3}>
-              <InputLabel>{t?.invoice?.Company_Name}</InputLabel>
+              <InputLabel>{t?.invoice?.customer_name}</InputLabel>
               <CustomerAutoComplete getCustomer={handleGetCustomer} />
             </Grid2>
             <Grid2 size={2}>
@@ -91,7 +102,7 @@ const CreateSalesInvoice:React.FC<IProps> = ({t}) => {
             </Grid2>
             <Grid2 size={2}>
               <InputLabel>{t?.invoice?.Currency}</InputLabel>
-              {/* <CurrenciesAutoComplete onSelected={handleSelectCurrency} /> */}
+              <CurrenciesAutoComplete onSelected={handleSelectCurrency} />
             </Grid2>
             {/* <Grid2 size={4}>
               <ProductsAutoComplete getProduct={handleGetSelectedProduct}  />

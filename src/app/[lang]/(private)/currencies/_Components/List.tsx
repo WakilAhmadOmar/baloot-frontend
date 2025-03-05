@@ -50,6 +50,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
   onDelete,
   t,
 }) => {
+  console?.log("item" , item)
   const theme = useTheme();
   const client = useApolloClient();
   const [open, setOpen] = React.useState(false);
@@ -279,16 +280,16 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
                 marginLeft: "0px",
                 marginRight: "0px",
                 "& .MuiTypography-body1": {
-                  fontSize: "2.4rem !important",
+                  fontSize: "1.8rem !important",
                   fontWeight: "700 !important",
-                  lineHeight: "2.2rem",
+                  lineHeight: "2rem",
                 },
               }}
               label={item?.name}
               onChange={handleChangeActiveAndDeActive}
             />
           </FormGroup>
-          <Typography variant="h3">{item?.symbol}</Typography>
+          <Typography variant="h5">{item?.symbol}</Typography>
         </Box>
         <Box
         // sx={{
@@ -329,7 +330,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
         <IconButton onClick={updateCurrencyFunction} size="large">
           <Edit size={20} color={theme.palette.primary.main} />
         </IconButton>
-        <IconButton size="large" onClick={onClickDelteButton}>
+        <IconButton size="large" onClick={onClickDelteButton} disabled={item?.isBase}>
           <Trash size={20} color={theme.palette.primary.main} />
         </IconButton>
       </Box>

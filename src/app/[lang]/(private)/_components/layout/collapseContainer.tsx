@@ -157,7 +157,7 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
             text={t?.layout?.purchase_invoice}
           />
            {/* <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.return_from_purchase}  /> */}
-          {/* <LinkLayout href={"/"+ lang +"/invoice/sales-invoice"} lang={lang} open={true} t={t} text={t?.layout?.sales_invoice}  /> */}
+          <LinkLayout href={"/"+ lang +"/invoice/sales-invoice"} lang={lang} open={true} t={t} text={t?.layout?.sales_invoice}  />
           {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.return_from_sale}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.pre_purchase_invoice}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.pre_sales_invoice}  />
