@@ -5,8 +5,7 @@ import { useApolloClient } from "@apollo/client";
 import { GET_PRODUCTS } from "../../graphql/queries/GET_PRODUCTS"
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/provider/appContext";
-import { useTheme } from "@mui/material";
-
+import {  useTheme } from "@mui/material";
 
 
 
@@ -119,7 +118,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   }, []);
   return (
     <Autocomplete
-      disablePortal
+      disablePortal={false}
       onChange={handleChangeCustomerSearch}
       fullWidth
       size="small"

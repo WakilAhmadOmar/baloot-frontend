@@ -65,7 +65,7 @@ const getUserCurrenciesFunction = async () => {
           name="currencyId"
           defaultValue={defaultValue || userCurrenciesState?.[0]?._id}
           onChange={handleChange}
-          {...register("currencyId")}
+          // {...register("currencyId")}
         >
           {userCurrenciesState?.map((item) => {
             return (

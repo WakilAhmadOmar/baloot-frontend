@@ -5,14 +5,17 @@ import { GET_EXTERNAL_TYPE_INCOME } from "@/graphql/queries/GET_EXTERNAL_TYPE_IN
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useApolloClient } from "@apollo/client";
 import { Box,  Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ConsumptionBox from "../../consumption/_Components/ConsumptionBox";
+import { DELETE_RECEIVE } from "@/graphql/mutation/DELETE_RECEIVE";
+import { AppContext } from "@/provider/appContext";
 
 interface IProps {
     t:any
 }
 const ExternalIncomePage:React.FC<IProps> = ({t}) => {
   const client = useApolloClient();
+  const { setHandleError } = useContext(AppContext)
   const [productsState, setProductsState] = useState<{
     products: any[];
     count: number;
@@ -87,6 +90,38 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
     }));
     canceleUpdateProduct();
   };
+
+  const handleDeleteItem = async (id:string) => {
+    setLoadingPage(true)
+    try{
+      const variables =  {
+        receiveId:id
+      }
+      const {data : { deleteReceive }} = await client.mutate({
+        mutation:DELETE_RECEIVE,
+        variables
+      })
+      if (deleteReceive?.message){
+        setHandleError({
+          message:deleteReceive?.message,
+          type:"success",
+          open:true
+        })
+        setProductsState((prevState) => ({
+          ...prevState,
+          products: prevState?.products?.filter((item) => item?._id !== id)
+        }))
+      }
+      setLoadingPage(false)
+    }catch(error:any){
+      setLoadingPage(false)
+      setHandleError({
+        type:"error",
+        message:error?.message,
+        open:true
+      })
+    }
+  }
   return (
     <Box>
       {loadingPage && <CircularProgressComponent />}
@@ -126,6 +161,7 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
             item={item}
             id={item?._id}
             updateProductFunction={updateProductFunction}
+            getIdToAddAction={handleDeleteItem}
             t={t}
           />
         ))}

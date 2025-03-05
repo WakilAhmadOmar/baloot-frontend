@@ -46,7 +46,15 @@
     "cancel": "لغو",
     "print_invoice": "چاپ فاکتور",
     "print_warehouse_receipt": "چاپ حواله گدام",
-    "reset": "تنظیم دوباره"
+    "reset": "تنظیم دوباره",
+    "sales_invoice": "فاکتور فروش",
+    "add_new_sales_invoice": "صدور فاکتور فروش جدید",
+    "customer_name": "نام مشتری",
+    "amount": "تعداد",
+    "consumption":" مصارفات"
+    
+    
+    
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -164,28 +172,27 @@
     "employees": "ثبت حساب کارمندان"
   },
   "pages": {
-    "currency":{
-      "message_title_delete":"آیا مطمئیند این ارز را حذف کنید؟",
-      "message_description_delete":" این ارز حذف شود دوباره به آن دسترسی نخواهید داشت.",
-      "cancel":"خیر",
-      "yes":"بله",
-      "add_new_currency":"افزودن ارز جدید",
-      "currency_name":"نام ارز",
-      "currency_name_is_required":"نام ارز حتمی است",
-      "symbol":"سمبول",
-      "symbol_is_required":"  سمبول حتمی است",
-      "set_daily_price":"تعیین قیمت روز",
-      "daily_rate":"نرخ روز",
-      "rate_is_required":"  نرخ حتمی است",
-      "base_currency":"ارز معیاری",
-      "to":"به",
-      "base_currency_is_required":" ارز معیاری حتمی است",
-      "save":"ذخیره",
-      "you_have_no_currency":"شما هیچ ارزی در سیستم ما ندارید. برای افزودن یا وارد کردن ارز خود روی دکمه زیر کلیک کنید.",
-      "no_currency_registered":"هیچ ارزی ثبت نشده است",
-      "define_currency":"تعریف ارز",
-      "current_rate_in_base_currency":" قیمت روز به ارز معیاری"
-    
+    "currency": {
+      "message_title_delete": "آیا مطمئیند این ارز را حذف کنید؟",
+      "message_description_delete": " این ارز حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "cancel": "خیر",
+      "yes": "بله",
+      "add_new_currency": "افزودن ارز جدید",
+      "currency_name": "نام ارز",
+      "currency_name_is_required": "نام ارز حتمی است",
+      "symbol": "سمبول",
+      "symbol_is_required": "  سمبول حتمی است",
+      "set_daily_price": "تعیین قیمت روز",
+      "daily_rate": "نرخ روز",
+      "rate_is_required": "  نرخ حتمی است",
+      "base_currency": "ارز معیاری",
+      "to": "به",
+      "base_currency_is_required": " ارز معیاری حتمی است",
+      "save": "ذخیره",
+      "you_have_no_currency": "شما هیچ ارزی در سیستم ما ندارید. برای افزودن یا وارد کردن ارز خود روی دکمه زیر کلیک کنید.",
+      "no_currency_registered": "هیچ ارزی ثبت نشده است",
+      "define_currency": "تعریف ارز",
+      "current_rate_in_base_currency": " قیمت روز به ارز معیاری"
     },
     "login": {
       "welcome_to_alpha_accounting_software": "به برنامه حسابداری آلفا خوش آمدید",
@@ -264,7 +271,6 @@
       "delete_description": "این مشتری حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "no_product_yet_title": "هیچ مشتری ثبت نشده است",
       "no_product_yet_discription": "شما هیچ مشتری در سیستم ما ندارید. برای افزودن یا وارد کردن مشتریان خود روی دکمه زیر کلیک کنید."
-
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -305,7 +311,6 @@
       "save": "ذخیره",
       "no_product_yet_title": "هیچ کامند ثبت نشده است",
       "no_product_yet_discription": "شما هیچ کارمند در سیستم ما ندارید. برای افزودن یا وارد کردن کارمندان خود روی دکمه زیر کلیک کنید."
-
     },
     "income": {
       "new_income": "عوایید جدید",
