@@ -236,7 +236,7 @@ import {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("address", { required: true })}
+                    {...register("address", { required: false })}
                     name="address"
                   />
                 </Grid>
@@ -244,7 +244,7 @@ import {
             </form>
           </DialogContent>
           <DialogActions
-            sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+            sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
             <Button
               color="primary"

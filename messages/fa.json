@@ -51,7 +51,12 @@
     "add_new_sales_invoice": "صدور فاکتور فروش جدید",
     "customer_name": "نام مشتری",
     "amount": "تعداد",
-    "consumption":" مصارفات"
+    "consumption":" مصارفات",
+
+    "customer_name_is_required":"نام مشتری حتمی است.",
+    "warehouse_is_required":"انتخاب گدام حتمی است.",
+    "currency_is_required":"انتخاب ارز حتمی است.",
+    "discount":"فیصدی تخفیف"
     
     
     

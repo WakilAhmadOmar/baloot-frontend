@@ -8,6 +8,13 @@ const InvoiceContextProvider = ({ children }: PropsWithChildren) => {
   const [warehouse, setWarehouse] = useState();
   const [currency, setCurrency] = useState();
   const [paymentOff, setPaymentOff] = useState<any>({});
+  const [sellBillPrice, setSellBillPrice] = useState({
+    totalPrice: 0,
+    discount: 0,
+    price: 0,
+    payment: 0,
+  });
+    const [rows, setRows] = useState<any>([]);
   const [billPrice, setBillPrice] = useState({
     totalPrice: 0,
     consumption: 0,
@@ -30,6 +37,8 @@ const InvoiceContextProvider = ({ children }: PropsWithChildren) => {
         setBillPrice,
         productBilState,
         setProductBilState,
+        rows, setRows,
+        sellBillPrice, setSellBillPrice
       }}
     >
       {children}

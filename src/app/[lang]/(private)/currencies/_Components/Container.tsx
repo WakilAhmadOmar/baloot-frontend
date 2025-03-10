@@ -40,7 +40,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
   const client = useApolloClient();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(true);
   const [baseCurrency, setBaseCurrency] = useState<any>(null);
   const {setHandleError} = useContext(AppContext)
 
@@ -50,13 +50,13 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
   const getProudctUnits = async () => {
     setLoadingPage(true);
     const currency = await getUserCurrenciesFunction(client);
-    const curencies = currency?.getUserCurrencies?.filter(
-      (item: any) => !item.isBase
-    );
+    // const curencies = currency?.getUserCurrencies?.filter(
+    //   (item: any) => !item.isBase
+    // );
     const base = currency?.getUserCurrencies?.filter(
       (item: any) => item.isBase
     );
-    setProductUnits(curencies);
+    setProductUnits(currency?.getUserCurrencies);
     setBaseCurrency(base?.[0]);
     setLoadingPage(false);
   };
@@ -192,13 +192,6 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
     setProductUnits(filterState);
   };
 
-  const handleCloseError = () => {
-    setHandleError({
-      open: false,
-      message: "",
-      status: "success",
-    });
-  };
   const openDialogDeleteFunction = (id: string) => {
     setIdToDeleteCurrency(id);
     setOpenDialogDelete(true);
@@ -421,18 +414,19 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
               {t?.pages?.currency?.add_new_currency}
             </Button>
             <Typography variant="h3">
-              {t?.pages?.currency?.base_currency} {baseCurrency?.name}
+              {t?.pages?.currency?.base_currency} ({baseCurrency?.symbol})
             </Typography>
           </Box>
           <Box display={"flex"} flexWrap={"wrap"} columnGap={2} rowGap={2}>
             {productUnits?.map((item:any) => {
               return (
-                <Box key={item?._id}>
+                <Box key={item?._id} height={"100%"}>
                   <CurrencyComponent
                     item={item}
                     onUpdate={handleUpdateCurrency}
                     onUpdateRate={handleUpdateRate}
                     onDelete={openDialogDeleteFunction}
+                    baseCurrency={baseCurrency}
                     t={t}
                   />
                 </Box>

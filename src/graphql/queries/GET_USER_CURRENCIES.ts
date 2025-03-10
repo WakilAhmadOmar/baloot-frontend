@@ -9,6 +9,7 @@ const GET_USER_CURRENCIES = gql`
       isActive
       isBase
       createdAt
+      rate
     }
   }
 `;

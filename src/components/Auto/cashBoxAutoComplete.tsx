@@ -82,7 +82,7 @@ const {setHandleError} = useContext(AppContext)
   }, []);
   return (
     <Autocomplete
-      disablePortal
+      disablePortal={false}
       onChange={handleChangeCustomerSearch}
       fullWidth
       size="small"

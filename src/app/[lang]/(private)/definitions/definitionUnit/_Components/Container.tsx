@@ -246,7 +246,7 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
           </form>
         </DialogContent>
         <DialogActions
-          sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+          sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button
             color="primary"

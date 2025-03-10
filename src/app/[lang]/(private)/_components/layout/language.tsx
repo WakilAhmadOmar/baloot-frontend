@@ -4,6 +4,7 @@ import {
     MenuItem,
     Select,
     Typography,
+    useTheme,
   } from "@mui/material";
   import Image from "next/image";
   import { useState } from "react";
@@ -18,6 +19,7 @@ interface IPropsLanguage {
 }
 
   const Language:React.FC<IPropsLanguage> = ({t , lang}) => {
+    const theme = useTheme()
     const pathname = usePathname()
     const [language, setLanguage] = useState<string | null>(lang);
 
@@ -37,7 +39,7 @@ interface IPropsLanguage {
         sx={{
           width: "135px",
           fieldset: {
-            border: `1px solid #ebeaea`,
+            border: `1px solid ${theme.palette.grey?.[50]}`,
           },
         }}
         renderValue={(selected: any) => (

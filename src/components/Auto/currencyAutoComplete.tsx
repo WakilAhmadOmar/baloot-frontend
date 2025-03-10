@@ -1,3 +1,4 @@
+"use client"
 import { Box, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
@@ -9,12 +10,14 @@ interface IPropsUserCurrencies {
 
   defaultValue?: string;
   onSelected?: (currencyId: any) => void;
-  register?: any;
+  register: any;
+  isRequired?:boolean
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
   onSelected,
-  register
+  register,
+  isRequired = true
 }) => {
   const client = useApolloClient();
   const {setHandleError} = useContext(AppContext)
@@ -56,16 +59,17 @@ const getUserCurrenciesFunction = async () => {
         onSelected(selectedItem)
     }
   };
+
   return (
     <Box>
       {userCurrenciesState?.length > 0 && (
         <Select
           fullWidth
           size={"small"}
-          name="currencyId"
+          name="currency"
           defaultValue={defaultValue || userCurrenciesState?.[0]?._id}
+          {...(register ?  register("currency" , {required:isRequired}) : {})}
           onChange={handleChange}
-          // {...register("currencyId")}
         >
           {userCurrenciesState?.map((item) => {
             return (

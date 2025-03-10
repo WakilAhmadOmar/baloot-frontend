@@ -10,7 +10,7 @@ const RowFactor = () => {
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        bgcolor={theme.palette.grey[900]}
+        bgcolor={theme.palette.background.default}
         pt={1.7}
         pb={1.7}
         pl={2.5}

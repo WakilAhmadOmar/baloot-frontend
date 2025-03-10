@@ -1,26 +1,41 @@
 "use client";
 import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
-import { Box, Button, FormControl, FormControlLabel, Grid2, IconButton, Radio, RadioGroup, TextField, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  Grid2,
+  IconButton,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Add, Trash } from "iconsax-react";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useContext, useState } from "react";
 import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
 import Moment from "react-moment";
-import PaymentComponent from "../../_components/PaymentComponent";
 import { numberToWords } from "@/utils/numberToWords";
+import WarehouseAutoComplete from "@/components/Auto/WarehouseAutoComplete";
+import PaymentReceiver from "./Payment";
+import { InvoiceContext } from "../../_components/invoiceContext";
+import { useApolloClient } from "@apollo/client";
+import { GET_PRODUCT_COUNT_IN_ENTREPOT } from "@/graphql/queries/GET_PRODUCT_COUNT_IN_ENTREPOT";
 
 interface IPropsTable {
   t: any;
+  register: any;
 }
-export default function DataTable({ t }: IPropsTable) {
+export default function DataTable({ t, register }: IPropsTable) {
   const theme = useTheme();
+  const client = useApolloClient()
+  const { rows, setRows, sellBillPrice, setSellBillPrice, paymentOff } =
+    useContext(InvoiceContext);
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
-  const [billPrice, setBillPrice] = useState({
-    totalPrice: 0,
-    consumption: 0,
-    price: 0,
-    payment: 0,
-  });
+
   const style = {
     width: "100%",
     paddingInlineStart: "3px !important",
@@ -54,7 +69,6 @@ export default function DataTable({ t }: IPropsTable) {
       },
     },
   };
-  const [rows, setRows] = useState<any>([]);
 
   const handleAddNewRow = () => {
     setRows([...rows, { id: rows?.length + 1 }]);
@@ -62,28 +76,28 @@ export default function DataTable({ t }: IPropsTable) {
 
   const sumBillFunction = (filterItems: any[]) => {
     const initialValue = 0;
-    let consumptionPrice = 0;
+    let discount = 0;
     let price = 0;
     const sumWithInitial = filterItems?.reduce((accumulator, product) => {
       const measures = 0;
       const sumMeasures = product?.measures?.reduce(
         (accum: number, measure: any) => {
-          if (measure?.selected){
-
-            price = price + measure.buyPrice * (measure?.amount || 1);
-            consumptionPrice = consumptionPrice + (measure?.consumption || 0);
-            return accum + (measure?.totalPrice || measure?.buyPrice);
-          }else return accum
+          if (measure?.selected) {
+            price = price + measure.sellPrice * (measure?.amount || 1);
+            discount =
+              discount + ((measure?.sellPrice * measure?.discount) / 100 || 0);
+            return accum + (measure?.totalPrice || measure?.sellPrice);
+          } else return accum;
         },
         measures
       );
       return accumulator + sumMeasures;
     }, initialValue);
-    setBillPrice((prevState: any) => ({
+    setSellBillPrice((prevState: any) => ({
       ...prevState,
       price,
       totalPrice: sumWithInitial,
-      consumption: consumptionPrice,
+      discount: discount,
     }));
   };
 
@@ -97,16 +111,14 @@ export default function DataTable({ t }: IPropsTable) {
             measures: product?.measures?.map((item: any, index: number) => ({
               ...item,
               selected: index === 0,
-              ...( index === 0 ? {totalPrice:item?.buyPrice} : {})
-              
+              ...(index === 0 ? { totalPrice: item?.buyPrice, amount: 1 } : {}),
             })),
           };
         } else return item;
       });
-      sumBillFunction(allRow)
+      sumBillFunction(allRow);
       return allRow;
     });
-
   };
 
   const handleGetMeasureFunction = (data: any[], idNumber: number) => {
@@ -127,8 +139,6 @@ export default function DataTable({ t }: IPropsTable) {
     );
   };
 
- 
-
   const handleChangeBillFunction = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     index: number,
@@ -137,28 +147,24 @@ export default function DataTable({ t }: IPropsTable) {
     const name = event?.currentTarget?.name;
     const value = parseInt(event?.currentTarget?.value) || 0;
     let productBill = [...rows];
-    let buyPrice =
-      productBill?.[index as number]?.measures?.[measureIndex]
-        ?.buyPrice || 0;
+    let sellPrice =
+      productBill?.[index as number]?.measures?.[measureIndex]?.sellPrice || 0;
     let amount =
-      productBill?.[index as number]?.measures?.[measureIndex]?.amount ||
-      0;
+      productBill?.[index as number]?.measures?.[measureIndex]?.amount || 0;
     let consumption =
-      productBill?.[index as number]?.measures?.[measureIndex]
-        ?.consumption || 0;
+      productBill?.[index as number]?.measures?.[measureIndex]?.consumption ||
+      0;
 
-    let totalPrice = (buyPrice + consumption) * amount;
+    let totalPrice = (sellPrice + consumption) * amount;
 
     let measures = productBill?.[index]?.measures;
 
     if (name === "amount" && value) {
-      
-      totalPrice = (buyPrice + consumption) * value;
+      totalPrice = (sellPrice + consumption) * value;
 
       measures[measureIndex] = {
         ...measures?.[measureIndex],
         [name]: value > 1 ? value : 1,
-        // discountAmount: discountAmount.toFixed(2),
         totalPrice: parseFloat(totalPrice.toFixed(2)),
       };
       productBill[index as number] = {
@@ -166,27 +172,8 @@ export default function DataTable({ t }: IPropsTable) {
         measures: measures,
       };
     }
-    // if (name === "discountPrecentage") {
-    //   // change discountPrecentage = value
-    //   // finde discocuntAmount
-    //   // discountAmount = (price * discountPrecentage) / 100
-    //   //finde  totalPrice
-    //   // totalPrice = totalPrice - (discountAmount * count)
-    //   measures[measureIndex] = {
-    //     ...measures?.[measureIndex],
-    //     [name]: value <= 0 ? 0 : value,
-    //     discountAmount: discountAmount,
-    //     totalPrice: totalPrice.toFixed(2),
-    //   };
-    //   productBill[index as number] = {
-    //     ...productBill?.[index as number],
-    //     measures: measures,
-    //   };
-    //   return setProductBilState(productBill);
-    // }
 
-    if (name === "buyPrice") {
-      // discountAmount = ((value * discountPrecentage) / 100) * count;
+    if (name === "sellPrice") {
       totalPrice = (value + consumption) * amount;
 
       measures[measureIndex] = {
@@ -200,30 +187,13 @@ export default function DataTable({ t }: IPropsTable) {
         measures: measures,
       };
     }
-    // if (name === "discountAmount") {
-    //   discountPrecentage = (value * 100) / price;
-    //   totalPrice = price * count - value;
-
-    //   measures[measureIndex] = {
-    //     ...measures?.[measureIndex],
-    //     [name]: value <= 0 ? 0 : value,
-    //     discountPrecentage: discountPrecentage.toFixed(2),
-    //     totalPrice: totalPrice.toFixed(2),
-    //   };
-
-    //   productBill[index as number] = {
-    //     ...productBill?.[index as number],
-    //     measures: measures,
-    //   };
-    // }
-    if (name === "consumption") {
-      totalPrice = (buyPrice + value) * amount;
+    if (name === "discount") {
+      totalPrice = sellPrice * amount - ((sellPrice * value) / 100) * amount;
       measures[measureIndex] = {
         ...measures?.[measureIndex],
         [name]: value > 0 ? value : 0,
-        // discountPrecentage: discountPrecentage.toFixed(2),
         totalPrice: parseFloat(totalPrice.toFixed(2)),
-        overPrice: buyPrice + value,
+        overPrice: sellPrice + value,
       };
 
       productBill[index as number] = {
@@ -234,16 +204,44 @@ export default function DataTable({ t }: IPropsTable) {
     sumBillFunction(productBill);
     setRows(productBill);
   };
-  const handleDeleteFunction = (event:MouseEvent<HTMLButtonElement>) => {
-    const id = parseInt(event?.currentTarget?.id)
-    setRows(rows?.filter((item:any , index:number) => index !== id))
-  }
+  const handleDeleteFunction = (event: MouseEvent<HTMLButtonElement>) => {
+    const id = parseInt(event?.currentTarget?.id);
+    setRows(rows?.filter((item: any, index: number) => index !== id));
+  };
+
+  const handleGetWarehouse = async (warehouse: any, rowIndex: number) => {
+    try {
+      const variables = {
+        entrepotId: warehouse?._id,
+        productId: rows?.[rowIndex]?._id,
+      };
+      const { data : { getProductCountInEntrepot }} = await client.query({
+        query:GET_PRODUCT_COUNT_IN_ENTREPOT,
+        variables
+      })
+      if (getProductCountInEntrepot?.measures?.length){
+        const existProduct = getProductCountInEntrepot?.measures?.some((d:any) => d?.amountOfProduct > 0)
+        setRows((prevState: any) => {
+          const allRow = prevState?.map((item: any, index: number) => {
+            if (index === rowIndex) {
+              return {
+                ...item,
+                warehouse: warehouse,
+                error: !existProduct
+              };
+            } else return item;
+          });
+          return allRow;
+        });
+      }
+    } catch (error) {}
+  };
   const columns: GridColDef[] = [
     {
       field: "Product Name",
       headerName: t?.invoice?.product_name,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 200,
       renderCell: ({ row }) => {
         const rowIndex = rows.findIndex((r: any) => r._id === row._id);
@@ -263,10 +261,28 @@ export default function DataTable({ t }: IPropsTable) {
       },
     },
     {
+      field: "warehouse",
+      headerName: t?.invoice?.warehouse,
+      sortable: false,
+      filterable: false,
+      width: 200,
+      renderCell: ({ row }) => {
+        const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+        return (
+          <>
+            <WarehouseAutoComplete
+              register={register}
+              getWarehouse={(data: any) => handleGetWarehouse(data, rowIndex)}
+            />
+          </>
+        );
+      },
+    },
+    {
       field: "Unit",
       headerName: t?.invoice?.unit,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 200,
       renderCell: ({ row }) => {
         const rowIndex = rows.findIndex((r: any) => r._id === row._id);
@@ -282,15 +298,14 @@ export default function DataTable({ t }: IPropsTable) {
     {
       field: "amount",
       headerName: t?.invoice?.amount,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
-
         return (
           <Box display={"grid"}>
-            {row?.measures?.map((measure: any , measureIndex:number) => {
-               const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+            {row?.measures?.map((measure: any, measureIndex: number) => {
+              const rowIndex = rows.findIndex((r: any) => r._id === row._id);
               if (measure?.selected) {
                 return (
                   <TextField
@@ -301,11 +316,7 @@ export default function DataTable({ t }: IPropsTable) {
                     value={measure?.amount || 1}
                     name="amount"
                     onChange={(event) =>
-                      handleChangeBillFunction(
-                        event,
-                        rowIndex,
-                        measureIndex
-                      )
+                      handleChangeBillFunction(event, rowIndex, measureIndex)
                     }
                   />
                 );
@@ -318,13 +329,13 @@ export default function DataTable({ t }: IPropsTable) {
     {
       field: "Price",
       headerName: t?.invoice?.price,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
         return (
           <Box display={"grid"}>
-            {row?.measures?.map((measure: any , measureIndex:number) => {
+            {row?.measures?.map((measure: any, measureIndex: number) => {
               const rowIndex = rows.findIndex((r: any) => r._id === row._id);
               if (measure?.selected) {
                 return (
@@ -332,15 +343,11 @@ export default function DataTable({ t }: IPropsTable) {
                     sx={style}
                     size="small"
                     type="number"
-                    placeholder="buyPrice"
-                    value={measure?.buyPrice || 1}
-                    name="buyPrice"
+                    placeholder="sellPrice"
+                    value={measure?.sellPrice || 1}
+                    name="sellPrice"
                     onChange={(event) =>
-                      handleChangeBillFunction(
-                        event,
-                        rowIndex,
-                        measureIndex
-                      )
+                      handleChangeBillFunction(event, rowIndex, measureIndex)
                     }
                   />
                 );
@@ -351,15 +358,15 @@ export default function DataTable({ t }: IPropsTable) {
       },
     },
     {
-      field: "consumption",
-      headerName: t?.invoice?.consumption,
-      sortable:false,
-      filterable:false,
+      field: "discount",
+      headerName: t?.invoice?.discount,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
         return (
           <Box display={"grid"}>
-            {row?.measures?.map((measure: any , measureIndex:number)  => {
+            {row?.measures?.map((measure: any, measureIndex: number) => {
               const rowIndex = rows.findIndex((r: any) => r._id === row._id);
               if (measure?.selected) {
                 return (
@@ -367,15 +374,11 @@ export default function DataTable({ t }: IPropsTable) {
                     sx={style}
                     size="small"
                     type="number"
-                    placeholder="consumption"
-                    value={measure?.consumption || 0}
-                    name="consumption"
+                    placeholder="discount"
+                    value={measure?.discount || 0}
+                    name="discount"
                     onChange={(event) =>
-                      handleChangeBillFunction(
-                        event,
-                        rowIndex,
-                        measureIndex
-                      )
+                      handleChangeBillFunction(event, rowIndex, measureIndex)
                     }
                   />
                 );
@@ -388,15 +391,18 @@ export default function DataTable({ t }: IPropsTable) {
     {
       field: "total",
       headerName: t?.invoice?.total,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
         return (
           <Box display={"grid"}>
-
-            {row?.measures?.map((measure:any , index:number) => {
-              return <Typography key={index + measure?.totalPrice}>{measure?.totalPrice}</Typography>
+            {row?.measures?.map((measure: any, index: number) => {
+              return (
+                <Typography key={index + measure?.totalPrice}>
+                  {measure?.totalPrice}
+                </Typography>
+              );
             })}
           </Box>
         );
@@ -405,8 +411,8 @@ export default function DataTable({ t }: IPropsTable) {
     {
       field: "expirationDate",
       headerName: t?.invoice?.expiration_date,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
         return (
@@ -419,8 +425,8 @@ export default function DataTable({ t }: IPropsTable) {
     {
       field: "action",
       headerName: t?.invoice?.actions,
-      sortable:false,
-      filterable:false,
+      sortable: false,
+      filterable: false,
       width: 120,
       renderCell: ({ row }) => {
         const rowIndex = rows.findIndex((r: any) => r._id === row._id);
@@ -429,8 +435,16 @@ export default function DataTable({ t }: IPropsTable) {
             size="small"
             onClick={handleDeleteFunction}
             id={rowIndex}
+            disabled={paymentOff?._id ? true : false}
           >
-            <Trash size={20} color={theme.palette.primary.contrastText} />
+            <Trash
+              size={20}
+              color={
+                paymentOff?._id
+                  ? theme.palette.grey?.[600]
+                  : theme.palette.primary.contrastText
+              }
+            />
           </IconButton>
         );
       },
@@ -438,20 +452,31 @@ export default function DataTable({ t }: IPropsTable) {
   ];
 
   const handleChangePaymentStatus = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const values = (event.target as HTMLInputElement).value;
-      if (values === "cash" || values === "loan") {
-        setStatusPayment(values);
-      }
-    };
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const values = (event.target as HTMLInputElement).value;
+    if (values === "cash" || values === "loan") {
+      setStatusPayment(values);
+    }
+  };
   return (
-    <Box sx={{ width: "100%", my:3}}>
+    <Box sx={{ width: "100%", my: 3 }}>
       <DataGrid
         rows={rows}
         columns={columns}
+        getRowClassName={(params) =>
+          params.row.error  ? "error-row" : ""
+        }
         sx={{
+          py: 4,
           border: 0,
+          "& .error-row": {
+            border: "2px solid red", // Red border for error row
+            backgroundColor: "#ffebee", // Light red background
+          },
+          "& .MuiDataGrid-main": {
+            paddingBottom: "3rem",
+          },
           "& .MuiDataGrid-cell": {
             display: "flex",
             alignItems: "center",
@@ -473,33 +498,34 @@ export default function DataTable({ t }: IPropsTable) {
         </Button>
       </Box> */}
       <Box
-              sx={{
-                backgroundColor: theme.palette.grey[100],
-                padding: "1rem 1rem",
-                display: "flex",
-                columnGap: "1rem",
-                alignItems: "center",
-              }}
-              mt={1}
-            >
-              <Button
-                startIcon={<Add style={{ margin: "0 1rem" }} />}
-                variant={"outlined"}
-                size={"small"}
-                onClick={handleAddNewRow}
-              >
-                {t?.invoice?.insert_new_row}
-              </Button>
-              <Typography variant="overline">{t?.invoice?.total_products}</Typography>
-              <Typography
-                variant="overline"
-                bgcolor={theme.palette.grey[100]}
-                minWidth={"15rem"}
-                sx={{ paddingInlineStart: "1rem", borderRadius: "5px" }}
-              >
-                {rows?.length}
-              </Typography>
-            </Box>
+        sx={{
+          backgroundColor: theme.palette.grey[100],
+          padding: "1rem 1rem",
+          display: "flex",
+          columnGap: "1rem",
+          alignItems: "center",
+        }}
+        mt={1}
+      >
+        <Button
+          startIcon={<Add style={{ margin: "0 1rem" }} />}
+          variant={"outlined"}
+          size={"small"}
+          onClick={handleAddNewRow}
+          disabled={paymentOff?._id ? true : false}
+        >
+          {t?.invoice?.insert_new_row}
+        </Button>
+        <Typography variant="overline">{t?.invoice?.total_products}</Typography>
+        <Typography
+          variant="overline"
+          bgcolor={theme.palette.grey[100]}
+          minWidth={"15rem"}
+          sx={{ paddingInlineStart: "1rem", borderRadius: "5px" }}
+        >
+          {rows?.length}
+        </Typography>
+      </Box>
       <Grid2
         container
         spacing={3}
@@ -507,7 +533,7 @@ export default function DataTable({ t }: IPropsTable) {
         justifyContent="space-between"
         sx={{ marginTop: "1.5rem" }}
       >
-        <Grid2  size={8}>
+        <Grid2 size={8}>
           <FormControl>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
@@ -546,29 +572,32 @@ export default function DataTable({ t }: IPropsTable) {
                 label="حساب گذشته مبلغ 2300 افغانی"
               />
             </Box> */}
-          <PaymentComponent
-              customer={"Ahmad"}
-              amount={billPrice?.totalPrice}
-              customerId={""}
-              paymentStatus={statusPayment}
-              t={t}
-            />
+          <PaymentReceiver
+            customer={"Ahmad"}
+            amount={sellBillPrice?.totalPrice}
+            customerId={""}
+            paymentStatus={statusPayment}
+            t={t}
+            register={register}
+          />
         </Grid2>
-        <Grid2  size={4} marginTop={3}>
+        <Grid2 size={4} marginTop={3}>
           <Box
             sx={{ borderBottom: `2px solid ${theme.palette?.grey[100]}` }}
             display="grid"
             gridTemplateColumns={"50% 50%"}
             columnGap="1rem"
-            
-            
           >
-            <Box bgcolor={theme.palette?.grey[100]} p={1}  paddingInlineStart={2}>
+            <Box
+              bgcolor={theme.palette?.grey[100]}
+              p={1}
+              paddingInlineStart={2}
+            >
               {" "}
               <Typography>{t?.invoice?.total_invoice_amount}</Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {billPrice.price}
+              {sellBillPrice.price}
             </Typography>
           </Box>
           <Box
@@ -576,14 +605,17 @@ export default function DataTable({ t }: IPropsTable) {
             display="grid"
             gridTemplateColumns={"50% 50%"}
             columnGap="1rem"
-            
           >
-            <Box bgcolor={theme.palette?.grey[100]} p={1}  paddingInlineStart={2}>
+            <Box
+              bgcolor={theme.palette?.grey[100]}
+              p={1}
+              paddingInlineStart={2}
+            >
               {" "}
               <Typography>{t?.invoice?.total_expense}</Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {billPrice?.consumption}
+              {sellBillPrice?.discount}
             </Typography>
           </Box>
           <Box
@@ -591,14 +623,19 @@ export default function DataTable({ t }: IPropsTable) {
             display="grid"
             gridTemplateColumns={"50% 50%"}
             columnGap="1rem"
-            
           >
-            <Box bgcolor={theme.palette?.grey[100]} p={1}  paddingInlineStart={2}>
+            <Box
+              bgcolor={theme.palette?.grey[100]}
+              p={1}
+              paddingInlineStart={2}
+            >
               {" "}
-              <Typography>{t?.invoice?.total_invoice_after_expense} </Typography>
+              <Typography>
+                {t?.invoice?.total_invoice_after_expense}{" "}
+              </Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {billPrice?.totalPrice}
+              {sellBillPrice?.totalPrice}
             </Typography>
           </Box>
           <Box
@@ -607,9 +644,12 @@ export default function DataTable({ t }: IPropsTable) {
             gridTemplateColumns={"50% 50%"}
             columnGap="1rem"
             alignItems={"center"}
-            
           >
-            <Box bgcolor={theme.palette?.grey[100]} p={1}  paddingInlineStart={2}>
+            <Box
+              bgcolor={theme.palette?.grey[100]}
+              p={1}
+              paddingInlineStart={2}
+            >
               {" "}
               <Typography>{t?.invoice?.receipt}</Typography>
             </Box>
@@ -622,25 +662,28 @@ export default function DataTable({ t }: IPropsTable) {
             display="grid"
             gridTemplateColumns={"50% 50%"}
             columnGap="1rem"
-            
           >
-            <Box bgcolor={theme.palette?.grey[100]} p={1}  paddingInlineStart={2}>
+            <Box
+              bgcolor={theme.palette?.grey[100]}
+              p={1}
+              paddingInlineStart={2}
+            >
               {" "}
               <Typography>{t?.invoice?.remaining}</Typography>
             </Box>
             <Typography>
-              {/* {billPrice?.totalPrice - (paymentOff?.payAmount || 0)} */}
-              {billPrice?.totalPrice }
+              {/* {sellBillPrice?.totalPrice - (paymentOff?.payAmount || 0)} */}
+              {sellBillPrice?.totalPrice}
             </Typography>
           </Box>
         </Grid2>
       </Grid2>
       <Box display="flex" columnGap={"1rem"}>
         <Typography variant="overline" bgcolor={theme.palette.grey[100]}>
-                {t?.invoice?.total_invoice_after_discount_in_words} :
+          {t?.invoice?.total_invoice_after_discount_in_words} :
         </Typography>
         <Typography variant="overline">
-          {numberToWords(billPrice?.totalPrice, t)}
+          {numberToWords(sellBillPrice?.totalPrice, t)}
         </Typography>
       </Box>
     </Box>

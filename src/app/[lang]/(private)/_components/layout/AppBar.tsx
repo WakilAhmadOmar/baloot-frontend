@@ -4,7 +4,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
-  drawerwidth: number;
+  drawerwidth: string;
 }
 
 export const AppBar = styled(MuiAppBar, {
@@ -26,7 +26,7 @@ export const AppBar = styled(MuiAppBar, {
       props: ({ open }: any) => open,
       style: {
         marginLeft: drawerwidth,
-        width: `calc(100% - ${drawerwidth}px)`,
+        width: `calc(100% - ${drawerwidth})`,
         transition: theme.transitions.create(["width", "margin"], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,

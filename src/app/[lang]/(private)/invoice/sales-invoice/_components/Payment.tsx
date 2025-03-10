@@ -21,10 +21,12 @@ import {
 //   import CircularProgressComponent from "../muiComponent/CircularProgressComponent";
 //   import SnackbarComponent from "../muiComponent/snackbarComponent";
 import { ADD_PAY_OFF } from "@/graphql/mutation/ADD_PAY_OF";
-import { InvoiceContext } from "./invoiceContext";
+
 import { AppContext } from "@/provider/appContext";
 import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
+import { InvoiceContext } from "../../_components/invoiceContext";
+import { ADD_NEW_RECEIVE } from "@/graphql/mutation/ADD_NEW_RECEIVE";
 
   
   interface IPropsPayment {
@@ -35,7 +37,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
     t:any,
     register:any
   }
-  const PaymentComponent: React.FC<IPropsPayment> = ({
+  const PaymentReceiver: React.FC<IPropsPayment> = ({
     amount,
     customerId,
     paymentStatus,
@@ -46,7 +48,8 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
       setPaymentOff,
       customer,
       currency,
-      setCurrency
+      setCurrency,
+      paymentOff
     } = useContext(InvoiceContext);
     const {setHandleError} = useContext(AppContext)
     const client = useApolloClient();
@@ -64,29 +67,27 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
     };
     const handlePayFunction =  async() => {
       setLoadingPage(true);
-  
-      console.log("currency" , currency)
       try {
         const variables = {
-          payOffObject:{
+            receiveObject:{
             customerId: customer?._id,
             amount: parseFloat(`${amount}`),
             currencyId: currency?._id,
-            payer: cashboxSelected?._id,
-            invoiceType:"PayOffBill"
+            receiver: cashboxSelected?._id,
+            invoiceType:"ReceiveBill"
   
           }
         };
         console.log("variables" , variables)
         const {
-          data: { addPayOff },
+          data: { addNewReceive },
         } = await client.mutate({
-          mutation: ADD_PAY_OFF,
+          mutation: ADD_NEW_RECEIVE,
           variables,
         });
 
-        if (addPayOff?._id) {
-          setPaymentOff(addPayOff);
+        if (addNewReceive?._id) {
+          setPaymentOff(addNewReceive);
           setOpen(false);
           setLoadingPage(false);
           setHandleError({
@@ -185,7 +186,8 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
           startIcon={<Add style={{ margin: "0 0 0 1rem" }} />}
           variant="outlined"
           onClick={handleClickOpen}
-          disabled={paymentStatus === "loan"}
+          disabled={paymentStatus === "loan" || paymentOff?._id ? true : false}
+
         >
           {t?.invoice?.payment}
         </Button>
@@ -193,5 +195,5 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
     );
   };
   
-  export default PaymentComponent;
+  export default PaymentReceiver;
   

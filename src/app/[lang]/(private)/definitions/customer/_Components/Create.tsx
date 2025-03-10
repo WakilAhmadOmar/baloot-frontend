@@ -1,199 +1,190 @@
 import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    TextField,
-    Typography,
-    useTheme,
-    Grid,
-    InputLabel,
-  } from "@mui/material";
-  import { CloseSquare } from "iconsax-react";
-  import { useEffect, useState } from "react";
-  import { useForm } from "react-hook-form";
-  import { useApolloClient } from "@apollo/client";
-  import { ADD_CUSTOMER } from "@/graphql/mutation/ADD_CUSTOMER";
-  import { UPDATE_CUSTOMER } from "@/graphql/mutation/UPDATE_CUSTOMER";
-  import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-  import EmptyPage from "@/components/util/emptyPage";
-  import { EmptyProductPageIcon } from "@/icons";
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Typography,
+  useTheme,
+  Grid,
+  InputLabel,
+} from "@mui/material";
+import { CloseSquare } from "iconsax-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useApolloClient } from "@apollo/client";
+import { ADD_CUSTOMER } from "@/graphql/mutation/ADD_CUSTOMER";
+import { UPDATE_CUSTOMER } from "@/graphql/mutation/UPDATE_CUSTOMER";
+import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
+import EmptyPage from "@/components/util/emptyPage";
+import { EmptyProductPageIcon } from "@/icons";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 
-  
-  interface IPropsCreateCustomer {
-    getProuctCreated: (product: any) => void;
-    isUpdate: boolean;
-    item?: any;
-    getProductUpdated?: (product: any) => void;
-    canceleUpdageProduct?: () => void;
-    isEmptyPage: boolean;
-    t:any
-  }
-  const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
-    getProductUpdated,
-    item,
-    getProuctCreated,
-    canceleUpdageProduct,
-    isUpdate,
-    isEmptyPage,
-    t
-  }) => {
-    const {
-      register,
-      handleSubmit,
-      watch,
-      formState: { errors },
-      getValues,
-      setValue,
-      getFieldState,
-    } = useForm();
-    const theme = useTheme();
-    const cleint = useApolloClient();
-    const [loadingPage, setLoadingPage] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [handleError, setHandleError] = useState<{
-      status: "success" | "info" | "warning" | "error";
-      open: boolean;
-      message: string;
-    }>({
-      status: "success",
-      open: false,
-      message: "",
-    });
-  
-    const handleOpenDialogFunction = () => {
-      setOpenDialog(!openDialog);
-    };
-    useEffect(() => {
+interface IPropsCreateCustomer {
+  getProuctCreated: (product: any) => void;
+  isUpdate: boolean;
+  item?: any;
+  getProductUpdated?: (product: any) => void;
+  canceleUpdageProduct?: () => void;
+  isEmptyPage: boolean;
+  t: any;
+}
+const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
+  getProductUpdated,
+  item,
+  getProuctCreated,
+  canceleUpdageProduct,
+  isUpdate,
+  isEmptyPage,
+  t,
+}) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    getValues,
+    setValue,
+    getFieldState,
+  } = useForm();
+  const theme = useTheme();
+  const cleint = useApolloClient();
+  const [loadingPage, setLoadingPage] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [handleError, setHandleError] = useState<{
+    status: "success" | "info" | "warning" | "error";
+    open: boolean;
+    message: string;
+  }>({
+    status: "success",
+    open: false,
+    message: "",
+  });
 
-      if (item?._id) {
-        setValue("fullName", item?.fullName);
-        setValue("fathersName", item?.fathersName);
-        setValue("dateOfBirth", item?.dateOfBirth);
-        setValue("idNumber", item?.idNumber);
-        setValue("jobTitle", item?.jobTitle);
-        setValue("startDate", item?.startDate);
-        setValue("amount", item?.salary?.amount);
-        setValue("currencyId", item?.salary?.currencyId?._id);
-        setValue("phoneNumber", item?.phoneNumber);
-        setValue("email", item?.email);
-        setValue("address", item?.address);
-      }
+  const handleOpenDialogFunction = () => {
+    setOpenDialog(!openDialog);
+  };
+  useEffect(() => {
+    if (item?._id) {
+      setValue("fullName", item?.fullName);
+      setValue("amount", item?.salary?.amount);
+      setValue("phoneNumber", item?.phoneNumber);
+      setValue("address", item?.address);
+      setValue("creditLimit", item?.creditLimit?.amount);
+    }
+    if (isUpdate) {
+      setOpenDialog(isUpdate);
+    }
+  }, [item?._id, isUpdate]);
+  const onSubmitFunction = async (data: any) => {
+    const variables = {
+      ...(isUpdate ? { customerId: item?._id } : {}),
+      customerObject: {
+        fullName: data?.fullName,
+        ...(data?.creditLimit
+          ? {
+              creditLimit: {
+                amount: parseFloat(data?.creditLimit),
+                currencyId: data?.currency,
+              },
+            }
+          : {}),
+        ...(data?.address ? { address: data?.address } : {}),
+        ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
+      },
+    };
+
+    console.log(variables);
+    try {
+      setLoadingPage(true);
       if (isUpdate) {
-        setOpenDialog(isUpdate);
-      }
-    }, [item?._id, isUpdate]);
-    const onSubmitFunction = async (data: any) => {
-      const variables = {
-        ...(isUpdate ? { customerId: item?._id } : {}),
-        customerObject: {
-          ...data,
-          creditLimit:{
-            amount:parseFloat(data?.creditLimit),
-            currencyId: data?.currencyId,
-          },
-          credit: {
-            amount: parseInt(data?.amount),
-            currencyId: data?.currencyId,
-            creditType: data.type,
-          },
-        },
-      };
-      delete variables.customerObject.amount;
-      delete variables.customerObject.currencyId;
-      delete variables.customerObject.type;
-      delete variables.customerObject.customerCode;
-
-  console.log(variables)
-      try {
-        setLoadingPage(true);
-        if (isUpdate) {
-          delete variables.customerObject.credit;
-          const {
-            data: { updateCustomer },
-          } = await cleint.mutate({
-            mutation: UPDATE_CUSTOMER,
-            variables,
-          });
-          if (updateCustomer?._id && getProductUpdated) {
-            getProductUpdated(updateCustomer);
-            setLoadingPage(false);
-            setOpenDialog(false);
-          }
-        } else {
-          const {
-            data: { addCustomer },
-          } = await cleint.mutate({
-            mutation: ADD_CUSTOMER,
-            variables,
-          });
-          if (addCustomer?._id) {
-            getProuctCreated(addCustomer);
-            setLoadingPage(false);
-            setOpenDialog(false);
-          }
-        }
-      } catch (error: any) {
-        setHandleError({
-          open: true,
-          message: error.message,
-          status: "error",
+        // delete variables.customerObject.credit;
+        const {
+          data: { updateCustomer },
+        } = await cleint.mutate({
+          mutation: UPDATE_CUSTOMER,
+          variables,
         });
-        setLoadingPage(false);
+        if (updateCustomer?._id && getProductUpdated) {
+          getProductUpdated(updateCustomer);
+          setValue("fullName", "");
+          setValue("amount", "");
+          setValue("phoneNumber", "");
+          setValue("address", "");
+          setValue("creditLimit", "");
+          setLoadingPage(false);
+          setOpenDialog(false);
+        }
+      } else {
+        const {
+          data: { addCustomer },
+        } = await cleint.mutate({
+          mutation: ADD_CUSTOMER,
+          variables,
+        });
+        if (addCustomer?._id) {
+          getProuctCreated(addCustomer);
+          setValue("fullName", "");
+          setValue("amount", "");
+          setValue("phoneNumber", "");
+          setValue("address", "");
+          setValue("creditLimit", "");
+          setLoadingPage(false);
+          setOpenDialog(false);
+        }
       }
-    };
+    } catch (error: any) {
+      setHandleError({
+        open: true,
+        message: error.message,
+        status: "error",
+      });
+      setLoadingPage(false);
+    }
+  };
 
-  
-    const handleCloseError = () => {
-      setHandleError((prevState) => ({
-        ...prevState,
-        open: false,
-      }));
-    };
-  
-    return (
-      <Box>
-        <Dialog
-          open={openDialog}
-          onClose={handleOpenDialogFunction}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
-          fullWidth
+  return (
+    <Box>
+      <Dialog
+        open={openDialog}
+        onClose={handleOpenDialogFunction}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        dir={t?.home?.dir}
+        fullWidth
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderBottom: `1px solid ${theme.palette.grey[200]}`,
+          }}
         >
-          <DialogTitle
-            id="alert-dialog-title"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              borderBottom: `1px solid ${theme.palette.grey[200]}`,
-            }}
-          >
-            <Typography>{t?.pages?.Customers?.add_new_customer}</Typography>
-            <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <form onSubmit={handleSubmit(onSubmitFunction)}>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.customer_name}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("fullName", { required: true })}
-                    name="fullName"
-                  />
-                </Grid>
-                {/* <Grid item xs={6}>
+          <Typography>{t?.pages?.Customers?.add_new_customer}</Typography>
+          <IconButton size="medium" onClick={handleOpenDialogFunction}>
+            <CloseSquare />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleSubmit(onSubmitFunction)}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  {t?.pages?.Customers?.customer_name}
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  {...register("fullName", { required: true })}
+                  name="fullName"
+                />
+              </Grid>
+              {/* <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.customer_code}
                   </InputLabel>
@@ -204,29 +195,31 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                     name="customerCode"
                   />
                 </Grid> */}
-                <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.contact_number}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("contactNumber", { required: true })}
-                    name="contactNumber"
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t.pages?.Customers?.credit_limit}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("creditLimit", { required: true })}
-                    name="creditLimit"
-                  />
-                </Grid>
-               {!isUpdate && <Grid item xs={8}>
+              <Grid item xs={12}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  {t?.pages?.Customers?.contact_number}
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  type="number"
+                  size="small"
+                  {...register("contactNumber", { required: false })}
+                  name="contactNumber"
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  {t.pages?.Customers?.credit_limit}
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  type="number"
+                  {...register("creditLimit", { required: false })}
+                  name="creditLimit"
+                />
+              </Grid>
+              {/* {<Grid item xs={8}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.previous_account}
                   </InputLabel>
@@ -239,64 +232,68 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
                       { name: t?.pages?.Customers?.debit, value: "Debit" },
                     ]}
                   />
-                </Grid>}
-                <Grid item xs={isUpdate ? 6 : 4}>
+                </Grid>} */}
+              <Grid item xs={4}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.currency}
-                  </InputLabel>
-                  <UserCurrenciesComponent register={register} />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.address}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("address", { required: true })}
-                    name="address"
-                  />
-                </Grid>
+                  {t?.pages?.Customers?.currency}
+                </InputLabel>
+                <UserCurrenciesComponent
+                  register={register}
+                  isRequired={false}
+                />
               </Grid>
-            </form>
-          </DialogContent>
-          <DialogActions
-            sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+              <Grid item xs={12}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  {t?.pages?.Customers?.address}
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  {...register("address", { required: false })}
+                  name="address"
+                />
+              </Grid>
+            </Grid>
+          </form>
+        </DialogContent>
+        <DialogActions
+          sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
+        >
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleSubmit(onSubmitFunction)}
           >
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleSubmit(onSubmitFunction)}
-            >
-              {t?.pages?.Customers?.save}
-            </Button>
-            <Button variant="outlined"  onClick={handleOpenDialogFunction}>{t?.pages?.Customers?.cancel}</Button>
-          </DialogActions>
-        </Dialog>
-        {isEmptyPage ? (
-          <Box className={"empty_page_content"}>
-            <EmptyPage
-              icon={<EmptyProductPageIcon />}
-              title={t.pages?.Customers.no_product_yet_title}
-              discription={t.pages?.Customers.no_product_yet_discription}
-              buttonText={t.pages?.Customers.add_new_customer}
-              onClick={handleOpenDialogFunction}
-            />
-          </Box>
-        ) : (
-          <Box>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenDialogFunction}
-            >
-              {t?.pages?.Customers?.add_new_customer}
-            </Button>
-          </Box>
-        )}
-      </Box>
-    );
-  };
-  
-  export default CreateCustomer;
-  
+            {t?.pages?.Customers?.save}
+          </Button>
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t?.pages?.Customers?.cancel}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {isEmptyPage ? (
+        <Box className={"empty_page_content"}>
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t.pages?.Customers.no_product_yet_title}
+            discription={t.pages?.Customers.no_product_yet_discription}
+            buttonText={t.pages?.Customers.add_new_customer}
+            onClick={handleOpenDialogFunction}
+          />
+        </Box>
+      ) : (
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialogFunction}
+          >
+            {t?.pages?.Customers?.add_new_customer}
+          </Button>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default CreateCustomer;

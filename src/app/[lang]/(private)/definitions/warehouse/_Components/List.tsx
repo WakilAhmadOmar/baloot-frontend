@@ -200,19 +200,19 @@ import {
                 <Typography variant="overline">رب خرم نیم کیلو</Typography>
                 <Box>
                   <Box display={"grid"} gridTemplateColumns={"50% 50%"} mb={0.5}>
-                    <Box>دانه</Box>
+                    <Typography>دانه</Typography>
                     <Box>
                       <TextField fullWidth size="small" />
                     </Box>
                   </Box>
                   <Box display={"grid"} gridTemplateColumns={"50% 50%"} mb={0.5}>
-                    <Box>بسته ای</Box>
+                    <Typography>بسته ای</Typography>
                     <Box>
                       <TextField fullWidth size="small" />
                     </Box>
                   </Box>
                   <Box display={"grid"} gridTemplateColumns={"50% 50%"} mb={0.5}>
-                    <Box>کارتن</Box>
+                    <Typography>کارتن</Typography>
                     <Box>
                       <TextField fullWidth size="small" />
                     </Box>
@@ -222,7 +222,7 @@ import {
             </Box>
           </DialogContent>
           <DialogActions
-            sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+            sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
             <Button
               color="primary"
