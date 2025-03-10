@@ -24,15 +24,19 @@ const ListItemIconStyle = {
   justifyContent: "center",
 };
 const ListItemIconOpenStyle = {
-  marginInlineEnd:3
+  marginInlineEnd: 3,
 };
 const ListItemIconCloseStyle = {
   m: "auto",
 };
 
 const ListItemTextStyle = {
-  textAlign:"start",
-  "& .MuiListItemText-primary": { fontFamily: "Sans !important" },
+  textAlign: "start",
+
+  "& .MuiListItemText-primary": {
+    fontFamily: "Sans !important",
+    fontSize: "1.5rem !important",
+  },
 };
 const ListItemTextOpenStyle = {
   opacity: 1,
@@ -61,15 +65,15 @@ const LinkLayout: React.FC<IPropsLinkLayout> = ({
   t,
 }) => {
   const pathname = usePathname();
-  const theme = useTheme()
+  const theme = useTheme();
   return (
-    <Link href={ href} >
+    <Link href={href}>
       <ListItem
         disablePadding
         sx={{
           display: "block",
           background:
-            pathname === href 
+            pathname === href
               ? `linear-gradient(90deg,${
                   t.home.dir === "rtl" ? rtlTrue : rtlFalse
                 } )`
@@ -82,18 +86,20 @@ const LinkLayout: React.FC<IPropsLinkLayout> = ({
             open ? ListItemButtonOpenStyle : ListItemButtonCloseStyle,
           ]}
         >
-         {Icon && <ListItemIcon
-            sx={[
-              ListItemIconStyle,
-              open ? ListItemIconOpenStyle : ListItemIconCloseStyle,
-            ]}
-          >
-            {Icon}
-          </ListItemIcon>}
+          {Icon && (
+            <ListItemIcon
+              sx={[
+                ListItemIconStyle,
+                open ? ListItemIconOpenStyle : ListItemIconCloseStyle,
+              ]}
+            >
+              {Icon}
+            </ListItemIcon>
+          )}
           <ListItemText
             primary={text}
             sx={[
-              Icon ? {} : { paddingInlineStart:3},
+              Icon ? {} : { paddingInlineStart: 3 },
               ListItemTextStyle,
               open ? ListItemTextOpenStyle : ListItemTextCloseStyle,
             ]}

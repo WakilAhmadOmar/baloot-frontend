@@ -25,7 +25,7 @@ export default async function RootLayout({
         <ApolloManager>
           <AppContextProvider>
             <ThemeProviderComponent>
-              <Paper sx={{ height: "100vh" }}>{children}</Paper>
+              <Paper sx={{minHeight:"100vh"}}>{children}</Paper>
             </ThemeProviderComponent>
           </AppContextProvider>
         </ApolloManager>

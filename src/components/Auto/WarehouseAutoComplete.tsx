@@ -11,9 +11,11 @@ import { debounce } from "lodash";
 
 interface IPropsFormFactore {
  getWarehouse?:(warehouse:any) => void;
+ register:any
 }
 const WarehouseAutoComplete: React.FC<IPropsFormFactore> = ({
- getWarehouse
+ getWarehouse,
+ register
 }) => {
     const { setHandleError } = useContext(AppContext);
   const client = useApolloClient();
@@ -38,7 +40,7 @@ const WarehouseAutoComplete: React.FC<IPropsFormFactore> = ({
         variables,
       });
       const mapData = getEntrepotList?.entrepot.map((item: any) => {
-        return { _id: item?._id, label: item?.name, ...item };
+        return { id: item?._id, label: item?.name, ...item };
       });
       const allCustomer = [...mapData, ...autoCompleteState?.data];
       const duplicate = allCustomer?.filter(
@@ -82,17 +84,19 @@ const WarehouseAutoComplete: React.FC<IPropsFormFactore> = ({
 
   return (
     <Autocomplete
-      disablePortal
+      disablePortal={false}
       onChange={handleChangeCustomerSearch}
       fullWidth
       size="small"
       id="combo-box-demo"
 
       options={autoCompleteState?.data}
+      
       onInputChange={handleSearch}
       renderInput={(params) => (
         <TextField
 
+        {...(register ? register("warehouse") : {})}
           {...params}
           name="warehouse"
         />

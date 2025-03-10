@@ -115,6 +115,13 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
     }
   }, [item?._id, isUpdate]);
   const onSubmitFunction = async (data: any) => {
+    if (selectedUnitProduct?.length === 0 ){
+      return setHandleError({
+        open:true,
+        status:"info",
+        message:"please select one Unit"
+      })
+    }
     const variables = {
       ...(isUpdate ? { productId: item?._id } : {}),
       productObject: {
@@ -159,7 +166,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
           : {}),
         ...(data?.barcode ? { barcode: data?.barcode } : {}),
         // isNewProduct: data?.isNewProduct === "newProduct",
-        currencyId: data?.currencyId,
+        currencyId: data?.currency,
         baseMeasureAmount: 10,
       },
     };
@@ -326,6 +333,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                       <TextField
                         fullWidth
                         size="small"
+                        type="number"
                         {...register("measure" + index, {
                           required: true,
                         })}
@@ -350,6 +358,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                           <TextField
                             fullWidth
                             size="small"
+                            type="number"
                             {...register("buyPrice " + item?.name, {
                               required: true,
                             })}
@@ -366,6 +375,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                           </InputLabel>
                           <TextField
                             fullWidth
+                            type="number"
                             size="small"
                             {...register("sellPrice " + item?.name, {
                               required: true,
@@ -426,7 +436,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
           </form>
         </DialogContent>
         <DialogActions
-          sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+          sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button
             color="primary"

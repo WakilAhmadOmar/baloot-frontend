@@ -28,7 +28,7 @@ import {
 import { LogoIcon } from "@/icons";
 import CollapseContainer from "./_components/layout/collapseContainer";
 
-const drawerWidth = 320;
+const drawerWidth ="36rem";
 
 export default async function MiniDrawer({
   children,
@@ -45,7 +45,7 @@ export default async function MiniDrawer({
   return (
     <Box
       sx={{ display: "flex" , direction:tra?.home?.dir }}
-      height={"calc(100vh - 8px)"}
+      // height={"calc(100vh - 8px)"}
     >
       <CssBaseline />
       <AppBar position="fixed" open={true} drawerwidth={drawerWidth} >

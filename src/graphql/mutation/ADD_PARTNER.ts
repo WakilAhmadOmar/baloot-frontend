@@ -14,7 +14,6 @@ const ADD_PARTNER = gql`
           symbol
         }
       }
-      investPercentage
       phoneNumber
       createdAt
     }

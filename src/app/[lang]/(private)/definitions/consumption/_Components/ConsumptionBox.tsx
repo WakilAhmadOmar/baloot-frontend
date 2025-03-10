@@ -97,7 +97,7 @@ import {
             height: "100%",
             alignItems: "center",
             display: "grid",
-            backgroundColor:theme.palette.grey[50]
+            background:theme.palette.background.default
           }}
         >
           <Box

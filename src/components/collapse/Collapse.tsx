@@ -128,10 +128,10 @@ const CollapseComponent: React.FC<IProps> = ({
         >
           <IconButton onClick={handleCollapseFunction}>
             {handleCollapseState ? (
-              <ArrowUp2 size={25} color={theme.palette.primary.contrastText} />
+              <ArrowUp2 size={20} color={theme.palette.primary.contrastText} />
             ) : (
               <ArrowDown2
-                size={25}
+                size={20}
                 color={theme.palette.primary.contrastText}
               />
             )}
@@ -158,10 +158,10 @@ const CollapseComponent: React.FC<IProps> = ({
             <Moment format="YYYY/MM/DD">{createdAt}</Moment>
           </Typography>
           <IconButton onClick={handleDeleteFunction}>
-            <Trash size={25} color={theme.palette.primary.contrastText} />
+            <Trash size={20} color={theme.palette.primary.contrastText} />
           </IconButton>
           <IconButton onClick={handleClickUpdateItem}>
-            <Edit size={25} color={theme.palette.primary.contrastText} />
+            <Edit size={20} color={theme.palette.primary.contrastText} />
           </IconButton>
         </Box>
       </Box>

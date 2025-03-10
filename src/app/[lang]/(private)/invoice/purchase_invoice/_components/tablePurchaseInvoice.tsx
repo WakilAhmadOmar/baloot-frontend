@@ -63,7 +63,7 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
   //   payment: 0,
   // });
 
-  const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
+  // const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
 
   const style = {
     width: "90%",
@@ -311,14 +311,14 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
     sumBillFunction(filterItems);
   };
 
-  const handleChangePaymentStatus = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const values = (event.target as HTMLInputElement).value;
-    if (values === "cash" || values === "loan") {
-      setStatusPayment(values);
-    }
-  };
+  // const handleChangePaymentStatus = (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const values = (event.target as HTMLInputElement).value;
+  //   if (values === "cash" || values === "loan") {
+  //     setStatusPayment(values);
+  //   }
+  // };
   return (
     <Box mt={3} p={1}>
       <Box>
@@ -548,7 +548,7 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
           {productBilState?.length}
         </Typography>
       </Box>
-      <Grid2
+      {/* <Grid2
         container
         spacing={3}
         maxWidth="100%"
@@ -576,24 +576,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
               />
             </RadioGroup>
           </FormControl>
-          {/* <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="پرداخت بصورت نقدی ( پرداخت کننده صندوق مرکزی)"
-              />
-            </Box>
-            <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="کل فاکتور به صورت قرض"
-              />
-            </Box>
-            <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="حساب گذشته مبلغ 2300 افغانی"
-              />
-            </Box> */}
           <PaymentComponent
               customer={"Ahmad"}
               amount={billPrice?.totalPrice}
@@ -689,7 +671,7 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
         <Typography variant="overline">
           {numberToWords(billPrice?.totalPrice, t)}
         </Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

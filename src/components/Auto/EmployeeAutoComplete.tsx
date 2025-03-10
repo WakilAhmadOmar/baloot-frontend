@@ -79,7 +79,7 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
     <>
       {optionsAuto?.options?.length > 0 ? (
         <Autocomplete
-          disablePortal
+          disablePortal={false}
           id="combo-box-demo"
           options={optionsAuto?.options}
           // defaultValue={optionsAuto?.options?.[0]}

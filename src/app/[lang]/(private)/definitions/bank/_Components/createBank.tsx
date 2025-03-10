@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Box,
   Button,
@@ -25,7 +25,6 @@ import SnackbarComponent from "@/components/snackbarComponent";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 
-
 interface IPropsCreateBank {
   getProuctCreated: (product: any) => void;
   isUpdate: boolean;
@@ -33,7 +32,7 @@ interface IPropsCreateBank {
   getProductUpdated?: (product: any) => void;
   canceleUpdageProduct?: () => void;
   isEmptyPage: boolean;
-  t:any
+  t: any;
 }
 
 const CreateBank: React.FC<IPropsCreateBank> = ({
@@ -43,13 +42,9 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
   getProductUpdated,
   canceleUpdageProduct,
   isEmptyPage,
-  t
+  t,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-  } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const theme = useTheme();
   const cleint = useApolloClient();
   const [openDialog, setOpenDialog] = useState(isUpdate);
@@ -103,20 +98,24 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
     }
   }, [item?._id, isUpdate]);
   const onSubmitFunction = async (data: any) => {
-    
     const variables = {
       ...(isUpdate ? { bankId: item?._id } : {}),
       bankObject: {
         name: data?.name,
-        cridet: {
-          amount: parseInt(data?.amount),
-          currencyId: data?.currencyId,
-        },
-        accountNumber: data?.accountNumber,
-        bankPhoneNumber: data?.bankPhoneNumber,
+        ...(data?.amount
+          ? {
+              credit: {
+                amount: parseInt(data?.amount),
+                currencyId: data?.currency,
+              },
+            }
+          : {}),
+        ...(data?.accountNumber ? { accountNumber: data?.accountNumber } : {}),
+        ...(data?.bankPhoneNumber
+          ? { bankPhoneNumber: data?.bankPhoneNumber }
+          : {}),
       },
     };
-   
 
     try {
       setLoadingPage(true);
@@ -233,12 +232,12 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                {t?.pages?.bank?.Account_Number}
+                  {t?.pages?.bank?.Account_Number}
                 </InputLabel>
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("accountNumber", { required: true })}
+                  {...register("accountNumber", { required: false })}
                   name="accountNumber"
                 />
               </Grid>
@@ -248,16 +247,20 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                 </InputLabel>
                 <TextField
                   fullWidth
+                  type="number"
                   size="small"
-                  {...register("amount", { required: true })}
+                  {...register("amount", { required: false })}
                   name="amount"
                 />
               </Grid>
               <Grid item xs={4}>
-              <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.bank?.Currency}
                 </InputLabel>
-                <UserCurrenciesComponent register={register} />
+                <UserCurrenciesComponent
+                  register={register}
+                  isRequired={false}
+                />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -265,8 +268,9 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                 </InputLabel>
                 <TextField
                   fullWidth
+                  type="number"
                   size="small"
-                  {...register("bankPhoneNumber", { required: true })}
+                  {...register("bankPhoneNumber", { required: false })}
                   name="bankPhoneNumber"
                 />
               </Grid>
@@ -274,7 +278,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
           </form>
         </DialogContent>
         <DialogActions
-          sx={{ display: "flex", justifyContent: "start", columnGap: "1rem" }}
+          sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button
             color="primary"

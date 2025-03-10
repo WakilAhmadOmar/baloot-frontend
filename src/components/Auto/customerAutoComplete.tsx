@@ -1,3 +1,4 @@
+"use client"
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useApolloClient } from "@apollo/client";
@@ -8,8 +9,9 @@ import { AppContext } from "@/provider/appContext";
 
 interface IProps {
   getCustomer?: (data: any) => void;
+  register:any
 }
-const CustomerAutoComplete: React.FC<IProps> = ({ getCustomer }) => {
+const CustomerAutoComplete: React.FC<IProps> = ({ getCustomer , register }) => {
   const client = useApolloClient();
   const { setHandleError } = useContext(AppContext);
   const [autoCompleteState, setAutoCompleteState] = useState<{
@@ -85,7 +87,10 @@ const CustomerAutoComplete: React.FC<IProps> = ({ getCustomer }) => {
       options={autoCompleteState?.data}
       onChange={handleChangeCustomerSearch}
       onInputChange={handleSearch}
-      renderInput={(params) => <TextField {...params} />}
+      renderInput={(params) => <TextField {...params} 
+      {...register("customer" )}
+      name="customer"
+       />}
     />
   );
 };
