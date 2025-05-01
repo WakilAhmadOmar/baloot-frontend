@@ -1,4 +1,5 @@
 import { Box, MenuItem, Select, TextField } from "@mui/material";
+import { ChangeEvent } from "react";
 
 type SelectItem = {
   name: string;
@@ -11,6 +12,8 @@ interface IPropsSelectWithInput {
   data?: SelectItem[];
   selectName?: string;
   inputName?: string;
+  inputDefaultValue?:number
+  onChange?:(event:ChangeEvent<HTMLInputElement | HTMLSelectElement>)=>void
 }
 
 const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
@@ -19,6 +22,8 @@ const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
   data,
   selectName,
   inputName,
+  inputDefaultValue,
+onChange
 }) => {
   return (
     <Box display={"flex"}>
@@ -28,6 +33,7 @@ const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
         name={selectName || "isNewProduct"}
         defaultValue={defaultValue || data?.[0]?.value}
         sx={{ borderStartEndRadius: 0, borderEndEndRadius: 0 }}
+        onChange={onChange}
       >
         {data?.map((item) => {
           return (
@@ -40,6 +46,8 @@ const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
       <TextField
         fullWidth={true}
         size={"small"}
+        type="number"
+        defaultValue={inputDefaultValue}
         sx={{
           "& .MuiInputBase-root": {
             borderStartStartRadius: "0",
@@ -48,6 +56,7 @@ const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
         }}
         {...register(inputName || "amount", { require: true })}
         name={inputName || "amount"}
+        onChange={onChange}
       />
     </Box>
   );

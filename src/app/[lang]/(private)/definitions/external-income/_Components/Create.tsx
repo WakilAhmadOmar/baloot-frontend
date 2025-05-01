@@ -143,7 +143,6 @@ import {
   
     return (
       <Box>
-        {loadingPage && <CircularProgressComponent />}
         <SnackbarComponent
           status={handleError?.status}
           open={handleError?.open}
@@ -174,7 +173,7 @@ import {
           </DialogTitle>
           <DialogContent sx={{ pt: 36, pb: 5 }}>
             <form onSubmit={handleSubmit(onSubmitFunction)}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2}sx={{mt:"1rem"}}>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.income?.income_name}
@@ -196,6 +195,7 @@ import {
               color="primary"
               variant="contained"
               onClick={handleSubmit(onSubmitFunction)}
+              loading={loadingPage}
             >
               {t?.pages?.income?.save}
             </Button>

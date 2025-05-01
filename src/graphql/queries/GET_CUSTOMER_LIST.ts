@@ -8,23 +8,16 @@ const GET_CUSTOMER_LIST = gql`
         fullName
         address
         contactNumber
-        creditLimit {
+
+        credit {
           amount
-          currencyId{
-          _id
-          name
-          symbol
+          creditType
+          currencyId {
+            _id
+            name
+            symbol
           }
         }
-          credit {
-        amount
-        creditType
-        currencyId {
-          _id
-          name
-          symbol
-        }
-      }
         createdAt
       }
       count
@@ -32,12 +25,3 @@ const GET_CUSTOMER_LIST = gql`
   }
 `;
 export { GET_CUSTOMER_LIST };
-
-// pastBilling {
-//   type
-//   amount
-//   currency {
-//     _id
-//     name
-//   }
-// }

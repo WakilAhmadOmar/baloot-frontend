@@ -82,7 +82,7 @@ import {
         getDefaultDataProduct();
       }
       if (defaultValue?.length > 0) {
-        console.log("defaultValue" , defaultValue)
+  
         setPersonName(defaultValue?.map((item) => item.name));
       }
     }, [defaultValue?.length]);

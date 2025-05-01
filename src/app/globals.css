@@ -64,3 +64,27 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
+
+/* .empty_page_content{
+  display: grid;
+  justify-content: "center";
+} */
+
+/* @media print {
+  .MuiDataGrid-row {
+    min-height: 5rem !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .MuiDataGrid-cell {
+    padding: 10px !important;
+    word-break: break-word !important;
+    box-sizing: border-box !important;
+  }
+
+  .MuiDataGrid-root {
+    overflow: visible !important;
+  }
+} */

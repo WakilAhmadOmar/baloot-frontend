@@ -1,19 +1,30 @@
 import { gql } from "@apollo/client";
 
 const GET_WARE_FROM_ENTREPOT = gql`
-  query ($enterpotId: ID!, $existProdut: Boolean!) {
-    getWareFromEntrepot(entrepotId: $enterpotId, existProduct: $existProdut) {
-      productId {
-        _id
-        name
-      }
-      measures {
-        measureId {
+  query GetWareFromEntrepot(
+    $entrepotId: ID!
+    $existProduct: Boolean!
+    $page: Int
+  ) {
+    getWareFromEntrepot(
+      entrepotId: $entrepotId
+      existProduct: $existProduct
+      page: $page
+    ) {
+      ware {
+        productId {
           _id
           name
         }
-        amountOfProduct
+        measures {
+          amountOfProduct
+          measureId {
+            _id
+            name
+          }
+        }
       }
+      count
     }
   }
 `;

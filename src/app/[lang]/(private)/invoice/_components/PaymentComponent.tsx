@@ -157,7 +157,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
             <Grid2 container spacing={3} mt={3}>
               <Grid2  size={6} >
                 <InputLabel required>{t?.invoice?.receiver}</InputLabel>
-                <CashBoxAutoComplete getCashBox={getCashBoxFunction} />
+                <CashBoxAutoComplete getCashBox={getCashBoxFunction} placeholder="" />
               </Grid2>
               <Grid2  size={6}>
                 <InputLabel required> {t?.invoice?.Currency}</InputLabel>

@@ -4,19 +4,28 @@ import Autocomplete, {
   AutocompleteChangeDetails,
 } from "@mui/material/Autocomplete";
 import { useApolloClient } from "@apollo/client";
-import { useTheme } from "@mui/material";
+import { MenuItem, Select, useTheme } from "@mui/material";
 import { GET_SAFE_LIST } from "../../graphql/queries/GET_SAFE_LIST";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/provider/appContext";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface IPropsProduct {
   getCashBox?: (product: any) => void;
   cashBoxIds?: string[];
+  placeholder?:string,
+  register?:any
+  isRequired?:boolean
+  name?:string
 }
 const CashBoxAutoComplete: React.FC<IPropsProduct> = ({
   getCashBox,
   cashBoxIds,
+  placeholder,
+  isRequired=true,
+  name
 }) => {
+  const {  control , formState: { errors },} =  useFormContext()
   const client = useApolloClient();
 const {setHandleError} = useContext(AppContext)
   const [autoCompleteState, setAutoCompleteState] = useState<{
@@ -34,6 +43,7 @@ const {setHandleError} = useContext(AppContext)
         page: textSearch ? 1 : autoCompleteState?.page,
         ...(textSearch ? { searchTerm: textSearch } : {}),
       };
+      //TODO : use search term for each select box
       const {
         data: { getSafeList },
       } = await client.query({
@@ -81,20 +91,48 @@ const {setHandleError} = useContext(AppContext)
     getCustomerFunction();
   }, []);
   return (
-    <Autocomplete
-      disablePortal={false}
-      onChange={handleChangeCustomerSearch}
-      fullWidth
-      size="small"
-      id="combo-box-demo"
-      options={autoCompleteState?.data}
-      // onSelect={onSelectFunction}
-      getOptionDisabled={(option: any) => {
-        const filterItems = cashBoxIds?.filter((item) => item === option?._id);
-        return (filterItems?.length as number) > 0;
-      }}
-      renderInput={(params) => <TextField {...params} placeholder="Cash Box" />}
-    />
+    <Controller
+          name={name ||  "cashboxId"}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              // label="Status"
+              fullWidth
+              size={"small"}
+              value={value}
+              // placeholder={placeholder}
+              // options={PROGRAM_STATUS}
+              // placeholder="Please select status"
+              error={!!errors?.currencyId}
+              // helperText={errors?.currencyId?.message}
+              required
+              onChange={onChange}
+            >
+              {autoCompleteState?.data?.map((item) => {
+                return (
+                  <MenuItem key={item?._id} value={item?._id}>
+                    {item?.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          )}
+        />
+    // <Autocomplete
+    //   disablePortal={false}
+    //   {...register("bank", { required: isRequired })}
+    //   onChange={handleChangeCustomerSearch}
+    //   fullWidth
+    //   size="small"
+    //   id="combo-box-demo"
+    //   options={autoCompleteState?.data}
+    //   // onSelect={onSelectFunction}
+    //   // getOptionDisabled={(option: any) => {
+    //   //   const filterItems = cashBoxIds?.filter((item) => item === option?._id);
+    //   //   return (filterItems?.length as number) > 0;
+    //   // }}
+    //   renderInput={(params) => <TextField {...params} placeholder={placeholder} />}
+    // />
   );
 };
 

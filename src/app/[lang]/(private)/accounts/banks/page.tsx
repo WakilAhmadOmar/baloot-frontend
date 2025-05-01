@@ -11,7 +11,7 @@ export default async function BankPage({
   const tra = await getDictionary(lang);
   return (
     <Box>
-      {/* <BankContainer t={tra} /> */}
+      <BankContainer t={tra} />
     </Box>
   );
 }

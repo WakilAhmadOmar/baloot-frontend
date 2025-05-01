@@ -9,6 +9,15 @@ const GET_EMPLOYEE_LIST = gql`
         fathersName
         idNumber
         jobTitle
+         credit {
+        amount
+        creditType
+        currencyId {
+          _id
+          name
+          symbol
+        }
+      }
         salary {
           amount
           currencyId {

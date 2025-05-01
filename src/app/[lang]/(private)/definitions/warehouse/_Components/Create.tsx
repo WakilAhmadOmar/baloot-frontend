@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     IconButton,
     TextField,
@@ -12,9 +11,6 @@ import {
     useTheme,
     Grid,
     InputLabel,
-    Select,
-    Chip,
-    MenuItem,
   } from "@mui/material";
   import { CloseSquare } from "iconsax-react";
   import { useEffect, useState } from "react";
@@ -22,7 +18,6 @@ import {
 
   import { useApolloClient } from "@apollo/client";
   import SnackbarComponent from "@/components/snackbarComponent";
-  import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
   import { ADD_ENTREPOT } from "@/graphql/mutation/ADD_ENTREPOT";
   import { UPDATE_ENTREPOT } from "@/graphql/mutation/UPDATE_ENTREPOT";
   import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
@@ -61,7 +56,6 @@ import {
     const cleint = useApolloClient();
     const [openDialog, setOpenDialog] = useState(isUpdate);
     const [loadingPage, setLoadingPage] = useState(false);
-    const [selectedUnitProduct, setSelectedUnitProduct] = useState<any[]>([]);
     const [employeeState, setEmployeeState] = useState<any>(null);
   
     const [handleError, setHandleError] = useState<{
@@ -85,27 +79,7 @@ import {
       if (item?._id) {
 
         setValue("name", item?.name);
-        setSelectedUnitProduct(
-          item?.measures?.map((item: any) => {
-            setValue("boughtPrice " + item?.measure?.name, item?.boughtPrice);
-            setValue("salePrice " + item?.measure?.name, item?.salePrice);
-            return {
-              measure: item?.measure?._id,
-              name: item?.measure?.name,
-              boughtPrice: item?.boughtPrice,
-              salePrice: item?.salePrice,
-            };
-          })
-        );
-        setValue("category", item?.category?._id);
-        setValue("expirationDate", item?.expirationDate);
-        setValue("barcode", item?.barcode);
-        setValue("amount", item?.amount);
-        setValue(
-          "isNewProduct",
-          item?.isNewProduct ? "newProduct" : "oldProduct"
-        );
-        setValue("currencyId", item?.currencyId?._id);
+        setValue("address", item?.address);
       }
       if (isUpdate) {
         setOpenDialog(isUpdate);
@@ -170,9 +144,11 @@ import {
     const handleGetEmployeeFunction = (data: any) => {
       setEmployeeState(data);
     };
+
+
     return (
       <Box>
-        {loadingPage && <CircularProgressComponent />}
+
         <SnackbarComponent
           status={handleError?.status}
           open={handleError?.open}
@@ -203,7 +179,7 @@ import {
           </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmit(onSubmitFunction)}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} sx={{mt:"1rem"}}>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.warehouse?.warehouses}
@@ -224,9 +200,11 @@ import {
                     {t?.pages?.warehouse?.warehouse_responsible}
                   </InputLabel>
                   <EmployeeAutoCompleteComponent
+                  placeholder=""
                     register={register}
                     name="employeeId"
                     getValue={handleGetEmployeeFunction}
+                    defaultValue={{...item?.responsible , id:item?.responsible?._id , label:item?.responsible?.name}}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -250,6 +228,7 @@ import {
               color="primary"
               variant="contained"
               onClick={handleSubmit(onSubmitFunction)}
+              loading={loadingPage}
             >
               {t?.pages?.warehouse?.save}
             </Button>

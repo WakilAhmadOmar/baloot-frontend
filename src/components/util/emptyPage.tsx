@@ -16,7 +16,7 @@ const EmptyPage: React.FC<IPropsEmptyPage> = ({
   buttonText,
 }) => {
   return (
-    <Box display={"grid"} justifyContent={"center"}>
+    <Box display={"grid"} justifyContent={"center"}  mx="auto">
       {icon}
       <Typography textAlign={"center"} variant="h6" p={1}>
         {title}

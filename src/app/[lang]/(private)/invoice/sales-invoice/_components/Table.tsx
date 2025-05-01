@@ -24,16 +24,20 @@ import PaymentReceiver from "./Payment";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { useApolloClient } from "@apollo/client";
 import { GET_PRODUCT_COUNT_IN_ENTREPOT } from "@/graphql/queries/GET_PRODUCT_COUNT_IN_ENTREPOT";
+import { AppContext } from "@/provider/appContext";
+import { useFormContext } from "react-hook-form";
 
 interface IPropsTable {
   t: any;
-  register: any;
+ 
 }
-export default function DataTable({ t, register }: IPropsTable) {
+export default function DataTable({ t }: IPropsTable) {
   const theme = useTheme();
-  const client = useApolloClient()
+  const client = useApolloClient();
+  const {register} = useFormContext()
   const { rows, setRows, sellBillPrice, setSellBillPrice, paymentOff } =
     useContext(InvoiceContext);
+  const { setHandleError } = useContext(AppContext);
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
 
   const style = {
@@ -122,20 +126,23 @@ export default function DataTable({ t, register }: IPropsTable) {
   };
 
   const handleGetMeasureFunction = (data: any[], idNumber: number) => {
-    setRows((prev: any) =>
-      prev?.map((item: any, index: number) => {
+    setRows((prev: any) =>{
+      const allRows = prev?.map((item: any, index: number) => {
         if (index === idNumber) {
           return {
             ...item,
             measures: item?.measures?.map((measure: any) =>
               data.some((d) => d?.measureId._id === measure?.measureId?._id)
-                ? { ...measure, selected: true }
-                : { ...measure, selected: false }
+                ? { ...measure, selected: true ,totalPrice: measure?.buyPrice, }
+                : { ...measure, selected: false , totalPrice: null}
             ),
           };
         }
         return item;
       })
+      sumBillFunction(allRows);
+      return allRows;
+    }
     );
   };
 
@@ -215,23 +222,33 @@ export default function DataTable({ t, register }: IPropsTable) {
         entrepotId: warehouse?._id,
         productId: rows?.[rowIndex]?._id,
       };
-      const { data : { getProductCountInEntrepot }} = await client.query({
-        query:GET_PRODUCT_COUNT_IN_ENTREPOT,
-        variables
-      })
-      if (getProductCountInEntrepot?.measures?.length){
-        const existProduct = getProductCountInEntrepot?.measures?.some((d:any) => d?.amountOfProduct > 0)
-        setRows((prevState: any) => {
-          const allRow = prevState?.map((item: any, index: number) => {
-            if (index === rowIndex) {
-              return {
-                ...item,
-                warehouse: warehouse,
-                error: !existProduct
-              };
-            } else return item;
-          });
-          return allRow;
+      const {
+        data: { getProductCountInEntrepot },
+      } = await client.query({
+        query: GET_PRODUCT_COUNT_IN_ENTREPOT,
+        variables,
+      });
+
+      const existProduct = getProductCountInEntrepot?.measures?.some(
+        (d: any) => d?.amountOfProduct > 0
+      );
+      setRows((prevState: any) => {
+        const allRow = prevState?.map((item: any, index: number) => {
+          if (index === rowIndex) {
+            return {
+              ...item,
+              warehouse: warehouse,
+              error: !existProduct,
+            };
+          } else return item;
+        });
+        return allRow;
+      });
+      if (!existProduct) {
+        setHandleError({
+          open: true,
+          message: "this product is not exist in this warehouse.",
+          type: "error",
         });
       }
     } catch (error) {}
@@ -251,7 +268,7 @@ export default function DataTable({ t, register }: IPropsTable) {
               getProduct={(product) =>
                 handleGetSelectedProduct(product, rowIndex)
               }
-              defaultValue={row}
+              defaultValue={{ ...row, id: row?._id, label: row?.name }}
               t={t}
               isTable
               productIds={rows?.map((item: any) => item?.id)}
@@ -271,8 +288,9 @@ export default function DataTable({ t, register }: IPropsTable) {
         return (
           <>
             <WarehouseAutoComplete
-              register={register}
+              // register={register}
               getWarehouse={(data: any) => handleGetWarehouse(data, rowIndex)}
+              defaultValue={{ ...row?.warehouse, id: row?.warehouse?._id }}
             />
           </>
         );
@@ -464,15 +482,13 @@ export default function DataTable({ t, register }: IPropsTable) {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowClassName={(params) =>
-          params.row.error  ? "error-row" : ""
-        }
+        getRowClassName={(params) => (params.row.error ? "error-row" : "")}
         sx={{
           py: 4,
           border: 0,
           "& .error-row": {
-            border: "2px solid red", // Red border for error row
-            backgroundColor: "#ffebee", // Light red background
+            border: "2px solid #fe12128f", // Red border for error row
+            backgroundColor: "#ffebee33", // Light red background
           },
           "& .MuiDataGrid-main": {
             paddingBottom: "3rem",
@@ -578,7 +594,6 @@ export default function DataTable({ t, register }: IPropsTable) {
             customerId={""}
             paymentStatus={statusPayment}
             t={t}
-            register={register}
           />
         </Grid2>
         <Grid2 size={4} marginTop={3}>

@@ -192,7 +192,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
 
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
+      
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
@@ -223,7 +223,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               {/* <Grid item xs={12}>
                   <Grid container spacing={2}> */}
               {/* <Grid item mt={2} xs={4}>
@@ -373,6 +373,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.employee?.save}
           </Button>

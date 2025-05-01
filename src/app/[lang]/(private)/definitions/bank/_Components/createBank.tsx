@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useApolloClient } from "@apollo/client";
 import { ADD_BANK } from "@/graphql/mutation/ADD_BANK";
 import { UPDATE_BANK } from "@/graphql/mutation/UPDATE_BANK";
@@ -44,7 +44,9 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
   isEmptyPage,
   t,
 }) => {
-  const { register, handleSubmit, setValue } = useForm();
+  
+  const methods = useForm()
+  const { register, handleSubmit, setValue} = methods
   const theme = useTheme();
   const cleint = useApolloClient();
   const [openDialog, setOpenDialog] = useState(isUpdate);
@@ -106,7 +108,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
           ? {
               credit: {
                 amount: parseInt(data?.amount),
-                currencyId: data?.currency,
+                currencyId: data?.currencyId,
               },
             }
           : {}),
@@ -187,13 +189,14 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
 
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
         message={handleError?.message}
         handleClose={handleCloseError}
       />
+      <FormProvider {...methods}>
+
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -218,7 +221,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.bank?.Bank_Name}
@@ -258,8 +261,8 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                   {t?.pages?.bank?.Currency}
                 </InputLabel>
                 <UserCurrenciesComponent
-                  register={register}
                   isRequired={false}
+                  name="currencyId"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -284,12 +287,14 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.bank?.Save}
           </Button>
           <Button variant="outlined">{t.pages.bank?.Cancel}</Button>
         </DialogActions>
       </Dialog>
+      </FormProvider>
       {isEmptyPage ? (
         <Box className={"empty_page_content"}>
           <EmptyPage

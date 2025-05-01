@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm , FormProvider } from "react-hook-form";
 import { useApolloClient } from "@apollo/client";
 import { ADD_CUSTOMER } from "@/graphql/mutation/ADD_CUSTOMER";
 import { UPDATE_CUSTOMER } from "@/graphql/mutation/UPDATE_CUSTOMER";
@@ -41,6 +41,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
   isEmptyPage,
   t,
 }) => {
+  const method = useForm()
   const {
     register,
     handleSubmit,
@@ -49,7 +50,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
     getValues,
     setValue,
     getFieldState,
-  } = useForm();
+  } = method;
   const theme = useTheme();
   const cleint = useApolloClient();
   const [loadingPage, setLoadingPage] = useState(false);
@@ -84,14 +85,14 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
       ...(isUpdate ? { customerId: item?._id } : {}),
       customerObject: {
         fullName: data?.fullName,
-        ...(data?.creditLimit
-          ? {
-              creditLimit: {
-                amount: parseFloat(data?.creditLimit),
-                currencyId: data?.currency,
-              },
-            }
-          : {}),
+        // ...(data?.creditLimit
+        //   ? {
+        //       creditLimit: {
+        //         amount: parseFloat(data?.creditLimit),
+        //         currencyId: data?.currency,
+        //       },
+        //     }
+        //   : {}),
         ...(data?.address ? { address: data?.address } : {}),
         ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
       },
@@ -147,7 +148,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
   };
 
   return (
-    <Box>
+    <FormProvider {...method}>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -172,7 +173,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Customers?.customer_name}
@@ -207,7 +208,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
                   name="contactNumber"
                 />
               </Grid>
-              <Grid item xs={8}>
+              {/* <Grid item xs={8}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t.pages?.Customers?.credit_limit}
                 </InputLabel>
@@ -218,7 +219,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
                   {...register("creditLimit", { required: false })}
                   name="creditLimit"
                 />
-              </Grid>
+              </Grid> */}
               {/* {<Grid item xs={8}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.pages?.Customers?.previous_account}
@@ -233,15 +234,16 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
                     ]}
                   />
                 </Grid>} */}
-              <Grid item xs={4}>
+              {/* <Grid item xs={4}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Customers?.currency}
                 </InputLabel>
                 <UserCurrenciesComponent
                   register={register}
                   isRequired={false}
+                  defaultValue={item?.creditLimit?.currencyId}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Customers?.address}
@@ -263,6 +265,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.Customers?.save}
           </Button>
@@ -292,7 +295,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
           </Button>
         </Box>
       )}
-    </Box>
+    </FormProvider>
   );
 };
 

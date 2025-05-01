@@ -1,13 +1,16 @@
+"use client";
 import { useApolloClient } from "@apollo/client";
-import { Autocomplete, TextField, useTheme } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { debounce } from "lodash";
+
 import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
 interface IProps {
   value?: string | number;
   name?: string;
   getValue?: (data: any) => void;
   register?: any;
+  placeholder: string;
+  defaultValue?:any
 }
 
 const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
@@ -15,15 +18,13 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
   value,
   name,
   register,
+  placeholder,
+  defaultValue
 }) => {
-  const theme = useTheme();
   const client = useApolloClient();
   const [optionsAuto, setOptionAuto] = useState<{
     page: number;
-    options: {
-      id: string;
-      name: string;
-    }[];
+    options: any[];
   }>({
     page: 1,
     options: [],
@@ -52,7 +53,11 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
       );
       setOptionAuto((prevState) => ({
         page: prevState?.page + 1,
-        options: duplicate,
+        options: duplicate?.map((item) => ({
+          ...item,
+          id: item?._id,
+          label: item?.name,
+        })),
       }));
     } catch (error: any) {
       console.log(error.message);
@@ -64,69 +69,34 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
       getProductsFunction();
     }
   }, []);
-  const debounceFunction = debounce(async (data: string) => {
-    if (data) {
-      getProductsFunction(data);
-    }
-  }, 500);
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debounceFunction(event?.currentTarget?.value);
-  };
+
   const handleSelectItem = (event: any, value: any) => {
     if (getValue) getValue(value);
   };
+  
   return (
     <>
-      {optionsAuto?.options?.length > 0 ? (
-        <Autocomplete
-          disablePortal={false}
-          id="combo-box-demo"
-          options={optionsAuto?.options}
-          // defaultValue={optionsAuto?.options?.[0]}
-          onChange={handleSelectItem}
-          getOptionLabel={(option: any) => option.name}
-          // value
-          fullWidth
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              {...register(name, { required: true })}
-              onChange={handleChange}
-              name={name}
-              fullWidth={true}
-              sx={{
-                maxWidth: "90%",
-
-                //   "& .MuiInputBase-sizeSmall": {
-                //     paddingRight: "10px",
-                //   },
-                //   "& .MuiAutocomplete-endAdornment": {
-                //     display: "none",
-                //   },
-                //   "& label.Mui-focused": {
-                //     color: "white",
-                //   },
-                //   "& .MuiInput-underline:after": {
-                //     borderColor: theme.palette.grey[200],
-                //   },
-                //   "& .MuiOutlinedInput-root": {
-                //     paddingRight: "10px !important",
-                //     "& fieldset": {
-                //       borderColor: "white",
-                //     },
-                //     "&:hover fieldset": {
-                //       borderColor: "white",
-                //     },
-                //     "&.Mui-focused fieldset": {
-                //       borderColor: theme.palette.grey[200],
-                //     },
-                //   },
-              }}
-              size="small"
-            />
-          )}
-        />
-      ) : null}
+      {optionsAuto?.options?.length > 0 && <Autocomplete
+        disablePortal={false}
+        {...register("employee", { required: true })}
+        onChange={handleSelectItem}
+        fullWidth
+        size="small"
+        id="combo-box-demo"
+        options={optionsAuto?.options}
+        defaultValue={
+          (optionsAuto?.options && defaultValue?._id)
+            ? optionsAuto?.options?.filter((item) =>defaultValue?._id === item?._id)?.[0]
+            : {}
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder={placeholder}
+            {...register("employee", { required: true })}
+          />
+        )}
+      />}
     </>
   );
 };

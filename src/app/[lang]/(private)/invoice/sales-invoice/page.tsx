@@ -11,7 +11,7 @@ export default async function SalesInvoicePage({
   const tra = await getDictionary(lang);
   return (
     <Box>
-      <Container t={tra} />
+      <Container t={tra}  lang={lang}/>
     </Box>
   );
 }

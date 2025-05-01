@@ -135,7 +135,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
 
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
+      {/* {loadingPage && <CircularProgressComponent />} */}
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
@@ -166,7 +166,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Expenses?.Expense_Name}
@@ -188,6 +188,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.Expenses?.Save}
           </Button>

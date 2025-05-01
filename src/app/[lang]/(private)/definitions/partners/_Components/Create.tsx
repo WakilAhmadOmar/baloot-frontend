@@ -53,7 +53,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
     getFieldState,
   } = useForm();
   const theme = useTheme();
-  const cleint = useApolloClient();
+  const client = useApolloClient();
   const [openDialog, setOpenDialog] = useState(isUpdate);
   const [loadingPage, setLoadingPage] = useState(false);
 
@@ -78,7 +78,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
     if (item?._id) {
       setValue("firstName", item?.firstName);
       setValue("lastName", item?.lastName);
-      setValue("amount", item?.invest?.amount);
+      setValue("invest", item?.invest?.amount);
       setValue("currency", item?.invest?.currencyId?._id);
       setValue("phoneNumber", item?.phoneNumber);
     }
@@ -95,10 +95,10 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
         ...(data?.phoneNumber ? { phoneNumber: data?.phoneNumber } : {}),
         phoneNumber: data?.phoneNumber,
 
-        ...(data?.amount
+        ...(data?.invest
           ? {
               invest: {
-                amount: parseFloat(data?.amount),
+                amount: parseFloat(data?.invest),
                 currencyId: data?.currency,
               },
             }
@@ -111,7 +111,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
       if (isUpdate) {
         const {
           data: { updatePartner },
-        } = await cleint.mutate({
+        } = await client.mutate({
           mutation: UPDATE_PARTNER,
           variables,
         });
@@ -123,7 +123,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
       } else {
         const {
           data: { addPartner },
-        } = await cleint.mutate({
+        } = await client.mutate({
           mutation: ADD_PARTNER,
           variables,
         });
@@ -149,10 +149,8 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
       open: false,
     }));
   };
-
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
@@ -185,7 +183,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2} mt={"1rem"}>
+            <Grid container spacing={2} mt={"1rem"} sx={{mt:"1rem"}}>
               <Grid item md={6} xs={12}>
                 <InputLabel sx={{ paddingBottom: "5px" }} required>
                   <Typography variant="subtitle2" component={"samp"}>
@@ -222,8 +220,8 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                   fullWidth
                   type="number"
                   size="small"
-                  {...register("amount", { required: false })}
-                  name="amount"
+                  {...register("invest", { required: false })}
+                  name="invest"
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -274,6 +272,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.partner?.save}
           </Button>

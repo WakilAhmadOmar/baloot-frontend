@@ -75,7 +75,9 @@ const CustomerList: React.FC<IProps> = ({
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     page: number
-  ) => {};
+  ) => {
+    console?.log("page" , page)
+  };
 
   const handleCloseError = () => {
     setHandleError((pre) => ({
@@ -131,12 +133,12 @@ const CustomerList: React.FC<IProps> = ({
                   <Typography variant="caption">
                     {item?.contactNumber}
                   </Typography>
-                  <Typography variant="caption">
+                  {/* <Typography variant="caption">
                     {t?.pages?.Customers?.credit_limit}
                   </Typography>
                   <Typography variant="caption">
                     {item?.creditLimit?.amount}{item?.creditLimit?.currencyId?.symbol}
-                  </Typography>
+                  </Typography> */}
                   <Typography variant="caption">
                     {t?.pages?.Customers?.address}
                   </Typography>

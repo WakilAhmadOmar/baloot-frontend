@@ -129,10 +129,10 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       />
       <Collapse in={selectedList === "accounts"} timeout="auto" unmountOnExit>
         <List>
-          {/* <LinkLayout href={ lang +"/definitions/definitionUnit"} lang={lang} open={true} t={t} text={t?.layout?.customers_accounts}  />
-          <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.employees_accounts}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_fund_balances}  />
-          <LinkLayout href={"/" + lang +"/accounts/banks"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_bank_balances}  /> */}
+           <LinkLayout href={ "/"+ lang +"/accounts/customer"} lang={lang} open={true} t={t} text={t?.layout?.customers_accounts}  />
+          <LinkLayout href={"/"+ lang +"/accounts/employee"} lang={lang} open={true} t={t} text={t?.layout?.employees_accounts}  />
+          <LinkLayout href={ "/"+  lang +"/accounts/cash-box"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_fund_balances}  />
+          <LinkLayout href={"/" + lang +"/accounts/banks"} lang={lang} open={true} t={t} text={t?.layout?.Recording_past_bank_balances}  /> 
         </List>
       </Collapse>
       <ListItemComponent
@@ -166,20 +166,20 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       </Collapse>
       <ListItemComponent
         handleOpenCollapse={handleChangeCollapse}
-        name="cash_receipts_and_payments"
+        name="transactions_received_paid"
         selectedList={selectedList}
         t={t}
-        text={t?.layout?.cash_receipts_and_payments}
+        text={t?.layout?.transactions_received_paid}
         open={open}
       />
       <Collapse
-        in={selectedList === "cash_receipts_and_payments"}
+        in={selectedList === "transactions_received_paid"}
         timeout="auto"
         unmountOnExit
       >
         <List>
-          {/* <LinkLayout href={ lang +"/definitions/definitionUnit"} lang={lang} open={true} t={t} text={t?.layout?.individual_cash_collection}  />
-          <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.cash_payment_to_individuals}  />
+           <LinkLayout href={ "/"+ lang +"/transactions/receive-customer"} lang={lang} open={true} t={t} text={t?.layout?.cash_receipt_from_customer}  />
+          {/*<LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.cash_payment_to_individuals}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.cash_receipt_from_employees}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.cash_payment_to_employees}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.expense_recording}  />

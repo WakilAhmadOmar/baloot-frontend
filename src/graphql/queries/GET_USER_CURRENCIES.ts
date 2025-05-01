@@ -8,6 +8,7 @@ const GET_USER_CURRENCIES = gql`
       symbol
       isActive
       isBase
+      baseRate
       createdAt
       rate
     }

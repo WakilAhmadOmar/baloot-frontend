@@ -1,21 +1,21 @@
-"use client"
+"use client";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useApolloClient } from "@apollo/client";
-import { GET_PRODUCTS } from "../../graphql/queries/GET_PRODUCTS"
-import { useContext, useEffect, useState } from "react";
+import { GET_PRODUCTS } from "../../graphql/queries/GET_PRODUCTS";
+import { forwardRef, useContext, useEffect, useState } from "react";
 import { AppContext } from "@/provider/appContext";
-import {  useTheme } from "@mui/material";
-
-
+import { useTheme } from "@mui/material";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface IPropsProduct {
-  getProduct?: (product: any , index?:number) => void;
+  getProduct?: (product: any, index?: number) => void;
   productIds?: string[];
-  isTable?:boolean
-  index?:number
+  isTable?: boolean;
+  index?: number;
   defaultValue?: any;
-  t:any
+  t: any;
+  name?:string
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   getProduct,
@@ -23,11 +23,13 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   isTable = false,
   index,
   defaultValue,
-  t
+  name,
+  t,
 }) => {
+  const { control } = useFormContext()
   const client = useApolloClient();
-  const theme = useTheme()
-  const {setHandleError} = useContext(AppContext)
+  const theme = useTheme();
+  const { setHandleError } = useContext(AppContext);
   const [autoCompleteState, setAutoCompleteState] = useState<{
     data: any[];
     page: number;
@@ -35,9 +37,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     data: [],
     page: 1,
   });
-  const [selectedValue, setSelectedValue] = useState<any>(
-    defaultValue?.name || ""
-  );
+  const [selectedValue, setSelectedValue] = useState<any>(null);
 
   const inputStyle = {
     maxWidth: "90%",
@@ -66,7 +66,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
         borderColor: theme.palette.primary.main,
       },
     },
-  }
+  };
 
   const getCustomerFunction = async (textSearch?: string) => {
     try {
@@ -81,13 +81,16 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
         variables,
       });
       const mapData = getProducts?.product.map((item: any) => {
-        return { _id: item?._id, label: item?.name, ...item };
+        return { id: item?._id, label: item?.name, ...item };
       });
       const allCustomer = [...mapData, ...autoCompleteState?.data];
       const duplicate = allCustomer?.filter(
         (value, index, self) =>
           index === self.findIndex((t) => t._id === value._id)
       );
+      if (selectedValue === undefined) {
+        setSelectedValue(duplicate?.[0]);
+      }
       setAutoCompleteState((prevState) => ({
         ...prevState,
         page: prevState.page + 1,
@@ -106,8 +109,9 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     item: any
   ) => {
     const value = event.currentTarget?.value;
+    setSelectedValue(item);
     if (getProduct && item?._id) {
-      getProduct(item , index);
+      getProduct(item, index);
     } else {
       getCustomerFunction(value);
     }
@@ -115,22 +119,44 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
 
   useEffect(() => {
     getCustomerFunction();
+
   }, []);
+  useEffect(() => {
+    if (defaultValue && !selectedValue) {
+      setSelectedValue(defaultValue);
+    }
+  }, [defaultValue]);
   return (
-    <Autocomplete
-      disablePortal={false}
-      onChange={handleChangeCustomerSearch}
-      fullWidth
-      size="small"
-      id="combo-box-demo"
-      inputValue={selectedValue}
-      options={autoCompleteState?.data}
-      getOptionDisabled={(option: any) => {
-        const filterItems = productIds?.filter((item) => item === option?._id);
-        return (filterItems?.length as number) > 0;
-      }}
-      renderInput={(params) => <TextField {...params} placeholder={t?.invoice?.product_name} sx={isTable ? inputStyle : {}} />}
-    />
+
+            // <Controller 
+            //   name={name || "productId"}
+            //   control={control}
+            //   render={({ field: { onChange, value } }) => (
+
+                <Autocomplete
+                  disablePortal={false}
+                  // {...register("product", { required: isRequired })}
+                  onChange={handleChangeCustomerSearch}
+                  fullWidth
+                  size="small"
+                  id="auto-complete-product"
+                  options={autoCompleteState?.data}
+                  value={ selectedValue}
+                  getOptionLabel={(option: any) => option?.name ? option?.name : ""
+                  } // Specify which property to display
+                  getOptionDisabled={(option: any) => {
+                    const filterItems = productIds?.filter((item) => item === option?._id);
+                    return (filterItems?.length as number) > 0;
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      // placeholder={placeholder}
+                    />
+                  )}
+                />
+            //   )}
+            // />
   );
 };
 

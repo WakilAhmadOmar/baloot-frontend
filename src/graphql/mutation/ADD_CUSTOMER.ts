@@ -7,23 +7,6 @@ const ADD_CUSTOMER = gql`
       fullName
       contactNumber
       address
-     creditLimit{
-      amount
-      currencyId{
-      _id
-      name
-      symbol
-      }
-      }
-      credit{
-      creditType
-      amount
-      currencyId{
-      _id
-      name
-      symbol
-      }
-      }
       createdAt
     }
   }

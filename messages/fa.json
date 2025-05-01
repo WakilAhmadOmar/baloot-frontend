@@ -46,20 +46,22 @@
     "cancel": "لغو",
     "print_invoice": "چاپ فاکتور",
     "print_warehouse_receipt": "چاپ حواله گدام",
-    "reset": "تنظیم دوباره",
+    "reset": "ریست",
     "sales_invoice": "فاکتور فروش",
     "add_new_sales_invoice": "صدور فاکتور فروش جدید",
     "customer_name": "نام مشتری",
     "amount": "تعداد",
-    "consumption":" مصارفات",
+    "consumption": " مصارفات",
 
-    "customer_name_is_required":"نام مشتری حتمی است.",
-    "warehouse_is_required":"انتخاب گدام حتمی است.",
-    "currency_is_required":"انتخاب ارز حتمی است.",
-    "discount":"فیصدی تخفیف"
-    
-    
-    
+    "customer_name_is_required": "نام مشتری حتمی است.",
+    "warehouse_is_required": "انتخاب گدام حتمی است.",
+    "currency_is_required": "انتخاب ارز حتمی است.",
+    "discount": "فیصدی تخفیف",
+    "delete_title": "آیا مطمئیند این فاکتور را حذف کنید؟",
+    "delete_description": "این فاکتور حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "discount_amount":"مبلغ تخفیف",
+    "quantity":"تعداد",
+     "units":"واحدات"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -90,9 +92,9 @@
     "pre_purchase_invoice": "فاکتور پیش خرید",
     "pre_sales_invoice": "فاکتور پیش فروش",
     "rating_factor": "فاکتور نرخ دهی",
-    "cash_receipts_and_payments": "دریافت و پرداخت های نقدی",
-    "individual_cash_collection": "دریافت نقد از اشخاص",
-    "cash_payment_to_individuals": "پرداخت نقد به اشخاص",
+    "transactions_received_paid": "دریافت و پرداخت های نقدی",
+    "cash_receipt_from_customer": "دریافت نقد از مشتری",
+    "cash_payment_to_customer": "پرداخت نقد به مشتری",
     "cash_receipt_from_employees": "دریافت نقد از کارمندان",
     "cash_payment_to_employees": "پرداخت نقد به کارمندان",
     "expense_recording": "ثبت مصارف",
@@ -224,7 +226,19 @@
       "delete_title": "آیا مطمئیند این بانک را حذف کنید؟",
       "delete_description": "این بانک حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "no_product_yet_title": "هیچ بانک ثبت نشده است",
-      "no_product_yet_discription": "شما هیچ بانک در سیستم ما ندارید. برای افزودن یا وارد کردن بانک ها خود روی دکمه زیر کلیک کنید."
+      "no_product_yet_discription": "شما هیچ بانک در سیستم ما ندارید. برای افزودن یا وارد کردن بانک ها خود روی دکمه زیر کلیک کنید.",
+      "list_of_previous_bank_accounts": "لیست حساب‌های گذشته بانک‌ها",
+      "account_number": "شماره حساب",
+      "phone_number": "شماره تماس",
+      "description": "توضیحات",
+      "record_previous_bank_accounts": "ثبت حساب گذشته بانک ها",
+      "bank_name": "نام بانک",
+      "previous_account": "حساب گذشته",
+      "currency": "ارز",
+      "new_currency": "ارز جدید",
+      "record_previous_balance": "ثبت موجودی گذشته",
+      "save": "ذخیره",
+      "cancel": "خیره"
     },
     "cashbox": {
       "New_Cashbox_Information": "مشخصات صندوق جدید",
@@ -241,7 +255,10 @@
       "delete_title": "آیا مطمئیند این صندق را حذف کنید؟",
       "delete_description": "این صندق حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "no_product_yet_title": "هیچ صندوق ثبت نشده است",
-      "no_product_yet_discription": "شما هیچ صندوق در سیستم ما ندارید. برای افزودن یا وارد کردن صندوق ها خود روی دکمه زیر کلیک کنید."
+      "no_product_yet_discription": "شما هیچ صندوق در سیستم ما ندارید. برای افزودن یا وارد کردن صندوق ها خود روی دکمه زیر کلیک کنید.",
+      "record_previous_cashbox_accounts": "ثبت حساب گذشته صندوق  ها",
+      "previous_account": "حساب گذشته",
+      "list_of_previous_cashbox_accounts": "لیست حساب‌های گذشته صندوق ها"
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -275,7 +292,9 @@
       "delete_title": "آیا مطمئیند این مشتری را حذف کنید؟",
       "delete_description": "این مشتری حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "no_product_yet_title": "هیچ مشتری ثبت نشده است",
-      "no_product_yet_discription": "شما هیچ مشتری در سیستم ما ندارید. برای افزودن یا وارد کردن مشتریان خود روی دکمه زیر کلیک کنید."
+      "no_product_yet_discription": "شما هیچ مشتری در سیستم ما ندارید. برای افزودن یا وارد کردن مشتریان خود روی دکمه زیر کلیک کنید.",
+      "list_of_customer_accounts": "لیست حساب های مشتریان",
+      "record_previous_customer_accounts": "ثبت حساب گذشته  مشتریان"
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -315,7 +334,9 @@
       "currency": "ارز",
       "save": "ذخیره",
       "no_product_yet_title": "هیچ کامند ثبت نشده است",
-      "no_product_yet_discription": "شما هیچ کارمند در سیستم ما ندارید. برای افزودن یا وارد کردن کارمندان خود روی دکمه زیر کلیک کنید."
+      "no_product_yet_discription": "شما هیچ کارمند در سیستم ما ندارید. برای افزودن یا وارد کردن کارمندان خود روی دکمه زیر کلیک کنید.",
+      "list_of_employee_accounts": "لیست حساب های کارمندان",
+      "record_previous_employee_accounts": "ثبت حساب گذشته  کارمندان"
     },
     "income": {
       "new_income": "عوایید جدید",
@@ -370,8 +391,30 @@
       "nothing_found": "چیزی یافت نشد",
       "address": "آدرس",
       "delete_title": "آیا مطمئیند این گدام را حذف کنید؟",
-      "delete_description": "این گدام حذف شود دوباره به آن دسترسی نخواهید داشت."
+      "delete_description": "این گدام حذف شود دوباره به آن دسترسی نخواهید داشت.",
+      "initial_inventory_entry_in_warehouse":"ثبت اول دوره اجناس در گدام ",
+      "back":"بازگشت"
     }
+  },
+  "transactions":{
+    "cash_receipt_from_customer": "دریافت نقد از مشتری",
+    "cash_payment_to_customer": "پرداخت نقد به مشتری",
+    "cash_receipt_from_employees": "دریافت نقد از کارمندان",
+    "cash_payment_to_employees": "پرداخت نقد به کارمندان",
+   "customer_cash_receipt" :"ثبت دریافت نقد از مشتری",
+   "title_delete_message":"آیا مطمئیند این حساب را حذف کنید؟",
+   "description_delete_message":"این حساب حذف شود دوباره به آن دسترسی نخواهید داشت.",
+   "received_amount":"مقدار دریافتی",
+   "calculated_amount":"مقدار محاسبه شده",
+   "description":"توضیحات",
+   "recipient":"دریافت کننده",
+   "full_name_of_customer":"نام کامل مشتری",
+   "currency":"ارز",
+   "calculated_currency":"ارز محاسبه شده",
+   "cancel":"لغو",
+   "save":"ذخیره",
+   "banks":"بانک‌ها",
+   "cashboxes":"صندق ها"
   },
   "numberToWord": {
     "zero": " صفر",

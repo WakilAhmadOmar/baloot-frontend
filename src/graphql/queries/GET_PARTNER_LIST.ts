@@ -15,7 +15,6 @@ const GET_PARNER_LIST = gql`
             symbol
           }
         }
-        investPercentage
         phoneNumber
         createdAt
       }

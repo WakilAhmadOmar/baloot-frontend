@@ -12,21 +12,30 @@ import {
   Grid,
   InputLabel,
 } from "@mui/material";
-import { CloseSquare } from "iconsax-react";
-import { useContext, useState } from "react";
+import { CloseCircle, CloseSquare } from "iconsax-react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import { AppContext } from "@/provider/appContext";
+import SelectWithInput from "@/components/search/SelectWIthInput";
+import BankAutoComplete from "@/components/Auto/bankAutoComplete";
+import { useApolloClient } from "@apollo/client";
+import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_OF_CREDIT";
 
 interface IPropsAddCashBox {
   isEmptyPage: boolean;
-  t:any
+  t: any;
+  onUpdateBank?: (bank: any) => void;
 }
 
-const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
+const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
+  isEmptyPage,
+  t,
+  onUpdateBank,
+}) => {
+  const client = useApolloClient();
   const {
     register,
     handleSubmit,
@@ -39,28 +48,123 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
-  const {setHandleError} = useContext(AppContext)
-
+  const { setHandleError } = useContext(AppContext);
+  const [bankDetails, setBankDetails] = useState<any>();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
+    setBankDetails(null);
   };
 
+  const handleAddNewCredit = () => {
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      credit: [
+        ...(prevState?.credit?.length > 0 ? prevState?.credit : []),
+        {
+          amount: 0,
+          creditType: "",
+          currencyId: {
+            _id: "",
+            name: "",
+            symbol: "",
+          },
+        },
+      ],
+    }));
+  };
+  const handleDeleteCredit = (event: MouseEvent) => {
+    const deleteIndex = parseInt(event?.currentTarget?.id);
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      credit: prevState?.credit?.filter(
+        (item: any, index: number) => index !== deleteIndex
+      ),
+    }));
+  };
+
+  const handleChangeCredit = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    index: number
+  ) => {
+    const name = event?.target?.name;
+    const value = event?.target?.value;
+    setBankDetails((prevState: any) => {
+      const credit = prevState?.credit?.map((item: any, inItem: number) => {
+        if (index == inItem) {
+          return {
+            ...item,
+            ...(name?.includes("amount") ? { amount: value } : {}),
+            ...(name?.includes("creditType") ? { creditType: value } : {}),
+          };
+        } else return item;
+      });
+      return {
+        ...prevState,
+        credit,
+      };
+    });
+  };
   const onSubmitFunction = async (data: any) => {
-    console.log("data", data);
+    try {
+      setLoadingPage(true);
+      const variables = {
+        creditObject: bankDetails?.credit?.map((item: any, index: number) => ({
+          amount: parseFloat(item?.amount),
+          creditType: item?.creditType,
+          currencyId: item?.currencyId?._id,
+        })),
+        description: data?.description,
+        accountType: "Bank",
+        accountId: data?.bank,
+      };
+
+      const {
+        data: { addFirstPeriodOfCredit },
+      } = await client.mutate({
+        mutation: ADD_FIRST_PERIOD_OF_CREDIT,
+        variables,
+      });
+      if (addFirstPeriodOfCredit?.message ) {
+        setHandleError({
+          message:addFirstPeriodOfCredit?.message,
+          type:"success",
+          open:true
+        });
+      }
+      setLoadingPage(false);
+      handleOpenDialogFunction();
+      setBankDetails(null);
+    } catch (error: any) {
+      setLoadingPage(false);
+      setHandleError({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
   };
 
-
+  const handleGetBank = (data: any) => {
+    setValue("bank", data?._id);
+    setBankDetails(data);
+  };
+  const handleSelectCurrency = (currency: any, index: number) => {
+    const allCredit = bankDetails?.credit;
+    allCredit[index].currencyId = currency;
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      credit: allCredit,
+    }));
+  };
   return (
-    <Box>
-      {loadingPage && <CircularProgressComponent />}
-  
+    <>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir="rtl"
+        dir={t?.home?.dir}
         fullWidth
       >
         <DialogTitle
@@ -72,7 +176,9 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>افزودن حساب بانک </Typography>
+          <Typography>
+            {t?.pages?.bank?.record_previous_bank_accounts}
+          </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -80,60 +186,108 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ my: "2rem" }}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  نام کامل بانک
+                  {t?.pages?.bank?.bank_name}
                 </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("name", { required: true })}
-                  name="name"
+                <BankAutoComplete
+                  placeholder="Banks"
+                  register={register}
+                  getCashBox={handleGetBank}
                 />
               </Grid>
-              <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  دیبت
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("cashierPhoneNumber", { required: true })}
-                  name="cashierPhoneNumber"
-                />
+            </Grid>
+            {bankDetails?.credit?.length > 0 && (
+              <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
+                <Grid item xs={7}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.pages?.bank?.previous_account}
+                  </InputLabel>
+                </Grid>
+                <Grid item xs={4}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.pages?.bank?.currency}
+                  </InputLabel>
+                </Grid>
               </Grid>
-
-              <Grid item xs={6}>
-                <UserCurrenciesComponent register={register} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  کردیت
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("cashierPhoneNumber", { required: true })}
-                  name="cashierPhoneNumber"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <UserCurrenciesComponent register={register} />
-              </Grid>
+            )}
+            {bankDetails?.credit?.map((item: any, index: any) => {
+              return (
+                <Grid
+                  container
+                  spacing={2}
+                  key={"credit" + index}
+                  sx={{ mb: "1.5rem" }}
+                >
+                  <Grid item xs={7}>
+                    <SelectWithInput
+                      register={register}
+                      inputName={"amount" + index}
+                      selectName={"creditType" + index}
+                      defaultValue={item?.creditType}
+                      inputDefaultValue={item?.amount}
+                      data={[
+                        { name: "Credit", value: "Credit" },
+                        { name: "Debit", value: "Debit" },
+                      ]}
+                      onChange={(
+                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      ) => handleChangeCredit(event, index)}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <UserCurrenciesComponent
+                      register={register}
+                      defaultValue={item?.currencyId}
+                      onSelected={(currency) =>
+                        handleSelectCurrency(currency, index)
+                      }
+                    />
+                  </Grid>
+                  {index > 0 && (
+                    <Grid item xs={1}>
+                      <IconButton
+                        color="primary"
+                        type="button"
+                        onClick={handleDeleteCredit}
+                        id={`${index}`}
+                      >
+                        <CloseCircle
+                          size={18}
+                          color={theme.palette.grey["A700"]}
+                        />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </Grid>
+              );
+            })}
+            <Grid item xs={12} display={"grid"} justifyContent={"end"}>
+              <Button
+                color="primary"
+                type="button"
+                variant="outlined"
+                onClick={handleAddNewCredit}
+                // startIcon={<Add size={25} color={theme.palette.grey["A700"]} />}
+              >
+                {t?.pages?.bank?.new_currency}
+              </Button>
+            </Grid>
+            <Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  توضیحات
+                  {t?.pages?.bank?.description}
                 </InputLabel>
                 <TextField
                   fullWidth
                   multiline
                   rows={4}
                   size="small"
-                  {...register("address", { required: true })}
-                  name="address"
+                  {...register("description", { required: false })}
+                  name="description"
                 />
               </Grid>
             </Grid>
@@ -146,19 +300,28 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
-            ذخیره
+            {t?.pages?.bank?.save}
           </Button>
-          <Button variant="outlined">لغو</Button>
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t?.pages?.bank?.cancel}
+          </Button>
         </DialogActions>
       </Dialog>
       {isEmptyPage ? (
-        <Box className={"empty_page_content"}>
+        <Box
+          className={"empty_page_content"}
+          width={"100%"}
+          height={"70vh"}
+          alignItems={"center"}
+          display={"grid"}
+        >
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title}
-            discription={t.product.no_product_yet_discription}
-            buttonText={t.product.add_new_product}
+            title={t.pages?.bank?.no_product_yet_title}
+            discription={t.pages?.bank?.no_product_yet_discription}
+            buttonText={t.pages?.bank.Create_new_Bank}
             onClick={handleOpenDialogFunction}
           />
         </Box>
@@ -169,11 +332,11 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
             color="primary"
             onClick={handleOpenDialogFunction}
           >
-            ثبت موجودی گذشته
+            {t?.pages?.bank?.record_previous_balance}
           </Button>
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 

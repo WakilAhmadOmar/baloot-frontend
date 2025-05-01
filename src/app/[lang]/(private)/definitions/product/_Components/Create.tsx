@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm , FormProvider } from "react-hook-form";
 //   import UploadComponent from "../muiComponent/uploadComponent";
 import SnackbarComponent from "@/components/snackbarComponent";
 import { useApolloClient } from "@apollo/client";
@@ -45,6 +45,9 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
   isEmptyPage,
   t,
 }) => {
+  const method  = useForm();
+  const theme = useTheme();
+  const cleint = useApolloClient();
   const {
     register,
     handleSubmit,
@@ -53,9 +56,8 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
     getValues,
     setValue,
     getFieldState,
-  } = useForm();
-  const theme = useTheme();
-  const cleint = useApolloClient();
+    
+  } = method
 
   const [openDialog, setOpenDialog] = useState(isUpdate);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -166,7 +168,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
           : {}),
         ...(data?.barcode ? { barcode: data?.barcode } : {}),
         // isNewProduct: data?.isNewProduct === "newProduct",
-        currencyId: data?.currency,
+        currencyId: data?.currencyId,
         baseMeasureAmount: 10,
       },
     };
@@ -247,8 +249,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
     setSelectedUnitProduct(newState);
   };
   return (
-    <Box>
-      {loadingPage && <CircularProgressComponent />}
+    <FormProvider {...method}>
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
@@ -279,7 +280,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12} mt={2}>
                 {/* <Grid container spacing={2}> */}
                   {/* <Grid item mt={2} xs={4}>
@@ -394,7 +395,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                   {t?.product?.currency}
                 </InputLabel>
                 <UserCurrenciesComponent
-                  register={register}
+                  // register={register}
                   defaultValue={item?.currencyId?._id}
                 />
               </Grid>
@@ -442,6 +443,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.product?.save}
           </Button>
@@ -473,7 +475,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
           )}
         </Box>
       )}
-    </Box>
+    </FormProvider>
   );
 };
 

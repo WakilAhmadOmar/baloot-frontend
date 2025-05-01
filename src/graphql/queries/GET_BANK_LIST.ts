@@ -5,6 +5,8 @@ const GET_BANK_LIST = gql`
     getBankList(page: $page, searchTerm: $searchTerm) {
      bank{
       _id
+      createdAt
+      
       credit{
         creditType
         amount

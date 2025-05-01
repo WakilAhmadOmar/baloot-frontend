@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm ,FormProvider} from "react-hook-form";
 import { useApolloClient } from "@apollo/client";
 import SnackbarComponent from "@/components/snackbarComponent";
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
@@ -45,7 +45,8 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
   isEmptyPage,
   t,
 }) => {
-  const { register, handleSubmit, setValue } = useForm();
+  const method = useForm()
+  const { register, handleSubmit, setValue } = method;
   const theme = useTheme();
 
   const cleint = useApolloClient();
@@ -174,8 +175,7 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
     setEmployee(employee);
   };
   return (
-    <Box>
-      {loadingPage && <CircularProgressComponent />}
+    <FormProvider {...method}>
       <SnackbarComponent
         status={handleError?.status}
         open={handleError?.open}
@@ -206,7 +206,7 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.cashbox?.Cashbox_Name}
@@ -223,6 +223,7 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
                   {t?.pages?.cashbox?.Cashier}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
+                placeholder=""
                   register={register}
                   name="cashier"
                   getValue={handleGetEmployeeFunction}
@@ -280,6 +281,7 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.pages?.cashbox?.Save}
           </Button>
@@ -309,7 +311,7 @@ const CreateCashBox: React.FC<IPropsCreateCashBox> = ({
           </Button>
         </Box>
       )}
-    </Box>
+    </FormProvider>
   );
 };
 

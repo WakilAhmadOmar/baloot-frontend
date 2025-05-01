@@ -142,7 +142,6 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
 
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
       {productUnits?.length > 0 && (
         <Typography variant="h3" mb={2}>
           {t?.pages?.unit.define_units}
@@ -222,7 +221,7 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} >
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
@@ -252,6 +251,7 @@ const DefinitionUnit:React.FC<IProps> = ({t}) => {
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
            {t?.pages?.unit?.save} 
           </Button>

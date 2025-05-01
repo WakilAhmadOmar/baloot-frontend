@@ -157,7 +157,6 @@ const CategoryProductPage:React.FC<IProps> = ({t}) => {
   };
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
       {(productUnits?.length > 0 || loadingPage) && (
         <Typography variant="h3" mb={2}>
           {t?.product?.categories}
@@ -242,7 +241,7 @@ const CategoryProductPage:React.FC<IProps> = ({t}) => {
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
@@ -272,6 +271,7 @@ const CategoryProductPage:React.FC<IProps> = ({t}) => {
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={loadingPage}
           >
             {t?.product?.save}
           </Button>
