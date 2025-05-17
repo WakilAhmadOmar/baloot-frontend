@@ -7,13 +7,13 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetReceiveListQuery({page}:{page:number}) {
+export function useGetReceiveListQuery({page , payerType}:{page:number , payerType:"Customer" | "Employee"}) {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getReceiveList  }} = await client.query({
         query:GET_RECEIVE_LIST,
-        variables:{page},
+        variables:{page, payerType},
         fetchPolicy:"network-only"
       })
      return getReceiveList
@@ -25,7 +25,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [RECEIVE_LIST_QUERY_KEY , page ],
+      queryKey: [RECEIVE_LIST_QUERY_KEY , page, payerType ],
     })
   }
 

@@ -116,8 +116,8 @@ import {
               <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
                 <Typography variant="caption"> {t?.pages?.cashbox?.Current_Balance}</Typography>
                 <Typography variant="caption">
-                  {item?.cridet?.[0]?.amount}{" "}
-                  {item?.cridet?.[0]?.currencyId?.name}
+                  {item?.credit?.[0]?.amount}{" "}
+                  {item?.credit?.[0]?.currencyId?.name}
                 </Typography>
               </Box>
               <Box display={"grid"} gridTemplateColumns={"20rem auto"}>

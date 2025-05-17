@@ -1,7 +1,4 @@
-import TextField from "@mui/material/TextField";
-import Autocomplete, {
-  AutocompleteChangeDetails,
-} from "@mui/material/Autocomplete";
+"use client";
 import { useApolloClient } from "@apollo/client";
 import { MenuItem, Select, useTheme } from "@mui/material";
 import { GET_SAFE_LIST } from "../../graphql/queries/GET_SAFE_LIST";
@@ -13,7 +10,6 @@ import { Controller, useFormContext } from "react-hook-form";
 interface IPropsProduct {
   getCashBox?: (product: any) => void;
   placeholder?: string;
-  register?: any;
   isRequired?: boolean;
   name?:string
 }
@@ -25,7 +21,6 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
 }) => {
   const client = useApolloClient();
   const {
-    register,
     control,
     formState: { errors },
   } = useFormContext();

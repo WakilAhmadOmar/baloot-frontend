@@ -19,11 +19,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, Edit } from "iconsax-react";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useContext, useMemo, useState } from "react";
 import { FormProvider, Resolver, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
+import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/update-receive-mutation";
+import { AppContext } from "@/provider/appContext";
 
 type UpdateFormProps = {
   t: any;
@@ -37,44 +39,75 @@ interface FormValues {
   amountCalculated?: number;
   receiver: string;
   invoiceType: string;
-  billId: string;
-  customerId: string;
+  payerId: string;
+  receiverType?: string;
+  description?:string
 }
 const UpdateForm = ({ t, item }: UpdateFormProps) => {
- const defaultValues = useMemo(()=> {
-    return{
+  const defaultValues = useMemo(() => {
+    return {
       amount: item?.amount || 0,
       currencyId: item?.currencyId?._id || "",
       calculatedTo: item?.calculatedTo?._id || "",
       amountCalculated: item?.amountCalculated || 0,
       receiver: item?.receiver?._id || "",
-      invoiceType: "",
-      billId: "",
-      customerId: item?.customerId?._id || "", // Add this line
-
-    }
- },[item])
+      invoiceType: item?.invoiceType || "",
+      payerId: item?.customerId?._id || "", // Add this line
+      receiverType: item?.receiverType || "",
+      description:item?.description
+    };
+  }, [item]);
 
   const methods = useForm<FormValues>({
     defaultValues,
-     resolver: yupResolver(useSchemaCrateForm(t)) as Resolver<FormValues, any> ,
+    resolver: yupResolver(useSchemaCrateForm(t)) as Resolver<FormValues, any>,
   });
   const theme = useTheme();
+  const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
-  const { handleSubmit, register } = methods;
-  const [accountType, setAccountType] = useState("banks");
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = methods;
+  const [receiverType, setReceiverType] = useState(item?.receiverType);
+
+  const { mutate, isLoading } = useUpdateReceiveMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
     value: string
   ) => {
-    setAccountType(value);
+    setReceiverType(value);
   };
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
 
-  const onSubmitFunction = () => {};
+  const onSubmitFunction = (data: FormValues) => {
+    mutate(
+      {
+        receiveId: item?._id,
+        receiveObject: {
+          ...data,
+          receiverType,
+          payerType: "Customer",
+        },
+      },
+      {
+        onSuccess: () => {
+          handleOpenDialogFunction();
+          setHandleError({
+            open: true,
+            message: "Update successfully",
+            type: "success",
+          });
+        },
+      }
+    );
+  };
+
+  console.log("errors", errors);
   return (
     <Box>
       <IconButton onClick={handleOpenDialogFunction}>
@@ -115,7 +148,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                   >
                     {t?.transactions?.full_name_of_customer}
                   </InputLabel>
-                  <CustomerAutoComplete />
+                  <CustomerAutoComplete name="payerId" />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
@@ -164,27 +197,39 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                   <RadioGroup
                     onChange={onChangeHandler}
                     row
-                    value={accountType}
+                    value={receiverType}
                   >
                     <FormControlLabel
-                      value="banks"
+                      value="Bank"
                       control={<Radio />}
-                      label={t?.transactions?.banks}
+                      label={t?.transactions?.bank}
                     />
                     <FormControlLabel
-                      value="cashboxes"
+                      value="Safe"
                       control={<Radio />}
-                      label={t?.transactions?.cashboxes}
+                      label={t?.transactions?.cashbox}
                     />
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {accountType === "banks" && (
+                  {receiverType === "Bank" && (
                     <BankAutoComplete name="receiver" />
                   )}
-                  {accountType === "cashboxes" && (
+                  {receiverType === "Safe" && (
                     <CashBoxAutoComplete name="receiver" />
                   )}
+                </Grid>
+                <Grid item xs={12}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.transactions?.description}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    size="small"
+                    {...register("description", { required: true })}
+                  />
                 </Grid>
               </Grid>
             </DialogContent>
@@ -198,9 +243,9 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
               <Button
                 color="primary"
                 variant="contained"
-                // type="submit"
+                type="submit"
                 onClick={handleSubmit(onSubmitFunction)}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 {t?.transactions?.save}
               </Button>

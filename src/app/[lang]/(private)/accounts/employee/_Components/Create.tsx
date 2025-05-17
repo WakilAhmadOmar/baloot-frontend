@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
 import { ChangeEvent, MouseEvent, useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
@@ -36,15 +36,13 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
   onUpdateEmployee,
 }) => {
   const client = useApolloClient();
+  const methods = useForm();
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    getValues,
     setValue,
-    getFieldState,
-  } = useForm();
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -62,7 +60,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
         ...(prevState?.credit?.length > 0 ? prevState?.credit : []),
         {
           amount: 0,
-          creditType: "",
+          creditType: "Credit",
           currencyId: {
             _id: "",
             name: "",
@@ -158,7 +156,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
     }));
   };
   return (
-    <>
+    <FormProvider {...methods}>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -195,8 +193,8 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
                   placeholder="Banks"
-                  register={register}
                   getValue={handleGetBank}
+                  name={"employeeId"}
                 />
               </Grid>
             </Grid>
@@ -240,7 +238,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                      register={register}
+                     name="currencyId"
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)
@@ -336,7 +334,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
           </Button>
         </Box>
       )}
-    </>
+    </FormProvider>
   );
 };
 

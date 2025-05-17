@@ -1,36 +1,39 @@
 import { gql } from "@apollo/client";
 
 const GET_RECEIVE_LIST = gql`
-  query GetReceiveList($page: Int) {
-    getReceiveList(page: $page) {
-      receive {
+query Receive($payerType: PayerTypeForReceiveEnum!, $page: Int) {
+  getReceiveList(payerType: $payerType, page: $page) {
+    receive {
+      _id
+      payerType
+      receiver {
         _id
-        receiver {
-          _id
-          name
-        }
-
-        amount
-        currencyId {
-          _id
-          name
-          symbol
-        }
-        customerId {
-          _id
-          fullName
-        }
-
-        calculatedTo {
-          _id
-          name
-          symbol
-        }
-        amountCalculated
-        createdAt
+        name
       }
-      count
+      payerId {
+        _id
+        name
+        fullName
+      }
+      currencyId {
+        _id
+        name
+        symbol
+      }
+      amount
+      calculatedTo {
+        name
+        _id
+        symbol
+      }
+      amountCalculated
+      invoiceType
+      description
+      receiverType
+      createdAt
     }
+    count
   }
+}
 `;
 export { GET_RECEIVE_LIST };

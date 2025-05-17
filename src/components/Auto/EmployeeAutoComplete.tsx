@@ -1,26 +1,30 @@
 "use client";
 import { useApolloClient } from "@apollo/client";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
+import { Controller, useFormContext } from "react-hook-form";
 interface IProps {
   value?: string | number;
   name?: string;
   getValue?: (data: any) => void;
-  register?: any;
   placeholder: string;
-  defaultValue?:any
+  defaultValue?: any;
 }
 
 const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
   getValue,
   value,
   name,
-  register,
   placeholder,
-  defaultValue
+  defaultValue,
 }) => {
+  const {
+    register,
+    formState: { errors },
+    control,
+  } = useFormContext();
   const client = useApolloClient();
   const [optionsAuto, setOptionAuto] = useState<{
     page: number;
@@ -73,10 +77,10 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
   const handleSelectItem = (event: any, value: any) => {
     if (getValue) getValue(value);
   };
-  
+
   return (
     <>
-      {optionsAuto?.options?.length > 0 && <Autocomplete
+      {/* {optionsAuto?.options?.length > 0 && <Autocomplete
         disablePortal={false}
         {...register("employee", { required: true })}
         onChange={handleSelectItem}
@@ -96,7 +100,39 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
             {...register("employee", { required: true })}
           />
         )}
-      />}
+      />} */}
+      {optionsAuto?.options?.length > 0 && (
+        <Controller
+          name={name || "employeeId"}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              fullWidth
+              size={"small"}
+              value={value}
+              // placeholder={placeholder}
+              // options={PROGRAM_STATUS}
+              // placeholder="Please select status"
+              error={!!errors?.[name || "employeeId"]}
+              // helperText={errors?.currencyId?.message}
+              required
+              onChange={onChange}
+            >
+              {optionsAuto?.options?.map((item) => {
+                return (
+                  <MenuItem
+                    key={item?._id}
+                    value={item?._id}
+                    sx={{ direction: "rtl" }}
+                  >
+                    {item?.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          )}
+        />
+      )}
     </>
   );
 };

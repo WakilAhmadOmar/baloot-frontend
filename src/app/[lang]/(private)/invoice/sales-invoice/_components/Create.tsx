@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { CloseSquare } from "iconsax-react";
-import { forwardRef, useContext, useState } from "react";
+import { forwardRef, useCallback, useContext, useState } from "react";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import DataTable from "./Table";
 import { useForm , FormProvider } from "react-hook-form";
@@ -59,6 +59,7 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
       handleSubmit,
       formState: { errors },
       setError,
+      reset
     } = methods;
   // const {
   //   register,
@@ -95,6 +96,7 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
   // };
   const onSubmitFunction = async (data: CreateFormSchema) => {
     setLoadingPage(true);
+    console.log("allProduct" ,rows)
     try {
       const variables = {
         sellBillObject: {
@@ -112,7 +114,7 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
                 entrepotId: item?.warehouse?._id,
                 measureId: data?.measureId?._id,
                 pricePerMeasure: data?.sellPrice,
-                productId: item?._id,
+                productId: item?._id
               }));
             return {
               ...allProduct?.[0],
@@ -148,7 +150,10 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
       });
     }
   };
-  console.log("errors", errors);
+  const resetInvoiceFunction = useCallback(() => {
+    reset()
+    setRows(null)
+  },[])
   return (
     <FormProvider {...methods} >
 
@@ -221,12 +226,12 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
               />
             </Grid2>
           </Grid2>
-          <DataTable t={t} register={register} />
+          <DataTable t={t}  />
         </DialogContent>
         <DialogActions>
           <Box display={"flex"} justifyContent="space-between" width={"100%"}>
             <Box display="flex" columnGap={"1rem"}>
-              <Button variant="outlined">{t?.invoice?.reset}</Button>
+              <Button variant="outlined"onClick={resetInvoiceFunction}>{t?.invoice?.reset}</Button>
               <Button variant="outlined" onClick={handleOpenDialogBox}>
                 {t?.invoice?.cancel}
               </Button>

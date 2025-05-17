@@ -230,7 +230,8 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
             measureId:measureItem?.measureId?._id,
             amountOfProduct:measureItem?.amountOfProduct
           }))
-        }))
+        })),
+        isFirstPeriodWare:true
       }
       const { data : { addWareToEntrepot }} = await client.mutate({
         mutation:ADD_WARE_TO_ENTREPOT,

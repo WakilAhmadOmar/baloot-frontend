@@ -89,7 +89,10 @@ const getUserCurrenciesFunction = async () => {
             error={!!errors?.currencyId}
             // helperText={errors?.currencyId?.message}
             required
-            onChange={onChange}
+            onChange={(event)=> {
+              onChange(event);
+              handleChange(event)
+            }}
           >
                   {userCurrenciesState?.map((item) => {
             return (

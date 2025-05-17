@@ -12,9 +12,9 @@ import {
   Grid,
   InputLabel,
 } from "@mui/material";
-import {  CloseCircle, CloseSquare } from "iconsax-react";
+import { CloseCircle, CloseSquare } from "iconsax-react";
 import { ChangeEvent, MouseEvent, useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
@@ -27,20 +27,24 @@ import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_
 interface IPropsAddCashBox {
   isEmptyPage: boolean;
   t: any;
-  onUpdateCustomer?:(cashbox:any) => void
+  onUpdateCustomer?: (cashbox: any) => void;
 }
 
-const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdateCustomer}) => {
+const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
+  isEmptyPage,
+  t,
+  onUpdateCustomer,
+}) => {
   const client = useApolloClient();
+  const methods = useForm();
   const {
     register,
     handleSubmit,
-    watch,
+
     formState: { errors },
-    getValues,
+
     setValue,
-    getFieldState,
-  } = useForm();
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -58,7 +62,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdat
         ...(prevState?.credit?.length > 0 ? prevState?.credit : []),
         {
           amount: 0,
-          creditType: "",
+          creditType: "Credit",
           currencyId: {
             _id: "",
             name: "",
@@ -84,13 +88,14 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdat
   ) => {
     const name = event?.target?.name;
     const value = event?.target?.value;
+    console.log("name : " ,name , "value : " , value )
     setCustomerDetails((prevState: any) => {
       const credit = prevState?.credit?.map((item: any, inItem: number) => {
         if (index == inItem) {
           return {
             ...item,
-            ...(name?.includes("amount") ? {amount:value} : {}),
-            ...(name?.includes("creditType") ? {creditType:value} : {})
+            ...(name?.includes("amount") ? { amount: value } : {}),
+            ...(name?.includes("creditType") ? { creditType: value } : {}),
           };
         } else return item;
       });
@@ -104,32 +109,34 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdat
     try {
       setLoadingPage(true);
       const variables = {
-        creditObject: customerDetails?.credit?.map((item: any, index: number) => ({
-          amount: parseFloat(item?.amount),
-          creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
-        })),
-        description:data?.description,
+        creditObject: customerDetails?.credit?.map(
+          (item: any, index: number) => ({
+            amount: parseFloat(item?.amount),
+            creditType: item?.creditType,
+            currencyId: item?.currencyId?._id,
+          })
+        ),
+        description: data?.description,
         accountType: "Customer",
         accountId: data?.customerId,
       };
-
+      console.log("variable" , variables)
       const {
         data: { addFirstPeriodOfCredit },
       } = await client.mutate({
         mutation: ADD_FIRST_PERIOD_OF_CREDIT,
         variables,
       });
-      if (addFirstPeriodOfCredit?.message ){
+      if (addFirstPeriodOfCredit?.message) {
         setHandleError({
-          open:true,
-          type:"success",
-          message:addFirstPeriodOfCredit?.message
-        })
-       }
-       setLoadingPage(false)
-       handleOpenDialogFunction()
-       setCustomerDetails(null)
+          open: true,
+          type: "success",
+          message: addFirstPeriodOfCredit?.message,
+        });
+      }
+      setLoadingPage(false);
+      handleOpenDialogFunction();
+      setCustomerDetails(null);
     } catch (error: any) {
       setLoadingPage(false);
       setHandleError({
@@ -153,7 +160,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdat
     }));
   };
   return (
-    <>
+    <FormProvider {...methods}>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -331,7 +338,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage, t , onUpdat
           </Button>
         </Box>
       )}
-    </>
+    </FormProvider>
   );
 };
 

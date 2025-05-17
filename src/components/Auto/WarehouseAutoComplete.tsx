@@ -2,7 +2,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useApolloClient } from "@apollo/client";
 import { GET_ENTREPOT_LIST } from "../../graphql/queries/GET_ENTREPOT_LIST";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "@/provider/appContext";
 import { debounce } from "lodash";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -70,12 +70,15 @@ name,
     }
   };
   const handleChangeCustomerSearch = (
-    event: React.ChangeEvent<any>,
-    item: any
+    event: any,
   ) => {
-    setSelectedValue(item);
-    if (item?._id && getWarehouse) {
-      getWarehouse(item);
+    const id = event.target?.value
+    
+    const objectItem = autoCompleteState?.data?.filter((item) => item?._id ===id )?.[0]
+
+    setSelectedValue(objectItem);
+    if (objectItem?._id && getWarehouse) {
+      getWarehouse(objectItem);
     }
     // getCustomerFunction();
   };
@@ -114,7 +117,10 @@ name,
               error={!!errors?.warehouseId}
               // helperText={errors?.currencyId?.message}
               required
-              onChange={onChange}
+              onChange={(event)=> {
+                onChange(event);
+                handleChangeCustomerSearch(event)
+              }}
             >
               {autoCompleteState?.data?.map((item) => {
                 return (

@@ -17,7 +17,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { useSchemaCrateForm } from "./create-form.schema";
@@ -26,13 +26,14 @@ import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsCreate {
   t: any;
 }
 const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
   const theme = useTheme();
-
+  const {setHandleError} = useContext(AppContext)
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
     // defaultValues,
@@ -46,7 +47,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
     setError,
   } = methods;
   const [openDialog, setOpenDialog] = useState(false);
-  const [accountType, setAccountType] = useState("banks");
+  const [accountType, setAccountType] = useState("Bank");
 
   const {mutate, error , isLoading} = useAddNewReceiveMutation()
 
@@ -67,14 +68,18 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
         ...data,
         amount:parseFloat(data?.amount),
         amountCalculated:parseFloat(data?.amountCalculated),
-        invoiceType:"Cash"
+        invoiceType:"Cash",
+        receiverType:accountType,
+        payerType:"Customer"
       }
     }, {
       onSuccess: () => {
         setOpenDialog(false)
-        // enqueueSnackbar("Event created successfully!", {
-        //   variant: "success",
-        // })
+        setHandleError({
+          open:true,
+          message:"This record added successfully",
+          type:"success"
+        })
 
         // router.back()
       },
@@ -118,13 +123,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   >
                     {t?.transactions?.full_name_of_customer}
                   </InputLabel>
-                  {/* <Select
-                  fullWidth
-                  size="small"
-                  {...register("customerId", { required: true })}
-                  name="name"
-                /> */}
-                  <CustomerAutoComplete />
+                  <CustomerAutoComplete name="payerId" />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
@@ -176,28 +175,28 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                     value={accountType}
                   >
                     <FormControlLabel
-                      value="banks"
+                      value="Bank"
                       control={<Radio />}
-                      label={t?.transactions?.banks}
+                      label={t?.transactions?.bank}
                     />
                     <FormControlLabel
-                      value="cashboxes"
+                      value="Safe"
                       control={<Radio />}
-                      label={t?.transactions?.cashboxes}
+                      label={t?.transactions?.cashbox}
                     />
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {accountType === "banks" && <BankAutoComplete name="receiver"/>}
+                  {accountType === "Bank" && <BankAutoComplete name="receiver"/>}
                   {/* <Select
                   fullWidth
                   size="small"
                   {...register("bankPhoneNumber", { required: true })}
                   name="bankPhoneNumber"
                 /> */}
-                  {accountType === "cashboxes" && <CashBoxAutoComplete name="receiver" />}
+                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" />}
                 </Grid>
-                {/* <Grid item xs={12}>
+                <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.transactions?.description}
                 </InputLabel>
@@ -208,7 +207,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   size="small"
                   {...register("description", { required: true })}
                 />
-              </Grid> */}
+              </Grid>
               </Grid>
             </DialogContent>
             <DialogActions

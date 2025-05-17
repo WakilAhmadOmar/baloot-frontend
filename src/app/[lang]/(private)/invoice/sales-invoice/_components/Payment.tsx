@@ -44,7 +44,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
   t,
 
 }) => {
-  const { setPaymentOff, customer, currency, setCurrency, paymentOff } =
+  const { setPaymentOff, customer, currency, setCurrency, paymentOff  } =
     useContext(InvoiceContext);
   const { setHandleError } = useContext(AppContext);
   const { register , handleSubmit  } = useFormContext()
@@ -71,6 +71,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
           currencyId: data?.currencyId,
           receiver: data?.cashboxId,
           invoiceType: "ReceiveBill",
+          receiverType:"Safe"
         },
       };
       const {
@@ -200,7 +201,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
         startIcon={<Add style={{ margin: "0 0 0 1rem" }} />}
         variant="outlined"
         onClick={handleClickOpen}
-        disabled={paymentStatus === "loan" || paymentOff?._id ? true : false}
+        disabled={paymentStatus === "loan"  || paymentOff?._id ? true : false}
       >
         {t?.invoice?.payment}
       </Button>

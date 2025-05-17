@@ -28,7 +28,8 @@ interface IProps {
   messageDescription:string,
   t:any
   editTable?:boolean,
-  UpdateComponent?:React.ReactNode
+  UpdateComponent?:React.ReactNode,
+  isLoading?:boolean
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -51,7 +52,8 @@ const CollapseComponent: React.FC<IProps> = ({
   messageDescription,
   messageTitle,
   editTable= true,
-  UpdateComponent
+  UpdateComponent,
+  isLoading= false
 }) => {
   const theme = useTheme();
   const [handleCollapseState, setHandleCollapseState] = useState(false);
@@ -67,14 +69,10 @@ const CollapseComponent: React.FC<IProps> = ({
   const handleDeleteThisItem = () => {
     if (getIdToAddAction && id) {
       getIdToAddAction(id);
-      handleDeleteFunction();
+      // handleDeleteFunction();
     }
   };
-  const handleClickUpdateItem = () => {
-    if (updateProductFunction && id) {
-      updateProductFunction(id);
-    }
-  };
+
 
   useEffect(() => {
     if (handleCollapseState && contentRef.current) {
@@ -111,6 +109,7 @@ const CollapseComponent: React.FC<IProps> = ({
             onClick={handleDeleteThisItem}
             variant="contained"
             color="primary"
+            loading={isLoading}
           >
             {t?.product?.yes}
           </Button>
