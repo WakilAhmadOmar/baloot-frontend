@@ -24,7 +24,7 @@ import { FormProvider, Resolver, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
-import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/update-receive-mutation";
+import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/use-update-receive-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 
@@ -127,7 +127,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
               }}
             >
               <Typography>
-                {t?.transactions?.cash_receipt_from_employees}
+                {t?.transactions?.update_cash_receipt_from_employees}
               </Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
@@ -142,8 +142,9 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                   >
                     {t?.transactions?.full_name_of_employee}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent placeholder="" name="payerId" />
+                  <EmployeeAutoCompleteComponent  name="payerId"dir={t?.home?.dir} />
                 </Grid>
+                
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
@@ -164,13 +165,13 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                   >
                     {t?.transactions?.currency}
                   </InputLabel>
-                  <UserCurrenciesComponent />
+                  <UserCurrenciesComponent dir={t?.home?.dir}/>
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.transactions?.calculated_currency}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" />
+                  <UserCurrenciesComponent name="calculatedTo" dir={t?.home?.dir}/>
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -207,10 +208,10 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                 </Grid>
                 <Grid item xs={8}>
                   {receiverType === "Bank" && (
-                    <BankAutoComplete name="receiver" />
+                    <BankAutoComplete name="receiver"  dir={t?.home?.dir}/>
                   )}
                   {receiverType === "Safe" && (
-                    <CashBoxAutoComplete name="receiver" />
+                    <CashBoxAutoComplete name="receiver" dir={t?.home?.dir}/>
                   )}
                 </Grid>
                 <Grid item xs={12}>

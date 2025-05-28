@@ -22,15 +22,24 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 
 import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
+import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income-type";
+import { useAddNewExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-add-new-external-income-mutation";
 
 type CreateFormProps = {
   t: any;
 };
 
+type FormInputType = {
+  receiver: string;
+  externalIncomeTypeId: string;
+  currencyId: string;
+  amount: number;
+  description?: string;
+};
 export const CreateCreate = ({ t }: CreateFormProps) => {
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
-  const methods = useForm({
+  const methods = useForm<FormInputType>({
     resolver: yupResolver(useSchemaCrateForm(t)),
     // defaultValues,
   });
@@ -40,16 +49,16 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
     formState: { errors },
   } = methods;
   const [openDialog, setOpenDialog] = useState(false);
-  const { mutate: addNewConsumptionMutation, isLoading } =
-    useAddNewConsumptionMutation();
+  const { mutate: addNewExternalIncomeMutation, isLoading } =
+    useAddNewExternalIncomeMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
   const onSubmitFunction = (data: any) => {
-    addNewConsumptionMutation(
+    addNewExternalIncomeMutation(
       {
-        consumptionObject: {
+        externalIncomeObject: {
           ...data,
           amount: Number(data?.amount),
         },
@@ -77,7 +86,7 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_new_expense}
+        {t?.transactions?.add_external_income}
       </Button>
       <Dialog
         open={openDialog}
@@ -96,35 +105,35 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.add_new_expense}</Typography>
+          <Typography>{t?.transactions?.add_external_income}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} mt={1}>
               <Grid item xs={12}>
                 <InputLabel
-                  sx={{ marginTop: "3rem", paddingBottom: "5px" }}
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t?.transactions?.external_income_type}
                 </InputLabel>
-                <CashBoxAutoComplete name="payer" />
+                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} dir={t.home?.dir}/>
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t?.transactions?.recipient}
                 </InputLabel>
-                <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
+                <CashBoxAutoComplete name="receiver" />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.payed_amount}
+                  {t?.transactions?.received_amount}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -138,7 +147,7 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
                 </InputLabel>
                 <CurrenciesAutoComplete />
               </Grid>
-
+              
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.transactions?.description}

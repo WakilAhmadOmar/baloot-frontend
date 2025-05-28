@@ -25,7 +25,7 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { AppContext } from "@/provider/appContext";
-import { useUpdatePayOffMutation } from "@/hooks/api/transactions/mutations/update-pay-off-mutation";
+import { useUpdatePayOffMutation } from "@/hooks/api/transactions/mutations/use-update-pay-off-mutation";
 
 type UpdateFormProps = {
   t: any;
@@ -134,7 +134,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
               }}
             >
               <Typography>
-                {t?.transactions?.cash_payment_to_employees}
+                {t?.transactions?.update_cash_payment_to_employees}
               </Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
@@ -143,29 +143,13 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
             <DialogContent>
               <Grid container spacing={2} mt={1}>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.recipient}
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    required
+                  >
+                    {t?.transactions?.full_name_of_customer}
                   </InputLabel>
-                </Grid>
-                <Grid item xs={4}>
-                  <RadioGroup onChange={onChangeHandler} row value={payerType}>
-                    <FormControlLabel
-                      value="Bank"
-                      control={<Radio />}
-                      label={t?.transactions?.bank}
-                    />
-                    <FormControlLabel
-                      value="Safe"
-                      control={<Radio />}
-                      label={t?.transactions?.cashbox}
-                    />
-                  </RadioGroup>
-                </Grid>
-                <Grid item xs={8}>
-                  {payerType === "Bank" && <BankAutoComplete name="payerId" />}
-                  {payerType === "Safe" && (
-                    <CashBoxAutoComplete name="payerId" />
-                  )}
+                  <CustomerAutoComplete name="receiver" />
                 </Grid>
 
                 <Grid item xs={6}>
@@ -206,14 +190,30 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                     {...register("amountCalculated", { required: true })}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <InputLabel
-                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                    required
-                  >
-                    {t?.transactions?.full_name_of_customer}
+                 <Grid item xs={12}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.transactions?.recipient}
                   </InputLabel>
-                  <CustomerAutoComplete name="receiver" />
+                </Grid>
+                <Grid item xs={4}>
+                  <RadioGroup onChange={onChangeHandler} row value={payerType}>
+                    <FormControlLabel
+                      value="Bank"
+                      control={<Radio />}
+                      label={t?.transactions?.bank}
+                    />
+                    <FormControlLabel
+                      value="Safe"
+                      control={<Radio />}
+                      label={t?.transactions?.cashbox}
+                    />
+                  </RadioGroup>
+                </Grid>
+                <Grid item xs={8}>
+                  {payerType === "Bank" && <BankAutoComplete name="payerId" />}
+                  {payerType === "Safe" && (
+                    <CashBoxAutoComplete name="payerId" />
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

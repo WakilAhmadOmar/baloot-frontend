@@ -1,32 +1,22 @@
 "use client";
 import CollapseComponent from "@/components/collapse/Collapse";
 // import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
-import CustomSearch from "@/components/search/CustomSearch";
+// import CustomSearch from "@/components/search/CustomSearch";
 import {
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
   IconButton,
-  InputLabel,
   Pagination,
-  Select,
   Stack,
-  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
+import { ExportSquare, Printer } from "iconsax-react";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
 import { useGetConsumptionListQuery } from "@/hooks/api/transactions/queries/use-get-consumption-list";
 import SkeletonComponent from "../../_components/Skeleton";
 import { UpdateForm } from "./Update-form";
-import { useDeleteConsumptionMutation } from "@/hooks/api/transactions/mutations/delete-consumption-mutation";
+import { useDeleteConsumptionMutation } from "@/hooks/api/transactions/mutations/use-delete-consumption-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
@@ -80,7 +70,7 @@ const handleDeleteFunction = (id:string) => {
               <Printer color={theme.palette.primary.main} />
             </IconButton>
             <Box> {/* <DateRangePickerComponent /> */}</Box>
-            <CustomSearch t={t} />
+            {/* <CustomSearch t={t} /> */}
           </Box>
         </Box>
       </Box>

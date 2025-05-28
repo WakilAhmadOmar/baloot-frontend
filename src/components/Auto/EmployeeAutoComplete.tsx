@@ -6,19 +6,16 @@ import { useEffect, useState } from "react";
 import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
 import { Controller, useFormContext } from "react-hook-form";
 interface IProps {
-  value?: string | number;
+  dir?: string;
   name?: string;
-  getValue?: (data: any) => void;
-  placeholder: string;
-  defaultValue?: any;
+  getEmployee?:(employee:any)=> void
+
 }
 
 const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
-  getValue,
-  value,
+  dir="ltr",
   name,
-  placeholder,
-  defaultValue,
+  getEmployee
 }) => {
   const {
     register,
@@ -74,9 +71,7 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
     }
   }, []);
 
-  const handleSelectItem = (event: any, value: any) => {
-    if (getValue) getValue(value);
-  };
+
 
   return (
     <>
@@ -110,20 +105,22 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
               fullWidth
               size={"small"}
               value={value}
-              // placeholder={placeholder}
-              // options={PROGRAM_STATUS}
-              // placeholder="Please select status"
               error={!!errors?.[name || "employeeId"]}
-              // helperText={errors?.currencyId?.message}
               required
-              onChange={onChange}
+              onChange={(event)=> {
+                onChange(event)
+                if (getEmployee){
+                  const selectedOption = optionsAuto?.options?.find((item) => item?._id === event.target.value);
+                  getEmployee(selectedOption)
+                }
+              }}
             >
               {optionsAuto?.options?.map((item) => {
                 return (
                   <MenuItem
                     key={item?._id}
                     value={item?._id}
-                    sx={{ direction: "rtl" }}
+                    dir={dir}
                   >
                     {item?.name}
                   </MenuItem>

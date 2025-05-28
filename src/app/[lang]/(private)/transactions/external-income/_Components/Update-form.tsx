@@ -19,10 +19,9 @@ import { useContext, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSchemaCrateForm } from "./Create-form.schema";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-
-import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
-import { useUpdateConsumptionMutation } from "@/hooks/api/transactions/mutations/update-consumption-mutation";
+import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income-type";
+import { useUpdateExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-update-external-income-mutation";
 
 type CreateFormProps = {
   t: any;
@@ -32,21 +31,20 @@ type CreateFormProps = {
 interface FormValues {
   amount: number;
   currencyId: string;
-  payer: string;
+  receiver: string;
   description?:string
-  consumptionTypeId:string
+  externalIncomeTypeId:string
 }
 export const UpdateForm = ({ t , item}: CreateFormProps) => {
-console?.log(item)
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
       return {
         amount: item?.amount || 0,
         currencyId: item?.currencyId?._id || "",
-        payer: item?.payer?._id || "", // Add this line
+        receiver: item?.receiver?._id || "", // Add this line
         description:item?.description,
-        consumptionTypeId:item?.consumptionTypeId?._id
+        externalIncomeTypeId:item?.externalIncomeTypeId?._id || ""
       };
     }, [item]);
   const methods = useForm<FormValues>({
@@ -59,20 +57,20 @@ console?.log(item)
     formState: { errors },
   } = methods;
   const [openDialog, setOpenDialog] = useState(false);
-  const { mutate: addUpdateConsumptionMutation, isLoading } =
-    useUpdateConsumptionMutation();
+  const { mutate: addUpdateExternalIncomeMutation, isLoading } =
+    useUpdateExternalIncomeMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
   const onSubmitFunction = (data: any) => {
-    addUpdateConsumptionMutation(
+    addUpdateExternalIncomeMutation(
       {
-        consumptionId:item?._id,
-        consumptionObject: {
+        externalIncomeId:item?._id,
+        externalIncomeObject: {
           currencyId: data?.currencyId,
-          consumptionTypeId: data?.consumptionTypeId,
-          payer: data?.payer,
+          externalIncomeTypeId: data?.externalIncomeTypeId,
+          receiver: data?.receiver,
           amount: Number(data?.amount),
           description: data?.description,
         },
@@ -83,7 +81,7 @@ console?.log(item)
           setHandleError({
             open: true,
             type: "success",
-            message: "Consumption successfully updated.",
+            message: "External income successfully updated.",
           });
         },
         onError:(error:any)=> {
@@ -96,12 +94,8 @@ console?.log(item)
       }
     );
   };
-  console.log("error", errors);
   return (
     <FormProvider {...methods}>
-      {/* <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_new_expense}
-      </Button> */}
       <IconButton onClick={handleOpenDialogFunction}>
         <Edit size={20} color={theme.palette.primary.contrastText} />
       </IconButton>
@@ -122,7 +116,7 @@ console?.log(item)
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.add_new_expense}</Typography>
+          <Typography>{t?.transactions?.update_external_income}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -130,23 +124,24 @@ console?.log(item)
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
+              
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t?.transactions?.external_income_type}
                 </InputLabel>
-                <CashBoxAutoComplete name="payer" />
+                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t?.transactions?.recipient}
                 </InputLabel>
-                <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
+                <CashBoxAutoComplete name="receiver" />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

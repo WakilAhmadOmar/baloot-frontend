@@ -81,6 +81,11 @@ const CollapseComponent: React.FC<IProps> = ({
       setContentHeight("0px");
     }
   }, [handleCollapseState, children]);
+  useEffect(()=>{
+    if(!isLoading){
+      setHandleDeleteState(false);
+    }
+  },[isLoading])
 
   return (
     <Box mt={0.5} borderRadius={"8px"}>
@@ -166,9 +171,9 @@ const CollapseComponent: React.FC<IProps> = ({
           <Typography variant="body2">
             <Moment format="YYYY/MM/DD">{createdAt}</Moment>
           </Typography>
-          <IconButton onClick={handleDeleteFunction}>
+          {getIdToAddAction && <IconButton onClick={handleDeleteFunction}>
             <Trash size={20} color={theme.palette.primary.contrastText} />
-          </IconButton>
+          </IconButton>}
           {
             editTable && UpdateComponent 
           }

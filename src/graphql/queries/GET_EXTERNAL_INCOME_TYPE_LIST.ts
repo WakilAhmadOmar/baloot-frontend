@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-const GET_EXTERNAL_TYPE_INCOME = gql`
+const GET_EXTERNAL_INCOME_TYPE_LIST = gql`
   query {
     getExternalIncomeTypeList {
       _id
@@ -10,4 +10,4 @@ const GET_EXTERNAL_TYPE_INCOME = gql`
   }
 `;
 
-export { GET_EXTERNAL_TYPE_INCOME };
+export { GET_EXTERNAL_INCOME_TYPE_LIST };

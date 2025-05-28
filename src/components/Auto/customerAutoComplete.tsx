@@ -10,21 +10,17 @@ import { Controller, useFormContext } from "react-hook-form";
 import { MenuItem, Select } from "@mui/material";
 
 interface IProps {
-  getCustomer?: (data: any) => void;
-  register?: any;
-  placeholder?: string;
-  defaultValue?: any;
   name?: string;
+  dir?:string
+  getCustomer?: (customer: any) => void;
 }
 const CustomerAutoComplete: React.FC<IProps> = ({
-  getCustomer,
-  placeholder,
-  defaultValue,
+  dir="ltr",
   name,
+  getCustomer,
 }) => {
   const client = useApolloClient();
   const {
-    register,
     control,
     formState: { errors },
     setValue,
@@ -64,16 +60,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
       });
     }
   }, [autoCompleteState?.page]);
-  const handleChangeCustomerSearch = (
-    event: any,
-    item: any,
-    res: any,
-    details: any
-  ) => {
-    if (getCustomer) {
-      getCustomer(item);
-    }
-  };
+  
 
   useEffect(() => {
     getCustomerFunction();
@@ -90,20 +77,24 @@ const CustomerAutoComplete: React.FC<IProps> = ({
               fullWidth
               size={"small"}
               value={value}
-              // placeholder={placeholder}
-              // options={PROGRAM_STATUS}
-              // placeholder="Please select status"
               error={!!errors?.[name || "customerId"]}
-              // helperText={errors?.currencyId?.message}
               required
-              onChange={onChange}
+              onChange={(event)=> {
+                onChange(event);
+                if (getCustomer) {
+                  const selectedCustomer = autoCompleteState?.data?.find(
+                    (item) => item?._id === event.target.value
+                  );
+                  getCustomer(selectedCustomer);
+                }
+              }}
             >
               {autoCompleteState?.data?.map((item) => {
                 return (
                   <MenuItem
                     key={item?._id}
                     value={item?._id}
-                    sx={{ direction: "rtl" }}
+                    dir={dir}
                   >
                     {item?.fullName}
                   </MenuItem>

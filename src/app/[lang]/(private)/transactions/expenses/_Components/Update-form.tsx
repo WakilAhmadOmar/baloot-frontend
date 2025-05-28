@@ -22,7 +22,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 
 import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
-import { useUpdateConsumptionMutation } from "@/hooks/api/transactions/mutations/update-consumption-mutation";
+import { useUpdateConsumptionMutation } from "@/hooks/api/transactions/mutations/use-update-consumption-mutation";
 
 type CreateFormProps = {
   t: any;
@@ -37,7 +37,6 @@ interface FormValues {
   consumptionTypeId:string
 }
 export const UpdateForm = ({ t , item}: CreateFormProps) => {
-console?.log(item)
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
@@ -96,12 +95,10 @@ console?.log(item)
       }
     );
   };
-  console.log("error", errors);
+
   return (
     <FormProvider {...methods}>
-      {/* <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_new_expense}
-      </Button> */}
+
       <IconButton onClick={handleOpenDialogFunction}>
         <Edit size={20} color={theme.palette.primary.contrastText} />
       </IconButton>
@@ -122,7 +119,7 @@ console?.log(item)
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.add_new_expense}</Typography>
+          <Typography>{t?.transactions?.update_expense}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -135,19 +132,20 @@ console?.log(item)
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t?.transactions?.consumption_type}
                 </InputLabel>
-                <CashBoxAutoComplete name="payer" />
+                <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t?.transactions?.payer}
                 </InputLabel>
-                <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
+                <CashBoxAutoComplete name="payer" />
               </Grid>
+              
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.transactions?.payed_amount}

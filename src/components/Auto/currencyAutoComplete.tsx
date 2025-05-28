@@ -10,26 +10,22 @@ import { Controller, useFormContext } from "react-hook-form"
 
 interface IPropsUserCurrencies {
 
-  defaultValue?: any;
+  defaultValue?: string;
   onSelected?: (currencyId: any) => void;
-  register?: any;
-  isRequired?:boolean
   name?:string
+  dir?:string
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
   onSelected,
-  isRequired = true,
-  name
+  name,
+  dir= "ltr"
 }) => {
   const client = useApolloClient();
   const {setHandleError} = useContext(AppContext)
   const [userCurrenciesState, setUserCurrenciesState] = useState<any[]>([]);
 
   const {
-    register,
-    watch,
-    setValue,
     formState: { errors },
     control
   } = useFormContext()
@@ -84,6 +80,7 @@ const getUserCurrenciesFunction = async () => {
             fullWidth
             size={"small"}
             value={value}
+            defaultValue={defaultValue }
             // options={PROGRAM_STATUS}
             // placeholder="Please select status"
             error={!!errors?.currencyId}
@@ -96,7 +93,7 @@ const getUserCurrenciesFunction = async () => {
           >
                   {userCurrenciesState?.map((item) => {
             return (
-              <MenuItem key={item?._id} value={item?._id}>
+              <MenuItem key={item?._id} value={item?._id} dir={dir} >
                 {item?.name}
               </MenuItem>
             );

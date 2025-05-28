@@ -23,12 +23,9 @@ interface IPropsCollapseContainer {
 const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
   const theme = useTheme();
   const [loadingPage, setLoadingPage] = useState(false);
-//   const router = useRouter();
+  // const router = useRouter();
   const routeToDetailsPage = () => {
-    // router?.push({
-    //   pathname: "/financialReports/customerAccounts/details",
-    //   query: { ID: "accountId" },
-    // });
+    // router?.push("/financial-reports/customers/details");
   };
   return (
     <Box>
@@ -49,7 +46,7 @@ const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
         </Box>
       </Box>
       <Box
-        // onClick={routeToDetailsPage}
+        onClick={routeToDetailsPage}
         sx={{
           bgcolor: theme.palette.background.default,
           display: "flex",
@@ -73,7 +70,7 @@ const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
       </Box>
       <Link href={"#"}>
       <Box
-        // onClick={routeToDetailsPage}
+        onClick={routeToDetailsPage}
         sx={{
         bgcolor: theme.palette.background.default,
           display: "flex",

@@ -1,156 +1,82 @@
 "use client";
 import AddBanksAccounts from "./Create";
 import CollapseComponent from "@/components/collapse/Collapse";
-import CustomSearch from "@/components/search/CustomSearch";
-import { GET_BANK_LIST } from "@/graphql/queries/GET_BANK_LIST";
-import { AppContext } from "@/provider/appContext";
-import { useApolloClient } from "@apollo/client";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import SkeletonComponent from "./Skeleton";
-import { DELETE_BANK } from "@/graphql/mutation/DELETE_BANK";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import { NotFoundIcon } from "@/icons";
+import { EmptyProductPageIcon, NotFoundIcon } from "@/icons";
+import { useGetBankListQuery } from "@/hooks/api/definitions/bank/queries/use-get-bank-list-query";
+import EmptyPage from "@/components/util/emptyPage";
+import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
+import { AppContext } from "@/provider/appContext";
+import { UpdateBanksAccounts } from "./Update";
 
 interface IPropsBankAccountPages {
   t: any;
 }
 
 const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
+  const [page, setPage] = useState(1);
   const { setHandleError } = useContext(AppContext);
-  const client = useApolloClient();
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [textSearchState , setTextSearchState] = useState("")
-  const [bankList, setBankList] = useState<any>({
-    page: 1,
-    data: [],
-    count: 0,
-  });
-  const getBankListFunction = async (searchTerm?: string) => {
-    setLoading(true)
-    try {
-      const variables = {
-        page: searchTerm ? 1 : bankList?.page,
-        ...(searchTerm ? { searchTerm: searchTerm } : {}),
+  const { data: bankList, isLoading } = useGetBankListQuery({ page });
+
+  const {mutate:addFirstPeriodMutation , isLoading:deleteLoading } = useAddFirstPeriodOfCreditMutation()
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
+
+  const handleDeleteAccount = (id: string) => {
+    // Implement the delete functionality here
+          const variables = {
+        creditObject: [],
+        accountType: "Bank",
+        accountId:id,
       };
-      const {
-        data: { getBankList },
-      } = await client.query({
-        query: GET_BANK_LIST,
-        variables,
-      });
 
-      if (getBankList?.bank) {
-        const allBank = [
-          ...bankList?.data,
-          ...(getBankList?.bank?.length > 0 ? getBankList?.bank : []),
-        ];
-        const duplicate = allBank?.filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t._id === value._id)
-        );
-        setBankList((prevState: any) => ({
-          page: searchTerm ? 1 : prevState.page + 1,
-          count: getBankList?.count ? getBankList?.count : prevState?.count,
-          data: searchTerm ? getBankList?.bank : duplicate,
-        }));
-      }
-      setLoading(false);
-    } catch (error: any) {
-      setLoading(false)
-      setHandleError({
-        open: true,
-        type: "error",
-        message: error.message,
-      });
-    }
-  };
-  useEffect(() => {
-    if (bankList?.count === 0) {
-      getBankListFunction();
-    }
-  }, []);
-
-  const handleDeleteItem = async (id: string) => {
-    setLoading(true);
-    try {
-      const variables = {
-        bankId: id,
-      };
-      const {
-        data: { deleteBank },
-      } = await client?.mutate({
-        mutation: DELETE_BANK,
-        variables,
-      });
-      if (deleteBank?.message) {
-        setLoading(false);
-        setBankList(bankList?.filter((item: any) => item?._id !== id));
-      }
-    } catch (error: any) {
-      setLoading(false);
-      setHandleError({
-        message: error?.message,
-        type: "error",
-        open: true,
-      });
-    }
-  };
-  const handleSearchItem = (search: string) => {
-    console.log("search" , search)
-    setTextSearchState(search)
-    if (search){
-
-      getBankListFunction(search);
-    }else {
-      getBankListFunction()
-    }
-  };
-  const handleUpdateBank = (bank:any) => {
-    setBankList((prevState:any) => ({
-      ...prevState,
-      data:prevState?.data?.map((item:any) => {
-        if (item?._id === bank?._id){
-          return {
-            ...item,
-            credit:bank?.credit,
-            description:bank?.description
-          }
-        }else return item
+      addFirstPeriodMutation(variables, {
+        onSuccess: ({message}:any) => {
+          setHandleError({
+          message:message ?? "",
+          type:"success",
+          open:true
+        })
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
+          });
+        },
       })
-    }))
-  }
+    
+  };
+
   return (
     <Box>
-      {loading && <CircularProgressComponent />}
-    
-        <Typography variant="h3">
-          {t?.pages?.bank?.list_of_previous_bank_accounts}
-        </Typography>
-      
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        mt={4}
-      
-      >
+      <Typography variant="h3">
+        {t?.pages?.bank?.list_of_previous_bank_accounts}
+      </Typography>
+
+      <Box display={"flex"} justifyContent={"space-between"} mt={4}>
         <Box display={"flex"} width={"100%"}>
-          <AddBanksAccounts
-            isEmptyPage={loadingPage === false && bankList?.count === 0}
-            t={t}
-            onUpdateBank={handleUpdateBank}
-          />
+          <AddBanksAccounts t={t} />
         </Box>
-        {( bankList?.count > 0) && (
+        {bankList?.count > 0 && (
           <Box>
-            <CustomSearch t={t} getTextSearchFunction={handleSearchItem} />
+            {/* <CustomSearch t={t} 
+            getTextSearchFunction={handleSearchItem}
+             /> */}
           </Box>
         )}
       </Box>
-      {textSearchState !== "" &&
-        !loadingPage &&
-        bankList?.data?.length === 0 && (
+      {/* {
+        !isLoading &&
+        bankList?.bank?.length === 0 && (
           <Box
             display={"grid"}
             justifyContent={"center"}
@@ -163,26 +89,41 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               {t?.product?.nothing_found}
             </Typography>
           </Box>
-        )}
-      {bankList?.data?.length === 0 &&
-        loadingPage &&
-        Array(8)
-          .fill(null)
-          .map((_, index) => <SkeletonComponent key={"skeleton" + index} />)}
+        )} */}
+      {bankList?.count === 0 && isLoading === false && (
+        <Box
+          className={"empty_page_content"}
+          width={"100%"}
+          height={"70vh"}
+          alignItems={"center"}
+          display={"grid"}
+        >
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t.pages?.bank?.no_product_yet_title}
+            discription={t.pages?.bank?.no_product_yet_discription}
+            // buttonText={t.pages?.bank.Create_new_Bank}
+            // onClick={handleOpenDialogFunction}
+          />
+        </Box>
+      )}
+     
       <Box mt={2}>
-        {bankList?.data?.map((item: any) => {
+        {bankList?.bank?.map((item: any) => {
           return (
             <CollapseComponent
+              editTable={true}
               key={item?._id}
               name={item?.name}
               createdAt={item?.createdAt}
               height="270px"
               t={t}
-              messageDescription={t?.pages?.bank?.delete_description}
-              messageTitle={t?.pages?.bank?.delete_title}
+              messageDescription={t?.pages?.bank?.account_delete_description}
+              messageTitle={t?.pages?.bank?.account_delete_title}
               id={item?._id}
-              editTable={false}
-              getIdToAddAction={handleDeleteItem}
+              getIdToAddAction={handleDeleteAccount}
+              isLoading={deleteLoading}
+              UpdateComponent={<UpdateBanksAccounts t={t} item={item} />}
             >
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
@@ -193,7 +134,7 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
                   {item?.accountNumber}
                 </Typography>
               </Box>
-              {item?.credit?.map((credit: any, index: number) => {
+              {item?.firstPeriodCredit?.map((credit: any, index: number) => {
                 return (
                   <Box
                     display={"grid"}
@@ -218,31 +159,39 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
                   {item?.bankPhoneNumber}
                 </Typography>
               </Box>
-              <Box display={"grid"} gridTemplateColumns={" auto"}>
+              <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
                   {t?.pages?.bank?.description}
                 </Typography>
-                <Typography variant="caption">{item?.description}</Typography>
+                <Typography variant="caption" pt={2}>{item?.description}</Typography>
               </Box>
             </CollapseComponent>
           );
         })}
       </Box>
-      {bankList?.count > 0 && textSearchState === "" &&<Box display={"flex"} justifyContent={"flex-end"} mt={2}>
-        <Stack spacing={2} p={1}>
-          <Pagination
-            count={bankList?.count / 10}
-            size={"medium"}
-            // onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>
-      </Box>}
+      
+      {bankList?.count > 9 && (
+        <Box display={"flex"} justifyContent={"flex-end"} mt={2}>
+          <Stack spacing={2} p={1}>
+            <Pagination
+              count={bankList?.count / 10}
+              size={"medium"}
+              onChange={handleChangePage}
+              variant="outlined"
+              color="primary"
+              shape="rounded"
+              sx={{
+                fontSize: "2rem !important",
+              }}
+            />
+          </Stack>
+        </Box>
+      )}
+       {
+        isLoading &&
+        Array(8)
+          .fill(null)
+          .map((_, index) => <SkeletonComponent key={"skeleton" + index} />)}
     </Box>
   );
 };

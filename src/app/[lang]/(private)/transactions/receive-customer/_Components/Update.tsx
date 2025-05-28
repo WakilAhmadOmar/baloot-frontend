@@ -24,7 +24,7 @@ import { FormProvider, Resolver, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
-import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/update-receive-mutation";
+import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/use-update-receive-mutation";
 import { AppContext } from "@/provider/appContext";
 
 type UpdateFormProps = {
@@ -133,7 +133,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
               }}
             >
               <Typography>
-                {t?.transactions?.cash_receipt_from_customer}
+                {t?.transactions?.update_cash_receipt_from_customer}
               </Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />

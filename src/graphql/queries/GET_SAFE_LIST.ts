@@ -7,16 +7,16 @@ const GET_SAFE_LIST = gql`
     safe {
       _id
       name
-      credit {
-        amount
-        creditType
-        currencyId {
-          _id
-          name
-          symbol
-        }
+      description
+      firstPeriodCredit {
+      amount
+      creditType
+      currencyId {
+        _id
+        name
+        symbol
       }
-      createdAt
+     }
       cashier {
         _id
         address

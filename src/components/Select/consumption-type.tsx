@@ -5,9 +5,10 @@ import { useGetConsumptionTypeQuery } from "@/hooks/api/definitions/consumption/
 
 interface IPropsConsumptionType {
   name?:string
+  dir?:string
 }
 const ConsumptionTypeSelectBox: React.FC<IPropsConsumptionType> = ({
-
+dir="ltr",
   name
 }) => {
 
@@ -32,7 +33,7 @@ const ConsumptionTypeSelectBox: React.FC<IPropsConsumptionType> = ({
         >
           {consumptionTypeList?.map((item:any) => {
             return (
-              <MenuItem key={item?._id} value={item?._id}>
+              <MenuItem key={item?._id} value={item?._id} dir={dir} >
                 {item?.name}
               </MenuItem>
             );

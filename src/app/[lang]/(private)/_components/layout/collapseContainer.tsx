@@ -274,12 +274,12 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       >
         <List>
           <LinkLayout href={"/" + lang +"/financial-reports/customers"} lang={lang} open={true} t={t} text={t?.layout?.customer_invoice}  />
-          {/* <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t?.layout?.employee_invoice}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.partner_invoice}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.debits_and_credits_across_all_accounts}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.expense_statement}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.external_revenue_statement}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.profit_and_loss_statement}  />
+           <LinkLayout href={"/" + lang +"/financial-reports/employees"} lang={lang} open={true} t={t} text={t?.layout?.employee_invoice}  />
+          <LinkLayout href={ "/" + lang +"/financial-reports/partner"} lang={lang} open={true} t={t} text={t?.layout?.partner_invoice}  />
+          <LinkLayout href={"/" + lang +"/financial-reports/debit-credit"} lang={lang} open={true} t={t} text={t?.layout?.debits_and_credits_across_all_accounts}  />
+          <LinkLayout href={"/"+ lang +"/financial-reports/expense"} lang={lang} open={true} t={t} text={t?.layout?.expense_statement}  />
+         <LinkLayout href={"/"+ lang +"/financial-reports/external-income"} lang={lang} open={true} t={t} text={t?.layout?.external_revenue_statement}  />
+           {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.profit_and_loss_statement}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.total_balance_in_base_currency}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.general_ledger}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t?.layout?.detailed_balance}  /> */}

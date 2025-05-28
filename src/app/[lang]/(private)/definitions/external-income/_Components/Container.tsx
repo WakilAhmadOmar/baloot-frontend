@@ -1,7 +1,7 @@
 
 "use client"
 import CreateExternalIncomeType from "./Create";
-import { GET_EXTERNAL_TYPE_INCOME } from "@/graphql/queries/GET_EXTERNAL_TYPE_INCOME";
+import { GET_EXTERNAL_TYPE_INCOME } from "@/graphql/queries/GET_EXTERNAL_INCOME_TYPE_LIST";
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useApolloClient } from "@apollo/client";
 import { Box,  Typography } from "@mui/material";

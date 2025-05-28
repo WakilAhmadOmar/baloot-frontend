@@ -104,23 +104,24 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
+              
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t?.transactions?.consumption_type}
                 </InputLabel>
-                <CashBoxAutoComplete name="payer" />
+                <ConsumptionTypeSelectBox dir={t?.home?.dir} name={"consumptionTypeId"} />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t?.transactions?.payer}
                 </InputLabel>
-                <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
+                <CashBoxAutoComplete name="payer" dir={t?.home?.dir} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -136,7 +137,7 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.transactions?.currency}
                 </InputLabel>
-                <CurrenciesAutoComplete />
+                <CurrenciesAutoComplete dir={t?.home?.dir} />
               </Grid>
 
               <Grid item xs={12}>

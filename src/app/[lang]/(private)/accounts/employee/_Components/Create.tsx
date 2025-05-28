@@ -23,17 +23,14 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
 import { useApolloClient } from "@apollo/client";
 import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_OF_CREDIT";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
+import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 
 interface IPropsAddCashBox {
-  isEmptyPage: boolean;
   t: any;
-  onUpdateEmployee?: (cashbox: any) => void;
 }
 
 const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
-  isEmptyPage,
   t,
-  onUpdateEmployee,
 }) => {
   const client = useApolloClient();
   const methods = useForm();
@@ -47,7 +44,22 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
   const [openDialog, setOpenDialog] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [employeeDetails, setEmployeeDetails] = useState<any>();
+  const [employeeDetails, setEmployeeDetails] = useState<any>({
+    firstPeriodCredit: [
+      {
+        amount: 0,
+        creditType: "Credit",
+        currencyId: {
+          _id: "",
+          name: "",
+          symbol: "",
+        },
+      },
+    ],
+  });
+
+  const { mutate: addFirstPeriodMutation, isLoading } =
+      useAddFirstPeriodOfCreditMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -56,8 +68,8 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
   const handleAddNewCredit = () => {
     setEmployeeDetails((prevState: any) => ({
       ...prevState,
-      credit: [
-        ...(prevState?.credit?.length > 0 ? prevState?.credit : []),
+      firstPeriodCredit: [
+        ...(prevState?.firstPeriodCredit?.length > 0 ? prevState?.firstPeriodCredit : []),
         {
           amount: 0,
           creditType: "Credit",
@@ -74,7 +86,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
     const deleteIndex = parseInt(event?.currentTarget?.id);
     setEmployeeDetails((prevState: any) => ({
       ...prevState,
-      credit: prevState?.credit?.filter(
+      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
         (item: any, index: number) => index !== deleteIndex
       ),
     }));
@@ -87,7 +99,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
     const name = event?.target?.name;
     const value = event?.target?.value;
     setEmployeeDetails((prevState: any) => {
-      const credit = prevState?.credit?.map((item: any, inItem: number) => {
+      const firstPeriodCredit = prevState?.firstPeriodCredit?.map((item: any, inItem: number) => {
         if (index == inItem) {
           return {
             ...item,
@@ -98,15 +110,14 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
       });
       return {
         ...prevState,
-        credit,
+        firstPeriodCredit,
       };
     });
   };
   const onSubmitFunction = async (data: any) => {
-    try {
-      setLoadingPage(true);
+ 
       const variables = {
-        creditObject: employeeDetails?.credit?.map(
+        creditObject: employeeDetails?.firstPeriodCredit?.map(
           (item: any, index: number) => ({
             amount: parseFloat(item?.amount),
             creditType: item?.creditType,
@@ -117,42 +128,36 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
         accountType: "Employee",
         accountId: data?.employeeId,
       };
-      const {
-        data: { addFirstPeriodOfCredit },
-      } = await client.mutate({
-        mutation: ADD_FIRST_PERIOD_OF_CREDIT,
-        variables,
-      });
-      if (addFirstPeriodOfCredit?.message) {
+        addFirstPeriodMutation(variables, {
+      onSuccess: ({ message }: any) => {
         setHandleError({
-          message: addFirstPeriodOfCredit?.message,
-          open: true,
+          message: message,
           type: "success",
+          open: true,
         });
-      }
-      setLoadingPage(false);
-      handleOpenDialogFunction();
-      setEmployeeDetails(null);
-    } catch (error: any) {
-      setLoadingPage(false);
-      setHandleError({
-        open: true,
-        message: error.message,
-        type: "error",
-      });
-    }
+        handleOpenDialogFunction();
+        setEmployeeDetails(null);
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          type: "error",
+        });
+      },
+    });
+
   };
 
   const handleGetBank = (data: any) => {
-    setValue("employeeId", data?._id);
     setEmployeeDetails(data);
   };
   const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = employeeDetails?.credit;
+    const allCredit = employeeDetails?.firstPeriodCredit;
     allCredit[index].currencyId = currency;
     setEmployeeDetails((prevState: any) => ({
       ...prevState,
-      credit: allCredit,
+      firstPeriodCredit: allCredit,
     }));
   };
   return (
@@ -192,13 +197,12 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   {t?.pages?.employee?.name}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
-                  placeholder="Banks"
-                  getValue={handleGetBank}
+                  getEmployee={handleGetBank}
                   name={"employeeId"}
                 />
               </Grid>
             </Grid>
-            {employeeDetails?.credit?.length > 0 && (
+            {employeeDetails?.firstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -212,7 +216,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                 </Grid>
               </Grid>
             )}
-            {employeeDetails?.credit?.map((item: any, index: any) => {
+            {employeeDetails?.firstPeriodCredit?.map((item: any, index: any) => {
               return (
                 <Grid
                   container
@@ -238,8 +242,9 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                     name="currencyId"
+                     name={"currencyId" + index}
                       defaultValue={item?.currencyId?._id}
+                      dir={t?.home?.dir}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)
                       }
@@ -248,14 +253,14 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   {index > 0 && (
                     <Grid item xs={1}>
                       <IconButton
-                        color="primary"
+                        color="error"
                         type="button"
                         onClick={handleDeleteCredit}
                         id={`${index}`}
                       >
                         <CloseCircle
                           size={18}
-                          color={theme.palette.grey["A700"]}
+                          color={theme.palette.error.main}
                         />
                       </IconButton>
                     </Grid>
@@ -294,36 +299,20 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t?.pages?.bank?.Cancel}
+          </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
-            loading={loadingPage}
+            loading={isLoading}
           >
             {t?.pages?.bank?.save}
           </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.bank?.cancel}
-          </Button>
         </DialogActions>
       </Dialog>
-      {isEmptyPage ? (
-        <Box
-          className={"empty_page_content"}
-          width={"100%"}
-          height={"70vh"}
-          alignItems={"center"}
-          display={"grid"}
-        >
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            title={t.pages?.Customers?.no_product_yet_title}
-            discription={t.pages?.Customers?.no_product_yet_discription}
-            buttonText={t.pages?.Customers.add_new_customer}
-            onClick={handleOpenDialogFunction}
-          />
-        </Box>
-      ) : (
+    
         <Box>
           <Button
             variant="contained"
@@ -333,7 +322,6 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({
             {t?.pages?.bank?.record_previous_balance}
           </Button>
         </Box>
-      )}
     </FormProvider>
   );
 };

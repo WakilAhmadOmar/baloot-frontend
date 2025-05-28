@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import CollapseComponent from "@/components/collapse/Collapse";
 // import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
 import CustomSearch from "@/components/search/CustomSearch";
@@ -23,31 +23,31 @@ import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
+import { useGetPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-pay-of-list-query";
+import EmptyPage from "@/components/util/emptyPage";
+import { EmptyProductPageIcon } from "@/icons";
+import SkeletonComponent from "../../_components/Skeleton";
 
 type EmployeeSalary = {
-  t:any
-}
+  t: any;
+};
 
-const RegistrationEmployeeSalaryPage = ({t}:EmployeeSalary) => {
+const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
   const theme = useTheme();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    getValues,
-    setValue,
-    getFieldState,
-  } = useForm();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data: payoffList, isLoading } = useGetPayOffListQuery({
+    page,
+    receiverType: "Employee",
+  });
 
-  const handleOpenDialogFunction = () => {
-    setOpenDialog(!openDialog);
+   const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
   };
-  const onSubmitFunction = (data: any) => {};
   return (
     <Box>
-      
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
           {t?.transactions?.monthly_employee_salary_entry}
@@ -62,64 +62,79 @@ const RegistrationEmployeeSalaryPage = ({t}:EmployeeSalary) => {
             <IconButton>
               <Printer color={theme.palette.primary.main} />
             </IconButton>
-            <Box>
-              {" "}
-              {/* <DateRangePickerComponent /> */}
-            </Box>
-            <CustomSearch  t={t}/>
+            <Box> {/* <DateRangePickerComponent /> */}</Box>
+            <CustomSearch t={t} />
           </Box>
         </Box>
       </Box>
       <Box>
-        <CollapseComponent
-          key={`${1}`}
-          name={"محمد رضا غلامی"}
-          createdAt={"1402/2/23"}
-           messageDescription=""
-           messageTitle=""
-           t={t}
-          // id={item?._id}
-          // getIdToAddAction={handleDelteProductFunction}
-          // updateProductFunction={handleUpdateProuct}
-        >
-          <Box
-            display={"grid"}
-            gridTemplateColumns={"15rem auto"}
-            rowGap={"1rem"}
-          >
-            <Typography variant="caption">مقدار دریافتی</Typography>
-            <Typography variant="caption">1250 دالر</Typography>
-            <Typography variant="caption">ارز</Typography>
-            <Typography variant="caption">دالر</Typography>
-            <Typography variant="caption">دریافت کننده </Typography>
-            <Typography variant="caption">صندوق مرکزی</Typography>
-            <Typography variant="caption">توضیحات</Typography>
-            <Typography variant="caption">
-              ای مبلغ از جناب محمد رضا بهرامی گرفته شده و به صندوق مرکزی گذاشته
-              شده
-            </Typography>
-          </Box>
-        </CollapseComponent>
+        {payoffList?.payOff?.map((item: any) => {
+          return (
+            <CollapseComponent
+              key={item?._id}
+              name={item?.receiver?.name}
+              createdAt={item?.createdAt}
+              messageDescription=""
+              messageTitle=""
+              t={t}
+              // id={item?._id}
+              // getIdToAddAction={handleDelteProductFunction}
+              // updateProductFunction={handleUpdateProuct}
+            >
+              <Box
+                display={"grid"}
+                gridTemplateColumns={"15rem auto"}
+                rowGap={"1rem"}
+              >
+                <Typography variant="caption">
+                  {t?.transactions?.receipt_amount}
+                </Typography>
+                <Typography variant="caption">
+                  {item?.amount} {item?.currencyId?.symbol}
+                </Typography>
+                <Typography variant="caption">
+                  {" "}
+                  {t?.transactions?.payer}{" "}
+                </Typography>
+                <Typography variant="caption">{item?.payerId?.name}</Typography>
+                <Typography variant="caption">
+                  {t?.transactions?.description}
+                </Typography>
+                <Typography variant="caption">{item?.description}</Typography>
+              </Box>
+            </CollapseComponent>
+          );
+        })}
       </Box>
+      {isLoading && <SkeletonComponent />}
       <Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination
-            count={Math.ceil(100 / 10)}
+            count={Math.ceil(payoffList?.count / 10)}
             size={"medium"}
             shape="rounded"
             variant="outlined"
             color="primary"
-            // onChange={handleChangePage}
+            onChange={handleChangePage}
             sx={{
               fontSize: "2rem !important",
-              direction:"ltr"
+              direction: "ltr",
             }}
           />
         </Stack>
       </Box>
+      {payoffList?.count === 0 && !isLoading && (
+        <Box mt={"10rem"}>
+          {" "}
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            discription=""
+            title={t?.transactions?.no_salary_has_been_recorded}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
 
 export default RegistrationEmployeeSalaryPage;
-

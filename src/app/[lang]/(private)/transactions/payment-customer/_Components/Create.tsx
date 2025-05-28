@@ -119,6 +119,62 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
             </DialogTitle>
             <DialogContent>
               <Grid container spacing={2} mt={1}>
+                <Grid item xs={12}>
+                  <InputLabel sx={{ paddingBottom: "5px" }} required>
+                    {t?.transactions?.recipient}({t?.pages?.Customers?.Customer})
+                  </InputLabel>
+                  <CustomerAutoComplete name="receiver" dir={t?.home?.dir} />
+                </Grid>
+                
+                <Grid item xs={6}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    required
+                  >
+                    {t?.transactions?.payed_amount}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    {...register("amount", { required: true })}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    required
+                  >
+                    {t?.transactions?.currency}
+                  </InputLabel>
+                  <UserCurrenciesComponent
+                    name="currencyId"
+                    dir={t?.home?.dir}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.transactions?.calculated_currency}
+                  </InputLabel>
+                  <UserCurrenciesComponent
+                    name="calculatedTo"
+                    dir={t?.home?.dir}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.transactions?.calculated_amount}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    {...register("amountCalculated", { required: true })}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <InputLabel sx={{ marginTop: "1rem" }}>
+                    {t?.transactions?.payer}
+                  </InputLabel>
+                </Grid>
                 <Grid item xs={4}>
                   <RadioGroup
                     onChange={onChangeHandler}
@@ -139,84 +195,24 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                 </Grid>
                 <Grid item xs={8}>
                   {accountType === "Bank" && (
-                    <BankAutoComplete name="payerId" />
+                    <BankAutoComplete name="payerId" dir={t?.home?.dir} />
                   )}
-                  {/* <Select
-                  fullWidth
-                  size="small"
-                  {...register("bankPhoneNumber", { required: true })}
-                  name="bankPhoneNumber"
-                /> */}
                   {accountType === "Safe" && (
-                    <CashBoxAutoComplete name="payerId" />
+                    <CashBoxAutoComplete name="payerId" dir={t?.home?.dir} />
                   )}
                 </Grid>
-
-                <Grid item xs={6}>
-                  <InputLabel
-                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                    required
-                  >
-                    {t?.transactions?.received_amount}
+                <Grid item xs={12}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.transactions?.description}
                   </InputLabel>
                   <TextField
                     fullWidth
+                    multiline
+                    rows={4}
                     size="small"
-                    {...register("amount", { required: true })}
+                    {...register("description", { required: true })}
                   />
                 </Grid>
-                <Grid item xs={6}>
-                  <InputLabel
-                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                    required
-                  >
-                    {t?.transactions?.currency}
-                  </InputLabel>
-                  <UserCurrenciesComponent name="currencyId"/>
-                </Grid>
-                <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_currency}
-                  </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" />
-                </Grid>
-                <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_amount}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("amountCalculated", { required: true })}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem" }}>
-                    {t?.transactions?.recipient}
-                  </InputLabel>
-                </Grid>
-
-                <Grid item xs={12}>
-                  <InputLabel
-                    sx={{  paddingBottom: "5px" }}
-                    required
-                  >
-                    {t?.transactions?.full_name_of_customer}
-                  </InputLabel>
-                  <CustomerAutoComplete name="receiver" />
-                </Grid>
-                <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  size="small"
-                  {...register("description", { required: true })}
-                />
-              </Grid>
               </Grid>
             </DialogContent>
             <DialogActions

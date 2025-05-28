@@ -1,90 +1,77 @@
 "use client";
 import { useApolloClient } from "@apollo/client";
-import { MenuItem, Select, useTheme } from "@mui/material";
-import { GET_SAFE_LIST } from "../../graphql/queries/GET_SAFE_LIST";
+import { MenuItem, Select } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/provider/appContext";
 import { GET_BANK_LIST } from "@/graphql/queries/GET_BANK_LIST";
 import { Controller, useFormContext } from "react-hook-form";
+import { useGetBankListQuery } from "@/hooks/api/definitions/bank/queries/use-get-bank-list-query";
 
 interface IPropsProduct {
-  getCashBox?: (product: any) => void;
-  placeholder?: string;
-  isRequired?: boolean;
   name?:string
+  dir?:string
+  getBank?: (bank: any) => void;
 }
 const BankAutoComplete: React.FC<IPropsProduct> = ({
-  getCashBox,
-  placeholder,
-  isRequired = true,
-  name
+  dir="ltr",
+  name,
+  getBank
 }) => {
-  const client = useApolloClient();
+  // const client = useApolloClient();
   const {
     control,
     formState: { errors },
   } = useFormContext();
-  const { setHandleError } = useContext(AppContext);
-  const [autoCompleteState, setAutoCompleteState] = useState<{
-    data: any[];
-    page: number;
-  }>({
-    data: [],
-    page: 1,
-  });
+  // const { setHandleError } = useContext(AppContext);
+  // const [autoCompleteState, setAutoCompleteState] = useState<{
+  //   data: any[];
+  //   page: number;
+  // }>({
+  //   data: [],
+  //   page: 1,
+  // });
+  const {data:bankList} = useGetBankListQuery({page:1})
 
-  const getBankFunction = async (textSearch?: string) => {
-    try {
-      //TODO : use search term for each select box
-      const variables = {
-        page: textSearch ? 1 : autoCompleteState?.page,
-        ...(textSearch ? { searchTerm: textSearch } : {}),
-      };
-      const {
-        data: { getBankList },
-      } = await client.query({
-        query: GET_BANK_LIST,
-        variables,
-      });
-      const mapData = getBankList?.bank?.map((item: any) => {
-        return { _id: item?._id, label: item?.name, ...item };
-      });
-      const allCustomer = [...mapData, ...autoCompleteState?.data];
-      const duplicate = allCustomer?.filter(
-        (value, index, self) =>
-          index === self.findIndex((t) => t._id === value._id)
-      );
-      // if (autoCompleteState?.data?.length && getCashBox) {
-      //   getCashBox(allCustomer?.[0]);
-      // }
-      setAutoCompleteState((prevState) => ({
-        ...prevState,
-        page: prevState.page + 1,
-        data: duplicate,
-      }));
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        status: "error",
-        message: error.message,
-      });
-    }
-  };
-  const handleChangeCustomerSearch = (
-    event: React.ChangeEvent<any>,
-    item: any
-  ) => {
-    const value = event.currentTarget?.value;
-    if (getCashBox && item?._id) {
-      getCashBox(item);
-    } else {
-      getBankFunction(value);
-    }
-  };
+  // const getBankFunction = async (textSearch?: string) => {
+  //   try {
+  //     //TODO : use search term for each select box
+  //     const variables = {
+  //       page: textSearch ? 1 : autoCompleteState?.page,
+  //       ...(textSearch ? { searchTerm: textSearch } : {}),
+  //     };
+  //     const {
+  //       data: { getBankList },
+  //     } = await client.query({
+  //       query: GET_BANK_LIST,
+  //       variables,
+  //     });
+  //     const mapData = getBankList?.bank?.map((item: any) => {
+  //       return { _id: item?._id, label: item?.name, ...item };
+  //     });
+  //     const allCustomer = [...mapData, ...autoCompleteState?.data];
+  //     const duplicate = allCustomer?.filter(
+  //       (value, index, self) =>
+  //         index === self.findIndex((t) => t._id === value._id)
+  //     );
+  
 
-  useEffect(() => {
-    getBankFunction();
-  }, []);
+  //     setAutoCompleteState((prevState) => ({
+  //       ...prevState,
+  //       page: prevState.page + 1,
+  //       data: duplicate,
+  //     }));
+  //   } catch (error: any) {
+  //     setHandleError({
+  //       open: true,
+  //       status: "error",
+  //       message: error.message,
+  //     });
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getBankFunction();
+  // }, []);
   return (
     <Controller
       name={name || "bankId"}
@@ -95,17 +82,22 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
           fullWidth
           size={"small"}
           value={value}
-          // placeholder={placeholder}
-          // options={PROGRAM_STATUS}
-          // placeholder="Please select status"
           error={!!errors?.currencyId}
           // helperText={errors?.currencyId?.message}
           required
-          onChange={onChange}
+          onChange={(event)=>{
+            onChange(event);
+            if (getBank) {
+              const selectedBank = bankList?.bank?.find(
+                (item:any) => item?._id === event.target.value
+              );
+              getBank(selectedBank);
+            }
+          }}
         >
-          {autoCompleteState?.data?.map((item) => {
+          {bankList?.bank?.map((item:any) => {
             return (
-              <MenuItem key={item?._id} value={item?._id}>
+              <MenuItem key={item?._id} value={item?._id} dir={dir}>
                 {item?.name}
               </MenuItem>
             );

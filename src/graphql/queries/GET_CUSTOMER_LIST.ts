@@ -8,8 +8,9 @@ const GET_CUSTOMER_LIST = gql`
         fullName
         address
         contactNumber
-
-        credit {
+        createdAt
+        description
+        firstPeriodCredit {
           amount
           creditType
           currencyId {
@@ -18,7 +19,6 @@ const GET_CUSTOMER_LIST = gql`
             symbol
           }
         }
-        createdAt
       }
       count
     }

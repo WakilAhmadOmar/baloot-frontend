@@ -86,6 +86,13 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
 
           // router.back()
         },
+        onError:(error:any)=>{
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
+          });
+        }
       }
     );
   };
@@ -120,32 +127,16 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
             </DialogTitle>
             <DialogContent>
               <Grid container spacing={2} mt={1}>
-                <Grid item xs={4}>
-                  <RadioGroup
-                    onChange={onChangeHandler}
-                    row
-                    value={accountType}
+                <Grid item xs={12}>
+                  <InputLabel
+                    sx={{  paddingBottom: "5px" }}
+                    required
                   >
-                    <FormControlLabel
-                      value="Bank"
-                      control={<Radio />}
-                      label={t?.transactions?.bank}
-                    />
-                    <FormControlLabel
-                      value="Safe"
-                      control={<Radio />}
-                      label={t?.transactions?.cashbox}
-                    />
-                  </RadioGroup>
+                    {t?.transactions?.full_name_of_employee}
+                  </InputLabel>
+                  <EmployeeAutoCompleteComponent name="receiver" dir={t?.home?.dir}/>
                 </Grid>
-                <Grid item xs={8}>
-                  {accountType === "Bank" && (
-                    <BankAutoComplete name="payerId" />
-                  )}
-                  {accountType === "Safe" && (
-                    <CashBoxAutoComplete name="payerId" />
-                  )}
-                </Grid>
+               
 
                 <Grid item xs={6}>
                   <InputLabel
@@ -167,13 +158,13 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   >
                     {t?.transactions?.currency}
                   </InputLabel>
-                  <UserCurrenciesComponent name="currencyId"/>
+                  <UserCurrenciesComponent name="currencyId" dir={t?.home?.dir}/>
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.transactions?.calculated_currency}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" />
+                  <UserCurrenciesComponent name="calculatedTo" dir={t?.home?.dir}/>
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -185,20 +176,36 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                     {...register("amountCalculated", { required: true })}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem" }}>
-                    {t?.transactions?.recipient}
+                    {t?.transactions?.payer}
                   </InputLabel>
                 </Grid>
-
-                <Grid item xs={12}>
-                  <InputLabel
-                    sx={{  paddingBottom: "5px" }}
-                    required
+                <Grid item xs={4}>
+                  <RadioGroup
+                    onChange={onChangeHandler}
+                    row
+                    value={accountType}
                   >
-                    {t?.transactions?.full_name_of_employee}
-                  </InputLabel>
-                  <EmployeeAutoCompleteComponent name="receiver" placeholder=""/>
+                    <FormControlLabel
+                      value="Bank"
+                      control={<Radio />}
+                      label={t?.transactions?.bank}
+                    />
+                    <FormControlLabel
+                      value="Safe"
+                      control={<Radio />}
+                      label={t?.transactions?.cashbox}
+                    />
+                  </RadioGroup>
+                </Grid>
+                <Grid item xs={8}>
+                  {accountType === "Bank" && (
+                    <BankAutoComplete name="payerId"  dir={t?.home?.dir}/>
+                  )}
+                  {accountType === "Safe" && (
+                    <CashBoxAutoComplete name="payerId" dir={t?.home?.dir} />
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

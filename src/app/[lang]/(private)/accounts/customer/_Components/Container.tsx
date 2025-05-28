@@ -3,14 +3,14 @@ import AddCashboxAccounts from "./Create";
 import CollapseComponent from "@/components/collapse/Collapse";
 import CustomSearch from "@/components/search/CustomSearch";
 import { AppContext } from "@/provider/appContext";
-import { useApolloClient } from "@apollo/client";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import SkeletonComponent from "./Skeleton";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import { NotFoundIcon } from "@/icons";
-import { GET_CUSTOMER_LIST } from "@/graphql/queries/GET_CUSTOMER_LIST";
-import { DELETE_CUSTOMER } from "@/graphql/mutation/DELETE_CUSTOMER";
+import { useGetCustomerListQuery } from "@/hooks/api/definitions/customer/queries/use-get-customer-list-query";
+import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
+import EmptyPage from "@/components/util/emptyPage";
+import { EmptyProductPageIcon } from "@/icons";
+import { UpdateCustomerAccounts } from "./Update";
 
 interface IPropsBankAccountPages {
   t: any;
@@ -18,137 +18,61 @@ interface IPropsBankAccountPages {
 
 const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
   const { setHandleError } = useContext(AppContext);
-  const client = useApolloClient();
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [textSearchState , setTextSearchState] = useState("")
-  const [customerDetails, setCustomerDetails] = useState<any>({
-    page: 1,
-    data: [],
-    count: 0,
-  });
-  const getCashboxListFunction = async (searchTerm?: string) => {
-    setLoadingPage(true)
-    try {
-      const variables = {
-        page: searchTerm ? 1 : customerDetails?.page,
-        ...(searchTerm ? { searchTerm: searchTerm } : {}),
-      };
-      const {
-        data: { getCustomerList },
-      } = await client.query({
-        query: GET_CUSTOMER_LIST,
-        variables,
-      });
 
-      if (getCustomerList?.customer) {
-        const allBank = [
-          ...customerDetails?.data,
-          ...(getCustomerList?.customer?.length > 0 ? getCustomerList?.customer : []),
-        ];
-        const duplicate = allBank?.filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t._id === value._id)
-        );
-        setCustomerDetails((prevState: any) => ({
-          page: searchTerm ? 1 : prevState.page + 1,
-          count: getCustomerList?.count ? getCustomerList?.count : prevState?.count,
-          data: searchTerm ? getCustomerList?.customer : duplicate,
-        }));
-      }
-      setLoadingPage(false);
-    } catch (error: any) {
-      setLoadingPage(false)
-      setHandleError({
-        open: true,
-        type: "error",
-        message: error.message,
-      });
-    }
-  };
-  useEffect(() => {
-    if (customerDetails?.count === 0) {
-      getCashboxListFunction();
-    }
-  }, []);
+  const [page, setPage] = useState(1);
+  const { data: customerList, isLoading } = useGetCustomerListQuery({ page });
 
-  const handleDeleteItem = async (id: string) => {
-    setLoading(true);
-    try {
-      const variables = {
-        customerId: id,
-      };
-      const {
-        data: { deleteCustomer },
-      } = await client?.mutate({
-        mutation: DELETE_CUSTOMER,
-        variables,
-      });
-      if (deleteCustomer?.message) {
-        setLoading(false);
-        setCustomerDetails(customerDetails?.filter((item: any) => item?._id !== id));
-      }
-    } catch (error: any) {
-      setLoading(false);
-      setHandleError({
-        message: error?.message,
-        type: "error",
-        open: true,
-      });
-    }
-  };
-  const handleSearchItem = (search: string) => {
-    setTextSearchState(search)
-    if (search){
+  const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
+    useAddFirstPeriodOfCreditMutation();
 
-      getCashboxListFunction(search);
-    }else {
-      getCashboxListFunction()
-    }
+  const handleDeleteAccount = (id: string) => {
+    const variables = {
+      creditObject: [],
+      accountType: "Customer",
+      accountId: id,
+    };
+
+    addFirstPeriodMutation(variables, {
+      onSuccess: ({ message }: any) => {
+        setHandleError({
+          message: message ?? "",
+          type: "success",
+          open: true,
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error?.message,
+          type: "error",
+        });
+      },
+    });
   };
-  
-  const handleUpdateCustomer = (customer:any) => {
-    setCustomerDetails((prevState:any) => ({
-      ...prevState,
-      data:prevState?.data?.map((item:any) => {
-        if (item?._id === customer?._id){
-          return {
-            ...item,
-            credit:customer?.credit,
-            description:customer?.description
-          }
-        }else return item
-      })
-    }))
-  }
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
   return (
     <Box>
-      {loading && <CircularProgressComponent />}
-    
-        <Typography variant="h3">
-          {t?.pages?.Customers?.list_of_customer_accounts}
-        </Typography>
-      
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        mt={4}
-      
-      >
+      <Typography variant="h3">
+        {t?.pages?.Customers?.list_of_customer_accounts}
+      </Typography>
+
+      <Box display={"flex"} justifyContent={"space-between"} mt={4}>
         <Box display={"flex"} width={"100%"}>
-          <AddCashboxAccounts
-            isEmptyPage={loadingPage === false && customerDetails?.count === 0}
-            t={t}
-            onUpdateCustomer={handleUpdateCustomer}
-          />
+          <AddCashboxAccounts t={t} />
         </Box>
-        {( customerDetails?.count > 0) && (
+        {/* {( customerDetails?.count > 0) && (
           <Box>
             <CustomSearch t={t} getTextSearchFunction={handleSearchItem} />
           </Box>
-        )}
+        )} */}
       </Box>
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         customerDetails?.data?.length === 0 && (
           <Box
@@ -163,14 +87,27 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               {t?.product?.nothing_found}
             </Typography>
           </Box>
-        )}
-      {customerDetails?.data?.length === 0 &&
-        loadingPage &&
-        Array(8)
-          .fill(null)
-          .map((_, index) => <SkeletonComponent key={"skeleton" + index} />)}
+        )} */}
+
+      {customerList?.count === 0 && isLoading === false && (
+        <Box
+          className={"empty_page_content"}
+          width={"100%"}
+          height={"70vh"}
+          alignItems={"center"}
+          display={"grid"}
+        >
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t.pages?.Customers?.no_product_yet_title}
+            discription={t.pages?.Customers?.no_product_yet_discription}
+            //  buttonText={t.pages?.Customers.add_new_customer}
+            //  onClick={handleOpenDialogFunction}
+          />
+        </Box>
+      )}
       <Box mt={2}>
-        {customerDetails?.data?.map((item: any) => {
+        {customerList?.customer.map((item: any) => {
           return (
             <CollapseComponent
               key={item?._id}
@@ -178,14 +115,16 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               createdAt={item?.createdAt}
               height="270px"
               t={t}
-              messageDescription={t?.pages?.Customers?.delete_description}
-              messageTitle={t?.pages?.Customers?.delete_title}
+              messageDescription={t?.pages?.Customers?.delete_description_account}
+              messageTitle={t?.pages?.Customers?.delete_title_account}
               id={item?._id}
-              editTable={false}
-              getIdToAddAction={handleDeleteItem}
-            >
+              editTable={true}
+              getIdToAddAction={handleDeleteAccount}
+              isLoading={deleteLoading}
+              UpdateComponent={<UpdateCustomerAccounts t={t} item={item}/>}
               
-              {item?.credit?.map((credit: any, index: number) => {
+            >
+              {item?.firstPeriodCredit?.map((credit: any, index: number) => {
                 return (
                   <Box
                     display={"grid"}
@@ -202,14 +141,6 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
                   </Box>
                 );
               })}
-              {/* <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
-                <Typography variant="caption" pt={2}>
-                  {t?.pages?.Customers?.credit_limit}
-                </Typography>
-                <Typography variant="caption" pt={2}>
-                  {item?.creditLimit?.amount} {item?.creditLimit?.currencyId?.symbol}
-                </Typography>
-              </Box> */}
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
                   {t?.pages?.Customers?.contact_number}
@@ -226,31 +157,37 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
                   {item?.address}
                 </Typography>
               </Box>
-              <Box display={"grid"} gridTemplateColumns={" auto"}>
+              <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
                   {t?.pages?.bank?.description}
                 </Typography>
-                <Typography variant="caption">{item?.description}</Typography>
+                <Typography variant="caption"pt={2} >{item?.description}</Typography>
               </Box>
             </CollapseComponent>
           );
         })}
       </Box>
-      {customerDetails?.count > 0 && textSearchState === "" &&<Box display={"flex"} justifyContent={"flex-end"} mt={2}>
-        <Stack spacing={2} p={1}>
-          <Pagination
-            count={customerDetails?.count / 10}
-            size={"medium"}
-            // onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>
-      </Box>}
+      {customerList?.count > 9 && (
+        <Box display={"flex"} justifyContent={"flex-end"} mt={2}>
+          <Stack spacing={2} p={1}>
+            <Pagination
+              count={customerList?.count / 10}
+              size={"medium"}
+              onChange={handleChangePage}
+              variant="outlined"
+              color="primary"
+              shape="rounded"
+              sx={{
+                fontSize: "2rem !important",
+              }}
+            />
+          </Stack>
+        </Box>
+      )}
+      {isLoading &&
+        Array(8)
+          .fill(null)
+          .map((_, index) => <SkeletonComponent key={"skeleton" + index} />)}
     </Box>
   );
 };

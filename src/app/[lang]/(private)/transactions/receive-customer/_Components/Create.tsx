@@ -123,7 +123,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   >
                     {t?.transactions?.full_name_of_customer}
                   </InputLabel>
-                  <CustomerAutoComplete name="payerId" />
+                  <CustomerAutoComplete name="payerId" dir={t?.home?.dir} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
@@ -145,13 +145,13 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   >
                     {t?.transactions?.currency}
                   </InputLabel>
-                  <UserCurrenciesComponent />
+                  <UserCurrenciesComponent dir={t?.home?.dir}/>
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t?.transactions?.calculated_currency}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" />
+                  <UserCurrenciesComponent name="calculatedTo" dir={t?.home?.dir} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -187,14 +187,8 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {accountType === "Bank" && <BankAutoComplete name="receiver"/>}
-                  {/* <Select
-                  fullWidth
-                  size="small"
-                  {...register("bankPhoneNumber", { required: true })}
-                  name="bankPhoneNumber"
-                /> */}
-                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" />}
+                  {accountType === "Bank" && <BankAutoComplete name="receiver" dir={t?.home?.dir}/>}
+                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" dir={t?.home?.dir} />}
                 </Grid>
                 <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

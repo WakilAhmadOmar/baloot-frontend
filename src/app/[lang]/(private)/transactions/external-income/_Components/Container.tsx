@@ -1,35 +1,25 @@
 "use client";
 import CollapseComponent from "@/components/collapse/Collapse";
 // import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
-import CustomSearch from "@/components/search/CustomSearch";
+// import CustomSearch from "@/components/search/CustomSearch";
 import {
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
   IconButton,
-  InputLabel,
   Pagination,
-  Select,
   Stack,
-  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
+import {  ExportSquare, Printer } from "iconsax-react";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
-import { useGetConsumptionListQuery } from "@/hooks/api/transactions/queries/use-get-consumption-list";
 import SkeletonComponent from "../../_components/Skeleton";
 import { UpdateForm } from "./Update-form";
-import { useDeleteConsumptionMutation } from "@/hooks/api/transactions/mutations/delete-consumption-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
+import { useGetExternalIncomeListQuery } from "@/hooks/api/transactions/queries/use-get-external-incom-list";
+import { useDeleteExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-delete-external-income";
 type ExpensesProps = {
   t: any;
 };
@@ -37,10 +27,10 @@ const RegistrationExpensesPage = ({ t }: ExpensesProps) => {
   const {setHandleError} = useContext(AppContext)
   const theme = useTheme();
   const [page, setPage] = useState(1);
-  const { data: consumptionList, isLoading } = useGetConsumptionListQuery({
+  const { data: externalIncomeList, isLoading } = useGetExternalIncomeListQuery({
     page,
   });
-  const {mutate:deleteConsumptionMutation} = useDeleteConsumptionMutation()
+  const {mutate:deleteExternalIncomeMutation , isLoading:isLoadingDelete} = useDeleteExternalIncomeMutation()
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
@@ -51,8 +41,8 @@ const RegistrationExpensesPage = ({ t }: ExpensesProps) => {
 
   
 const handleDeleteFunction = (id:string) => {
-  deleteConsumptionMutation({
-    consumptionId:id
+  deleteExternalIncomeMutation({
+    externalIncomeId:id
   },{
     onSuccess:({message})=>{
       setHandleError({
@@ -70,7 +60,7 @@ const handleDeleteFunction = (id:string) => {
           {t?.transactions?.add_external_income}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
-          {/* <CreateCreate t={t} /> */}
+          <CreateCreate t={t} />
 
           <Box display={"flex"} columnGap={"2rem"} alignItems={"center"}>
             <IconButton>
@@ -80,15 +70,15 @@ const handleDeleteFunction = (id:string) => {
               <Printer color={theme.palette.primary.main} />
             </IconButton>
             <Box> {/* <DateRangePickerComponent /> */}</Box>
-            <CustomSearch t={t} />
+            {/* <CustomSearch t={t} /> */}
           </Box>
         </Box>
       </Box>
       <Box>
-        {consumptionList?.consumption?.map((item: any) => (
+        {externalIncomeList?.externalIncome?.map((item: any) => (
           <CollapseComponent
             key={item?._id}
-            name={item?.consumptionTypeId?.name}
+            name={item?.externalIncomeTypeId?.name}
             createdAt={item?.createdAt}
             messageDescription={t?.transactions?.description_delete_message}
             messageTitle={t?.transactions?.title_delete_message}
@@ -96,6 +86,7 @@ const handleDeleteFunction = (id:string) => {
             t={t}
             getIdToAddAction={handleDeleteFunction}
              UpdateComponent={<UpdateForm t={t} item={item} />}
+             isLoading={isLoadingDelete}
           >
             <Box
               display={"grid"}
@@ -109,9 +100,9 @@ const handleDeleteFunction = (id:string) => {
                 {item?.amount} {item?.currencyId?.symbol}
               </Typography>
               <Typography variant="caption">
-                {t?.transactions?.payer}
+                {t?.transactions?.recipient}
               </Typography>
-              <Typography variant="caption">{item?.payer?.name}</Typography>
+              <Typography variant="caption">{item?.receiver?.name}</Typography>
               <Typography variant="caption">
                 {t?.transactions?.description}
               </Typography>
@@ -124,7 +115,7 @@ const handleDeleteFunction = (id:string) => {
       <Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination 
-            count={Math.ceil(consumptionList?.count / 10)}
+            count={Math.ceil(externalIncomeList?.count / 10)}
             size={"medium"}
             shape="rounded"
             variant="outlined"
@@ -138,7 +129,7 @@ const handleDeleteFunction = (id:string) => {
           />
         </Stack>
       </Box>
-      {consumptionList?.count === 0 && !isLoading && (
+      {externalIncomeList?.count === 0 && !isLoading && (
         <Box mt={"10rem"}>
           {" "}
           <EmptyPage
