@@ -1,6 +1,5 @@
 import { client } from "@/config/http-client"
-import {  GET_CONSUMPTION_TYPE_LIST_QUERY_KEY, GET_EXTERNAL_INCOME_TYPE_LIST_QUERY_KEY } from "@/constants/queries-key";
-import { GET_CONSUMPTION_TYPE_LIST } from "@/graphql/queries/GET_CONSUMPTION_TYPE_LIST";
+import {   GET_EXTERNAL_INCOME_TYPE_LIST_QUERY_KEY } from "@/constants/queries-key";
 import { GET_EXTERNAL_INCOME_TYPE_LIST } from "@/graphql/queries/GET_EXTERNAL_INCOME_TYPE_LIST";
 import { AppContext } from "@/provider/appContext";
 import { ApolloError } from "@apollo/client";
@@ -25,7 +24,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [GET_EXTERNAL_INCOME_TYPE_LIST_QUERY_KEY  ],
+      queryKey: [ GET_EXTERNAL_INCOME_TYPE_LIST_QUERY_KEY ],
     })
   }
 

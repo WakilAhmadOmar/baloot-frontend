@@ -70,7 +70,8 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
         amount:parseFloat(data?.amount),
         amountCalculated:parseFloat(data?.amountCalculated),
         invoiceType:"Cash",
-        receiverType:accountType
+        receiverType:accountType,
+        payerType:"Employee"
       }
     }, {
       onSuccess: () => {

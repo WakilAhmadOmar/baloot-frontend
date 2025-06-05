@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-const GET_MEANSURES = gql`
+const GET_MEASURES = gql`
   query {
     getMeasures {
       _id
@@ -10,4 +10,4 @@ const GET_MEANSURES = gql`
     }
   }
 `;
-export { GET_MEANSURES };
+export { GET_MEASURES };

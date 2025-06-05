@@ -13,141 +13,67 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-
-import { useApolloClient } from "@apollo/client";
-import SnackbarComponent from "@/components/snackbarComponent";
-import { ADD_ENTREPOT } from "@/graphql/mutation/ADD_ENTREPOT";
-import { UPDATE_ENTREPOT } from "@/graphql/mutation/UPDATE_ENTREPOT";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
+import { useAddEntrepotMutation } from "@/hooks/api/definitions/warehouse/mutations/use-add-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsCreateWarehouse {
-  getProuctCreated: (product: any) => void;
-  isUpdate: boolean;
-  item?: any;
-  getProductUpdated?: (product: any) => void;
-  canceleUpdageProduct?: () => void;
-  isEmpty?: boolean;
   t: any;
 }
 
 const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
-  getProuctCreated,
-  isUpdate,
-  canceleUpdageProduct,
-  getProductUpdated,
-  isEmpty,
-  item,
   t,
 }) => {
   const methods = useForm();
+  const {setHandleError} = useContext(AppContext)
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = methods;
   const theme = useTheme();
-  const cleint = useApolloClient();
-  const [openDialog, setOpenDialog] = useState(isUpdate);
-  const [loadingPage, setLoadingPage] = useState(false);
-  const [employeeState, setEmployeeState] = useState<any>(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
+  const {mutate , isLoading} = useAddEntrepotMutation()
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
-    if (canceleUpdageProduct) {
-      canceleUpdageProduct();
-    }
+    
   };
 
-  useEffect(() => {
-    if (item?._id) {
-      setValue("name", item?.name);
-      setValue("address", item?.address);
-    }
-    if (isUpdate) {
-      setOpenDialog(isUpdate);
-    }
-  }, [item?._id, isUpdate]);
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      ...(isUpdate ? { entrepotId: item?._id } : {}),
       entrepotObject: {
         name: data?.name,
         address: data?.address,
         responsible: data?.employeeId,
       },
     };
-    try {
-      setLoadingPage(true);
-      if (isUpdate) {
-        const {
-          data: { updateEntrepot },
-        } = await cleint.mutate({
-          mutation: UPDATE_ENTREPOT,
-          variables,
+    mutate(variables , {
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t?.pages?.warehouse?.warehouse_saved_successfully,
+          status: "success",
         });
-        if (updateEntrepot?.message && getProductUpdated) {
-          getProductUpdated(updateEntrepot);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      } else {
-        const {
-          data: { addEntrepot },
-        } = await cleint.mutate({
-          mutation: ADD_ENTREPOT,
-          variables,
+        handleOpenDialogFunction()
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
         });
-
-        if (addEntrepot?._id) {
-          getProuctCreated(addEntrepot);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      }
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        message: error.message,
-        status: "error",
-      });
-      setLoadingPage(false);
-    }
-  };
-
-  const handleCloseError = () => {
-    setHandleError((prevState) => ({
-      ...prevState,
-      open: false,
-    }));
-  };
-
-  const handleGetEmployeeFunction = (data: any) => {
-    setEmployeeState(data);
+      },
+    })
+   
   };
 
   return (
     <FormProvider {...methods}>
-      <SnackbarComponent
-        status={handleError?.status}
-        open={handleError?.open}
-        message={handleError?.message}
-        handleClose={handleCloseError}
-      />
+     
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -193,14 +119,14 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
                   {t?.pages?.warehouse?.warehouse_responsible}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
-                  placeholder=""
                   name="employeeId"
-                  getValue={handleGetEmployeeFunction}
-                  defaultValue={{
-                    ...item?.responsible,
-                    id: item?.responsible?._id,
-                    label: item?.responsible?.name,
-                  }}
+                  dir={t?.home?.dir}
+                  // getValue={handleGetEmployeeFunction}
+                  // defaultValue={{
+                  //   ...item?.responsible,
+                  //   id: item?.responsible?._id,
+                  //   label: item?.responsible?.name,
+                  // }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -224,7 +150,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
-            loading={loadingPage}
+            loading={isLoading}
           >
             {t?.pages?.warehouse?.save}
           </Button>
@@ -234,17 +160,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
         </DialogActions>
       </Dialog>
 
-      {isEmpty ? (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            buttonText={t?.pages?.warehouse?.add_warehouse}
-            discription={t?.pages?.warehouse?.no_warehouse}
-            onClick={handleOpenDialogFunction}
-            title={t?.pages?.warehouse?.no_warehouse_registered}
-          />
-        </Box>
-      ) : (
+      
         <Box>
           <Button
             variant="contained"
@@ -254,7 +170,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             {t?.pages?.warehouse?.add_warehouse}
           </Button>
         </Box>
-      )}
+      
     </FormProvider>
   );
 };

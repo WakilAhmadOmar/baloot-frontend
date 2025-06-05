@@ -146,6 +146,7 @@
     "category_name": "نام دسته بندی",
     "yes": "بله",
     "add_new_category": "افزودن دسته بندی جدید",
+    "update_category": "اصلاح دسته بندی ",
     "create_title": "تعریف جنس",
     "product_name": "نام محصول",
     "count": "تعداد",
@@ -156,7 +157,14 @@
     "currency": "ارز",
     "choose_unit_from_largest": "واحد از بزرگ به کوچک انتخاب کنید",
     "delete_title": "آیا مطمئیند این جنس را حذف کنید؟",
-    "delete_description": "این جنس حذف شود دوباره به آن دسترسی نخواهید داشت."
+    "delete_description": "این جنس حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "product_added_successfully":"جنس ذخیره شده",
+    "product_deleted_successfully":"جنس موافقانه پاک شد",
+    "product_updated_successfully":"جنس موافقانه اصلاح شد",
+    "update_product":"اصلاح جنس",
+    "this_category_saved_successfully":"این دسته موافقانه ذخیره شد",
+    "this_category_updated_successfully":"این دسته موافقانه اصلاح شد"
+
   },
   "position_link": {
     "": "صحفه اصلی",
@@ -214,6 +222,7 @@
     "bank": {
       "Banks": "بانک ها",
       "New_Bank_Information": "مشخصات بانک جدید ",
+      "update_Bank_Information":  " اصلاح مشخصات بانک ",
       "Bank_Name": " نام بانک",
       "Account_Number": "شماه حساب",
       "Current_Balance": "مبلغ موجودی",
@@ -241,7 +250,10 @@
       "new_currency": "ارز جدید",
       "record_previous_balance": "ثبت موجودی گذشته",
       "save": "ذخیره",
-      "cancel": "خیره"
+      "cancel": "خیره",
+      "bank_saved_successfully":"بانک موافقانه ذخیره شد",
+      "bank_updated_successfully":"بانک موافقانه اصلاح شد",
+      "bank_deleted_successfully":"بانک موافقانه پاک شد"
     },
     "cashbox": {
       "New_Cashbox_Information": "مشخصات صندوق جدید",
@@ -265,7 +277,10 @@
       "no_product_yet_discription": "شما هیچ صندوق در سیستم ما ندارید. برای افزودن یا وارد کردن صندوق ها خود روی دکمه زیر کلیک کنید.",
       "record_previous_cashbox_accounts": "ثبت حساب گذشته صندوق  ها",
       "previous_account": "حساب گذشته",
-      "list_of_previous_cashbox_accounts": "لیست حساب‌های گذشته صندوق ها"
+      "list_of_previous_cashbox_accounts": "لیست حساب‌های گذشته صندوق ها",
+      "safe_saved_successfully":"صدنوق موافقانه ذخیره شد",
+      "safe_updated_successfully":"صدنوق موافقانه اصلاح شد",
+      "safe_deleted_successfully":"صدنوق موافقانه پاک شد"
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -278,13 +293,17 @@
       "You_have_no_expenses": "شما هیچ مصرف در سیستم ما ندارید. برای افزودن یا وارد کردن مصرف خود روی دکمه زیر کلیک کنید.",
       "Are_you_sure_you_want_to_delete_this_item": "آیا مطمئیند این مصرف را حذف کنید؟",
       "Once_this_item_is_deleted": "این مصرف حذف شود دوباره به آن دسترسی نخواهید داشت.",
-      "yes": "بله"
+      "yes": "بله",
+      "expense_type_saved_successfully":"نوع مصارف موافقانه ذخیره شد",
+      "expense_type_updated_successfully":"نوع مصارف موافقانه اصلاح شد",
+      "expense_type_deleted_successfully":"نوع مصارف موافقانه پاک شد"
     },
     "Customers": {
       "Customers": "مشتریان",
       "Customer": "مشتری",
       "Nothing_Found": "چیزی یافت نشد",
       "add_new_customer": "افزودن مشتری جدید",
+      "update_customer": "اصلاح مشتری",
       "customer_name": "نام کامل مشتری",
       "customer_code": " کد مشتری",
       "contact_number": "شماره تماس",
@@ -305,11 +324,13 @@
       "no_product_yet_discription": "شما هیچ مشتری در سیستم ما ندارید. برای افزودن یا وارد کردن مشتریان خود روی دکمه زیر کلیک کنید.",
       "list_of_customer_accounts": "لیست حساب های مشتریان",
       "record_previous_customer_accounts": "ثبت حساب گذشته  مشتریان",
-      "update_record_previous_customer_account": "اصلاح حساب گذشته مشتری "
+      "update_record_previous_customer_account": "اصلاح حساب گذشته مشتری ",
+      "customer_saved_successfully":"مشتری موافقانه ذخیره شد"
     },
     "unit": {
       "define_units": "تعریف واحدات",
-      "update_successfully": "با موفقیت به‌روز شد",
+      "update_successfully": "با موفقیت اصلاح شد",
+      "create_successfully": "با موفقیت ذخیره شد",
       "are_you_sure_to_delete_this_unit": "آیا مطمئیند این واحد را حذف کنید؟",
       "you_will_not_have_access_again": "این واحد حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "no": "خیر",
@@ -321,7 +342,8 @@
       "cancel": "لغو",
       "no_unit_registered": "هیچ واحدی ثبت نشده است",
       "add_new_unit": "افزودن واحد جدید",
-      "no_units_description": "شما هیچ واحدی در سیستم ما ندارید. برای افزودن یا وارد کردن واحدات خود روی دکمه زیر کلیک کنید."
+      "no_units_description": "شما هیچ واحدی در سیستم ما ندارید. برای افزودن یا وارد کردن واحدات خود روی دکمه زیر کلیک کنید.",
+      "update_unit":"اصلاح واحد"
     },
     "employee": {
       "job_title": "وظیفه",
@@ -350,10 +372,13 @@
       "no_product_yet_discription": "شما هیچ کارمند در سیستم ما ندارید. برای افزودن یا وارد کردن کارمندان خود روی دکمه زیر کلیک کنید.",
       "list_of_employee_accounts": "لیست حساب های کارمندان",
       "record_previous_employee_accounts": "ثبت حساب گذشته  کارمندان",
-      "update_record_previous_employee_account": "اصلاح حساب گذشته کارمند "
+      "update_record_previous_employee_account": "اصلاح حساب گذشته کارمند ",
+      "employee_saved_successfully":"کارمند موافقانه ذخیره شد",
+      "employee_updated_successfully":"کارمند موافقانه اصلاح شد"
     },
     "income": {
       "new_income": "عوایید جدید",
+      "update_income": "اصلاح عواید بیرونی ",
       "income_name": "نام عواید",
       "save": "ذخیره",
       "cancel": "لغو",
@@ -362,7 +387,9 @@
       "no_income_description": "شما هیچ عوایید بیرونی در سیستم ما ندارید. برای افزودن یا وارد کردن عواید بیرونی جدید خود روی دکمه زیر کلیک کنید.",
       "delete_title": "آیا مطمئیند این عوایید را حذف کنید؟",
       "delete_description": "این عوایید حذف شود دوباره به آن دسترسی نخواهید داشت.",
-      "external_income": "عواید بیرونی"
+      "external_income": "عواید بیرونی",
+      "external_income_type_saved_successfully":"نوع عواید بیرونی موافقانه ذخیره شده",
+      "external_income_type_updated_successfully":"نوع عواید بیرونی موافقانه اصلاح شده"
     },
     "partner": {
       "new_partner_details": "مشخصات شریک جدید",
@@ -383,7 +410,9 @@
       "amount_of_money_in_cash": "مقدار سرمایه به پول",
       "delete_title": "آیا مطمئیند این شریک را حذف کنید؟",
       "delete_description": "این شریک حذف شود دوباره به آن دسترسی نخواهید داشت.",
-      "currency": "ارز"
+      "currency": "ارز",
+      "this_partner_saved_successfully":"یک شریک موافقانه ذخیره شده",
+      "this_partner_updated_successfully":" شریک موافقانه اصلاح شده"
     },
     "warehouse": {
       "initial_period_registration": "ثبت اول دوره",
@@ -399,6 +428,7 @@
       "save": "ذخیره",
       "warehouses": " گدام ها",
       "add_warehouse": "افزودن گدام جدید",
+      "update_warehouse": "اصلاح گدام ",
       "no_warehouse": "شما هیچ گدام در سیستم ما ندارید. برای افزودن یا وارد کردن گدام خود روی دکمه زیر کلیک کنید.",
       "no_warehouse_registered": "هیچ گدام ثبت نشده است",
       "add_new_warehouse": "افزودن گدام جدید",
@@ -407,7 +437,10 @@
       "delete_title": "آیا مطمئیند این گدام را حذف کنید؟",
       "delete_description": "این گدام حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "initial_inventory_entry_in_warehouse": "ثبت اول دوره اجناس در گدام ",
-      "back": "بازگشت"
+      "back": "بازگشت",
+      "warehouse_saved_successfully":"گدام موافقانه ذخیره شد",
+      "warehouse_updated_successfully":"گدام موافقانه اصلاح شد",
+      "warehouse_deleted_successfully":"گدام موافقانه پاک شد"
     }
   },
   "transactions": {

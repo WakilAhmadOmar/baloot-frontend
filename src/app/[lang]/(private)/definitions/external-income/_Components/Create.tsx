@@ -14,141 +14,68 @@ import {
     InputLabel,
   } from "@mui/material";
   import { CloseSquare } from "iconsax-react";
-  import { useEffect, useState } from "react";
+  import { useContext, useState } from "react";
   import { useForm } from "react-hook-form";
-  import { useApolloClient } from "@apollo/client";
-  import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-  import SnackbarComponent from "@/components/snackbarComponent";
-  import EmptyPage from "@/components/util/emptyPage";
-  import { EmptyProductPageIcon } from "@/icons";
-  import { UPDATE_EXTERNAL_INCOME_TYPE } from "@/graphql/mutation/UPDATE_EXTERNAL_INCOME_TYPE";
-  import { ADD_NEW_EXTERNAL_INCOME_TYPE } from "@/graphql/mutation/ADD_NEW_EXTERNAL_INCOME_TYPE";
+
+import { useAddExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-add-mutation";
+import { AppContext } from "@/provider/appContext";
   
   interface IPropsCreateConsumetion {
-    getProuctCreated: (product: any) => void;
-    isUpdate: boolean;
-    item?: any;
-    getProductUpdated?: (product: any) => void;
-    canceleUpdageProduct?: () => void;
-    isEmptyPage?: boolean;
     t:any
   }
   
   const CreateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
-    getProuctCreated,
-    isUpdate,
-    canceleUpdageProduct,
-    getProductUpdated,
-    isEmptyPage = true,
-    item,
+
     t
   }) => {
     const {
       register,
       handleSubmit,
-      watch,
       formState: { errors },
-      getValues,
-      setValue,
-      getFieldState,
     } = useForm();
     const theme = useTheme();
-    const cleint = useApolloClient();
-    const [openDialog, setOpenDialog] = useState(isUpdate);
-    const [loadingPage, setLoadingPage] = useState(false);
-    const [selectedUnitProduct, setSelectedUnitProduct] = useState<any[]>([]);
-    const [productCategory, setProductCategory] = useState<{
-      category: any[];
-      page: number;
-    }>({
-      category: [],
-      page: 1,
-    });
+    const [openDialog, setOpenDialog] = useState(false);
+    const {setHandleError} = useContext(AppContext)
+ 
   
-    const [handleError, setHandleError] = useState<{
-      status: "success" | "info" | "warning" | "error";
-      open: boolean;
-      message: string;
-    }>({
-      status: "success",
-      open: false,
-      message: "",
-    });
+    const {mutate  , isLoading } = useAddExternalIncomeTypeMutation()
+
+  
   
     const handleOpenDialogFunction = () => {
       setOpenDialog(!openDialog);
-      if (canceleUpdageProduct) {
-        canceleUpdageProduct();
-      }
+     
     };
   
-    useEffect(() => {
-      if (item?._id) {
-        setValue("name", item?.name);
-      }
-      if (isUpdate) {
-        setOpenDialog(isUpdate);
-      }
-    }, [item?._id, isUpdate]);
     const onSubmitFunction = async (data: any) => {
       const variables = {
-        ...(isUpdate ? { externalIncomeTypeId: item?._id } : {}),
+        
         name: data?.name,
       };
   
-  
-      try {
-        setLoadingPage(true);
-        if (isUpdate) {
-          const {
-            data: { updateExternalIncomeType },
-          } = await cleint.mutate({
-            mutation: UPDATE_EXTERNAL_INCOME_TYPE,
-            variables,
-          });
-          if (updateExternalIncomeType?._id && getProductUpdated) {
-            getProductUpdated(updateExternalIncomeType);
-            setLoadingPage(false);
-            setOpenDialog(false);
-          }
-        } else {
-          const {
-            data: { addNewExternalIncomeType },
-          } = await cleint.mutate({
-            mutation: ADD_NEW_EXTERNAL_INCOME_TYPE,
-            variables,
-          });
-          if (addNewExternalIncomeType?._id) {
-            getProuctCreated(addNewExternalIncomeType);
-            setLoadingPage(false);
-            setOpenDialog(false);
-          }
-        }
-      } catch (error: any) {
-        setHandleError({
+      mutate(variables , {
+        onSuccess:()=> {
+           setHandleError({
+          open: true,
+          message: t?.pages?.income?.external_income_type_saved_successfully,
+          status: "success",
+        });
+        setOpenDialog(false);
+        },
+        onError:(error:any)=> {
+           setHandleError({
           open: true,
           message: error.message,
           status: "error",
         });
-        setLoadingPage(false);
-      }
+        }
+      })
+  
     };
   
-    const handleCloseError = () => {
-      setHandleError((prevState) => ({
-        ...prevState,
-        open: false,
-      }));
-    };
   
     return (
       <Box>
-        <SnackbarComponent
-          status={handleError?.status}
-          open={handleError?.open}
-          message={handleError?.message}
-          handleClose={handleCloseError}
-        />
         <Dialog
           open={openDialog}
           onClose={handleOpenDialogFunction}
@@ -195,24 +122,14 @@ import {
               color="primary"
               variant="contained"
               onClick={handleSubmit(onSubmitFunction)}
-              loading={loadingPage}
+              loading={isLoading}
             >
               {t?.pages?.income?.save}
             </Button>
-            <Button variant="outlined"  onClick={handleOpenDialogFunction}>لغو</Button>
+            <Button variant="outlined"  onClick={handleOpenDialogFunction}>{t?.pages?.income?.cancel}</Button>
           </DialogActions>
         </Dialog>
-        {isEmptyPage ? (
-          <Box className={"empty_page_content"}>
-            <EmptyPage
-              icon={<EmptyProductPageIcon />}
-              buttonText={t?.pages?.income?.add_new_external_income}
-              discription={t?.pages?.income?.no_income_description}
-              onClick={handleOpenDialogFunction}
-              title={t?.pages?.income?.no_external_income_recorded}
-            />
-          </Box>
-        ) : (
+
           <Box>
             <Button
               variant="contained"
@@ -222,7 +139,7 @@ import {
               {t?.pages?.income?.new_income}
             </Button>
           </Box>
-        )}
+
       </Box>
     );
   };

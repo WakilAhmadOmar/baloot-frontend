@@ -14,79 +14,39 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import SnackbarComponent from "@/components/snackbarComponent";
-import { useApolloClient } from "@apollo/client";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
-import { ADD_PARTNER } from "@/graphql/mutation/ADD_PARTNER";
-import { UPDATE_PARTNER } from "@/graphql/mutation/UPDATE_PARTNER";
+
+import { useAddPartnerMutation } from "@/hooks/api/definitions/partner/mutations/use-add-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsCreateProduct {
-  getProuctCreated: (product: any) => void;
-  isUpdate: boolean;
-  item?: any;
-  getProductUpdated?: (product: any) => void;
-  canceleUpdageProduct?: () => void;
-  isEmptyPage?: boolean;
   t: any;
 }
 const CreatePartner: React.FC<IPropsCreateProduct> = ({
-  getProuctCreated,
-  isUpdate,
-  item,
-  getProductUpdated,
-  canceleUpdageProduct,
-  isEmptyPage,
   t,
 }) => {
   const methods = useForm();
+  const {mutate , isLoading } = useAddPartnerMutation()
+  const {setHandleError} = useContext(AppContext)
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = methods;
   const theme = useTheme();
-  const client = useApolloClient();
-  const [openDialog, setOpenDialog] = useState(isUpdate);
-  const [loadingPage, setLoadingPage] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
+
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
-    if (canceleUpdageProduct) {
-      canceleUpdageProduct();
-    }
   };
 
-  useEffect(() => {
-    if (item?._id) {
-      setValue("firstName", item?.firstName);
-      setValue("lastName", item?.lastName);
-      setValue("invest", item?.invest?.amount);
-      setValue("currency", item?.invest?.currencyId?._id);
-      setValue("phoneNumber", item?.phoneNumber);
-    }
-    if (isUpdate) {
-      setOpenDialog(isUpdate);
-    }
-  }, [item?._id, isUpdate]);
+
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      ...(isUpdate ? { partnerId: item?._id } : {}),
       partnerObject: {
         firstName: data?.firstName,
         ...(data?.lastName ? { lastName: data?.lastName } : {}),
@@ -104,57 +64,28 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
       },
     };
 
-    try {
-      setLoadingPage(true);
-      if (isUpdate) {
-        const {
-          data: { updatePartner },
-        } = await client.mutate({
-          mutation: UPDATE_PARTNER,
-          variables,
-        });
-        if (updatePartner?._id && getProductUpdated) {
-          getProductUpdated(updatePartner);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      } else {
-        const {
-          data: { addPartner },
-        } = await client.mutate({
-          mutation: ADD_PARTNER,
-          variables,
-        });
-        if (addPartner?._id) {
-          getProuctCreated(addPartner);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      }
-    } catch (error: any) {
-      setHandleError({
+    mutate(variables , {
+      onSuccess:() =>{
+        setHandleError({
+          open:true,
+          type:"success",
+          message:t?.pages?.partner?.this_partner_saved_successfully
+        })
+        handleOpenDialogFunction()
+      },
+      onError: (error:any)=> {
+        setHandleError({
         open: true,
         message: error.message,
         status: "error",
       });
-      setLoadingPage(false);
-    }
+      }
+    })
   };
 
-  const handleCloseError = () => {
-    setHandleError((prevState) => ({
-      ...prevState,
-      open: false,
-    }));
-  };
   return (
     <Box>
-      <SnackbarComponent
-        status={handleError?.status}
-        open={handleError?.open}
-        message={handleError?.message}
-        handleClose={handleCloseError}
-      />
+      
       <FormProvider {...methods}>
         <Dialog
           open={openDialog}
@@ -231,23 +162,10 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                     {t?.pages?.partner?.currency}
                   </InputLabel>
                   <UserCurrenciesComponent
-                    defaultValue={item?.invest?.currencyId?._id}
-                    isRequired={false}
                     name="currencyId"
+                    dir={t?.home?.dir}
                   />
                 </Grid>
-                {/* <Grid item xs={12} md={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.partner?.investment_percentage}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    type="number"
-                    size="small"
-                    {...register("investPercentage", { required: false })}
-                    name="investPercentage"
-                  />
-                </Grid> */}
 
                 <Grid item xs={12} md={6}>
                   <InputLabel
@@ -273,7 +191,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
               color="primary"
               variant="contained"
               onClick={handleSubmit(onSubmitFunction)}
-              loading={loadingPage}
+              loading={isLoading}
             >
               {t?.pages?.partner?.save}
             </Button>
@@ -283,19 +201,8 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
           </DialogActions>
         </Dialog>
       </FormProvider>
-      {isEmptyPage ? (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            title={t.pages?.partner.no_partner_yet_title}
-            discription={t.pages?.partner.no_partner_yet_description}
-            buttonText={t.pages?.partner.add_new_partner_button}
-            onClick={handleOpenDialogFunction}
-          />
-        </Box>
-      ) : (
         <Box>
-          {isUpdate === false && (
+
             <Button
               variant="contained"
               color="primary"
@@ -303,9 +210,9 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
             >
               {t.pages?.partner?.add_new_partner}
             </Button>
-          )}
+
         </Box>
-      )}
+
     </Box>
   );
 };

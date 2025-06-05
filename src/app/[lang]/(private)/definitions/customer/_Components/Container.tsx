@@ -1,151 +1,81 @@
-"use client"
+"use client";
 import CreateCustomer from "./Create";
-import CustomerList from "./List";
-import { GET_CUSTOMER_LIST } from "@/graphql/queries/GET_CUSTOMER_LIST";
-import { NotFoundIcon } from "@/icons";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import CustomSearch from "@/components/search/CustomSearch";
-import { useApolloClient } from "@apollo/client";
+import { EmptyProductPageIcon } from "@/icons";
 import {
   Box,
+  Card,
+  Grid,
+  Pagination,
+  Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import CollapseComponent from "@/components/collapse/Collapse";
+import { useGetCustomerListQuery } from "@/hooks/api/definitions/customer/queries/use-get-customer-list-query";
+import EmptyPage from "@/components/util/emptyPage";
+import UpdateCustomer from "./Update";
+import { useDeleteCustomerMutation } from "@/hooks/api/definitions/customer/mutations/use-delete-mutation";
+import { AppContext } from "@/provider/appContext";
+import SkeletonComponent from "../../_Components/Skeleton";
 
-interface IProps{
-    t:any
+interface IProps {
+  t: any;
 }
-const CustomerPage:React.FC<IProps> = ({t}) => {
-  const client = useApolloClient();
-  const [customerState, setCustomerState] = useState<{
-    customers: any[];
-    count: number;
-    page: number;
-  }>({
-    customers: [],
-    count: 0,
-    page: 1,
-  });
+const CustomerPage: React.FC<IProps> = ({ t }) => {
+  const theme = useTheme();
+  const {setHandleError} = useContext(AppContext)
 
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [updateProductState, setUpdateProductState] = useState(false);
-  const [updateProductItem, setUpdateProductItem] = useState({});
-  const [textSearchState, setTextSearchState] = useState("");
+  const [page, setPage] = useState(1);
 
-  const getProductListFunction = async (textSearch?: string) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        page: textSearch ? 1 : customerState?.page,
-        ...(textSearch ? { searchTerm: textSearch } : {}),
-      };
-      const {
-        data: { getCustomerList },
-      } = await client.query({
-        query: GET_CUSTOMER_LIST,
-        variables,
-      });
-      setCustomerState((prevState) => ({
-        customers: getCustomerList?.customer,
-        count:
-          getCustomerList?.count > 0
-            ? getCustomerList?.count
-            : prevState?.count,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {
-      setLoadingPage(false);
-    }
-  };
-  useEffect(() => {
-    if (customerState?.customers?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
+  const { data: customerList, isLoading } = useGetCustomerListQuery({ page });
+  const {mutate , isLoading:deleteIsLoading} = useDeleteCustomerMutation()
 
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = customerState?.customers?.filter((item) => {
-      return id !== item?._id;
-    });
-    setCustomerState((preState) => ({
-      ...preState,
-      customers: filterState,
-    }));
-  };
-  const handleGetCreatedProduct = (product: any) => {
-    setCustomerState((prevState) => ({
-      ...prevState,
-      customers: [product, ...prevState?.customers],
-    }));
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
   };
 
-  const canceleUpdateProduct = () => {
-    setUpdateProductItem({});
-    setUpdateProductState(false);
-  };
-  const updateItemFunction = (productId: String) => {
-    const item = customerState?.customers?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
-    setUpdateProductState(true);
-  };
-  const handleGetUpdateProduct = (product: any) => {
-    const filterState = customerState?.customers?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setCustomerState((prevState) => ({
-      ...prevState,
-      customers: filterState,
-    }));
-    canceleUpdateProduct();
-  };
-  const getTextSearchFunction = (textSearch: string) => {
-    setCustomerState((prvState) => ({
-      ...prvState,
-      page: 0,
-      products: [],
-    }));
-    setTextSearchState(textSearch);
-    getProductListFunction(textSearch);
-  };
+  const handleDeleteFunction = (id:string) => {
+    mutate({customerId:id} , {
+      onSuccess: ({message}) => {
+        setHandleError({
+          open:true,
+          type:"success",
+          message
+        })
+      },
+      onError: (error:any)=> {
+        setHandleError({
+          open:true,
+          type:"error",
+          message:error.message
+        })
+      }
+    })
+  }
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(customerState?.count > 0 || loadingPage) && (
-        <Typography variant="h3" mb={2}>
-          {t?.pages?.Customers?.customers}
-        </Typography>
-      )}
+      <Typography variant="h3" mb={2}>
+        {t?.pages?.Customers?.customers}
+      </Typography>
 
       <Box
         mb={2}
         sx={{
           display: "flex",
-          ...(customerState?.count === 0 && loadingPage === false
-            ? { justifyContent: "center" }
-            : { justifyContent: "space-between" }),
         }}
       >
-        <CreateCustomer
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmptyPage={loadingPage === false && customerState?.count === 0}
-          t={t}
-        />
-        {customerState?.count > 0 && (
+        <CreateCustomer t={t} />
+        {/* {customerState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction}  t={t}/>
           </Box>
-        )}
+        )} */}
       </Box>
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         customerState?.customers?.length === 0 && (
           <Box
@@ -160,17 +90,126 @@ const CustomerPage:React.FC<IProps> = ({t}) => {
               {t?.pages?.Customers?.Nothing_Found}
             </Typography>
           </Box>
-        )}
+        )} */}
       <Box>
-        {customerState?.customers?.length > 0 && (
-          <CustomerList
-            products={customerState?.customers}
-            count={customerState?.count}
-            deleteProductFunction={handleDeleteItemFunction}
-            handleUpdateProuct={updateItemFunction}
-            t={t}
-          />
+        {customerList?.customer?.map((item: any) => {
+          return (
+            <CollapseComponent
+              key={item?._id}
+              name={item?.fullName}
+              createdAt={item?.createdAt}
+              id={item?._id}
+              getIdToAddAction={handleDeleteFunction}
+              // updateProductFunction={handleUpdateProuct}
+              height="150px"
+              t={t}
+              messageTitle={t?.pages?.Customers?.delete_title}
+              messageDescription={t?.pages?.Customers?.delete_description}
+              UpdateComponent={<UpdateCustomer t={t} item={item} />}
+              isLoading={deleteIsLoading}
+              editTable
+            >
+              <Grid container spacing={2}>
+                <Grid
+                  item
+                  xs={10}
+                  display="grid"
+                  gridTemplateColumns={"auto 1rem"}
+                >
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"15rem auto"}
+                    rowGap={"1rem"}
+                  >
+                    <Typography variant="caption">
+                      {t?.pages?.Customers?.contact_number}
+                    </Typography>
+                    <Typography variant="caption">
+                      {item?.contactNumber}
+                    </Typography>
+                    {/* <Typography variant="caption">
+                    {t?.pages?.Customers?.credit_limit}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.creditLimit?.amount}{item?.creditLimit?.currencyId?.symbol}
+                  </Typography> */}
+                    <Typography variant="caption">
+                      {t?.pages?.Customers?.address}
+                    </Typography>
+                    <Typography variant="caption">{item?.address}</Typography>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={2} display="grid">
+                  <Card
+                    sx={{
+                      boxShadow: "none",
+                      padding: "2.5rem 1.5rem",
+                      border: `1px solid ${theme.palette.grey[200]}`,
+                      borderRadius: "8px",
+                      height: "100%",
+                    }}
+                  >
+                    <Typography
+                      variant="button"
+                      textAlign={"center"}
+                      component={"div"}
+                    >
+                      {t?.pages?.Customers?.amount_due}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        FontWeight: 500,
+                        FontSize: "2rem",
+                        LineHeight: "22px",
+                      }}
+                      textAlign={"center"}
+                    >
+                      {item?.firstPeriodCredit?.length > 0
+                        ? item?.firstPeriodCredit?.map((item: any) => (
+                            <Typography key={item?.currencyId?._id}>
+                              {item?.amount}
+                              {item?.currencyId?.symbol}
+                              <Typography component={"span"} display={"grid"}>
+                                Type:{item?.creditType}
+                              </Typography>
+                            </Typography>
+                          ))
+                        : "0"}
+                    </Typography>
+                  </Card>
+                </Grid>
+              </Grid>
+            </CollapseComponent>
+          );
+        })}
+        {customerList?.count > 9 && (
+          <Stack spacing={2} p={1} display={"grid"} justifyContent={"end"}>
+            <Pagination
+              count={Math.ceil(customerList?.count / 10)}
+              size={"medium"}
+              onChange={handleChangePage}
+              variant="outlined"
+              color="primary"
+              shape="rounded"
+              sx={{
+                fontSize: "2rem !important",
+              }}
+            />
+          </Stack>
         )}
+        {customerList?.count === 0 && !isLoading && (
+          <Box className={"empty_page_content"}>
+            <EmptyPage
+              icon={<EmptyProductPageIcon />}
+              title={t.pages?.Customers.no_product_yet_title}
+              discription={t.pages?.Customers.no_product_yet_discription}
+              // buttonText={t.pages?.Customers.add_new_customer}
+              // onClick={handleOpenDialogFunction}
+            />
+          </Box>
+        )}
+        {isLoading && <SkeletonComponent />}
       </Box>
     </Box>
   );

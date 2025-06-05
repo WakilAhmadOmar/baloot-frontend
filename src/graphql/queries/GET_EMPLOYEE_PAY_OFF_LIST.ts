@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 
-const GET_PAY_OFF_LIST = gql`
-query GetPayOffList($page: Int, $receiverType: ReceiverTypeForPayOffEnum!) {
-  getPayOffList(page: $page, receiverType: $receiverType) {
+const GET_EMPLOYEE_PAY_OFF_LIST = gql`
+query GetEmployeePayOffList($page: Int ) {
+  getEmployeePayOffList(page: $page) {
    
     count
-    payOff {
+    employeePayOff {
     _id
     amount
     amountCalculated
@@ -21,19 +21,17 @@ query GetPayOffList($page: Int, $receiverType: ReceiverTypeForPayOffEnum!) {
       symbol
     }
     description
-    invoiceType
+    payerType
     payerId {
       _id
       name
     }
-    payerType
     receiver {
       _id
       name
-      fullName
     }
     }
   }
 }
 `
-export {GET_PAY_OFF_LIST}
+export {GET_EMPLOYEE_PAY_OFF_LIST}

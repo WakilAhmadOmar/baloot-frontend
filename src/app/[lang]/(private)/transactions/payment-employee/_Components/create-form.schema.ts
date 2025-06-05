@@ -8,7 +8,6 @@ return object().shape({
     amount:number().required(t?.transactions.amount_is_required),
     calculatedTo:string(),
     amountCalculated:number(),
-    invoiceType:string(),
     billId:string(),
     description:string().max(255 , t.transactions?.description_to_much)
 })

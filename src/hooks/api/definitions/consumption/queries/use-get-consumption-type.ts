@@ -7,13 +7,12 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetConsumptionTypeQuery({page  }:{page:number }) {
+export function useGetConsumptionTypeQuery() {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getConsumptionTypeList  }} = await client.query({
         query:GET_CONSUMPTION_TYPE_LIST,
-        variables:{page, },
         fetchPolicy:"network-only"
       })
      return getConsumptionTypeList
@@ -25,7 +24,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [GET_CONSUMPTION_TYPE_LIST_QUERY_KEY , page ],
+      queryKey: [GET_CONSUMPTION_TYPE_LIST_QUERY_KEY ],
     })
   }
 

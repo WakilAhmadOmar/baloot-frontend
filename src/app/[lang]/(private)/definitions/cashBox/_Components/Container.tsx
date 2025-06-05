@@ -1,150 +1,78 @@
-"use client"
+"use client";
 
-import CashBoxList from "./CashboxList";
 import CreateCashBox from "./CreateCashbox";
-
-import { GET_SAFE_LIST } from "@/graphql/queries/GET_SAFE_LIST";
-import {  NotFoundIcon } from "@/icons";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import CustomSearch from "@/components/search/CustomSearch";
-import { useApolloClient } from "@apollo/client";
-import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { EmptyProductPageIcon, NotFoundIcon } from "@/icons";
+import { Box, Pagination, Stack, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import { useGetSafeListQuery } from "@/hooks/api/definitions/safe/queries/use-get-safe-list-query";
+import CollapseComponent from "@/components/collapse/Collapse";
+import EmptyPage from "@/components/util/emptyPage";
+import UpdateCashBox from "./Update";
+import { useDeleteSafeMutation } from "@/hooks/api/definitions/safe/mutations/use-delete-mutation";
+import { AppContext } from "@/provider/appContext";
+import SkeletonComponent from "../../_Components/Skeleton";
 
 interface IProps {
-    t:any
+  t: any;
 }
 
-const CashBoxContainer:React.FC<IProps> = ({t}) => {
-  const client = useApolloClient();
-  const [productsState, setProductsState] = useState<{
-    products: any[];
-    count: number;
-    page: number;
-  }>({
-    products: [],
-    count: 0,
-    page: 1,
-  });
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [updateProductState, setUpdateProductState] = useState(false);
-  const [updateProductItem, setUpdateProductItem] = useState({});
-  const [textSearchState, setTextSearchState] = useState("");
+const CashBoxContainer: React.FC<IProps> = ({ t }) => {
 
-  const getProductListFunction = async (searchText?: string) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        page: productsState?.page,
-        ...(searchText ? { searchTerm: searchText } : {}),
-      };
-      const {
-        data: { getSafeList },
-      } = await client.query({
-        query: GET_SAFE_LIST,
-        variables,
-        fetchPolicy: "network-only",
-      });
-      setProductsState((prevState) => ({
-        products: getSafeList?.safe,
-        count: getSafeList?.count > 0 ? getSafeList?.count : prevState.count,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {}
+  const [page, setPage] = useState(1);
+  const {setHandleError} = useContext(AppContext)
+
+  const { data: safeList, isLoading } = useGetSafeListQuery({ page });
+  const {mutate , isLoading:deleteIsLoading} = useDeleteSafeMutation()
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
   };
-  useEffect(() => {
-    if (productsState?.products?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
 
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = productsState?.products?.filter((item) => {
-      return id !== item?._id;
+  const handleDeleteFunction = (safeId:string)=> {
+    mutate({safeId}, {
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t?.pages?.cashbox?.safe_deleted_successfully,
+          status: "success",
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
     });
-    setProductsState((preState) => ({
-      ...preState,
-      products: filterState,
-      count: preState?.count - 1,
-    }));
-  };
-  const handleGetCreatedProduct = (product: any) => {
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: [product, ...prevState?.products],
-      count: prevState?.count + 1,
-    }));
-  };
+  }
 
-  const canceleUpdateProduct = () => {
-    setUpdateProductItem({});
-    setUpdateProductState(false);
-  };
-  const updateProductFunction = (productId: String) => {
-    const item = productsState?.products?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
-    setUpdateProductState(true);
-  };
-  const handleGetUpdateProduct = (product: any) => {
-    const filterState = productsState?.products?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: filterState,
-    }));
-    canceleUpdateProduct();
-  };
-
-  const getTextSearchFunction = (textSearch: string) => {
-    setProductsState((prvState) => ({
-      ...prvState,
-      page: 0,
-      products: [],
-    }));
-    setTextSearchState(textSearch);
-    getProductListFunction(textSearch);
-  };
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(productsState?.count > 0 || loadingPage) && (
-        <Typography variant="h3" mb={2}>
-          {t?.pages?.cashboxes}
-        </Typography>
-      )}
+      <Typography variant="h3" mb={2}>
+        {t?.pages?.cashboxes}
+      </Typography>
 
       <Box
         mb={2}
         sx={{
           display: "flex",
-          ...(productsState?.count === 0 && loadingPage === false
-            ? { justifyContent: "center" }
-            : { justifyContent: "space-between" }),
         }}
       >
         <CreateCashBox
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmptyPage={loadingPage === false && productsState?.count === 0}
           t={t}
         />
-        {productsState?.count > 0 && (
+        {/* {productsState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
           </Box>
-        )}
+        )} */}
       </Box>
 
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         productsState?.products?.length === 0 && (
           <Box
@@ -159,19 +87,78 @@ const CashBoxContainer:React.FC<IProps> = ({t}) => {
               {t?.pages?.cashbox?.Nothing_Found}
             </Typography>
           </Box>
-        )}
-      {productsState?.products?.length > 0 && (
-        <CashBoxList
-          products={productsState?.products}
-          count={productsState?.count}
-          deleteProductFunction={handleDeleteItemFunction}
-          handleUpdateProuct={updateProductFunction}
-          t={t}
-        />
+        )} */}
+      {safeList?.safe?.map((item: any) => {
+        return (
+          <CollapseComponent
+            key={item?._id}
+            name={item?.name}
+            createdAt={item?.createdAt}
+            id={item?._id}
+            getIdToAddAction={handleDeleteFunction}
+            UpdateComponent={<UpdateCashBox t={t} item={item} />}
+            editTable
+            height="150px"
+            t={t}
+            messageDescription={t?.pages?.cashbox?.delete_description}
+            messageTitle={t?.pages?.cashbox?.delete_title}
+            isLoading={deleteIsLoading}
+          >
+            <Box display={"grid"} gridTemplateColumns={"20rem auto"} mb={1}>
+              <Typography variant="caption">
+                {t?.pages?.cashbox?.Cashier}{" "}
+              </Typography>
+              <Typography variant="caption">{item?.cashier?.name}</Typography>
+            </Box>
+            <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
+              <Typography variant="caption">
+                {" "}
+                {t?.pages?.cashbox?.Current_Balance}
+              </Typography>
+              <Typography variant="caption">
+                {item?.credit?.[0]?.amount}{" "}
+                {item?.credit?.[0]?.currencyId?.name}
+              </Typography>
+            </Box>
+            <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
+              <Typography variant="caption">
+                {" "}
+                {t?.pages?.cashbox?.Cashier_Contact_Number}
+              </Typography>
+              <Typography variant="caption">
+                {item?.cashier?.phoneNumber}{" "}
+              </Typography>
+            </Box>
+          </CollapseComponent>
+        );
+      })}
+      {safeList?.count > 9 && (
+        <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
+          <Pagination
+            count={Math.ceil(safeList?.count / 10)}
+            size={"medium"}
+            onChange={handleChangePage}
+            variant="outlined"
+            color="primary"
+            shape="rounded"
+            sx={{
+              fontSize: "2rem !important",
+            }}
+          />
+        </Stack>
       )}
+       {safeList?.count === 0 && !isLoading &&<Box className={"empty_page_content"}>
+                <EmptyPage
+                  icon={<EmptyProductPageIcon />}
+                  title={t.pages?.cashbox.no_product_yet_title}
+                  discription={t.pages?.cashbox.no_product_yet_discription}
+                  // buttonText={t.pages?.cashbox?.Create_new_Cashbox}
+                  // onClick={handleOpenDialogFunction}
+                />
+              </Box>}
+              {isLoading && <SkeletonComponent />}
     </Box>
   );
 };
 
 export default CashBoxContainer;
-

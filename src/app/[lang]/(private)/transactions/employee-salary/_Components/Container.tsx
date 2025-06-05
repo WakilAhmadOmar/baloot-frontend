@@ -23,7 +23,7 @@ import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
-import { useGetPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-pay-of-list-query";
+import { useGetCustomerPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-customer-pay-off-list-query";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import SkeletonComponent from "../../_components/Skeleton";
@@ -35,9 +35,9 @@ type EmployeeSalary = {
 const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
   const theme = useTheme();
   const [page, setPage] = useState(1);
-  const { data: payoffList, isLoading } = useGetPayOffListQuery({
+  const { data: payoffList, isLoading } = useGetCustomerPayOffListQuery({
     page,
-    receiverType: "Employee",
+    // receiverType: "Employee",
   });
 
    const handleChangePage = (

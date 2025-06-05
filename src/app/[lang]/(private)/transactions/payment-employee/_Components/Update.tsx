@@ -25,7 +25,8 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { AppContext } from "@/provider/appContext";
-import { useUpdatePayOffMutation } from "@/hooks/api/transactions/mutations/use-update-pay-off-mutation";
+import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
+import { useUpdateEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-update-employee-pay-off";
 
 type UpdateFormProps = {
   t: any;
@@ -38,7 +39,6 @@ interface FormValues {
   calculatedTo?: string;
   amountCalculated?: number;
   receiver: string;
-  invoiceType: string;
   payerId: string;
   payerType?: string;
   description?:string
@@ -52,7 +52,6 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
       calculatedTo: item?.calculatedTo?._id || "",
       amountCalculated: item?.amountCalculated || 0,
       receiver: item?.receiver?._id || "",
-      invoiceType: item?.invoiceType || "",
       payerId: item?.payerId?._id || "", // Add this line
       payerType: item?.payerType || "",
       description:item?.description
@@ -73,7 +72,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
   } = methods;
   const [payerType, setPayerType] = useState(item?.payerType);
 
-  const { mutate, isLoading } = useUpdatePayOffMutation();
+  const { mutate, isLoading } = useUpdateEmployeePayOffMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -92,7 +91,6 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
         payOffObject: {
           ...data,
           payerType,
-          receiverType: "Employee",
         },
       },
       {
@@ -149,7 +147,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                   >
                     {t?.transactions?.full_name_of_customer}
                   </InputLabel>
-                  <CustomerAutoComplete name="receiver" />
+                  <EmployeeAutoCompleteComponent name="receiver" />
                 </Grid>
 
                 <Grid item xs={6}>

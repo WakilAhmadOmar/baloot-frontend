@@ -13,39 +13,24 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useForm , FormProvider } from "react-hook-form";
-//   import UploadComponent from "../muiComponent/uploadComponent";
-import SnackbarComponent from "@/components/snackbarComponent";
+import { ChangeEvent, useContext, useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { useApolloClient } from "@apollo/client";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-import { ADD_PRODUCT } from "@/graphql/mutation/ADD_PRODUCT";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import { UPDATE_PRODUCT } from "@/graphql/mutation/UPDATE_PRODUCT";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
+
 import ProductCategoriesComponent from "@/components/util/ProductCategory";
 import ProductMeansureComponent from "@/components/util/ProductMeansure";
+import { useAddProductMutation } from "@/hooks/api/definitions/product/mutations/use-add-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsCreateProduct {
-  getProuctCreated: (product: any) => void;
-  isUpdate: boolean;
-  item?: any;
-  getProductUpdated?: (product: any) => void;
-  canceleUpdageProduct?: () => void;
-  isEmptyPage?: boolean;
   t: any;
 }
 const CreateProduct: React.FC<IPropsCreateProduct> = ({
-  getProuctCreated,
-  isUpdate,
-  item,
-  getProductUpdated,
-  canceleUpdageProduct,
-  isEmptyPage,
   t,
 }) => {
-  const method  = useForm();
+  const { mutate: addProductMutation, isLoading } = useAddProductMutation();
+  const method = useForm();
   const theme = useTheme();
   const cleint = useApolloClient();
   const {
@@ -56,76 +41,28 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
     getValues,
     setValue,
     getFieldState,
-    
-  } = method
+  } = method;
 
-  const [openDialog, setOpenDialog] = useState(isUpdate);
-  const [loadingPage, setLoadingPage] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [selectedUnitProduct, setSelectedUnitProduct] = useState<any[]>([]);
-  const [productCategory, setProductCategory] = useState<{
-    category: any[];
-    page: number;
-  }>({
-    category: [],
-    page: 1,
-  });
 
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
+  const { setHandleError } = useContext(AppContext);
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
-    if (canceleUpdageProduct) {
-      canceleUpdageProduct();
-    }
+ 
   };
 
-  useEffect(() => {
-    if (item?._id) {
-      setValue("name", item?.name);
-      setSelectedUnitProduct(
-        item?.measures?.map((it: any) => {
-          setValue("buyPrice " + it?.measureId?.name, it?.buyPrice);
-          setValue("sellPrice " + it?.measureId?.name, it?.sellPrice);
-          return {
-            measure: it?.measureId?._id,
-            name: it?.measureId?.name,
-            boughtPrice: it?.boughtPrice,
-            sellPrice: it?.sellPrice,
-          };
-        })
-      );
-      setValue("category", item?.category?._id);
-      setValue("expirationDate", item?.expirationDate?.slice(0, 10));
-      setValue("barcode", item?.barcode);
-      setValue("amount", item?.amount);
-      setValue(
-        "isNewProduct",
-        item?.isNewProduct ? "newProduct" : "oldProduct"
-      );
-      setValue("currencyId", item?.currencyId?._id);
-    }
-    if (isUpdate) {
-      setOpenDialog(isUpdate);
-    }
-  }, [item?._id, isUpdate]);
+
   const onSubmitFunction = async (data: any) => {
-    if (selectedUnitProduct?.length === 0 ){
+    if (selectedUnitProduct?.length === 0) {
       return setHandleError({
-        open:true,
-        status:"info",
-        message:"please select one Unit"
-      })
+        open: true,
+        status: "info",
+        message: "please select one Unit",
+      });
     }
     const variables = {
-      ...(isUpdate ? { productId: item?._id } : {}),
       productObject: {
         name: data?.name,
         measures: selectedUnitProduct?.map((item, index: number) => {
@@ -172,57 +109,26 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         baseMeasureAmount: 10,
       },
     };
-    try {
-      setLoadingPage(true);
-      if (isUpdate) {
-        const {
-          data: { updateProduct },
-        } = await cleint.mutate({
-          mutation: UPDATE_PRODUCT,
-          variables,
+    addProductMutation(variables, {
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t?.product?.product_added_successfully,
+          status: "success",
         });
-        if (updateProduct?._id && getProductUpdated) {
-          getProductUpdated(updateProduct);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      } else {
-        const {
-          data: { addProduct },
-        } = await cleint.mutate({
-          mutation: ADD_PRODUCT,
-          variables,
+        handleOpenDialogFunction()
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
         });
-        if (addProduct?._id) {
-          setValue("name", "");
-          setValue("category", "");
-          setValue("expirationDate", "");
-          setValue("barcode", "");
-          setValue("isNewProduct", "newProduct");
-          setSelectedUnitProduct([]);
-          getProuctCreated(addProduct);
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      }
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        message: error.message,
-        status: "error",
-      });
-      setLoadingPage(false);
-    }
+      },
+    });
   };
   const handleGetMeasureFunction = (data: any[]) => {
     setSelectedUnitProduct(data);
-  };
-
-  const handleCloseError = () => {
-    setHandleError((prevState) => ({
-      ...prevState,
-      open: false,
-    }));
   };
 
   const handleChangePriceMeasureFunction = (
@@ -250,12 +156,6 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
   };
   return (
     <FormProvider {...method}>
-      <SnackbarComponent
-        status={handleError?.status}
-        open={handleError?.open}
-        message={handleError?.message}
-        handleClose={handleCloseError}
-      />
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -280,31 +180,31 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2} sx={{mt:"1rem"}}>
+            <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12} mt={2}>
                 {/* <Grid container spacing={2}> */}
-                  {/* <Grid item mt={2} xs={4}>
+                {/* <Grid item mt={2} xs={4}>
                     <UploadComponent />
                   </Grid> */}
-                  {/* <Grid item mt={12} xs={18}> */}
-                    <InputLabel sx={{ paddingBottom: "5px" }} required>
-                      <Typography variant="subtitle2" component={"samp"}>
-                        {t?.product?.product_name}
-                      </Typography>
-                    </InputLabel>
-                    <TextField
-                      fullWidth
-                      size="small"
-                      {...register("name", { required: true })}
-                      name="name"
-                    />
-                    <ProductMeansureComponent
-                      register={register}
-                      getDataSelect={handleGetMeasureFunction}
-                      defaultValue={selectedUnitProduct}
-                      t={t}
-                    />
-                  {/* </Grid> */}
+                {/* <Grid item mt={12} xs={18}> */}
+                <InputLabel sx={{ paddingBottom: "5px" }} required>
+                  <Typography variant="subtitle2" component={"samp"}>
+                    {t?.product?.product_name}
+                  </Typography>
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  {...register("name", { required: true })}
+                  name="name"
+                />
+                <ProductMeansureComponent
+                  register={register}
+                  getDataSelect={handleGetMeasureFunction}
+                  defaultValue={selectedUnitProduct}
+                  t={t}
+                />
+                {/* </Grid> */}
                 {/* </Grid> */}
               </Grid>
               {selectedUnitProduct?.length > 1 &&
@@ -391,18 +291,17 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                   })}
               </Grid>
               <Grid item xs={12} md={6}>
-              <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
                   {t?.product?.currency}
                 </InputLabel>
                 <UserCurrenciesComponent
                   // register={register}
-                  defaultValue={item?.currencyId?._id}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
                 <ProductCategoriesComponent
                   register={register}
-                  defaultValue={item?.category?._id}
+                 
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -413,7 +312,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                   fullWidth
                   type="date"
                   size="small"
-                  defaultValue={item?.expirationDate?.slice(0, 10)}
+                  // defaultValue={item?.expirationDate?.slice(0, 10)}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -439,32 +338,22 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t?.product?.cancel}
+          </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
-            loading={loadingPage}
+            loading={isLoading}
           >
             {t?.product?.save}
           </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
-          </Button>
         </DialogActions>
       </Dialog>
-      {isEmptyPage ? (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title}
-            discription={t.product.no_product_yet_discription}
-            buttonText={t.product.add_new_product}
-            onClick={handleOpenDialogFunction}
-          />
-        </Box>
-      ) : (
+      
         <Box>
-          {isUpdate === false && (
+          
             <Button
               variant="contained"
               color="primary"
@@ -472,9 +361,9 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
             >
               {t?.product?.add_new_product}
             </Button>
-          )}
+         
         </Box>
-      )}
+     
     </FormProvider>
   );
 };

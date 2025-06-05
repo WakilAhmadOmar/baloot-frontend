@@ -46,7 +46,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
         variables,
       });
 
-      setValue(name || "customerId", getCustomerList?.customer?.[0]?._id);
+      // setValue(name || "customerId", getCustomerList?.customer?.[0]?._id);
       setAutoCompleteState((prevState) => ({
         ...prevState,
         page: prevState.page + 1,

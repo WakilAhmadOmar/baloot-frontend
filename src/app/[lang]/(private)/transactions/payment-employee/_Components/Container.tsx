@@ -14,10 +14,10 @@ import { useContext } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
-import { useGetPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-pay-of-list-query";
-import { useDeletePayOffMutation } from "@/hooks/api/transactions/mutations/use-delete-pay-off-mutation";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
+import { useGetEmployeePayOffListQuery } from "@/hooks/api/transactions/queries/use-get-employee-pay-off-list-query";
+import { useDeleteEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-delete-employee-pay-off";
 
 interface IProps {
   t: any;
@@ -27,8 +27,8 @@ const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
 
-  const {data , isLoading} = useGetPayOffListQuery({page:1 , receiverType:"Employee"})
-  const {mutate , isLoading:deleteIsLoading } = useDeletePayOffMutation()
+  const {data , isLoading} = useGetEmployeePayOffListQuery({page:1})
+  const {mutate , isLoading:deleteIsLoading } = useDeleteEmployeePayOffMutation()
 
 const handleDeleteFunction = (id:string) => {
   mutate({
@@ -67,18 +67,17 @@ const handleDeleteFunction = (id:string) => {
       </Box>
       <Box>
         {
-          data?.payOff?.map((item:any) => {
+          data?.employeePayOff?.map((item:any) => {
             return(
         <CollapseComponent
           key={item?._id}
-          name={item?.receiver?.fullName}
+          name={item?.receiver?.name}
           createdAt={item?.createdAt}
           t={t}
           messageDescription={t?.transactions?.description_delete_message}
           messageTitle={t?.transactions?.title_delete_message}
           id={item?._id}
           getIdToAddAction={handleDeleteFunction}
-          // updateProductFunction={handleUpdateFunction}
           UpdateComponent={<UpdateForm t={t} item={item} />}
           isLoading={deleteIsLoading}
         >
@@ -98,7 +97,7 @@ const handleDeleteFunction = (id:string) => {
             <Typography variant="caption">
               {t?.transactions?.recipient}
             </Typography>
-            <Typography variant="caption">{item?.receiver?.fullName}</Typography>
+            <Typography variant="caption">{item?.payerId?.name}</Typography>
             <Typography variant="caption">
               {t?.transactions?.description}
             </Typography>
@@ -129,7 +128,7 @@ const handleDeleteFunction = (id:string) => {
           />
         </Stack>
       </Box>
-      {data?.count === 0 && !isLoading && (
+      {data?.count===0  && !isLoading && (
         <Box mt={"10rem"}>
           {" "}
           <EmptyPage

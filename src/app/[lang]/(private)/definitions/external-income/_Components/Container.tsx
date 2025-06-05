@@ -1,7 +1,6 @@
 
 "use client"
 import CreateExternalIncomeType from "./Create";
-import { GET_EXTERNAL_TYPE_INCOME } from "@/graphql/queries/GET_EXTERNAL_INCOME_TYPE_LIST";
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useApolloClient } from "@apollo/client";
 import { Box,  Typography } from "@mui/material";
@@ -9,6 +8,11 @@ import { useContext, useEffect, useState } from "react";
 import ConsumptionBox from "../../consumption/_Components/ConsumptionBox";
 import { DELETE_RECEIVE } from "@/graphql/mutation/DELETE_RECEIVE";
 import { AppContext } from "@/provider/appContext";
+import { useGetExternalIncomeTypeListQuery } from "@/hooks/api/definitions/external-income/queries/use-get-external-income-type";
+import ExternalIncomeBox from "./external-income-cart";
+import EmptyPage from "@/components/util/emptyPage";
+import { EmptyProductPageIcon } from "@/icons";
+import { SkeletonComponentBox } from "../../_Components/Skeleton-box";
 
 interface IProps {
     t:any
@@ -16,54 +20,19 @@ interface IProps {
 const ExternalIncomePage:React.FC<IProps> = ({t}) => {
   const client = useApolloClient();
   const { setHandleError } = useContext(AppContext)
-  const [productsState, setProductsState] = useState<{
-    products: any[];
-    count: number;
-    page: number;
-  }>({
-    products: [],
-    count: 0,
-    page: 1,
-  });
+ 
   const [loadingPage, setLoadingPage] = useState(true);
   const [updateProductState, setUpdateProductState] = useState(false);
   const [updateProductItem, setUpdateProductItem] = useState({});
+  
+  const {data:incomeList , isLoading } = useGetExternalIncomeTypeListQuery()
 
-  const getProductListFunction = async () => {
-    try {
-      const {
-        data: { getExternalIncomeTypeList },
-      } = await client.query({
-        query: GET_EXTERNAL_TYPE_INCOME,
-      });
-      setProductsState((prevState) => ({
-        ...prevState,
-        products: getExternalIncomeTypeList,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {}
-  };
-  useEffect(() => {
-    if (productsState?.products?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
 
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = productsState?.products?.filter((item) => {
-      return id !== item?._id;
-    });
-    setProductsState((preState) => ({
-      ...preState,
-      products: filterState,
-    }));
-  };
   const handleGetCreatedProduct = (product: any) => {
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: [product, ...prevState?.products],
-    }));
+    // setProductsState((prevState) => ({
+    //   ...prevState,
+    //   products: [product, ...prevState?.products],
+    // }));
   };
 
   const canceleUpdateProduct = () => {
@@ -72,22 +41,22 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
   };
   const updateProductFunction = (productId: String) => {
 
-    const item = productsState?.products?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
+    // const item = productsState?.products?.filter((item) => {
+    //   return item?._id === productId;
+    // });
+    // setUpdateProductItem(item?.[0]);
     setUpdateProductState(true);
   };
   const handleGetUpdateProduct = (product: any) => {
-    const filterState = productsState?.products?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: filterState,
-    }));
+    // const filterState = productsState?.products?.map((item) => {
+    //   if (item?._id === product._id) {
+    //     return product;
+    //   } else return item;
+    // });
+    // setProductsState((prevState) => ({
+    //   ...prevState,
+    //   products: filterState,
+    // }));
     canceleUpdateProduct();
   };
 
@@ -107,10 +76,10 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
           type:"success",
           open:true
         })
-        setProductsState((prevState) => ({
-          ...prevState,
-          products: prevState?.products?.filter((item) => item?._id !== id)
-        }))
+        // setProductsState((prevState) => ({
+        //   ...prevState,
+        //   products: prevState?.products?.filter((item) => item?._id !== id)
+        // }))
       }
       setLoadingPage(false)
     }catch(error:any){
@@ -124,28 +93,19 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
   }
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(productsState?.products?.length > 0 || loadingPage) && (
+  
         <Typography variant="h3" mb={2}>
           {t?.pages?.income?.external_income}
         </Typography>
-      )}
+
       <Box
         mb={2}
         sx={{
-          display: productsState?.count > 0 ? "flex" : "grid",
-          justifyContent: productsState.count > 0 ? "space-between" : "",
+          display: "flex" ,
+         
         }}
       >
         <CreateExternalIncomeType
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmptyPage={
-            loadingPage === false && productsState?.products?.length === 0
-          }
           t={t}
         />
         {/* {productsState?.products?.length > 0 && (
@@ -155,17 +115,25 @@ const ExternalIncomePage:React.FC<IProps> = ({t}) => {
         )} */}
       </Box>
       <Box display={"flex"} flexWrap="wrap" columnGap={"1rem"} rowGap="1rem">
-        {productsState?.products?.map((item) => (
-          <ConsumptionBox
+        {incomeList?.map((item:any) => (
+          <ExternalIncomeBox
             key={item?._id}
             item={item}
-            id={item?._id}
-            updateProductFunction={updateProductFunction}
-            getIdToAddAction={handleDeleteItem}
             t={t}
           />
         ))}
+        {isLoading && <SkeletonComponentBox />}
       </Box>
+       {incomeList?.length === 0 && !isLoading && <Box className={"empty_page_content"}>
+            <EmptyPage
+              icon={<EmptyProductPageIcon />}
+              title={t?.pages?.income?.no_external_income_recorded}
+              discription={t?.pages?.income?.no_income_description}
+              // onClick={handleOpenDialogFunction}
+              // buttonText={t?.pages?.income?.add_new_external_income}
+            />
+          </Box>}
+          
     </Box>
   );
 };

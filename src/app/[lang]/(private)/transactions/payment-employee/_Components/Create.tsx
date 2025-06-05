@@ -29,6 +29,7 @@ import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use
 import { AppContext } from "@/provider/appContext";
 import { useAddPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-pay-of-mutation";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
+import { useAddEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-add-employee-pay-off";
 
 interface IPropsCreate {
   t: any;
@@ -51,7 +52,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddPayOffMutation();
+  const { mutate, error, isLoading } = useAddEmployeePayOffMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);

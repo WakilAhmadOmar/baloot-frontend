@@ -1,5 +1,5 @@
 import { client } from "@/config/http-client";
-import { PAY_OF_LIST_QUERY_KEY } from "@/constants/queries-key";
+// import { PAY_OF_LIST_QUERY_KEY } from "@/constants/queries-key";
 import { UPDATE_PAY_OFF } from "@/graphql/mutation/UPDATE_PAY_OFF";
 import { ClientError } from "@/types";
 import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
@@ -17,7 +17,7 @@ export const useUpdatePayOffMutation = (options: UseMutationOptions<{}, ClientEr
     
     const onSuccess = ()=> {
       // queryClient.invalidateQueries({ queryKey: [RECEIVE_LIST_QUERY_KEY] })
-      queryClient.refetchQueries({ queryKey: [PAY_OF_LIST_QUERY_KEY] });
+      // queryClient.refetchQueries({ queryKey: [PAY_OF_LIST_QUERY_KEY] });
 
     }
     return useMutation({

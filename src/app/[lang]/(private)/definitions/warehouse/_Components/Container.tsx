@@ -1,145 +1,72 @@
-"use client"
-import { GET_ENTREPOT_LIST } from "@/graphql/queries/GET_ENTREPOT_LIST";
-import { NotFoundIcon } from "@/icons";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import CustomSearch from "@/components/search/CustomSearch";
+"use client";
+
+import { EmptyProductPageIcon } from "@/icons";
 import CreateWarehouse from "./Create";
-import WarehouseList from "./List";
-import { useApolloClient } from "@apollo/client";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-interface IProps{
-    t:any
+import { Box, Button, Grid,  Typography } from "@mui/material";
+import { useGetWarehouseList } from "@/hooks/api/definitions/warehouse/queries/use-get-list";
+import CollapseComponent from "@/components/collapse/Collapse";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Add } from "iconsax-react";
+import EmptyPage from "@/components/util/emptyPage";
+import UpdateWarehouse from "./Update";
+import { useDeleteWarehouseMutation } from "@/hooks/api/definitions/warehouse/mutations/use-delete-mutation";
+import { useContext } from "react";
+import { AppContext } from "@/provider/appContext";
+import SkeletonComponent from "../../_Components/Skeleton";
+
+interface IProps {
+  t: any;
 }
 
-const WarehousePage:React.FC<IProps> = ({t}) => {
-  const client = useApolloClient();
-  const [productsState, setProductsState] = useState<{
-    products: any[];
-    count: number;
-    page: number;
-  }>({
-    products: [],
-    count: 0,
-    page: 1,
-  });
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [updateProductState, setUpdateProductState] = useState(false);
-  const [updateProductItem, setUpdateProductItem] = useState({});
-  const [textSearchState, setTextSearchState] = useState("");
+const WarehousePage: React.FC<IProps> = ({ t }) => {
+  const pathname = usePathname();
+  const {setHandleError} = useContext(AppContext)
+  const lang = pathname.split("/")[1];
 
-  const getProductListFunction = async (textSearch?: string) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        page: textSearch ? 1 : productsState?.page,
-        ...(textSearch ? { searchTerm: textSearch } : {}),
-      };
-      const {
-        data: { getEntrepotList },
-      } = await client.query({
-        query: GET_ENTREPOT_LIST,
-        variables,
-        fetchPolicy: "network-only",
-      });
-      setProductsState((prevState) => ({
-        products: getEntrepotList?.entrepot,
-        count:
-          getEntrepotList?.count > 0 ? getEntrepotList?.count : prevState.count,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {
-      setLoadingPage(false);
-    }
-  };
-  useEffect(() => {
-    if (productsState?.products?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
+  const { data: warehouseList, isLoading } = useGetWarehouseList({ page: 1 });
+  const {mutate , isLoading:deleteIsLoading} = useDeleteWarehouseMutation()
 
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = productsState?.products?.filter((item) => {
-      return id !== item?._id;
-    });
-    setProductsState((preState) => ({
-      ...preState,
-      products: filterState,
-      count: preState.count - 1,
-    }));
-  };
-  const handleGetCreatedProduct = (product: any) => {
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: [product, ...prevState?.products],
-      count: prevState?.count + 1,
-    }));
-  };
+  const handleDeleteFunction = (id:string) =>{
+    mutate({entrepotId:id},{
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t?.pages?.warehouse?.warehouse_deleted_successfully,
+          status: "success",
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
+    } )
+  }
 
-  const canceleUpdateProduct = () => {
-    setUpdateProductItem({});
-    setUpdateProductState(false);
-  };
-  const updateProductFunction = (productId: String) => {
-    const item = productsState?.products?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
-    setUpdateProductState(true);
-  };
-  const handleGetUpdateProduct = (product: any) => {
-    const filterState = productsState?.products?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: filterState,
-    }));
-    canceleUpdateProduct();
-  };
-  const getTextSearchFunction = (textSearch: string) => {
-    setProductsState((prvState) => ({
-      ...prvState,
-      page: 0,
-      products: [],
-    }));
-    setTextSearchState(textSearch);
-    getProductListFunction(textSearch);
-  };
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(productsState?.count > 0 || loadingPage) && (
-        <Typography variant="h3" mb={2}>
-          {t?.pages?.warehouse?.warehouses}
-        </Typography>
-      )}
+      <Typography variant="h3" mb={2}>
+        {t?.pages?.warehouse?.warehouses}
+      </Typography>
       <Box
         mb={2}
         sx={{
-          display: productsState?.count > 0 ? "flex" : "grid",
-          justifyContent: productsState.count > 0 ? "space-between" : "",
+          display: "flex",
         }}
       >
         <CreateWarehouse
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmpty={loadingPage === false && productsState?.count === 0}
           t={t}
         />
-        {productsState?.products?.length > 0 && (
+        {/* {productsState?.products?.length > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
           </Box>
-        )}
+        )} */}
       </Box>
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         productsState?.products?.length === 0 && (
           <Box
@@ -154,19 +81,103 @@ const WarehousePage:React.FC<IProps> = ({t}) => {
               {t?.pages?.warehouse?.nothing_found}
             </Typography>
           </Box>
-        )}
-      {productsState?.products?.length > 0 && (
-        <WarehouseList
-          products={productsState?.products}
-          count={productsState?.count}
-          deleteProductFunction={handleDeleteItemFunction}
-          handleUpdateProuct={updateProductFunction}
-          t={t}
-        />
+        )} */}
+      {warehouseList?.entrepot?.map((item: any) => {
+        return (
+          <CollapseComponent
+            key={item?._id}
+            name={item?.name}
+            createdAt={item?.createdAt}
+            id={item?._id}
+            getIdToAddAction={handleDeleteFunction}
+            // updateProductFunction={handleUpdateProuct}
+            messageTitle={t?.pages?.warehouse?.delete_title}
+            messageDescription={t?.pages?.warehouse?.delete_description}
+            UpdateComponent={<UpdateWarehouse t={t} item={item} />}
+            isLoading={deleteIsLoading}
+            t={t}
+          >
+            <Grid container spacing={2}>
+              <Grid
+                item
+                xs={8}
+                display="grid"
+                gridTemplateColumns={"auto 1rem"}
+              >
+                <Box
+                  display={"grid"}
+                  gridTemplateColumns={"17rem auto"}
+                  rowGap={"1rem"}
+                >
+                  <Typography variant="caption">
+                    {t?.pages?.warehouse?.warehouses}
+                  </Typography>
+                  <Typography variant="caption">{item?.name}</Typography>
+                  <Typography variant="caption">
+                    {t?.pages?.warehouse?.warehouse_responsible}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.responsible?.name}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t?.pages?.warehouse?.product_quantity}
+                  </Typography>
+                  <Typography variant="caption"></Typography>
+                  <Typography variant="caption">
+                    {t?.pages?.warehouse?.warehouse_address}
+                  </Typography>
+                  <Typography variant="caption">{item?.address}</Typography>
+                </Box>
+              </Grid>
+
+              <Grid
+                item
+                xs={4}
+                justifyContent={"flex-end"}
+                display="grid"
+                alignItems={"flex-end"}
+              >
+                <Box>
+                  <Link
+                    href={
+                      `/${lang}/definitions/warehouse/` +
+                      item?._id +
+                      "?name=" +
+                      item?.name
+                    }
+                    lang={lang}
+                  >
+                    <Button
+                      startIcon={<Add />}
+                      id={item?._id}
+                      variant="outlined"
+                      sx={{
+                        borderStyle: "dashed",
+                      }}
+                    >
+                      {t?.pages?.warehouse?.initial_period_registration}
+                    </Button>
+                  </Link>
+                </Box>
+              </Grid>
+            </Grid>
+          </CollapseComponent>
+        );
+      })}
+      {warehouseList?.count === 0 && !isLoading && (
+        <Box className={"empty_page_content"}>
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            discription={t?.pages?.warehouse?.no_warehouse}
+            title={t?.pages?.warehouse?.no_warehouse_registered}
+            // buttonText={t?.pages?.warehouse?.add_warehouse}
+            // onClick={handleOpenDialogFunction}
+          />
+        </Box>
       )}
+      {isLoading &&  <SkeletonComponent/>}
     </Box>
   );
 };
 
 export default WarehousePage;
-

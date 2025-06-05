@@ -11,7 +11,6 @@ import {
   InputLabel,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Typography,
   useTheme,
@@ -25,9 +24,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
 import { AppContext } from "@/provider/appContext";
-import { useAddPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-pay-of-mutation";
+import { useAddCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-customer-pay-off-mutation";
 
 interface IPropsCreate {
   t: any;
@@ -50,7 +48,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddPayOffMutation();
+  const { mutate, error, isLoading } = useAddCustomerPayOffMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);

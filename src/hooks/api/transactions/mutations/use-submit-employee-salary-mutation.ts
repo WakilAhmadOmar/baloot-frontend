@@ -1,5 +1,5 @@
 import { client } from "@/config/http-client";
-import { PAY_OF_LIST_QUERY_KEY } from "@/constants/queries-key";
+// import { PAY_OF_LIST_QUERY_KEY } from "@/constants/queries-key";
 import { SUBMIT_EMPLOYEE_SALARY } from "@/graphql/mutation/SUBMIT_EMPLOYEE_SALARY";
 
 import { ClientError } from "@/types";
@@ -17,7 +17,7 @@ export const useSubmitEmployeeSalaryMutation = (options: UseMutationOptions<{}, 
       }
     
     const onSuccess = ()=> {
-      queryClient.refetchQueries({ queryKey: [PAY_OF_LIST_QUERY_KEY] });
+      // queryClient.refetchQueries({ queryKey: [PAY_OF_LIST_QUERY_KEY] });
 
     }
     return useMutation({
