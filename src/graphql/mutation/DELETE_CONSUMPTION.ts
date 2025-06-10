@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const DELETE_CONSUMPTION = gql`
-mutation($consumptionId: ID!){
+mutation DeleteConsumption($consumptionId: ID!) {
   deleteConsumption(consumptionId: $consumptionId) {
     message
   }

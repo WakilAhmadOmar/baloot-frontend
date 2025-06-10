@@ -7,13 +7,6 @@ const ADD_BANK = gql`
       name
       accountNumber
       bankPhoneNumber
-      credit {
-        amount
-        currencyId {
-          _id
-          name
-        }
-      }
       createdAt
     }
   }

@@ -6,24 +6,29 @@ import { useApolloClient } from "@apollo/client";
 import { GET_USER_CURRENCIES } from "../../graphql/queries/GET_USER_CURRENCIES";
 import { AppContext } from "@/provider/appContext";
 
+import { Controller, useFormContext } from "react-hook-form"
+
 interface IPropsUserCurrencies {
 
   defaultValue?: string;
   onSelected?: (currencyId: any) => void;
-  register: any;
-  isRequired?:boolean
+  name?:string
+  dir?:string
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
   onSelected,
-  register,
-  isRequired = true
+  name,
+  dir= "ltr"
 }) => {
   const client = useApolloClient();
   const {setHandleError} = useContext(AppContext)
   const [userCurrenciesState, setUserCurrenciesState] = useState<any[]>([]);
 
-
+  const {
+    formState: { errors },
+    control
+  } = useFormContext()
 
 // user selected curencies
 const getUserCurrenciesFunction = async () => {
@@ -33,6 +38,9 @@ const getUserCurrenciesFunction = async () => {
     } = await client.query({
       query: GET_USER_CURRENCIES,
     });
+    if (userCurrenciesState?.length === 0 && onSelected && !defaultValue) {
+      onSelected(getUserCurrencies?.[0])
+    }
     setUserCurrenciesState(getUserCurrencies)
   } catch (error: any) {
     setHandleError((prevState:any) => ({
@@ -63,22 +71,51 @@ const getUserCurrenciesFunction = async () => {
   return (
     <Box>
       {userCurrenciesState?.length > 0 && (
-        <Select
-          fullWidth
-          size={"small"}
-          name="currency"
-          defaultValue={defaultValue || userCurrenciesState?.[0]?._id}
-          {...(register ?  register("currency" , {required:isRequired}) : {})}
-          onChange={handleChange}
-        >
-          {userCurrenciesState?.map((item) => {
+        <Controller
+        name={name || "currencyId"}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            // label="Status"
+            fullWidth
+            size={"small"}
+            value={value}
+            defaultValue={defaultValue }
+            // options={PROGRAM_STATUS}
+            // placeholder="Please select status"
+            error={!!errors?.currencyId}
+            // helperText={errors?.currencyId?.message}
+            required
+            onChange={(event)=> {
+              onChange(event);
+              handleChange(event)
+            }}
+          >
+                  {userCurrenciesState?.map((item) => {
             return (
-              <MenuItem key={item?._id} value={item?._id}>
+              <MenuItem key={item?._id} value={item?._id} dir={dir} >
                 {item?.name}
               </MenuItem>
             );
           })}
         </Select>
+        )}
+      />
+        // <Select
+        //   fullWidth
+        //   size={"small"}
+        //   defaultValue={defaultValue?._id || userCurrenciesState?.[0]?._id}
+        //   {...(register ?  register("currencyId" , {required:isRequired}) : {})}
+        //   onChange={handleChange}
+        // >
+          // {userCurrenciesState?.map((item) => {
+          //   return (
+          //     <MenuItem key={item?._id} value={item?._id}>
+          //       {item?.name}
+          //     </MenuItem>
+          //   );
+          // })}
+        // </Select>
       )}
     </Box>
   );

@@ -1,9 +1,5 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
-  Collapse,
   Typography,
   IconButton,
   useTheme,
@@ -17,7 +13,7 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { ArrowDown2, Trash, Edit, ArrowUp2, InfoCircle } from "iconsax-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 // height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms
 interface IProps {
@@ -31,6 +27,9 @@ interface IProps {
   messageTitle:string,
   messageDescription:string,
   t:any
+  editTable?:boolean,
+  UpdateComponent?:React.ReactNode,
+  isLoading?:boolean
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -51,11 +50,16 @@ const CollapseComponent: React.FC<IProps> = ({
   height,
   t,
   messageDescription,
-  messageTitle
+  messageTitle,
+  editTable= true,
+  UpdateComponent,
+  isLoading= false
 }) => {
   const theme = useTheme();
   const [handleCollapseState, setHandleCollapseState] = useState(false);
   const [handleDeleteState, setHandleDeleteState] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState("0px");
   const handleCollapseFunction = () => {
     setHandleCollapseState(!handleCollapseState);
   };
@@ -65,14 +69,23 @@ const CollapseComponent: React.FC<IProps> = ({
   const handleDeleteThisItem = () => {
     if (getIdToAddAction && id) {
       getIdToAddAction(id);
-      handleDeleteFunction();
+      // handleDeleteFunction();
     }
   };
-  const handleClickUpdateItem = () => {
-    if (updateProductFunction && id) {
-      updateProductFunction(id);
+
+
+  useEffect(() => {
+    if (handleCollapseState && contentRef.current) {
+      setContentHeight(`${contentRef.current.scrollHeight}px`);
+    } else {
+      setContentHeight("0px");
     }
-  };
+  }, [handleCollapseState, children]);
+  useEffect(()=>{
+    if(!isLoading){
+      setHandleDeleteState(false);
+    }
+  },[isLoading])
 
   return (
     <Box mt={0.5} borderRadius={"8px"}>
@@ -101,6 +114,7 @@ const CollapseComponent: React.FC<IProps> = ({
             onClick={handleDeleteThisItem}
             variant="contained"
             color="primary"
+            loading={isLoading}
           >
             {t?.product?.yes}
           </Button>
@@ -114,7 +128,6 @@ const CollapseComponent: React.FC<IProps> = ({
         sx={{
           display: "grid",
           gridTemplateColumns: "auto 17rem",
-          // justifyContent: "space-between",
           alignItems: "center",
         }}
         bgcolor={theme.palette.background.default}
@@ -152,21 +165,26 @@ const CollapseComponent: React.FC<IProps> = ({
             display: "flex",
             alignItems: "center",
             columnGap: "1rem",
+            justifyContent:"flex-end"
           }}
         >
           <Typography variant="body2">
             <Moment format="YYYY/MM/DD">{createdAt}</Moment>
           </Typography>
-          <IconButton onClick={handleDeleteFunction}>
+          {getIdToAddAction && <IconButton onClick={handleDeleteFunction}>
             <Trash size={20} color={theme.palette.primary.contrastText} />
-          </IconButton>
-          <IconButton onClick={handleClickUpdateItem}>
+          </IconButton>}
+          {
+            editTable && UpdateComponent 
+          }
+          {/* {editTable && <IconButton onClick={handleClickUpdateItem}>
             <Edit size={20} color={theme.palette.primary.contrastText} />
-          </IconButton>
+          </IconButton>} */}
         </Box>
       </Box>
       {true && (
         <Box
+        ref={contentRef}
           pt={handleDeleteState ? 1 : 0}
           pb={handleDeleteState ? 1 : 0}
           pr={2}
@@ -176,9 +194,11 @@ const CollapseComponent: React.FC<IProps> = ({
             backgroundColor: theme.palette.grey[100],
             borderBottomLeftRadius: "8px",
             borderBottomRightRadius: "8px",
-            height: handleCollapseState ? height || "200px" : "0px",
-            transition: "height 0.25s",
-            transitionTimingFunction: "linear",
+            // height: handleCollapseState ? height || "200px" : "0px",
+            // transition: "height 0.25s",
+            // transitionTimingFunction: "linear",
+            maxHeight: contentHeight,
+          transition: "max-height 0.25s ease-in-out",
           }}
         >
           <Box height={"100%"} p={2}>
@@ -187,47 +207,7 @@ const CollapseComponent: React.FC<IProps> = ({
         </Box>
       )}
     </Box>
-    // <Accordion
-    //   sx={{
-    //     boxShadow: "none",
-    //     margin: "2px 0",
-    //   }}
-    // >
-    //   <AccordionSummary
-    //     expandIcon={<ArrowDown2 />}
-    //     aria-controls="panel1a-content"
-    //     id="panel1a-header"
-    //     sx={{ display: "flex", width: "100%" }}
-    //   >
-    //     <Box
-    //       sx={{
-    //         display: "flex",
-    //         justifyContent: "space-between",
-    //         alignItems: "center",
-    //         widht: "100%",
-    //       }}
-    //     >
-    //       <Typography>نام محصول در اینجا نوشته میشود</Typography>
-    //       <Box
-    //         sx={{
-    //           display: "flex",
-    //           alignItems: "center",
-    //           columnGap: "1rem",
-    //         }}
-    //       >
-    //         <Trash />
-    //         <Edit />
-    //         <Typography>1402/2/23</Typography>
-    //       </Box>
-    //     </Box>
-    //   </AccordionSummary>
-    //   <AccordionDetails>
-    //     <Typography>
-    //       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-    //       malesuada lacus ex, sit amet blandit leo lobortis eget.
-    //     </Typography>
-    //   </AccordionDetails>
-    // </Accordion>
+    
   );
 };
 

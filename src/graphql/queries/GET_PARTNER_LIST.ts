@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-const GET_PARNER_LIST = gql`
+const GET_PARTNER_LIST = gql`
   query ($page: Int!, $searchTerm: String) {
     getPartnerList(page: $page, searchTerm: $searchTerm) {
       partner {
@@ -15,7 +15,6 @@ const GET_PARNER_LIST = gql`
             symbol
           }
         }
-        investPercentage
         phoneNumber
         createdAt
       }
@@ -23,4 +22,4 @@ const GET_PARNER_LIST = gql`
     }
   }
 `;
-export { GET_PARNER_LIST };
+export { GET_PARTNER_LIST };

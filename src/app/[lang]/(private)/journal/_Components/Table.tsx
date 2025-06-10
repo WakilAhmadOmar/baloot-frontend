@@ -39,14 +39,42 @@ const paginationModel = { page: 0, pageSize: 5 };
 
 export default function DataTable() {
   return (
-    <Paper sx={{ height: 400, width: '100%' }}>
+    <Paper sx={{ height: 400, width: '100%', direction:"rtl" }}>
       <DataGrid
         rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
+        checkboxSelection={false}
+        autoHeight
+        disableVirtualization
+        getRowHeight={() => "auto"}
+        sx={{
+          // backgroundColor: "white",
+          height: "100%",
+          "& .MuiDataGrid-columnSeparator": {
+            display: "none", // This removes the line between headers
+          },
+          "& .MuiDataGrid-container--top [role=row]":{
+            background:"rgb(238, 0, 0) !important"
+          },
+          "& .MuiDataGrid-cell": {
+            borderTop: "1px solid #E1E1E1 !important",
+            textAlign: " right",
+            padding: "10px !important",
+            wordBreak: "break-word",
+            boxSizing: "border-box",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+        hideFooter
+        hideFooterSelectedRowCount
+        disableColumnMenu
+        disableAutosize
+        disableColumnFilter
+        disableColumnSelector
       />
     </Paper>
   );

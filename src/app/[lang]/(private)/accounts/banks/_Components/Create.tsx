@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Button,
@@ -12,55 +13,161 @@ import {
   Grid,
   InputLabel,
 } from "@mui/material";
-import { CloseSquare } from "iconsax-react";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
+import { CloseCircle, CloseSquare } from "iconsax-react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
 import { AppContext } from "@/provider/appContext";
+import SelectWithInput from "@/components/search/SelectWIthInput";
+import BankAutoComplete from "@/components/Auto/bankAutoComplete";
+import { useApolloClient } from "@apollo/client";
+import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 
 interface IPropsAddCashBox {
-  isEmptyPage: boolean;
-  t:any
+  t: any;
 }
 
-const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
+const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
+  const methods = useForm();
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    getValues,
-    setValue,
-    getFieldState,
-  } = useForm();
+    reset,
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
-  const {setHandleError} = useContext(AppContext)
-
+  const { setHandleError } = useContext(AppContext);
+  const [bankDetails, setBankDetails] = useState<any>({
+    _id: "1",
+    firstPeriodCredit: [
+      {
+        amount: 0,
+        creditType: "Debit",
+        currencyId: {
+          _id: "",
+          name: "",
+          symbol: "",
+        },
+      },
+    ],
+  });
+  const { mutate: addFirstPeriodMutation, isLoading } =
+    useAddFirstPeriodOfCreditMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
 
-  const onSubmitFunction = async (data: any) => {
-    console.log("data", data);
+  const handleAddNewCredit = () => {
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      firstPeriodCredit: [
+        ...(prevState?.firstPeriodCredit?.length > 0
+          ? prevState?.firstPeriodCredit
+          : []),
+        {
+          amount: 0,
+          creditType: "Debit",
+          currencyId: {
+            _id: "",
+            name: "",
+            symbol: "",
+          },
+        },
+      ],
+    }));
+  };
+  const handleDeleteCredit = (event: MouseEvent) => {
+    const deleteIndex = parseInt(event?.currentTarget?.id);
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
+        (item: any, index: number) => index !== deleteIndex
+      ),
+    }));
   };
 
+  const handleChangeCredit = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    index: number
+  ) => {
+    const name = event?.target?.name;
+    const value = event?.target?.value;
+    setBankDetails((prevState: any) => {
+      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
+        (item: any, inItem: number) => {
+          if (index == inItem) {
+            return {
+              ...item,
+              ...(name?.includes("amount") ? { amount: value } : {}),
+              ...(name?.includes("creditType") ? { creditType: value } : {}),
+            };
+          } else return item;
+        }
+      );
+      return {
+        ...prevState,
+        firstPeriodCredit,
+      };
+    });
+  };
+  const onSubmitFunction = async (data: any) => {
+    const variables = {
+      creditObject: bankDetails?.firstPeriodCredit?.map(
+        (item: any, index: number) => ({
+          amount: parseFloat(item?.amount),
+          creditType: item?.creditType,
+          currencyId: item?.currencyId?._id,
+        })
+      ),
+      description: data?.description,
+      accountType: "Bank",
+      accountId: data?.bankId,
+    };
 
+    addFirstPeriodMutation(variables, {
+      onSuccess: ({ message }: any) => {
+        setHandleError({
+          message: message ?? "",
+          type: "success",
+          open: true,
+        });
+        handleOpenDialogFunction();
+        reset();
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error?.message,
+          type: "error",
+        });
+      },
+    });
+  };
+
+  const handleGetBank = (data: any) => {
+    console.log("data", data);
+    setBankDetails(data);
+  };
+  const handleSelectCurrency = (currency: any, index: number) => {
+    const allCredit = bankDetails?.firstPeriodCredit;
+    allCredit[index].currencyId = currency;
+    setBankDetails((prevState: any) => ({
+      ...prevState,
+      firstPeriodCredit: allCredit,
+    }));
+  };
+
+  console.log("bankDetails", bankDetails);
   return (
-    <Box>
-      {loadingPage && <CircularProgressComponent />}
-  
+    <FormProvider {...methods}>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir="rtl"
+        dir={t?.home?.dir}
         fullWidth
       >
         <DialogTitle
@@ -72,7 +179,9 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>افزودن حساب بانک </Typography>
+          <Typography>
+            {t?.pages?.bank?.record_previous_bank_accounts}
+          </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -80,60 +189,105 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ mt: "2rem", mb: "1rem" }}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  نام کامل بانک
+                  {t?.pages?.bank?.bank_name}
                 </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("name", { required: true })}
-                  name="name"
+                <BankAutoComplete
+                  dir={t?.home?.dir}
+                  name="bankId"
+                  getBank={handleGetBank}
                 />
               </Grid>
-              <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  دیبت
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("cashierPhoneNumber", { required: true })}
-                  name="cashierPhoneNumber"
-                />
+            </Grid>
+            {bankDetails?.firstPeriodCredit?.length > 0 && (
+              <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
+                <Grid item xs={7}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.pages?.bank?.previous_account}
+                  </InputLabel>
+                </Grid>
+                <Grid item xs={4}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t?.pages?.bank?.currency}
+                  </InputLabel>
+                </Grid>
               </Grid>
-
-              <Grid item xs={6}>
-                <UserCurrenciesComponent register={register} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  کردیت
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  {...register("cashierPhoneNumber", { required: true })}
-                  name="cashierPhoneNumber"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <UserCurrenciesComponent register={register} />
-              </Grid>
+            )}
+            {bankDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+              return (
+                <Grid
+                  container
+                  spacing={2}
+                  key={"credit" + index}
+                  sx={{ mb: "1.5rem" }}
+                >
+                  <Grid item xs={7}>
+                    <SelectWithInput
+                      register={register}
+                      inputName={"amount" + index}
+                      selectName={"creditType" + index}
+                      defaultValue={item?.creditType}
+                      inputDefaultValue={item?.amount}
+                      data={[{ name: "Debit", value: "Debit" }]}
+                      onChange={(
+                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      ) => handleChangeCredit(event, index)}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <UserCurrenciesComponent
+                      name="currencyId"
+                      dir={t?.home?.dir}
+                      defaultValue={item?.currencyId?._id}
+                      onSelected={(currency) =>
+                        handleSelectCurrency(currency, index)
+                      }
+                    />
+                  </Grid>
+                  {index > 0 && (
+                    <Grid item xs={1}>
+                      <IconButton
+                        color="error"
+                        type="button"
+                        onClick={handleDeleteCredit}
+                        id={`${index}`}
+                      >
+                        <CloseCircle
+                          size={18}
+                          color={theme.palette.error.main}
+                        />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </Grid>
+              );
+            })}
+            <Grid item xs={12} display={"grid"} justifyContent={"end"}>
+              <Button
+                color="primary"
+                type="button"
+                variant="outlined"
+                onClick={handleAddNewCredit}
+              >
+                {t?.pages?.bank?.new_currency}
+              </Button>
+            </Grid>
+            <Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  توضیحات
+                  {t?.pages?.bank?.description}
                 </InputLabel>
                 <TextField
                   fullWidth
                   multiline
                   rows={4}
                   size="small"
-                  {...register("address", { required: true })}
-                  name="address"
+                  {...register("description", { required: false })}
+                  name="description"
                 />
               </Grid>
             </Grid>
@@ -142,38 +296,29 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ isEmptyPage , t }) => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t?.pages?.bank?.Cancel}
+          </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={isLoading}
           >
-            ذخیره
+            {t?.pages?.bank?.save}
           </Button>
-          <Button variant="outlined">لغو</Button>
         </DialogActions>
       </Dialog>
-      {isEmptyPage ? (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title}
-            discription={t.product.no_product_yet_discription}
-            buttonText={t.product.add_new_product}
-            onClick={handleOpenDialogFunction}
-          />
-        </Box>
-      ) : (
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-          >
-            ثبت موجودی گذشته
-          </Button>
-        </Box>
-      )}
-    </Box>
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t?.pages?.bank?.record_previous_balance}
+        </Button>
+      </Box>
+    </FormProvider>
   );
 };
 

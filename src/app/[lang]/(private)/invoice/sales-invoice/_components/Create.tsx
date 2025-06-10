@@ -20,14 +20,17 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { CloseSquare } from "iconsax-react";
-import { forwardRef, useContext, useState } from "react";
+import { forwardRef, useCallback, useContext, useState } from "react";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import DataTable from "./Table";
-import { useForm } from "react-hook-form";
+import { useForm , FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useSchemaCrateForm, { CreateFormSchema } from "./create-form.schema";
 import { useApolloClient } from "@apollo/client";
 import { ADD_SELLS_BILL } from "@/graphql/mutation/ADD_SELLS_BILL";
+import { AppContext } from "@/provider/appContext";
+import { PrintInvoice } from "./print-invoice";
+import PrintTable from "./table-print";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -40,55 +43,67 @@ const Transition = forwardRef(function Transition(
 
 interface IProps {
   t: any;
+  onCreated?: (billInfo: any) => void;
 }
 
-const CreateSalesInvoice: React.FC<IProps> = ({ t }) => {
+const CreateSalesInvoice: React.FC<IProps> = ({ t, onCreated }) => {
   const schemaCreateForm = useSchemaCrateForm(t);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<CreateFormSchema>({
-    resolver: yupResolver(schemaCreateForm),
-  });
+  const methods = useForm<CreateFormSchema>({
+      resolver: yupResolver(useSchemaCrateForm(t)),
+      // defaultValues,
+    });
+  
+    const {
+      register,
+      control,
+      handleSubmit,
+      formState: { errors },
+      setError,
+      reset
+    } = methods;
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  //   setError,
+  // } = useForm<CreateFormSchema>({
+  //   resolver: yupResolver(schemaCreateForm),
+  // });
   const {
     customer,
-    setCustomer,
-    warehouse,
-    setWarehouse,
-    currency,
-    setCurrency,
     paymentOff,
     rows,
     setRows,
-    sellBillPrice
+    sellBillPrice,
   } = useContext(InvoiceContext);
+  const { setHandleError } = useContext(AppContext);
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const client = useApolloClient()
+  const [openDialog, setOpenDialog] = useState(false); 
+  const [loadingPage, setLoadingPage] = useState(false);
+  const client = useApolloClient();
   const theme = useTheme();
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
   };
-  const handleGetCustomer = (data: any) => {
-    setCustomer(data);
-  };
-  const handleGetWarehouse = (data: any) => {
-    setWarehouse(data);
-  };
-  const handleSelectCurrency = (data: any) => {
-    setCurrency(data);
-  };
+  // const handleGetCustomer = (data: any) => {
+  //   setCustomer(data);
+  // };
+  // const handleGetWarehouse = (data: any) => {
+  //   setWarehouse(data);
+  // };
+  // const handleSelectCurrency = (data: any) => {
+  //   setCurrency(data);
+  // };
   const onSubmitFunction = async (data: CreateFormSchema) => {
-    console.log("rows" , rows)
+    setLoadingPage(true);
+    console.log("allProduct" ,rows)
     try {
       const variables = {
         sellBillObject: {
           billDate: new Date(),
-          currencyId: currency?._id,
-          customerId: customer?._id,
-          entrepotId: warehouse?._id,
+          currencyId: data?.currencyId,
+          customerId: data?.customerId,
+          entrepotId: data?.warehouseId,
           isPaid: paymentOff?._id ? true : false,
           products: rows?.map((item: any) => {
             const allProduct = item?.measures
@@ -96,29 +111,52 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t }) => {
               ?.map((data: any) => ({
                 count: data?.amount,
                 discountPercentage: data?.discount || 0,
-                entrepotId:item?.warehouse?._id,
-                measureId:data?.measureId?._id,
-                pricePerMeasure:data?.sellPrice,
-                productId:item?._id
+                entrepotId: item?.warehouse?._id,
+                measureId: data?.measureId?._id,
+                pricePerMeasure: data?.sellPrice,
+                productId: item?._id
               }));
-              return {
-                ...allProduct?.[0]
-              }
+            return {
+              ...allProduct?.[0],
+            };
           }),
           status: "Accepted",
           totalPriceAfterDiscount: sellBillPrice?.totalPrice,
           transactionId: paymentOff?._id,
         },
       };
-      console.log("varialbess" , variables)
-      const {data  : { addSellsBill }} = await client.mutate({
-        mutation:ADD_SELLS_BILL,
-        variables
-      })
-      console.log("addSellsBill", addSellsBill)
-    } catch (error) {}
+      console.log("varialbess", variables);
+      const {
+        data: { addSellsBill },
+      } = await client.mutate({
+        mutation: ADD_SELLS_BILL,
+        variables,
+      });
+      if (addSellsBill?._id && onCreated) {
+        onCreated(addSellsBill);
+      }
+      setLoadingPage(false);
+      setHandleError({
+        message: "Action successfully recorded.",
+        type: "success",
+        open: true,
+      });
+    } catch (error: any) {
+      setLoadingPage(false);
+      setHandleError({
+        type: "error",
+        message: error?.message,
+        open: true,
+      });
+    }
   };
+  const resetInvoiceFunction = useCallback(() => {
+    reset()
+    setRows(null)
+  },[])
   return (
+    <FormProvider {...methods} >
+
     <Box>
       <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
         {t?.invoice?.add_new_sales_invoice}
@@ -159,8 +197,9 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t }) => {
             <Grid2 size={3} gap={1} display={"grid"}>
               <InputLabel>{t?.invoice?.customer_name}</InputLabel>
               <CustomerAutoComplete
-                register={register}
-                getCustomer={handleGetCustomer}
+
+                // register={register}
+                // getCustomer={handleGetCustomer}
               />
             </Grid2>
             <Grid2 size={2} gap={1} display={"grid"}>
@@ -175,44 +214,50 @@ const CreateSalesInvoice: React.FC<IProps> = ({ t }) => {
             <Grid2 size={2} gap={1} display={"grid"}>
               <InputLabel>{t.invoice?.Warehouse} </InputLabel>
               <WarehouseAutoComplete
-                register={register}
-                getWarehouse={handleGetWarehouse}
+                // register={register}
+                // getWarehouse={handleGetWarehouse}
               />
             </Grid2>
             <Grid2 size={2} gap={1} display={"grid"}>
               <InputLabel>{t?.invoice?.Currency}</InputLabel>
               <CurrenciesAutoComplete
-                register={register}
-                onSelected={handleSelectCurrency}
+                // register={register}
+                // onSelected={handleSelectCurrency}
               />
             </Grid2>
           </Grid2>
-          <DataTable t={t} register={register} />
+          <DataTable t={t}  />
         </DialogContent>
         <DialogActions>
           <Box display={"flex"} justifyContent="space-between" width={"100%"}>
             <Box display="flex" columnGap={"1rem"}>
-              <Button
-                variant="contained"
-                onClick={handleSubmit(onSubmitFunction)}
-              >
-                {t?.invoice?.save}
-              </Button>
+              <Button variant="outlined"onClick={resetInvoiceFunction}>{t?.invoice?.reset}</Button>
               <Button variant="outlined" onClick={handleOpenDialogBox}>
                 {t?.invoice?.cancel}
               </Button>
             </Box>
             <Box display="flex" columnGap={"1rem"}>
-              <Button variant="outlined">{t?.invoice?.print_invoice}</Button>
-              <Button variant="outlined">
+              <Button
+                variant="contained"
+                onClick={handleSubmit(onSubmitFunction)}
+                loading={loadingPage}
+              >
+                {t?.invoice?.save}
+              </Button>
+              {/* <Button variant="outlined" disabled>
+                {t?.invoice?.print_invoice}
+              </Button> */}
+              <PrintInvoice t={t} />
+              {/* <PrintTable /> */}
+              <Button variant="outlined" disabled>
                 {t?.invoice?.print_warehouse_receipt}
               </Button>
-              <Button variant="outlined">{t?.invoice?.reset}</Button>
             </Box>
           </Box>
         </DialogActions>
       </Dialog>
     </Box>
+    </FormProvider>
   );
 };
 

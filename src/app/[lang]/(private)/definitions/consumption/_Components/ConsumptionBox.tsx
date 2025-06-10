@@ -15,13 +15,14 @@ import {
   } from "@mui/material";
   import { TransitionProps } from "@mui/material/transitions";
   import { Edit, InfoCircle, Trash } from "iconsax-react";
-  import React, { useState } from "react";
+  import React, { useContext, useState } from "react";
   import Moment from "react-moment";
+import UpdateConsumption from "./Update";
+import { useDeleteConsumptionTypeMutation } from "@/hooks/api/definitions/consumption/mutations/use-delete-mutation";
+import { AppContext } from "@/provider/appContext";
   
   interface IProps {
-    id?: string;
-    getIdToAddAction?: (id: string) => void;
-    updateProductFunction?: (id: string) => void;
+
     item?: any;
     t:any
   }
@@ -35,29 +36,43 @@ import {
     return <Slide direction="up" ref={ref} {...props} />;
   });
   const ConsumptionBox: React.FC<IProps> = ({
-    getIdToAddAction,
-    id,
-    updateProductFunction,
+
     item,
     t
   }) => {
     const theme = useTheme();
     const [handleDeleteState, setHandleDeleteState] = useState(false);
+    const {setHandleError} = useContext(AppContext)
+    const {mutate , isLoading } = useDeleteConsumptionTypeMutation()
   
     const handleDeleteFunction = () => {
       setHandleDeleteState(!handleDeleteState);
     };
     const handleDeleteThisItem = () => {
-      if (getIdToAddAction && id) {
-        getIdToAddAction(id);
-      }
-      handleDeleteFunction();
+        const variables = {
+      consumptionTypeId: item?._id,
     };
-    const handleClickUpdateItem = () => {
-      if (updateProductFunction && id) {
-        updateProductFunction(id);
-      }
+
+    mutate(variables, {
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t?.pages?.Expenses?.expense_type_deleted_successfully,
+          status: "success",
+        });
+        setHandleDeleteState(false);
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
+    });
+
     };
+  
     return (
       <Box display={"grid"}>
         <Dialog
@@ -85,6 +100,7 @@ import {
               onClick={handleDeleteThisItem}
               variant="contained"
               color="primary"
+              loading={isLoading}
             >
               {t?.pages?.Expenses?.yes}
             </Button>
@@ -120,9 +136,7 @@ import {
               <IconButton onClick={handleDeleteFunction}>
                 <Trash color={theme.palette.grey["A700"]} size={25} />
               </IconButton>
-              <IconButton onClick={handleClickUpdateItem}>
-                <Edit color={theme.palette.grey["A700"]} size={25} />
-              </IconButton>
+              <UpdateConsumption t={t} item={item} />
             </Box>
           </Box>
         </Card>

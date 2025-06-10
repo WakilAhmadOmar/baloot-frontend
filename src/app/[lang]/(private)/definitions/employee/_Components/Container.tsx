@@ -1,152 +1,76 @@
 "use client"
 import CreateEmployee from "./Create";
-import EmployeesList from "./List";
-import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
-import {  NotFoundIcon } from "@/icons";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import CustomSearch from "@/components/search/CustomSearch";
-
-import { useApolloClient } from "@apollo/client";
-import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {  EmptyProductPageIcon } from "@/icons";
+import { Box, Grid, Pagination, Stack, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-list-query";
+import CollapseComponent from "@/components/collapse/Collapse";
+import EmployeeDetails from "./Details";
+import SkeletonComponent from "../../_Components/Skeleton";
+import EmptyPage from "@/components/util/emptyPage";
+import UpdateEmployee from "./Update";
+import { useDeleteEmployeeMutation } from "@/hooks/api/definitions/employee/mutations/use-delete-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IProps {
     t:any
 }
 const EmployeePage:React.FC<IProps> = ({t}) => {
-  const client = useApolloClient();
-  const [employeeState, setEmployeeState] = useState<{
-    employees: any[];
-    count: number;
-    page: number;
-  }>({
-    employees: [],
-    count: 0,
-    page: 1,
-  });
+  const {setHandleError} = useContext(AppContext)
+ 
+  const [page , setPage] = useState(1)
 
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [updateProductState, setUpdateProductState] = useState(false);
-  const [updateProductItem, setUpdateProductItem] = useState({});
-  const [textSearchState, setTextSearchState] = useState("");
+  const {data:employeeList , isLoading} = useGetEmployeeListQuery({page})
+  const {mutate , isLoading:deleteIsLoading} = useDeleteEmployeeMutation()
 
-  const getProductListFunction = async (textSearch?: string) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        page: textSearch ? 1 : employeeState?.page,
-        ...(textSearch ? { searchTerm: textSearch } : {}),
-      };
-      const {
-        data: { getEmployeeList },
-      } = await client.query({
-        query: GET_EMPLOYEE_LIST,
-        variables,
-        fetchPolicy: "network-only",
-      });
-      setEmployeeState((prevState) => ({
-        employees: getEmployeeList?.employee,
-        count:
-          getEmployeeList?.count > 0
-            ? getEmployeeList?.count
-            : prevState?.count,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {
-      setLoadingPage(false);
-    }
-  };
-  useEffect(() => {
-    if (employeeState?.employees?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
-
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = employeeState?.employees?.filter((item) => {
-      return id !== item?._id;
+  const handleDeleteFunction = (employeeId:string) => {
+     mutate({employeeId}, {
+      onSuccess: ({message}) => {
+        setHandleError({
+          open: true,
+          message,
+          status: "success",
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
     });
-    setEmployeeState((preState) => ({
-      ...preState,
-      employees: filterState,
-      count: preState?.count - 1,
-    }));
-  };
-  const handleGetCreatedProduct = (product: any) => {
-    setEmployeeState((prevState) => ({
-      ...prevState,
-      employees: [product, ...prevState?.employees],
-      count: prevState.count + 1,
-    }));
-  };
+  }
 
-  const canceleUpdateProduct = () => {
-    setUpdateProductItem({});
-    setUpdateProductState(false);
-  };
-  const updateItemFunction = (productId: String) => {
-    const item = employeeState?.employees?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
-    setUpdateProductState(true);
-  };
-  const handleGetUpdateProduct = (product: any) => {
-    const filterState = employeeState?.employees?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setEmployeeState((prevState) => ({
-      ...prevState,
-      employees: filterState,
-    }));
-    canceleUpdateProduct();
-  };
 
-  const getTextSearchFunction = (textSearch: string) => {
-    setEmployeeState((prvState) => ({
-      ...prvState,
-      page: 0,
-      employees: [],
-    }));
-    setTextSearchState(textSearch);
-    getProductListFunction(textSearch);
-  };
+   const handleChangePage = (
+      event: React.ChangeEvent<unknown>,
+      page: number
+    ) => {
+      setPage(page)
+    };
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(employeeState?.count > 0 || loadingPage) && (
         <Typography variant="h3" mb={2}>
           {t?.pages?.employee?.employees}
         </Typography>
-      )}
       <Box
         mb={2}
         sx={{
           display: "flex",
-          ...(employeeState?.count === 0 && loadingPage === false
-            ? { justifyContent: "center" }
-            : { justifyContent: "space-between" }),
+          
         }}
       >
         <CreateEmployee
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmptyPage={loadingPage === false && employeeState?.count === 0}
           t={t}
         />
-        {employeeState?.count > 0 && (
+        {/* {employeeState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
           </Box>
-        )}
+        )} */}
       </Box>
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         employeeState?.employees?.length === 0 && (
           <Box
@@ -161,16 +85,80 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
               {t?.pages?.employee?.employees}
             </Typography>
           </Box>
-        )}
-      {employeeState?.employees?.length > 0 && (
-        <EmployeesList
-          products={employeeState?.employees}
-          count={employeeState?.count}
-          deleteProductFunction={handleDeleteItemFunction}
-          handleUpdateProuct={updateItemFunction}
-          t={t}
-        />
-      )}
+        )} */}
+           {employeeList?.employee?.map((item:any) => {
+          return (
+            <CollapseComponent
+              key={item?._id}
+              name={item?.name}
+              createdAt={item?.createdAt}
+              id={item?._id}
+              getIdToAddAction={handleDeleteFunction}
+              UpdateComponent= {<UpdateEmployee t={t} item={item} />}
+              editTable
+              t={t}
+              messageDescription={t?.pages?.employee?.delete_description}
+              messageTitle={t?.pages?.employee?.delete_title}
+              isLoading={deleteIsLoading}
+            >
+              <Grid container spacing={2}>
+                <Grid item xs={9} display="grid">
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"17rem auto"}
+                    rowGap={"1rem"}
+                  >
+                    <Typography variant="caption">{t?.pages?.employee?.job_title}</Typography>
+                    <Typography variant="caption">{item?.jobTitle}</Typography>
+                    <Typography variant="caption">{t?.pages?.employee?.salary_amount}</Typography>
+                    <Typography variant="caption">
+                      {item?.salary?.amount}
+                    </Typography>
+                    <Typography variant="caption">{t?.pages?.employee?.phone_number}</Typography>
+                    <Typography variant="caption">{item?.phoneNumber}</Typography>
+                    <Typography variant="caption">{t?.pages?.employee?.email}</Typography>
+                    <Typography variant="caption">{item?.email}</Typography>
+                  </Box>
+                </Grid>
+  
+                <Grid
+                  item
+                  xs={3}
+                  justifyContent={"flex-end"}
+                  display="flex"
+                  alignItems={"flex-end"}
+                >
+                  <Box>
+                    <EmployeeDetails item={item} t={t}/>
+                  </Box>
+                </Grid>
+              </Grid>
+            </CollapseComponent>
+          );
+        })}
+        {employeeList?.count > 9 && <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
+          <Pagination
+            count={Math.ceil(employeeList?.count / 10)}
+            size={"medium"}
+            onChange={handleChangePage}
+            variant="outlined"
+            color="primary"
+            shape="rounded"
+            sx={{
+              fontSize: "2rem !important",
+            }}
+          />
+        </Stack>}
+        {isLoading && <SkeletonComponent />}
+        {employeeList?.count === 0  && !isLoading && <Box className={"empty_page_content"}>
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t.pages?.employee.no_product_yet_title}
+            discription={t.pages?.employee.no_product_yet_discription}
+            // buttonText={t.pages?.employee.add_new_employee}
+            // onClick={handleOpenDialogFunction}
+          />
+        </Box>}
     </Box>
   );
 };

@@ -13,141 +13,67 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useApolloClient } from "@apollo/client";
-import { ADD_CUSTOMER } from "@/graphql/mutation/ADD_CUSTOMER";
-import { UPDATE_CUSTOMER } from "@/graphql/mutation/UPDATE_CUSTOMER";
-import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
-import SelectWithInput from "@/components/search/SelectWIthInput";
+import { useContext, useState } from "react";
+import { useForm , FormProvider } from "react-hook-form";
+import { useAddCustomerMutation } from "@/hooks/api/definitions/customer/mutations/use-add-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsCreateCustomer {
-  getProuctCreated: (product: any) => void;
-  isUpdate: boolean;
-  item?: any;
-  getProductUpdated?: (product: any) => void;
-  canceleUpdageProduct?: () => void;
-  isEmptyPage: boolean;
   t: any;
 }
 const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
-  getProductUpdated,
-  item,
-  getProuctCreated,
-  canceleUpdageProduct,
-  isUpdate,
-  isEmptyPage,
+ 
   t,
 }) => {
+  const method = useForm()
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    getValues,
-    setValue,
-    getFieldState,
-  } = useForm();
+
+  } = method;
   const theme = useTheme();
-  const cleint = useApolloClient();
-  const [loadingPage, setLoadingPage] = useState(false);
+  const {mutate , isLoading } = useAddCustomerMutation()
+
+
   const [openDialog, setOpenDialog] = useState(false);
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
+ const {setHandleError} = useContext(AppContext)
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
-  useEffect(() => {
-    if (item?._id) {
-      setValue("fullName", item?.fullName);
-      setValue("amount", item?.salary?.amount);
-      setValue("phoneNumber", item?.phoneNumber);
-      setValue("address", item?.address);
-      setValue("creditLimit", item?.creditLimit?.amount);
-    }
-    if (isUpdate) {
-      setOpenDialog(isUpdate);
-    }
-  }, [item?._id, isUpdate]);
+
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      ...(isUpdate ? { customerId: item?._id } : {}),
       customerObject: {
         fullName: data?.fullName,
-        ...(data?.creditLimit
-          ? {
-              creditLimit: {
-                amount: parseFloat(data?.creditLimit),
-                currencyId: data?.currency,
-              },
-            }
-          : {}),
         ...(data?.address ? { address: data?.address } : {}),
         ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
       },
     };
 
-    console.log(variables);
-    try {
-      setLoadingPage(true);
-      if (isUpdate) {
-        // delete variables.customerObject.credit;
-        const {
-          data: { updateCustomer },
-        } = await cleint.mutate({
-          mutation: UPDATE_CUSTOMER,
-          variables,
-        });
-        if (updateCustomer?._id && getProductUpdated) {
-          getProductUpdated(updateCustomer);
-          setValue("fullName", "");
-          setValue("amount", "");
-          setValue("phoneNumber", "");
-          setValue("address", "");
-          setValue("creditLimit", "");
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      } else {
-        const {
-          data: { addCustomer },
-        } = await cleint.mutate({
-          mutation: ADD_CUSTOMER,
-          variables,
-        });
-        if (addCustomer?._id) {
-          getProuctCreated(addCustomer);
-          setValue("fullName", "");
-          setValue("amount", "");
-          setValue("phoneNumber", "");
-          setValue("address", "");
-          setValue("creditLimit", "");
-          setLoadingPage(false);
-          setOpenDialog(false);
-        }
-      }
-    } catch (error: any) {
-      setHandleError({
+    mutate(variables , {
+      onSuccess:() => {
+        setHandleError({
+          open: true,
+        message: t?.pages?.Customers?.customer_saved_successfully,
+        status: "success",
+        })
+        setOpenDialog(false)
+      },
+      onError: (error:any) => {
+        setHandleError({
         open: true,
         message: error.message,
         status: "error",
       });
-      setLoadingPage(false);
-    }
+      }
+    })
+    
   };
 
   return (
-    <Box>
+    <FormProvider {...method}>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -172,7 +98,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Customers?.customer_name}
@@ -184,17 +110,6 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
                   name="fullName"
                 />
               </Grid>
-              {/* <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.customer_code}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("customerCode", { required: true })}
-                    name="customerCode"
-                  />
-                </Grid> */}
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t?.pages?.Customers?.contact_number}
@@ -205,41 +120,6 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
                   size="small"
                   {...register("contactNumber", { required: false })}
                   name="contactNumber"
-                />
-              </Grid>
-              <Grid item xs={8}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t.pages?.Customers?.credit_limit}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  type="number"
-                  {...register("creditLimit", { required: false })}
-                  name="creditLimit"
-                />
-              </Grid>
-              {/* {<Grid item xs={8}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.previous_account}
-                  </InputLabel>
-                  <SelectWithInput
-                    selectName="type"
-                    register={register}
-                    inputName="amount"
-                    data={[
-                      { name: t?.pages?.Customers?.credit, value: "Credit" },
-                      { name: t?.pages?.Customers?.debit, value: "Debit" },
-                    ]}
-                  />
-                </Grid>} */}
-              <Grid item xs={4}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Customers?.currency}
-                </InputLabel>
-                <UserCurrenciesComponent
-                  register={register}
-                  isRequired={false}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -263,6 +143,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={isLoading}
           >
             {t?.pages?.Customers?.save}
           </Button>
@@ -271,17 +152,9 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
           </Button>
         </DialogActions>
       </Dialog>
-      {isEmptyPage ? (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            icon={<EmptyProductPageIcon />}
-            title={t.pages?.Customers.no_product_yet_title}
-            discription={t.pages?.Customers.no_product_yet_discription}
-            buttonText={t.pages?.Customers.add_new_customer}
-            onClick={handleOpenDialogFunction}
-          />
-        </Box>
-      ) : (
+
+        
+    
         <Box>
           <Button
             variant="contained"
@@ -291,8 +164,8 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             {t?.pages?.Customers?.add_new_customer}
           </Button>
         </Box>
-      )}
-    </Box>
+    
+    </FormProvider>
   );
 };
 

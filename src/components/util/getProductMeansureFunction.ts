@@ -1,13 +1,13 @@
 // this function get apollo client and return product measure
 
-import { GET_MEANSURES } from "@/graphql/queries/GET_MEANSURES";
+import { GET_MEASURES } from "@/graphql/queries/GET_MEASURES";
 
 const getProductMeansureFunction = async (cleint: any) => {
   try {
     const {
       data: { getMeasures },
     } = await cleint.query({
-      query: GET_MEANSURES,
+      query: GET_MEASURES,
     });
     return {
       type: "success",

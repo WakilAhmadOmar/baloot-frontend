@@ -1,144 +1,74 @@
-"use client"
-import BankList from "../_Components/bankList";
+"use client";
 import CreateBank from "../_Components/createBank";
-import { GET_BANK_LIST } from "@/graphql/queries/GET_BANK_LIST";
-import { NotFoundIcon } from "@/icons";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import CustomSearch from "@/components/search/CustomSearch";
-import { useApolloClient } from "@apollo/client";
-import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { EmptyProductPageIcon, NotFoundIcon } from "@/icons";
+import { Box, Grid, Pagination, Stack, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import { useGetBankListQuery } from "@/hooks/api/definitions/bank/queries/use-get-bank-list-query";
+import CollapseComponent from "@/components/collapse/Collapse";
+import SkeletonComponent from "../../_Components/Skeleton";
+import EmptyPage from "@/components/util/emptyPage";
+import UpdateBank from "./Update";
+import { useDeleteBankMutation } from "@/hooks/api/definitions/bank/mutations/use-delete-mutation";
+import { AppContext } from "@/provider/appContext";
 
 interface IPropsBankContainer {
-    t:any
+  t: any;
 }
 
-const BankContainer:React.FC<IPropsBankContainer> = ({t}) => {
-  const client = useApolloClient();
-  const [productsState, setProductsState] = useState<{
-    products: any[];
-    count: number;
-    page: number;
-  }>({
-    products: [],
-    count: 0,
-    page: 1,
-  });
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [updateProductState, setUpdateProductState] = useState(false);
-  const [updateProductItem, setUpdateProductItem] = useState({});
-  const [textSearchState, setTextSearchState] = useState("");
+const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
+  const { setHandleError } = useContext(AppContext);
+  const [page, setPage] = useState(1);
+  const { data: bankList, isLoading } = useGetBankListQuery({ page });
+  const { mutate, isLoading: deleteIsLoading } = useDeleteBankMutation();
 
-  const getProductListFunction = async (searchText?: string) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        page: searchText ? 1 : productsState?.page,
-        ...(searchText ? { searchTerm: searchText } : {}),
-      };
-      const {
-        data: { getBankList },
-      } = await client.query({
-        query: GET_BANK_LIST,
-        variables,
-      });
-      setProductsState((prevState) => ({
-        products: getBankList?.bank,
-        count: getBankList?.count > 0 ? getBankList?.count : prevState?.count,
-        page: prevState.page + 1,
-      }));
-      setLoadingPage(false);
-    } catch (error: any) {}
-  };
-  useEffect(() => {
-    if (productsState?.products?.length === 0) {
-      getProductListFunction();
-    }
-  }, []);
-
-  const handleDeleteItemFunction = (id: string) => {
-    const filterState = productsState?.products?.filter((item) => {
-      return id !== item?._id;
-    });
-    setProductsState((preState) => ({
-      ...preState,
-      products: filterState,
-      count: preState.count - 1,
-    }));
-  };
-  const handleGetCreatedProduct = (product: any) => {
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: [product, ...prevState?.products],
-      count: prevState?.count + 1,
-    }));
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
   };
 
-  const canceleUpdateProduct = () => {
-    setUpdateProductItem({});
-    setUpdateProductState(false);
-  };
-  const updateProductFunction = (productId: String) => {
-    const item = productsState?.products?.filter((item) => {
-      return item?._id === productId;
-    });
-    setUpdateProductItem(item?.[0]);
-    setUpdateProductState(true);
-  };
-  const handleGetUpdateProduct = (product: any) => {
-    const filterState = productsState?.products?.map((item) => {
-      if (item?._id === product._id) {
-        return product;
-      } else return item;
-    });
-    setProductsState((prevState) => ({
-      ...prevState,
-      products: filterState,
-    }));
-    canceleUpdateProduct();
-  };
-  const getTextSearchFunction = (textSearch: string) => {
-    setProductsState((prvState) => ({
-      ...prvState,
-      page: 0,
-      products: [],
-    }));
-    setTextSearchState(textSearch);
-    getProductListFunction(textSearch);
+  const handleDeleteFunction = (bankId: string) => {
+    mutate(
+      { bankId },
+      {
+        onSuccess: () => {
+          setHandleError({
+            open: true,
+            message: t?.pages?.bank?.bank_deleted_successfully,
+            status: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error.message,
+            status: "error",
+          });
+        },
+      }
+    );
   };
   return (
     <Box>
-      {loadingPage && <CircularProgressComponent />}
-      {(productsState?.count > 0 || loadingPage) && (
-        <Typography variant="h3" mb={2}>
-          {t?.pages?.bank?.Banks}
-        </Typography>
-      )}
+      <Typography variant="h3" mb={2}>
+        {t?.pages?.bank?.Banks}
+      </Typography>
+
       <Box
         mb={2}
         sx={{
           display: "flex",
-          ...(productsState?.count === 0 && loadingPage === false
-            ? { justifyContent: "center" }
-            : { justifyContent: "space-between" }),
         }}
       >
-        <CreateBank
-          getProuctCreated={handleGetCreatedProduct}
-          isUpdate={updateProductState}
-          item={updateProductItem}
-          getProductUpdated={handleGetUpdateProduct}
-          canceleUpdageProduct={canceleUpdateProduct}
-          isEmptyPage={loadingPage === false && productsState?.count === 0}
-          t={t}
-        />
-        {productsState?.count > 0 && (
+        <CreateBank t={t} />
+        {/* {productsState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
           </Box>
-        )}
+        )} */}
       </Box>
-      {textSearchState !== "" &&
+      {/* {textSearchState !== "" &&
         !loadingPage &&
         productsState?.products?.length === 0 && (
           <Box
@@ -153,15 +83,87 @@ const BankContainer:React.FC<IPropsBankContainer> = ({t}) => {
               {t?.pages?.bank?.Nothing_Found}
             </Typography>
           </Box>
-        )}
-      {productsState?.products?.length > 0 && (
-        <BankList
-          products={productsState?.products}
-          count={productsState?.count}
-          deleteProductFunction={handleDeleteItemFunction}
-          handleUpdateProuct={updateProductFunction}
-          t={t}
-        />
+        )} */}
+      {bankList?.bank?.map((item: any) => {
+        return (
+          <CollapseComponent
+            key={item?._id}
+            name={item?.name}
+            createdAt={item?.createdAt}
+            id={item?._id}
+            getIdToAddAction={handleDeleteFunction}
+            t={t}
+            messageTitle={t?.pages?.bank?.delete_title}
+            messageDescription={t?.pages?.bank?.delete_description}
+            UpdateComponent={<UpdateBank t={t} item={item} />}
+            editTable
+            isLoading={deleteIsLoading}
+          >
+            <Grid container spacing={2}>
+              <Grid
+                item
+                xs={12}
+                display="grid"
+                gridTemplateColumns={"auto 1rem"}
+              >
+                <Box
+                  display={"grid"}
+                  gridTemplateColumns={"20rem auto"}
+                  rowGap={"1rem"}
+                >
+                  <Typography variant="caption">
+                    {" "}
+                    {t.pages.bank?.Account_Number}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.accountNumber}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t?.pages?.bank?.Current_Balance}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.cridet?.[0]?.amount}
+                    {item?.cridet?.[0]?.currencyId?.name}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t?.pages?.bank?.Bank_Contact_Number}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.bankPhoneNumber}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </CollapseComponent>
+        );
+      })}
+      {bankList?.count > 9 && (
+        <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
+          <Pagination
+            count={Math.ceil(bankList?.count / 10)}
+            size={"medium"}
+            onChange={handleChangePage}
+            variant="outlined"
+            color="primary"
+            shape="rounded"
+            sx={{
+              fontSize: "2rem !important",
+            }}
+          />
+        </Stack>
+      )}
+      {isLoading && <SkeletonComponent />}
+
+      {bankList?.count === 0 && !isLoading && (
+        <Box className={"empty_page_content"}>
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t.pages?.bank?.no_product_yet_title}
+            discription={t.pages?.bank?.no_product_yet_discription}
+            // buttonText={t.pages?.bank?.Create_new_Bank}
+            // onClick={handleOpenDialogFunction}
+          />
+        </Box>
       )}
     </Box>
   );

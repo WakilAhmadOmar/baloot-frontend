@@ -128,6 +128,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
   const onClickDelteButton = () => {
     if (onDelete) onDelete(item?._id);
   };
+
   return (
     <Card
       sx={{
@@ -308,7 +309,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
             {t?.pages?.currency?.current_rate_in_base_currency}
           </Typography>
           <Typography textAlign={"center"} variant="h3" p={1.5}>
-            {item?.rate}
+            {item?.rate} = {baseCurrency?.symbol} {item?.baseRate}
           </Typography>
         </Box>
       </Box>
