@@ -14,12 +14,12 @@ import { useDeleteWarehouseMutation } from "@/hooks/api/definitions/warehouse/mu
 import { useContext } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_Components/Skeleton";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
 
-const WarehousePage: React.FC<IProps> = ({ t }) => {
+
+const WarehousePage = () => {
+  const t= useTranslations("pages")
   const pathname = usePathname();
   const {setHandleError} = useContext(AppContext)
   const lang = pathname.split("/")[1];
@@ -32,7 +32,7 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.warehouse?.warehouse_deleted_successfully,
+          message: t("warehouse.warehouse_deleted_successfully"),
           status: "success",
         });
       },
@@ -49,7 +49,7 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.warehouse?.warehouses}
+        {t("warehouse.warehouses")}
       </Typography>
       <Box
         mb={2}
@@ -58,7 +58,6 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
         }}
       >
         <CreateWarehouse
-          t={t}
         />
         {/* {productsState?.products?.length > 0 && (
           <Box>
@@ -78,7 +77,7 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.warehouse?.nothing_found}
+              {t("warehouse.nothing_found")}
             </Typography>
           </Box>
         )} */}
@@ -91,11 +90,10 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
             id={item?._id}
             getIdToAddAction={handleDeleteFunction}
             // updateProductFunction={handleUpdateProuct}
-            messageTitle={t?.pages?.warehouse?.delete_title}
-            messageDescription={t?.pages?.warehouse?.delete_description}
-            UpdateComponent={<UpdateWarehouse t={t} item={item} />}
+            messageTitle={t("warehouse.delete_title")}
+            messageDescription={t("warehouse.delete_description")}
+            UpdateComponent={<UpdateWarehouse  item={item} />}
             isLoading={deleteIsLoading}
-            t={t}
           >
             <Grid container spacing={2}>
               <Grid
@@ -110,21 +108,21 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
                   rowGap={"1rem"}
                 >
                   <Typography variant="caption">
-                    {t?.pages?.warehouse?.warehouses}
+                    {t("warehouse.warehouses")}
                   </Typography>
                   <Typography variant="caption">{item?.name}</Typography>
                   <Typography variant="caption">
-                    {t?.pages?.warehouse?.warehouse_responsible}
+                    {t("warehouse.warehouse_responsible")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.responsible?.name}
                   </Typography>
                   <Typography variant="caption">
-                    {t?.pages?.warehouse?.product_quantity}
+                    {t("warehouse.product_quantity")}
                   </Typography>
                   <Typography variant="caption"></Typography>
                   <Typography variant="caption">
-                    {t?.pages?.warehouse?.warehouse_address}
+                    {t("warehouse.warehouse_address")}
                   </Typography>
                   <Typography variant="caption">{item?.address}</Typography>
                 </Box>
@@ -155,7 +153,7 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
                         borderStyle: "dashed",
                       }}
                     >
-                      {t?.pages?.warehouse?.initial_period_registration}
+                      {t("warehouse.initial_period_registration")}
                     </Button>
                   </Link>
                 </Box>
@@ -168,9 +166,9 @@ const WarehousePage: React.FC<IProps> = ({ t }) => {
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            discription={t?.pages?.warehouse?.no_warehouse}
-            title={t?.pages?.warehouse?.no_warehouse_registered}
-            // buttonText={t?.pages?.warehouse?.add_warehouse}
+            discription={t("warehouse.no_warehouse")}
+            title={t("warehouse.no_warehouse_registered")}
+            // buttonText={t("warehouse.add_warehouse")}
             // onClick={handleOpenDialogFunction}
           />
         </Box>

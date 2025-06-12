@@ -19,13 +19,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useAddBankMutation } from "@/hooks/api/definitions/bank/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateBankMutation } from "@/hooks/api/definitions/bank/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsCreateBank {
-  t: any;
   item: any;
 }
 
-const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
+const UpdateBank: React.FC<IPropsCreateBank> = ({ item}) => {
+  const t = useTranslations("pages")
   const methods = useForm({
     defaultValues: {
       name: item?.name,
@@ -58,7 +59,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.bank?.bank_updated_successfully,
+          message: t("bank.bank_updated_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -81,7 +82,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
+          dir={t("dir")}
           fullWidth
         >
           <DialogTitle
@@ -93,7 +94,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
               borderBottom: `1px solid ${theme.palette.grey[200]}`,
             }}
           >
-            <Typography>{t?.pages?.bank?.update_Bank_Information}</Typography>
+            <Typography>{t("bank.update_Bank_Information")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
               <CloseSquare />
             </IconButton>
@@ -103,7 +104,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Bank_Name}
+                    {t("bank.Bank_Name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -114,7 +115,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Account_Number}
+                    {t("bank.Account_Number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -125,7 +126,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Bank_Contact_Number}
+                    {t("bank.Bank_Contact_Number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -137,7 +138,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.description}
+                    {t("bank.description")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -161,9 +162,9 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item, t }) => {
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t?.pages?.bank?.Save}
+              {t("bank.Save")}
             </Button>
-            <Button variant="outlined">{t.pages.bank?.Cancel}</Button>
+            <Button variant="outlined">{t("bank.Cancel")}</Button>
           </DialogActions>
         </Dialog>
       </FormProvider>

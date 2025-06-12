@@ -18,11 +18,10 @@ import {
   import Moment from "react-moment";
 import UpdateExternalIncomeType from "./Update";
 import { useDeleteExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-delete-mutation";
+import { useTranslations } from "next-intl";
   
   interface IProps {
-
     item?: any;
-    t:any
   }
   
   const Transition = React.forwardRef(function Transition(
@@ -34,9 +33,9 @@ import { useDeleteExternalIncomeTypeMutation } from "@/hooks/api/definitions/ext
     return <Slide direction="up" ref={ref} {...props} />;
   });
   const ExternalIncomeBox: React.FC<IProps> = ({
-    item,
-    t
+    item
   }) => {
+    const t = useTranslations("pages")
     const theme = useTheme();
     const [handleDeleteState, setHandleDeleteState] = useState(false);
     const {mutate} = useDeleteExternalIncomeTypeMutation()
@@ -56,27 +55,27 @@ import { useDeleteExternalIncomeTypeMutation } from "@/hooks/api/definitions/ext
           keepMounted
           onClose={handleDeleteFunction}
           aria-describedby="alert-dialog-slide-description"
-          dir={t?.home?.dir}
+          dir={t("dir")}
         >
           <DialogTitle className="dialogTitleDelete" display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-            <Typography variant="h5">{t?.pages?.Expenses?.Are_you_sure_you_want_to_delete_this_item}</Typography>
+            <Typography variant="h5">{t("Expenses.Are_you_sure_you_want_to_delete_this_item")}</Typography>
             <InfoCircle size="32" color={theme.palette.warning.main} />
           </DialogTitle>
           <DialogContent className="dialogContentDelete">
             <DialogContentText id="alert-dialog-slide-description">
               <Typography variant="body1">
-                {t?.pages?.Expenses?.Once_this_item_is_deleted}
+                {t("Expenses.Once_this_item_is_deleted")}
               </Typography>
             </DialogContentText>
           </DialogContent>
           <DialogActions className="dialogActionDelete" sx={{display:"flex" , gap:"1rem"}}>
-            <Button onClick={handleDeleteFunction} variant="outlined">{t?.pages?.Expenses?.Cancel}</Button>
+            <Button onClick={handleDeleteFunction} variant="outlined">{t("Expenses.Cancel")}</Button>
             <Button
               onClick={handleDeleteThisItem}
               variant="contained"
               color="primary"
             >
-              {t?.pages?.Expenses?.yes}
+              {t("Expenses.yes")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -110,7 +109,7 @@ import { useDeleteExternalIncomeTypeMutation } from "@/hooks/api/definitions/ext
               {/* <IconButton onClick={handleDeleteFunction}>
                 <Trash color={theme.palette.grey["A700"]} size={25} />
               </IconButton> */}
-              <UpdateExternalIncomeType t={t} item={item} />
+              <UpdateExternalIncomeType  item={item} />
             </Box>
           </Box>
         </Card>

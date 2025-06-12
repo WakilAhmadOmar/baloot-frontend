@@ -22,9 +22,9 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income-type";
 import { useUpdateExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-update-external-income-mutation";
+import { useTranslations } from "next-intl";
 
 type CreateFormProps = {
-  t: any;
   item:any
 };
 
@@ -35,7 +35,8 @@ interface FormValues {
   description?:string
   externalIncomeTypeId:string
 }
-export const UpdateForm = ({ t , item}: CreateFormProps) => {
+export const UpdateForm = ({ item}: CreateFormProps) => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
@@ -116,7 +117,7 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.update_external_income}</Typography>
+          <Typography>{t("update_external_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -130,22 +131,22 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.external_income_type}
+                  {t("external_income_type")}
                 </InputLabel>
-                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} />
+                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"}  dir={t("dir")}/>
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.recipient}
+                  {t("recipient")}
                 </InputLabel>
-                <CashBoxAutoComplete name="receiver" />
+                <CashBoxAutoComplete name="receiver" dir={t("dir")}/>
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.payed_amount}
+                  {t("payed_amount")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -155,14 +156,14 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.currency}
+                  {t("currency")}
                 </InputLabel>
-                <CurrenciesAutoComplete />
+                <CurrenciesAutoComplete dir={t("dir")} />
               </Grid>
 
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -184,10 +185,10 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.transactions?.save}
+            {t("save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.transactions?.cancel}
+            {t("cancel")}
           </Button>
         </DialogActions>
       </Dialog>

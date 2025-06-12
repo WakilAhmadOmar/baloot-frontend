@@ -16,31 +16,22 @@ import { CloseCircle, CloseSquare } from "iconsax-react";
 import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-import EmptyPage from "@/components/util/emptyPage";
-import { EmptyProductPageIcon } from "@/icons";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
-import { useApolloClient } from "@apollo/client";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_OF_CREDIT";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
+import { useTranslations } from "next-intl";
 
-interface IPropsAddCashBox {
-  t: any;
-  onUpdateCashbox?: (cashbox: any) => void;
-}
-
-const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
+const AddBanksAccounts = () => {
+  const t = useTranslations("pages")
   const methods = useForm();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
   const { setHandleError } = useContext(AppContext);
   const [cashboxDetails, setCashboxDetails] = useState<any>({
     firstPeriodCredit: [
@@ -182,7 +173,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -195,7 +186,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           }}
         >
           <Typography>
-            {t?.pages?.cashbox?.record_previous_cashbox_accounts}
+            {t("cashbox.record_previous_cashbox_accounts")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
@@ -209,12 +200,12 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.pages?.cashbox?.Cashbox_Name}
+                  {t("cashbox.Cashbox_Name")}
                 </InputLabel>
                 <CashBoxAutoComplete
                   getCashbox={handleGetBank}
                   name="cashboxId"
-                  dir={t?.home?.dir}
+                  dir={t("dir")}
                 />
               </Grid>
             </Grid>
@@ -222,12 +213,12 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.cashbox?.previous_account}
+                    {t("cashbox.previous_account")}
                   </InputLabel>
                 </Grid>
                 <Grid item xs={4}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.currency}
+                    {t("bank.currency")}
                   </InputLabel>
                 </Grid>
               </Grid>
@@ -255,7 +246,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                      dir={t?.home?.dir}
+                      dir={t("dir")}
                       name="currencyId"
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>
@@ -297,13 +288,13 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
                 onClick={handleAddNewCredit}
                 // startIcon={<Add size={25} color={theme.palette.grey["A700"]} />}
               >
-                {t?.pages?.bank?.new_currency}
+                {t("bank.new_currency")}
               </Button>
             </Grid>
             <Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -321,7 +312,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.bank?.Cancel}
+            {t("bank.Cancel")}
           </Button>
           <Button
             color="primary"
@@ -329,7 +320,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.bank?.save}
+            {t("bank.save")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -340,7 +331,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           color="primary"
           onClick={handleOpenDialogFunction}
         >
-          {t?.pages?.bank?.record_previous_balance}
+          {t("bank.record_previous_balance")}
         </Button>
       </Box>
     </FormProvider>

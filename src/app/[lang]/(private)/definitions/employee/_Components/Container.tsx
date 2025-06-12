@@ -11,11 +11,11 @@ import EmptyPage from "@/components/util/emptyPage";
 import UpdateEmployee from "./Update";
 import { useDeleteEmployeeMutation } from "@/hooks/api/definitions/employee/mutations/use-delete-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-    t:any
-}
-const EmployeePage:React.FC<IProps> = ({t}) => {
+
+const EmployeePage = () => {
+  const t = useTranslations("pages")
   const {setHandleError} = useContext(AppContext)
  
   const [page , setPage] = useState(1)
@@ -52,7 +52,7 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
   return (
     <Box>
         <Typography variant="h3" mb={2}>
-          {t?.pages?.employee?.employees}
+          {t("employee.employees")}
         </Typography>
       <Box
         mb={2}
@@ -62,7 +62,6 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
         }}
       >
         <CreateEmployee
-          t={t}
         />
         {/* {employeeState?.count > 0 && (
           <Box>
@@ -82,7 +81,7 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.employee?.employees}
+              {t("employee.employees")}
             </Typography>
           </Box>
         )} */}
@@ -94,11 +93,10 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
               createdAt={item?.createdAt}
               id={item?._id}
               getIdToAddAction={handleDeleteFunction}
-              UpdateComponent= {<UpdateEmployee t={t} item={item} />}
+              UpdateComponent= {<UpdateEmployee  item={item} />}
               editTable
-              t={t}
-              messageDescription={t?.pages?.employee?.delete_description}
-              messageTitle={t?.pages?.employee?.delete_title}
+              messageDescription={t("employee.delete_description")}
+              messageTitle={t("employee.delete_title")}
               isLoading={deleteIsLoading}
             >
               <Grid container spacing={2}>
@@ -108,15 +106,15 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
                     gridTemplateColumns={"17rem auto"}
                     rowGap={"1rem"}
                   >
-                    <Typography variant="caption">{t?.pages?.employee?.job_title}</Typography>
+                    <Typography variant="caption">{t("employee.job_title")}</Typography>
                     <Typography variant="caption">{item?.jobTitle}</Typography>
-                    <Typography variant="caption">{t?.pages?.employee?.salary_amount}</Typography>
+                    <Typography variant="caption">{t("employee.salary_amount")}</Typography>
                     <Typography variant="caption">
                       {item?.salary?.amount}
                     </Typography>
-                    <Typography variant="caption">{t?.pages?.employee?.phone_number}</Typography>
+                    <Typography variant="caption">{t("employee.phone_number")}</Typography>
                     <Typography variant="caption">{item?.phoneNumber}</Typography>
-                    <Typography variant="caption">{t?.pages?.employee?.email}</Typography>
+                    <Typography variant="caption">{t("employee.email")}</Typography>
                     <Typography variant="caption">{item?.email}</Typography>
                   </Box>
                 </Grid>
@@ -129,7 +127,7 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
                   alignItems={"flex-end"}
                 >
                   <Box>
-                    <EmployeeDetails item={item} t={t}/>
+                    <EmployeeDetails item={item}/>
                   </Box>
                 </Grid>
               </Grid>
@@ -153,8 +151,8 @@ const EmployeePage:React.FC<IProps> = ({t}) => {
         {employeeList?.count === 0  && !isLoading && <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.employee.no_product_yet_title}
-            discription={t.pages?.employee.no_product_yet_discription}
+            title={t("employee.no_product_yet_title")}
+            discription={t("employee.no_product_yet_discription")}
             // buttonText={t.pages?.employee.add_new_employee}
             // onClick={handleOpenDialogFunction}
           />

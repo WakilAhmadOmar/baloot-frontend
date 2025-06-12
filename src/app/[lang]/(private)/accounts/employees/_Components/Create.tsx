@@ -16,36 +16,57 @@ import { CloseCircle, CloseSquare } from "iconsax-react";
 import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
+import EmptyPage from "@/components/util/emptyPage";
+import { EmptyProductPageIcon } from "@/icons";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
-import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
+import { useApolloClient } from "@apollo/client";
+import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_OF_CREDIT";
+import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
+import { useTranslations } from "next-intl";
 
-interface IPropsAddCashBox {
-  t: any;
-}
 
-const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
+const AddBanksAccounts = () => {
+  const t = useTranslations("pages")
+  const client = useApolloClient();
   const methods = useForm();
-  const { register, handleSubmit } = methods;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [customerDetails, setCustomerDetails] = useState<any>();
+  const [employeeDetails, setEmployeeDetails] = useState<any>({
+    firstPeriodCredit: [
+      {
+        amount: 0,
+        creditType: "Credit",
+        currencyId: {
+          _id: "",
+          name: "",
+          symbol: "",
+        },
+      },
+    ],
+  });
+
   const { mutate: addFirstPeriodMutation, isLoading } =
-    useAddFirstPeriodOfCreditMutation();
+      useAddFirstPeriodOfCreditMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
 
   const handleAddNewCredit = () => {
-    setCustomerDetails((prevState: any) => ({
+    setEmployeeDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: [
-        ...(prevState?.firstPeriodCredit?.length > 0
-          ? prevState?.firstPeriodCredit
-          : []),
+        ...(prevState?.firstPeriodCredit?.length > 0 ? prevState?.firstPeriodCredit : []),
         {
           amount: 0,
           creditType: "Credit",
@@ -60,7 +81,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
   };
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
-    setCustomerDetails((prevState: any) => ({
+    setEmployeeDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
         (item: any, index: number) => index !== deleteIndex
@@ -74,18 +95,16 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
   ) => {
     const name = event?.target?.name;
     const value = event?.target?.value;
-    setCustomerDetails((prevState: any) => {
-      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
-        (item: any, inItem: number) => {
-          if (index == inItem) {
-            return {
-              ...item,
-              ...(name?.includes("amount") ? { amount: value } : {}),
-              ...(name?.includes("creditType") ? { creditType: value } : {}),
-            };
-          } else return item;
-        }
-      );
+    setEmployeeDetails((prevState: any) => {
+      const firstPeriodCredit = prevState?.firstPeriodCredit?.map((item: any, inItem: number) => {
+        if (index == inItem) {
+          return {
+            ...item,
+            ...(name?.includes("amount") ? { amount: value } : {}),
+            ...(name?.includes("creditType") ? { creditType: value } : {}),
+          };
+        } else return item;
+      });
       return {
         ...prevState,
         firstPeriodCredit,
@@ -93,20 +112,20 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
     });
   };
   const onSubmitFunction = async (data: any) => {
-    const variables = {
-      creditObject: customerDetails?.firstPeriodCredit?.map(
-        (item: any, index: number) => ({
-          amount: parseFloat(item?.amount),
-          creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
-        })
-      ),
-      description: data?.description,
-      accountType: "Customer",
-      accountId: data?.customerId,
-    };
-
-    addFirstPeriodMutation(variables, {
+ 
+      const variables = {
+        creditObject: employeeDetails?.firstPeriodCredit?.map(
+          (item: any, index: number) => ({
+            amount: parseFloat(item?.amount),
+            creditType: item?.creditType,
+            currencyId: item?.currencyId?._id,
+          })
+        ),
+        description: data?.description,
+        accountType: "Employee",
+        accountId: data?.employeeId,
+      };
+        addFirstPeriodMutation(variables, {
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message,
@@ -114,7 +133,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           open: true,
         });
         handleOpenDialogFunction();
-        setCustomerDetails(null);
+        setEmployeeDetails(null);
       },
       onError: (error: any) => {
         setHandleError({
@@ -124,18 +143,16 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
         });
       },
     });
+
   };
 
   const handleGetBank = (data: any) => {
-    setCustomerDetails(data);
+    setEmployeeDetails(data);
   };
   const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = customerDetails?.firstPeriodCredit;
-    allCredit[index] = {
-      ...allCredit[index],
-      currencyId: currency,
-    };
-    setCustomerDetails((prevState: any) => ({
+    const allCredit = employeeDetails?.firstPeriodCredit;
+    allCredit[index].currencyId = currency;
+    setEmployeeDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: allCredit,
     }));
@@ -147,7 +164,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -160,7 +177,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           }}
         >
           <Typography>
-            {t?.pages?.Customers?.record_previous_customer_accounts}
+            {t("employee.record_previous_employee_accounts")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
@@ -174,97 +191,95 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.pages?.Customers?.Customers}
+                  {t("employee.name")}
                 </InputLabel>
-                <CustomerAutoComplete
-                  getCustomer={handleGetBank}
-                  dir={t?.home?.dir}
+                <EmployeeAutoCompleteComponent
+                  getEmployee={handleGetBank}
+                  name={"employeeId"}
                 />
               </Grid>
             </Grid>
-            {customerDetails?.firstPeriodCredit?.length > 0 && (
+            {employeeDetails?.firstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.Customers?.previous_account}
+                    {t("Customers.previous_account")}
                   </InputLabel>
                 </Grid>
                 <Grid item xs={4}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.currency}
+                    {t("bank.currency")}
                   </InputLabel>
                 </Grid>
               </Grid>
             )}
-            {customerDetails?.firstPeriodCredit?.map(
-              (item: any, index: any) => {
-                return (
-                  <Grid
-                    container
-                    spacing={2}
-                    key={"credit" + index}
-                    sx={{ mb: "1.5rem" }}
-                  >
-                    <Grid item xs={7}>
-                      <SelectWithInput
-                        register={register}
-                        inputName={"amount" + index}
-                        selectName={"creditType" + index}
-                        defaultValue={item?.creditType}
-                        inputDefaultValue={item?.amount}
-                        data={[
-                          { name: "Credit", value: "Credit" },
-                          { name: "Debit", value: "Debit" },
-                        ]}
-                        onChange={(
-                          event: ChangeEvent<
-                            HTMLInputElement | HTMLSelectElement
-                          >
-                        ) => handleChangeCredit(event, index)}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <UserCurrenciesComponent
-                        dir={t?.home?.dir}
-                        defaultValue={item?.currencyId?._id}
-                        onSelected={(currency) =>
-                          handleSelectCurrency(currency, index)
-                        }
-                      />
-                    </Grid>
-                    {index > 0 && (
-                      <Grid item xs={1}>
-                        <IconButton
-                          color="error"
-                          type="button"
-                          onClick={handleDeleteCredit}
-                          id={`${index}`}
-                        >
-                          <CloseCircle
-                            size={18}
-                            color={theme.palette.error.main}
-                          />
-                        </IconButton>
-                      </Grid>
-                    )}
+            {employeeDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+              return (
+                <Grid
+                  container
+                  spacing={2}
+                  key={"credit" + index}
+                  sx={{ mb: "1.5rem" }}
+                >
+                  <Grid item xs={7}>
+                    <SelectWithInput
+                      register={register}
+                      inputName={"amount" + index}
+                      selectName={"creditType" + index}
+                      defaultValue={item?.creditType}
+                      inputDefaultValue={item?.amount}
+                      data={[
+                        { name: "Credit", value: "Credit" },
+                        { name: "Debit", value: "Debit" },
+                      ]}
+                      onChange={(
+                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      ) => handleChangeCredit(event, index)}
+                    />
                   </Grid>
-                );
-              }
-            )}
+                  <Grid item xs={4}>
+                    <UserCurrenciesComponent
+                     name={"currencyId" + index}
+                      defaultValue={item?.currencyId?._id}
+                      dir={t("dir")}
+                      onSelected={(currency) =>
+                        handleSelectCurrency(currency, index)
+                      }
+                    />
+                  </Grid>
+                  {index > 0 && (
+                    <Grid item xs={1}>
+                      <IconButton
+                        color="error"
+                        type="button"
+                        onClick={handleDeleteCredit}
+                        id={`${index}`}
+                      >
+                        <CloseCircle
+                          size={18}
+                          color={theme.palette.error.main}
+                        />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </Grid>
+              );
+            })}
             <Grid item xs={12} display={"grid"} justifyContent={"end"}>
               <Button
                 color="primary"
                 type="button"
                 variant="outlined"
                 onClick={handleAddNewCredit}
+                // startIcon={<Add size={25} color={theme.palette.grey["A700"]} />}
               >
-                {t?.pages?.bank?.new_currency}
+                {t("bank.new_currency")}
               </Button>
             </Grid>
             <Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -282,7 +297,7 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.bank?.Cancel}
+            {t("bank.Cancel")}
           </Button>
           <Button
             color="primary"
@@ -290,19 +305,20 @@ const AddBanksAccounts: React.FC<IPropsAddCashBox> = ({ t }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.bank?.save}
+            {t("bank.save")}
           </Button>
         </DialogActions>
       </Dialog>
-      <Box>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenDialogFunction}
-        >
-          {t?.pages?.bank?.record_previous_balance}
-        </Button>
-      </Box>
+    
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialogFunction}
+          >
+            {t("bank.record_previous_balance")}
+          </Button>
+        </Box>
     </FormProvider>
   );
 };

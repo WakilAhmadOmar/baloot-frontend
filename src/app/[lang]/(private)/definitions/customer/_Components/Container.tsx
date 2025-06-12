@@ -18,11 +18,11 @@ import UpdateCustomer from "./Update";
 import { useDeleteCustomerMutation } from "@/hooks/api/definitions/customer/mutations/use-delete-mutation";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_Components/Skeleton";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
-const CustomerPage: React.FC<IProps> = ({ t }) => {
+
+const CustomerPage = () => {
+  const t = useTranslations("pages")
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
 
@@ -59,7 +59,7 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.Customers?.customers}
+        {t("Customers.Customers")}
       </Typography>
 
       <Box
@@ -68,7 +68,7 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
           display: "flex",
         }}
       >
-        <CreateCustomer t={t} />
+        <CreateCustomer  />
         {/* {customerState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction}  t={t}/>
@@ -87,7 +87,7 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.Customers?.Nothing_Found}
+              {t("Customers.Nothing_Found")}
             </Typography>
           </Box>
         )} */}
@@ -102,10 +102,9 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
               getIdToAddAction={handleDeleteFunction}
               // updateProductFunction={handleUpdateProuct}
               height="150px"
-              t={t}
-              messageTitle={t?.pages?.Customers?.delete_title}
-              messageDescription={t?.pages?.Customers?.delete_description}
-              UpdateComponent={<UpdateCustomer t={t} item={item} />}
+              messageTitle={t("Customers.delete_title")}
+              messageDescription={t("Customers.delete_description")}
+              UpdateComponent={<UpdateCustomer item={item} />}
               isLoading={deleteIsLoading}
               editTable
             >
@@ -122,19 +121,19 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
                     rowGap={"1rem"}
                   >
                     <Typography variant="caption">
-                      {t?.pages?.Customers?.contact_number}
+                      {t("Customers.contact_number")}
                     </Typography>
                     <Typography variant="caption">
                       {item?.contactNumber}
                     </Typography>
                     {/* <Typography variant="caption">
-                    {t?.pages?.Customers?.credit_limit}
+                    {t("Customers.credit_limit")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.creditLimit?.amount}{item?.creditLimit?.currencyId?.symbol}
                   </Typography> */}
                     <Typography variant="caption">
-                      {t?.pages?.Customers?.address}
+                      {t("Customers.address")}
                     </Typography>
                     <Typography variant="caption">{item?.address}</Typography>
                   </Box>
@@ -155,7 +154,7 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
                       textAlign={"center"}
                       component={"div"}
                     >
-                      {t?.pages?.Customers?.amount_due}
+                      {t("Customers.amount_due")}
                     </Typography>
                     <Typography
                       sx={{
@@ -202,8 +201,8 @@ const CustomerPage: React.FC<IProps> = ({ t }) => {
           <Box className={"empty_page_content"}>
             <EmptyPage
               icon={<EmptyProductPageIcon />}
-              title={t.pages?.Customers.no_product_yet_title}
-              discription={t.pages?.Customers.no_product_yet_discription}
+              title={t("Customers.no_product_yet_title")}
+              discription={t("Customers.no_product_yet_discription")}
               // buttonText={t.pages?.Customers.add_new_customer}
               // onClick={handleOpenDialogFunction}
             />

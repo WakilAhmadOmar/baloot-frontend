@@ -1,7 +1,7 @@
 "use client";
 
 import CreateCashBox from "./CreateCashbox";
-import { EmptyProductPageIcon, NotFoundIcon } from "@/icons";
+import { EmptyProductPageIcon } from "@/icons";
 import { Box, Pagination, Stack, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { useGetSafeListQuery } from "@/hooks/api/definitions/safe/queries/use-get-safe-list-query";
@@ -11,13 +11,12 @@ import UpdateCashBox from "./Update";
 import { useDeleteSafeMutation } from "@/hooks/api/definitions/safe/mutations/use-delete-mutation";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_Components/Skeleton";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
 
-const CashBoxContainer: React.FC<IProps> = ({ t }) => {
+const CashBoxContainer = () => {
 
+  const t = useTranslations("pages")
   const [page, setPage] = useState(1);
   const {setHandleError} = useContext(AppContext)
 
@@ -36,7 +35,7 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.cashbox?.safe_deleted_successfully,
+          message: t("cashbox.safe_deleted_successfully"),
           status: "success",
         });
       },
@@ -53,7 +52,7 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.cashboxes}
+        {t("cashbox.safes")}
       </Typography>
 
       <Box
@@ -63,7 +62,6 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
         }}
       >
         <CreateCashBox
-          t={t}
         />
         {/* {productsState?.count > 0 && (
           <Box>
@@ -84,7 +82,7 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.cashbox?.Nothing_Found}
+              {t("cashbox.Nothing_Found")}
             </Typography>
           </Box>
         )} */}
@@ -96,24 +94,23 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
             createdAt={item?.createdAt}
             id={item?._id}
             getIdToAddAction={handleDeleteFunction}
-            UpdateComponent={<UpdateCashBox t={t} item={item} />}
+            UpdateComponent={<UpdateCashBox  item={item} />}
             editTable
             height="150px"
-            t={t}
-            messageDescription={t?.pages?.cashbox?.delete_description}
-            messageTitle={t?.pages?.cashbox?.delete_title}
+            messageDescription={t("cashbox.delete_description")}
+            messageTitle={t("cashbox.delete_title")}
             isLoading={deleteIsLoading}
           >
             <Box display={"grid"} gridTemplateColumns={"20rem auto"} mb={1}>
               <Typography variant="caption">
-                {t?.pages?.cashbox?.Cashier}{" "}
+                {t("cashbox.Cashier")}{" "}
               </Typography>
               <Typography variant="caption">{item?.cashier?.name}</Typography>
             </Box>
             <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
               <Typography variant="caption">
                 {" "}
-                {t?.pages?.cashbox?.Current_Balance}
+                {t("cashbox.Current_Balance")}
               </Typography>
               <Typography variant="caption">
                 {item?.credit?.[0]?.amount}{" "}
@@ -123,7 +120,7 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
             <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
               <Typography variant="caption">
                 {" "}
-                {t?.pages?.cashbox?.Cashier_Contact_Number}
+                {t("cashbox.Cashier_Contact_Number")}
               </Typography>
               <Typography variant="caption">
                 {item?.cashier?.phoneNumber}{" "}
@@ -150,8 +147,8 @@ const CashBoxContainer: React.FC<IProps> = ({ t }) => {
        {safeList?.count === 0 && !isLoading &&<Box className={"empty_page_content"}>
                 <EmptyPage
                   icon={<EmptyProductPageIcon />}
-                  title={t.pages?.cashbox.no_product_yet_title}
-                  discription={t.pages?.cashbox.no_product_yet_discription}
+                  title={t("cashbox.no_product_yet_title")}
+                  discription={t("cashbox.no_product_yet_discription")}
                   // buttonText={t.pages?.cashbox?.Create_new_Cashbox}
                   // onClick={handleOpenDialogFunction}
                 />

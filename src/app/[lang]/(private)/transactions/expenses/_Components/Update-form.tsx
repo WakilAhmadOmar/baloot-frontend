@@ -23,9 +23,9 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateConsumptionMutation } from "@/hooks/api/transactions/mutations/use-update-consumption-mutation";
+import { useTranslations } from "next-intl";
 
 type CreateFormProps = {
-  t: any;
   item:any
 };
 
@@ -36,7 +36,8 @@ interface FormValues {
   description?:string
   consumptionTypeId:string
 }
-export const UpdateForm = ({ t , item}: CreateFormProps) => {
+export const UpdateForm = ({ item}: CreateFormProps) => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
@@ -119,7 +120,7 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.update_expense}</Typography>
+          <Typography>{t("update_expense")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -132,7 +133,7 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t("consumption_type")}
                 </InputLabel>
                 <ConsumptionTypeSelectBox name={"consumptionTypeId"} />
               </Grid>
@@ -141,14 +142,14 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t("payer")}
                 </InputLabel>
                 <CashBoxAutoComplete name="payer" />
               </Grid>
               
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.payed_amount}
+                  {t("payed_amount")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -158,14 +159,14 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.currency}
+                  {t("currency")}
                 </InputLabel>
                 <CurrenciesAutoComplete />
               </Grid>
 
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -187,10 +188,10 @@ export const UpdateForm = ({ t , item}: CreateFormProps) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.transactions?.save}
+            {t("save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.transactions?.cancel}
+            {t("cancel")}
           </Button>
         </DialogActions>
       </Dialog>

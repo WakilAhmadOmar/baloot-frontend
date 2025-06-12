@@ -1,14 +1,10 @@
+import Container from "./_Components/Container";
 
-import { getDictionary } from "@/dictionaries";
-import Container from "./_Components/Container"
-
-export default async function CurrenciesPage({params}:{ params: Promise<{ lang: 'en' | 'fa' }>}) {
-  const lang = (await params).lang
-  const tra = await getDictionary(lang)
+export default async function CurrenciesPage() {
   return (
-    <div >
-      <main >
-      <Container t={tra}/>
+    <div>
+      <main>
+        <Container />
       </main>
     </div>
   );

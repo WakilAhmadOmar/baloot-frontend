@@ -12,10 +12,9 @@ import CompanyMenuComponent from "./companyMenu";
 import ThemeToggle from "./ThemeToggle";
 
  interface IPropsCustomToolbar {
-    t:any
     lang:string
  }
-const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t , lang}) => {
+const CustomToolbar:React.FC<IPropsCustomToolbar> = ({ lang}) => {
     const theme = useTheme()
     const [open, setOpen] = useState(true);
 
@@ -34,7 +33,7 @@ const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t , lang}) => {
             }}
           >
             <Box display="flex" alignItems={"center"} columnGap="1rem">
-                <PositionText t={t} />
+                <PositionText/>
             </Box>
             <Box
               display="flex"
@@ -43,7 +42,7 @@ const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t , lang}) => {
               columnGap={2}
             >
               <Box>
-                <Language t={t} lang={lang}/>
+                <Language  lang={lang}/>
               </Box>
               <Box>
               <ThemeToggle />
@@ -73,7 +72,7 @@ const CustomToolbar:React.FC<IPropsCustomToolbar> = ({t , lang}) => {
                 </Box>
               </Box>
               <Box>
-                <CompanyMenuComponent t={t} />
+                <CompanyMenuComponent />
               </Box>
             </Box>
           </Box>

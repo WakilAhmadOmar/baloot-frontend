@@ -1,21 +1,19 @@
 "use client"
+import { useTranslations } from "next-intl";
 import CreateProduct from "./Create";
 import ProductList from "./List";
 import { Box, Typography } from "@mui/material";
 
-interface IProps {
-    t:any
-}
+const ProductPage = () => {
+  const t = useTranslations("product")
+ 
 
-const ProductPage:React.FC<IProps> = ({t}) => {
- 
- 
   return (
     <Box>
       
    
         <Typography variant="h3" mb={2}>
-          {t?.product?.product_list}
+          {t("product_list")}
         </Typography>
     
       <Box
@@ -28,7 +26,7 @@ const ProductPage:React.FC<IProps> = ({t}) => {
         }}
       >
         <CreateProduct
-          t={t}
+          
         />
         {/* {productsState?.count > 0 && (
           <Box>
@@ -50,9 +48,7 @@ const ProductPage:React.FC<IProps> = ({t}) => {
               {t?.product?.nothing_found}
             </Typography>
           </Box> */}
-        <ProductList
-          t={t}
-        />
+        <ProductList/>
      
     </Box>
   );

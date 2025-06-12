@@ -18,13 +18,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateWarehouseMutation } from "@/hooks/api/definitions/warehouse/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsCreateWarehouse {
-  t: any;
   item:any
 }
 
-const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
+const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
+  const t = useTranslations("pages")
   const methods = useForm({
     defaultValues:{
         employeeId:item?.responsible?._id,
@@ -61,7 +62,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.warehouse?.warehouse_updated_successfully,
+          message: t("warehouse.warehouse_updated_successfully"),
           status: "success",
         });
         handleOpenDialogFunction();
@@ -83,7 +84,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -95,7 +96,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography> {t?.pages?.warehouse?.update_warehouse}</Typography>
+          <Typography> {t("warehouse.update_warehouse")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -105,7 +106,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.warehouse?.warehouses}
+                  {t("warehouse.warehouses")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -120,16 +121,16 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.pages?.warehouse?.warehouse_responsible}
+                  {t("warehouse.warehouse_responsible")}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
                   name="employeeId"
-                  dir={t?.home?.dir}
+                  dir={t("dir")}
                 />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.warehouse?.address}
+                  {t("warehouse.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -150,10 +151,10 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ t  , item }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.warehouse?.save}
+            {t("warehouse.save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.warehouse?.cancel}
+            {t("warehouse.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -51,7 +51,6 @@ const ListItemTextCloseStyle = {
 };
 
 interface IPropsListItem {
-  t: any;
   text: string;
   handleOpenCollapse: (event: MouseEvent<HTMLElement>) => void;
   name: string;
@@ -60,7 +59,6 @@ interface IPropsListItem {
 }
 
 const ListItemComponent: React.FC<IPropsListItem> = ({
-  t,
   text,
   handleOpenCollapse,
   open,

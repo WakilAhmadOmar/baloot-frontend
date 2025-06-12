@@ -27,12 +27,10 @@ import { useGetCustomerPayOffListQuery } from "@/hooks/api/transactions/queries/
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import SkeletonComponent from "../../_components/Skeleton";
+import { useTranslations } from "next-intl";
 
-type EmployeeSalary = {
-  t: any;
-};
-
-const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
+const RegistrationEmployeeSalaryPage = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const [page, setPage] = useState(1);
   const { data: payoffList, isLoading } = useGetCustomerPayOffListQuery({
@@ -50,7 +48,7 @@ const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
     <Box>
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
-          {t?.transactions?.monthly_employee_salary_entry}
+          {t("monthly_employee_salary_entry")}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
           <CreateCreate t={t} />
@@ -76,7 +74,6 @@ const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
               createdAt={item?.createdAt}
               messageDescription=""
               messageTitle=""
-              t={t}
               // id={item?._id}
               // getIdToAddAction={handleDelteProductFunction}
               // updateProductFunction={handleUpdateProuct}
@@ -87,18 +84,18 @@ const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
                 rowGap={"1rem"}
               >
                 <Typography variant="caption">
-                  {t?.transactions?.receipt_amount}
+                  {t("receipt_amount")}
                 </Typography>
                 <Typography variant="caption">
                   {item?.amount} {item?.currencyId?.symbol}
                 </Typography>
                 <Typography variant="caption">
                   {" "}
-                  {t?.transactions?.payer}{" "}
+                  {t("payer")}{" "}
                 </Typography>
                 <Typography variant="caption">{item?.payerId?.name}</Typography>
                 <Typography variant="caption">
-                  {t?.transactions?.description}
+                  {t("description")}
                 </Typography>
                 <Typography variant="caption">{item?.description}</Typography>
               </Box>
@@ -129,7 +126,7 @@ const RegistrationEmployeeSalaryPage = ({ t }: EmployeeSalary) => {
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             discription=""
-            title={t?.transactions?.no_salary_has_been_recorded}
+            title={t("no_salary_has_been_recorded")}
           />
         </Box>
       )}

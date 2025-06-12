@@ -26,6 +26,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { UPDATE_USER_CURRENCY_STATUS } from "@/graphql/mutation/UPDATE_USER_CURRENCY_STATUS";
 import { UPDATE_USER_CURRENCY_RATE } from "@/graphql/mutation/UPDATE_USER_CURRENCY_RATE";
+import { useTranslations } from "next-intl";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -41,7 +42,7 @@ interface IPropsCurrency {
   onUpdate: (item: any) => void;
   onUpdateRate: (item: any) => void;
   onDelete: (id: string) => void;
-  t: any;
+
   baseCurrency:any
 }
 const CurrencyComponent: React.FC<IPropsCurrency> = ({
@@ -50,8 +51,8 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
   onUpdateRate,
   onDelete,
   baseCurrency,
-  t,
 }) => {
+  const t = useTranslations("pages")
   const theme = useTheme();
   const client = useApolloClient();
   const [open, setOpen] = React.useState(false);
@@ -144,7 +145,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
         keepMounted
         onClose={handleClickOpen}
         aria-describedby="alert-dialog-slide-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
         maxWidth={updateCurrency ? "sm" : "sm"}
       >
@@ -163,7 +164,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
           >
             <Typography variant="button">
               {" "}
-              {t?.pages?.currency?.daily_rate}
+              {t("currency.daily_rate")}
               {/* {item?.name} */}
             </Typography>
 
@@ -188,7 +189,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t?.pages?.currency?.daily_rate} ({item?.name})
+                      {t("currency.daily_rate")} ({item?.name})
                     </InputLabel>
                     <TextField
                       fullWidth
@@ -199,7 +200,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
                     />
                     {errors?.rate?.type === "required" && (
                       <Typography color="error" p={1}>
-                        {t?.pages?.currency?.rate_is_required}
+                        {t("currency.rate_is_required")}
                       </Typography>
                     )}
                   </Box>
@@ -219,8 +220,8 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t?.pages?.currency?.to} {baseCurrency?.symbol} (
-                      {t?.pages?.currency?.base_currency})
+                      {t("currency.to")} {baseCurrency?.symbol} (
+                      {t("currency.base_currency")})
                     </InputLabel>
                     <TextField
                       fullWidth
@@ -231,7 +232,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
                     />
                     {errors?.baseRate?.type === "required" && (
                       <Typography color="error" p={1}>
-                        {t?.pages?.currency?.rate_is_required}
+                        {t("currency.rate_is_required")}
                       </Typography>
                     )}
                   </Box>
@@ -255,10 +256,10 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
             variant="contained"
             color="primary"
           >
-            {t?.pages?.currency?.save}
+            {t("currency.save")}
           </Button>
           <Button onClick={handleClickOpen} variant="outlined">
-            {t?.pages?.currency?.cancel}
+            {t("currency.cancel")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -306,7 +307,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
             pt={2}
             textAlign={"center"}
           >
-            {t?.pages?.currency?.current_rate_in_base_currency}
+            {t("currency.current_rate_in_base_currency")}
           </Typography>
           <Typography textAlign={"center"} variant="h3" p={1.5}>
             {item?.rate} = {baseCurrency?.symbol} {item?.baseRate}
@@ -326,7 +327,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
             paddingBottom: "1rem",
           }}
         >
-          {t?.pages?.currency?.set_daily_price}
+          {t("currency.set_daily_price")}
         </Button>
       </Box>
       <Box display={"flex"} justifyContent={"center"} columnGap={0.5} pb={1}>

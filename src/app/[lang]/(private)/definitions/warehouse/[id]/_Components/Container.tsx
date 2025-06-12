@@ -14,16 +14,17 @@ import {
   useTheme,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 
 interface IPropsContainer {
   id: string;
-  t: any;
 }
 
-const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
+const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
+  const t = useTranslations("pages")
   const paginationModel = { page: 1, pageSize: 10 };
   const client = useApolloClient();
   const {setHandleError } = useContext(AppContext)
@@ -157,7 +158,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
     },
     {
       field: "ProductId",
-      headerName: t?.pages?.warehouse?.product_name,
+      headerName: t("warehouse.product_name"),
       width: 230,
       cellClassName: "pointer",
       sortable: false,
@@ -172,7 +173,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
     },
     {
       field: "Unit",
-      headerName: t?.pages?.warehouse?.units,
+      headerName: t("warehouse.units"),
       width: 130,
       sortable: false,
       filterable: false,
@@ -190,7 +191,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
     },
     {
       field: "Quantity",
-      headerName: t?.pages?.warehouse?.quantity,
+      headerName: t("warehouse.quantity"),
       width: 150,
       sortable: false,
       filterable: false,
@@ -265,7 +266,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
     <Box>
         <Box>
           <Typography variant="h3" mb={2}>
-            {t?.pages?.warehouse?.initial_inventory_entry_in_warehouse}({name})
+            {t("warehouse.initial_inventory_entry_in_warehouse")}({name})
           </Typography>
         </Box>
       <Box
@@ -276,9 +277,9 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ t, id }) => {
       >
         <Box display={"flex"} gap="2rem" alignItems={"center"}>
           <Link href={`/${lang}/definitions/warehouse`}>
-          <Button variant="outlined">{t?.pages?.warehouse?.back}</Button>
+          <Button variant="outlined">{t("warehouse.back")}</Button>
           </Link>
-          <Button variant="contained" onClick={handleSaveProduct}>{t?.pages?.warehouse?.save}</Button>
+          <Button variant="contained" onClick={handleSaveProduct}>{t("warehouse.save")}</Button>
         </Box>
         <Box>
         </Box>

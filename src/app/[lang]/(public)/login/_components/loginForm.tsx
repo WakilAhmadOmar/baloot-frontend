@@ -12,12 +12,12 @@ import { ACCESS_TOKEN_KEY } from "@/libs/constants";
 import { AppContext } from "@/provider/appContext";
 import useSchemaLoginForm from "./schemas";
 import LoginImage from "@/assets/images/image_for_login_page.jpg"
+import { useTranslations } from "next-intl";
 
-interface IPropsLoginForm {
-  t: any;
-}
 
-const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
+
+const LoginForm = () => {
+  const t = useTranslations("pages")
   const client = useApolloClient();
   const { setHandleError } = useContext(AppContext);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -70,8 +70,10 @@ const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
         backgroundImage:`url(${LoginImage?.src})`,
         backgroundPosition:"center",
         backgroundSize:"cover",
-        backgroundRepeat:"no-repeat"
+        backgroundRepeat:"no-repeat",
+        direction:t("dir")
       }}
+      
     >
       <Card sx={{ p: 5, boxShadow: "none", width: "450px" }}>
       <Box display={"flex"} justifyContent={"center"}>
@@ -79,14 +81,14 @@ const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
       </Box>
       <Box mb={5}>
         <Typography variant="h5" textAlign={"center"}>
-          {t?.pages?.login?.welcome_to_alpha_accounting_software}
+          {t("login.welcome_to_alpha_accounting_software")}
         </Typography>
       </Box>
         <form onSubmit={handleSubmit}>
           <Box rowGap={1} display={"grid"}>
-            <InputLabel>{t?.pages?.login?.email}</InputLabel>
+            <InputLabel>{t("login.email")}</InputLabel>
             <TextField
-              placeholder={t?.pages?.login?.enter_your_email}
+              placeholder={t("login.enter_your_email")}
               name="email"
               type="email"
               onChange={handleChange}
@@ -97,9 +99,9 @@ const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
             <Typography variant="body2" color="error">{errors?.email}</Typography>
           </Box>
           <Box mt={3} rowGap={1} display={"grid"}>
-            <InputLabel>{t?.pages?.login?.password}</InputLabel>
+            <InputLabel>{t("login.password")}</InputLabel>
             <TextField
-              placeholder={t?.pages?.login?.enter_your_password}
+              placeholder={t("login.enter_your_password")}
               name="password"
               type="password"
               onChange={handleChange}
@@ -116,7 +118,7 @@ const LoginForm: React.FC<IPropsLoginForm> = ({ t }) => {
               type="submit"
               loading={loadingPage}
             >
-              {t?.pages?.login?.continue}
+              {t("login.continue")}
             </Button>
           </Box>
         </form>

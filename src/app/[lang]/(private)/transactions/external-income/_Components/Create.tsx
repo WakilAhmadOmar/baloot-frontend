@@ -24,10 +24,8 @@ import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
 import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income-type";
 import { useAddNewExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-add-new-external-income-mutation";
+import { useTranslations } from "next-intl";
 
-type CreateFormProps = {
-  t: any;
-};
 
 type FormInputType = {
   receiver: string;
@@ -36,7 +34,8 @@ type FormInputType = {
   amount: number;
   description?: string;
 };
-export const CreateCreate = ({ t }: CreateFormProps) => {
+export const CreateCreate = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm<FormInputType>({
@@ -82,11 +81,10 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
       }
     );
   };
-  console.log("error", errors);
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_external_income}
+        {t("add_external_income")}
       </Button>
       <Dialog
         open={openDialog}
@@ -105,7 +103,7 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.add_external_income}</Typography>
+          <Typography>{t("add_external_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -118,22 +116,22 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.external_income_type}
+                  {t("external_income_type")}
                 </InputLabel>
-                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} dir={t.home?.dir}/>
+                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} dir={t("dir")}/>
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.recipient}
+                  {t("recipient")}
                 </InputLabel>
-                <CashBoxAutoComplete name="receiver" />
+                <CashBoxAutoComplete name="receiver" dir={t("dir")} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.received_amount}
+                  {t("received_amount")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -143,14 +141,14 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.currency}
+                  {t("currency")}
                 </InputLabel>
-                <CurrenciesAutoComplete />
+                <CurrenciesAutoComplete dir={t("dir")} />
               </Grid>
               
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -172,10 +170,10 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.transactions?.save}
+            {t("save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.transactions?.cancel}
+            {t("cancel")}
           </Button>
         </DialogActions>
       </Dialog>

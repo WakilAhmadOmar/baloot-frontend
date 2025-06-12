@@ -4,16 +4,16 @@ import { Edit, InfoCircle, Trash } from "iconsax-react";
 import Moment from "react-moment";
 import { UpdateUnit } from "./Update";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 interface IPropsUnitProduct {
   item: any;
   canDelete?: Boolean;
-  t:any
 }
 export const UnitItem: React.FC<IPropsUnitProduct> = ({
   item,
   canDelete = true,
-  t
 }) => {
+  const t = useTranslations("pages")
   const theme = useTheme();
  const [openDialogDelete, setOpenDialogDelete] = useState(false);
  const handleOpenDialogDeleteFunction = () =>{
@@ -45,12 +45,12 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
           >
             <InfoCircle color={theme.palette.warning.main} />
             <Typography variant="h5">
-             {t?.pages?.unit?.are_you_sure_to_delete_this_unit}
+             {t("unit.are_you_sure_to_delete_this_unit")}
             </Typography>
           </Box>
           <Box pt={1} sx={{ paddingInlineStart: "3rem" }}>
             <Typography variant="body1">
-             {t?.pages?.unit?.you_will_not_have_access_again} 
+             {t("unit.you_will_not_have_access_again")} 
             </Typography>
           </Box>
         </DialogContent>
@@ -58,10 +58,10 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogDeleteFunction}>
-            خیر
+            {t("unit.cancel")}
           </Button>
           <Button color="primary" variant="contained" onClick={deleteFunction}>
-            بلی
+           {t("unit.yes")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -99,7 +99,7 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
           </IconButton>
         )}
        
-       <UpdateUnit item={item} t={t} />
+       <UpdateUnit item={item} />
       </Box>
     </Card>
     </>

@@ -122,6 +122,7 @@
     "discount_amount": "Discount Amount"
   },
   "product": {
+    "dir":"ltr",
     "category": "Category",
     "product_code": "Product Code",
     "old_amount": "Old Amount",
@@ -157,16 +158,17 @@
     "choose_unit_from_largest": "Choose Unit from Largest to Smallest",
     "delete_title": "Are you sure you want to delete this product?",
     "delete_description": "Once this product is deleted, you will no longer have access to it.",
-    "product_added_successfully":"product saved successfully.",
-       "product_deleted_successfully":"Product deleted successfully",
-       "product_updated_successfully":"Product update successfully",
-       "update_product":"Update Product",
-       "this_category_saved_successfully":"This category saved successfully",
-       "this_category_updated_successfully":"This category updated successfully"
+    "product_added_successfully": "product saved successfully.",
+    "product_deleted_successfully": "Product deleted successfully",
+    "product_updated_successfully": "Product update successfully",
+    "update_product": "Update Product",
+    "this_category_saved_successfully": "This category saved successfully",
+    "this_category_updated_successfully": "This category updated successfully"
   },
 
   "position_link": {
-    "": "Dashboard",
+    "en": "Dashboard",
+    "home": "Home",
     "journal": "Journal Book",
     "definitions": "Definitions",
     "definitionUnit": "Definitions Units",
@@ -184,9 +186,22 @@
     "accounts": "Add Accounts",
     "customers": "Add Customers Accounts",
     "employees": "Add Employees Accounts",
-    "cashBoxes": "Add Cash Boxes"
+    "cashBoxes": "Add Cash Boxes",
+    "currencies":"Currencies",
+      "product-category":"Product Category",
+      "external-income":"External Income",
+      "cash-box":"Safes Account",
+      "banks":"Banks Account",
+      "receive-customer":"Receive Customer",
+      "transactions":"Transactions",
+      "receive-employee":"Receive Employee",
+      "payment-customer":"Payment Customer",
+      "payment-employee":"Payment Employee",
+      "expenses":"Expenses",
+       "employee-salary":"Employee salary"
   },
   "pages": {
+    "dir": "ltr",
     "currency": {
       "message_title_delete": "Are you sure you want to delete this currency",
       "message_description_delete": "Once this currency is deleted, you will no longer have access to it.",
@@ -251,11 +266,12 @@
       "record_previous_balance": "Record Previous Balance",
       "save": "Save",
       "cancel": "Cancel",
-      "bank_saved_successfully":"Bank saved successfully",
-      "bank_updated_successfully":"Bank updated successfully",
-      "bank_deleted_successfully":"Bank deleted successfully"
+      "bank_saved_successfully": "Bank saved successfully",
+      "bank_updated_successfully": "Bank updated successfully",
+      "bank_deleted_successfully": "Bank deleted successfully"
     },
     "cashbox": {
+      "safes":"Safes",
       "New_Cashbox_Information": "New Safe Information",
       "Cashbox_Name": "Safe Name",
       "Cashier": "Cashier",
@@ -269,14 +285,14 @@
       "Nothing_Found": "Nothing Found",
       "delete_title": "Are you sure you want to delete this Safe?",
       "delete_description": "Once this Safe is deleted, you will no longer have access to it.",
-       "update_record_previous_safe_account": "Update Record Previous Safe Account",
+      "update_record_previous_safe_account": "Update Record Previous Safe Account",
       "no_product_yet_title": "You have no Safe in our system.",
       "record_previous_cashbox_accounts": "List of Previous Safe Accounts",
       "previous_account": "Previous Account",
       "no_product_yet_discription": "You have no Safe in our system. Click the button below to add or import your cashboxes.",
-       "safe_saved_successfully":"Safe saved successfully",
-       "safe_updated_successfully":"Safe updated successfully",
-       "safe_deleted_successfully":"Safe deleted successfully"
+      "safe_saved_successfully": "Safe saved successfully",
+      "safe_updated_successfully": "Safe updated successfully",
+      "safe_deleted_successfully": "Safe deleted successfully"
     },
     "Expenses": {
       "Expenses": "Expenses",
@@ -290,9 +306,9 @@
       "Are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item",
       "Once_this_item_is_deleted": "Once this item is deleted, you will no longer have access to it.",
       "yes": "Yes",
-            "expense_type_saved_successfully":"Expense type saved successfully",
-            "expense_type_updated_successfully":"Expense type updated successfully",
-            "expense_type_deleted_successfully":"Expense type deleted successfully"
+      "expense_type_saved_successfully": "Expense type saved successfully",
+      "expense_type_updated_successfully": "Expense type updated successfully",
+      "expense_type_deleted_successfully": "Expense type deleted successfully"
     },
     "Customers": {
       "Customers": "Customers",
@@ -320,8 +336,8 @@
       "no_product_yet_discription": "You have no customer in our system. Click the button below to add or import your customers.",
       "list_of_customer_accounts": "List of Customer Accounts",
       "record_previous_customer_accounts": "record Previous Customer Accounts",
-         "update_record_previous_customer_account": "Update Record Previous Customer Account",
-         "customer_saved_successfully":"Customer saved successfully"
+      "update_record_previous_customer_account": "Update Record Previous Customer Account",
+      "customer_saved_successfully": "Customer saved successfully"
     },
     "unit": {
       "define_units": "Define Units",
@@ -339,7 +355,7 @@
       "no_unit_registered": "No unit registered",
       "add_new_unit": "Add New Unit",
       "no_units_description": "You have no units in our system. Click the button below to add or import your units.",
-      "update_unit":"Update Unit"
+      "update_unit": "Update Unit"
     },
     "employee": {
       "job_title": "Job Title",
@@ -369,8 +385,8 @@
       "list_of_employee_accounts": "List of Employee Accounts",
       "record_previous_employee_accounts": "record Previous Employee Accounts",
       "update_record_previous_employee_account": "Update record previous Employee Account",
-      "employee_saved_successfully":"Employee saved successfully",
-      "employee_updated_successfully":"Employee updated successfully"
+      "employee_saved_successfully": "Employee saved successfully",
+      "employee_updated_successfully": "Employee updated successfully"
     },
     "income": {
       "new_income": "New Income",
@@ -384,8 +400,8 @@
       "delete_title": "Are you sure you want to delete this external-income?",
       "delete_description": "Once this external-income is deleted, you will no longer have access to it.",
       "external_income": "External Income",
-      "external_income_type_saved_successfully":"External income type saved successfully",
-      "external_income_type_updated_successfully":"External income type updated successfully"
+      "external_income_type_saved_successfully": "External income type saved successfully",
+      "external_income_type_updated_successfully": "External income type updated successfully"
     },
     "partner": {
       "new_partner_details": "New Partner Details",
@@ -405,8 +421,8 @@
       "delete_title": "Are you sure you want to delete this partner?",
       "delete_description": "Once this partner is deleted, you will no longer have access to it.",
       "currency": "Currency",
-            "this_partner_saved_successfully":"This partner saved successfully",
-            "this_partner_updated_successfully":"This partner updated successfully"
+      "this_partner_saved_successfully": "This partner saved successfully",
+      "this_partner_updated_successfully": "This partner updated successfully"
     },
     "warehouse": {
       "initial_period_registration": "Initial Period Registration",
@@ -432,12 +448,14 @@
       "delete_description": "Once this warehouse is deleted, you will no longer have access to it.",
       "initial_inventory_entry_in_warehouse": "Initial Inventory Entry in Warehouse",
       "back": "Back",
-       "warehouse_saved_successfully":"Warehouse saved successfully",
-      "warehouse_updated_successfully":"Warehouse updated successfully",
-      "warehouse_deleted_successfully":"Warehouse deleted successfully"
+      "warehouse_saved_successfully": "Warehouse saved successfully",
+      "warehouse_updated_successfully": "Warehouse updated successfully",
+      "warehouse_deleted_successfully": "Warehouse deleted successfully"
     }
   },
   "transactions": {
+    "dir":"ltr",
+    "customer":"Customer",
     "cash_receipt_from_customer": "Cash Receipt from Customer",
     "update_cash_receipt_from_customer": "Update Cash Receipt from Customer",
     "cash_payment_to_customer": "Cash Payment to Customer",
@@ -461,7 +479,6 @@
     "save": "Save",
     "bank": "Bank",
     "cashbox": "Cashbox",
-
     "receiver_is_required": "Receiver is required",
     "customer_is_required": "Customer is required",
     "currency_is_required": "Currency is required",

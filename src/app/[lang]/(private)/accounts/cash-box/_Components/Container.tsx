@@ -11,12 +11,12 @@ import { useGetSafeListQuery } from "@/hooks/api/definitions/safe/queries/use-ge
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { UpdateSafeAccounts } from "./Update";
 import EmptyPage from "@/components/util/emptyPage";
+import { useTranslations } from "next-intl";
 
-interface IPropsBankAccountPages {
-  t: any;
-}
 
-const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
+
+const CashboxPage = () => {
+  const t = useTranslations("pages")
   const [page, setPage] = useState(1);
   const { data: safeList, isLoading } = useGetSafeListQuery({ page });
   const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
@@ -56,15 +56,12 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3">
-        {t?.pages?.cashbox?.record_previous_cashbox_accounts}
+        {t("cashbox.record_previous_cashbox_accounts")}
       </Typography>
 
       <Box display={"flex"} justifyContent={"space-between"} mt={4}>
         <Box display={"flex"} width={"100%"}>
           <AddCashboxAccounts
-            // isEmptyPage={isLoading === false }
-            t={t}
-            // onUpdateCashbox={handleUpdateCashbox}
           />
         </Box>
         {/* {( safeList?.count > 0) && (
@@ -100,9 +97,9 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
         >
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.cashbox?.no_product_yet_title}
-            discription={t.pages?.cashbox?.no_product_yet_discription}
-            // buttonText={t.pages?.cashbox.Create_new_Cashbox}
+            title={t("cashbox.no_product_yet_title")}
+            discription={t("cashbox.no_product_yet_discription")}
+            // buttonText={t("cashbox.Create_new_Cashbox")}
             // onClick={handleOpenDialogFunction}
           />
         </Box>
@@ -115,14 +112,13 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               name={item?.name}
               createdAt={item?.createdAt}
               height="270px"
-              t={t}
-              messageDescription={t?.pages?.cashbox?.delete_description_account}
-              messageTitle={t?.pages?.cashbox?.delete_title_account}
+              messageDescription={t("cashbox.delete_description_account")}
+              messageTitle={t("cashbox.delete_title_account")}
               id={item?._id}
               editTable={true}
               getIdToAddAction={handleDeleteAccount}
               isLoading={deleteLoading}
-              UpdateComponent={<UpdateSafeAccounts t={t} item={item} />}
+              UpdateComponent={<UpdateSafeAccounts item={item} />}
             >
               {item?.firstPeriodCredit?.map((credit: any, index: number) => {
                 return (
@@ -143,7 +139,7 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               })}
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.cashbox?.Cashier}
+                  {t("cashbox.Cashier")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.cashier?.name}
@@ -151,7 +147,7 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.phone_number}
+                  {t("bank.phone_number")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.cashier?.phoneNumber}
@@ -159,7 +155,7 @@ const CashboxPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.description}

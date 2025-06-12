@@ -15,13 +15,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface IPropsCreate {
-  t: any;
-}
-export const CreateCategory = ({ t }: IPropsCreate) => {
+
+export const CreateCategory = () => {
+  const t = useTranslations("product")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -41,7 +41,7 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
         setHandleError({
           open: true,
           type: "success",
-          message: t?.product?.this_category_saved_successfully,
+          message: t("this_category_saved_successfully"),
         });
         setOpenDialog(false);
       },
@@ -58,14 +58,14 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
     <Box>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
         {" "}
-        {t?.product?.add_new_category}
+        {t("add_new_category")}
       </Button>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -77,7 +77,7 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.product?.add_new_category}</Typography>
+          <Typography variant="button">{t("add_new_category")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -90,7 +90,7 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
                   required
                 >
-                  {t?.product?.category_name}
+                  {t("category_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -111,7 +111,7 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
+            {t("cancel")}
           </Button>
           <Button
             color="primary"
@@ -119,7 +119,7 @@ export const CreateCategory = ({ t }: IPropsCreate) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.product?.save}
+            {t("save")}
           </Button>
         </DialogActions>
       </Dialog>

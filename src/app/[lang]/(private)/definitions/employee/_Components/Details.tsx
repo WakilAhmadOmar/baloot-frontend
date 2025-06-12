@@ -13,6 +13,7 @@ import {
   } from "@mui/material";
   import { TransitionProps } from "@mui/material/transitions";
   import { CloseSquare } from "iconsax-react";
+import { useTranslations } from "next-intl";
   import React from "react";
   
   const Transition = React.forwardRef(function Transition(
@@ -26,9 +27,10 @@ import {
   
   interface IPropsEmployeeDetails {
     item: any; 
-    t:any
+
   }
-  const EmployeeDetails: React.FC<IPropsEmployeeDetails> = ({ item , t }) => {
+  const EmployeeDetails: React.FC<IPropsEmployeeDetails> = ({ item  }) => {
+    const t = useTranslations("pages")
     const [open, setOpen] = React.useState(false);
     const theme = useTheme();
   
@@ -44,7 +46,7 @@ import {
           onClose={handleClickOpen}
           aria-describedby="alert-dialog-slide-description"
           fullWidth
-          dir="rtl"
+          dir={t("dir")}
         >
           <DialogTitle
             display={"flex"}
@@ -53,7 +55,7 @@ import {
             borderBottom={`1px solid ${theme.palette.grey[200]}`}
             mb={3}
           >
-            <Typography variant="button">{t?.pages?.employee?.employee_details}</Typography>
+            <Typography variant="button">{t("employee.employee_details")}</Typography>
             <IconButton onClick={handleClickOpen}>
               <CloseSquare />
             </IconButton>
@@ -85,7 +87,7 @@ import {
                 {item?.jobTitle}
               </Typography>
               <Typography textAlign={"center"} variant="subtitle2">
-                 {t?.pages?.employee?.id_number}: {item?.idNumber}
+                 {t("employee.id_number")}: {item?.idNumber}
               </Typography>
             </Box>
             <Box
@@ -95,43 +97,43 @@ import {
               mt={3}
             >
               <Typography textAlign={"start"} variant="subtitle2">
-                {t?.pages?.employee?.fathers_name}:
+                {t("employee.fathers_name")}:
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.fathersName}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-               {t?.pages?.employee?.phone_number}: 
+               {t("employee.phone_number")}: 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.phoneNumber}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-               {t?.pages?.employee?.salary_amount} : 
+               {t("employee.salary_amount")} : 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.salary?.amount}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-               {t?.pages?.employee?.date_of_birth} : 
+               {t("employee.date_of_birth")} : 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.dateOfBirth}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-               {t?.pages?.employee?.start_date}: 
+               {t("employee.start_date")}: 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.startDate}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-               {t?.pages?.employee?.email}: 
+               {t("employee.email")}: 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.email}
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
-              {t?.pages?.employee?.address} : 
+              {t("employee.address")} : 
               </Typography>
               <Typography textAlign={"start"} variant="subtitle2">
                 {item?.address}
@@ -146,12 +148,12 @@ import {
             }}
           >
             <Button onClick={handleClickOpen} variant="outlined" color="primary">
-             {t?.pages?.employee?.cancel} 
+             {t("employee.cancel")} 
             </Button>
           </DialogActions>
         </Dialog>
         <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-         {t?.pages?.employee?.more_info}
+         {t("employee.more_info")}
         </Button>
       </Box>
     );

@@ -7,6 +7,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { ReactElement } from "react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 const ListItemButtonStyle = {
   minHeight: 48,
@@ -53,7 +54,7 @@ interface IPropsLinkLayout {
   Icon?: ReactElement;
   href: string;
   lang: string;
-  t: any;
+
 }
 
 const LinkLayout: React.FC<IPropsLinkLayout> = ({
@@ -62,10 +63,10 @@ const LinkLayout: React.FC<IPropsLinkLayout> = ({
   Icon,
   lang,
   href,
-  t,
+
 }) => {
   const pathname = usePathname();
-  const theme = useTheme();
+const t = useTranslations("home")
   return (
     <Link href={href}>
       <ListItem
@@ -75,7 +76,7 @@ const LinkLayout: React.FC<IPropsLinkLayout> = ({
           background:
             pathname === href
               ? `linear-gradient(90deg,${
-                  t.home.dir === "rtl" ? rtlTrue : rtlFalse
+                  t("dir") === "rtl" ? rtlTrue : rtlFalse
                 } )`
               : "",
         }}

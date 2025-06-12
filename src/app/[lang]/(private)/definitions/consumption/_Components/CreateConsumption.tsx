@@ -17,14 +17,11 @@ import { useContext,  useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAddConsumptionTypeMutation } from "@/hooks/api/definitions/consumption/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateConsumetion {
-  t: any;
-}
 
-const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
-  t,
-}) => {
+const CreateConsumption = () => {
+  const t = useTranslations("pages")
   const {
     register,
     handleSubmit,
@@ -48,8 +45,8 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.Expenses?.expense_type_saved_successfully,
-          status: "success",
+          message: t("Expenses.expense_type_saved_successfully"),
+          type: "success",
         });
         setOpenDialog(false);
       },
@@ -57,7 +54,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
         setHandleError({
           open: true,
           message: error.message,
-          status: "error",
+          type: "error",
         });
       },
     });
@@ -70,7 +67,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -82,7 +79,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.pages?.Expenses.New_Expense} </Typography>
+          <Typography>{t("ExpensesNew_Expense")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -92,7 +89,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Expenses?.Expense_Name}
+                  {t("Expenses.Expense_Name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -113,10 +110,10 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.Expenses?.Save}
+            {t("Expenses.Save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.Expenses?.Cancel}
+            {t("Expenses.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -129,7 +126,7 @@ const CreateConsumption: React.FC<IPropsCreateConsumetion> = ({
             onClick={handleOpenDialogFunction}
             
           >
-            {t?.pages?.Expenses?.Add_New_Expense}
+            {t("Expenses.Add_New_Expense")}
           </Button>
         </Box>
     </Box>

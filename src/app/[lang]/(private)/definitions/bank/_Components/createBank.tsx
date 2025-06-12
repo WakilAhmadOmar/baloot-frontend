@@ -18,15 +18,12 @@ import {  useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAddBankMutation } from "@/hooks/api/definitions/bank/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateBank {
-  t: any;
-}
 
-const CreateBank: React.FC<IPropsCreateBank> = ({
 
-  t,
-}) => {
+const CreateBank = () => {
+  const t = useTranslations("pages")
   const methods = useForm();
   const { register, handleSubmit } = methods;
   const theme = useTheme();
@@ -51,7 +48,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.bank?.bank_saved_successfully,
+          message: t("bank.bank_saved_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -74,7 +71,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
+          dir={("dir")}
           fullWidth
         >
           <DialogTitle
@@ -86,7 +83,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
               borderBottom: `1px solid ${theme.palette.grey[200]}`,
             }}
           >
-            <Typography>{t?.pages?.bank?.New_Bank_Information}</Typography>
+            <Typography>{t("bank.New_Bank_Information")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
               <CloseSquare />
             </IconButton>
@@ -96,7 +93,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Bank_Name}
+                    {t("bank.Bank_Name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -107,7 +104,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Account_Number}
+                    {t("bank.Account_Number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -118,7 +115,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.Bank_Contact_Number}
+                    {t("bank.Bank_Contact_Number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -130,7 +127,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.description}
+                    {t("bank.description")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -154,9 +151,9 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t?.pages?.bank?.Save}
+              {t("bank.Save")}
             </Button>
-            <Button variant="outlined">{t.pages.bank?.Cancel}</Button>
+            <Button variant="outlined">{t("bank.Cancel")}</Button>
           </DialogActions>
         </Dialog>
       </FormProvider>
@@ -166,7 +163,7 @@ const CreateBank: React.FC<IPropsCreateBank> = ({
           color="primary"
           onClick={handleOpenDialogFunction}
         >
-          {t?.pages?.bank?.Create_new_Bank}
+          {t("bank.Create_new_Bank")}
         </Button>
       </Box>
     </Box>

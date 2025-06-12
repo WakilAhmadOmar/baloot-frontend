@@ -22,12 +22,11 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 
 import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-type CreateFormProps = {
-  t: any;
-};
 
-export const CreateCreate = ({ t }: CreateFormProps) => {
+export const CreateCreate = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
@@ -77,14 +76,14 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_new_expense}
+        {t("add_new_expense")}
       </Button>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir="rtl"
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -96,7 +95,7 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.transactions?.add_new_expense}</Typography>
+          <Typography>{t("add_new_expense")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -110,22 +109,22 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.consumption_type}
+                  {t("consumption_type")}
                 </InputLabel>
-                <ConsumptionTypeSelectBox dir={t?.home?.dir} name={"consumptionTypeId"} />
+                <ConsumptionTypeSelectBox dir={t("dir")} name={"consumptionTypeId"} />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.payer}
+                  {t("payer")}
                 </InputLabel>
-                <CashBoxAutoComplete name="payer" dir={t?.home?.dir} />
+                <CashBoxAutoComplete name="payer" dir={t("dir")} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.payed_amount}
+                  {t("payed_amount")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -135,14 +134,14 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.currency}
+                  {t("currency")}
                 </InputLabel>
-                <CurrenciesAutoComplete dir={t?.home?.dir} />
+                <CurrenciesAutoComplete dir={t("dir")} />
               </Grid>
 
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -164,10 +163,10 @@ export const CreateCreate = ({ t }: CreateFormProps) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.transactions?.save}
+            {t("save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.transactions?.cancel}
+            {t("cancel")}
           </Button>
         </DialogActions>
       </Dialog>

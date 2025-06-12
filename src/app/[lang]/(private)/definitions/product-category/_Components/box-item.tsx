@@ -2,12 +2,12 @@ import { Box, Card, Typography, useTheme } from "@mui/material";
 
 import Moment from "react-moment";
 import { UpdateCategory } from "./Updage";
+import { useTranslations } from "next-intl";
 // import { DeleteCategory } from "./Delete";
 interface IPropsUnitProduct {
   item: any;
-  t: any;
 }
-const BoxItemCategory: React.FC<IPropsUnitProduct> = ({ item, t }) => {
+const BoxItemCategory: React.FC<IPropsUnitProduct> = ({ item }) => {
   const theme = useTheme();
 
   return (
@@ -40,7 +40,7 @@ const BoxItemCategory: React.FC<IPropsUnitProduct> = ({ item, t }) => {
       <Box display="flex" justifyContent={"center"} columnGap={1}>
         {/* <DeleteCategory t={t} id={item?._id} /> */}
 
-        <UpdateCategory t={t} item={item} />
+        <UpdateCategory item={item} />
       </Box>
     </Card>
   );

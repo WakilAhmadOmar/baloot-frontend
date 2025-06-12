@@ -22,17 +22,14 @@ import ProductCategoriesComponent from "@/components/util/ProductCategory";
 import ProductMeansureComponent from "@/components/util/ProductMeansure";
 import { useAddProductMutation } from "@/hooks/api/definitions/product/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateProduct {
-  t: any;
-}
-const CreateProduct: React.FC<IPropsCreateProduct> = ({
-  t,
-}) => {
+
+const CreateProduct = () => {
+  const t = useTranslations("product")
   const { mutate: addProductMutation, isLoading } = useAddProductMutation();
   const method = useForm();
   const theme = useTheme();
-  const cleint = useApolloClient();
   const {
     register,
     handleSubmit,
@@ -113,7 +110,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.product?.product_added_successfully,
+          message: t("product_added_successfully"),
           status: "success",
         });
         handleOpenDialogFunction()
@@ -161,7 +158,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -173,7 +170,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.product?.create_title} </Typography>
+          <Typography variant="button">{t("create_title")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -189,7 +186,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                 {/* <Grid item mt={12} xs={18}> */}
                 <InputLabel sx={{ paddingBottom: "5px" }} required>
                   <Typography variant="subtitle2" component={"samp"}>
-                    {t?.product?.product_name}
+                    {t("product_name")}
                   </Typography>
                 </InputLabel>
                 <TextField
@@ -218,14 +215,14 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                         sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                       >
                         <Typography component={"span"}>
-                          {t?.product?.count}{" "}
+                          {t("count")}{" "}
                         </Typography>
                         <Typography component={"span"}>
                           {" "}
                           {item?.name}{" "}
                         </Typography>
                         <Typography component={"span"}>
-                          {t?.product?.in_one}
+                          {t("in_one")}
                         </Typography>
                         <Typography component={"span"}>
                           {selectedUnitProduct?.[index - 1]?.name}
@@ -254,7 +251,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                           >
-                            {t?.product?.bought_price} {item?.name}
+                            {t("bought_price")} {item?.name}
                           </InputLabel>
                           <TextField
                             fullWidth
@@ -272,7 +269,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                           >
-                            {t?.product?.sale_price} {item?.name}
+                            {t("sale_price")} {item?.name}
                           </InputLabel>
                           <TextField
                             fullWidth
@@ -292,7 +289,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
-                  {t?.product?.currency}
+                  {t("currency")}
                 </InputLabel>
                 <UserCurrenciesComponent
                   // register={register}
@@ -306,7 +303,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.product?.expirationDate}
+                  {t("expirationDate")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -323,7 +320,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
 
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1.5rem", paddingBottom: "5px" }}>
-                  {t?.product?.product_code}
+                  {t("product_code")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -339,7 +336,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
+            {t("cancel")}
           </Button>
           <Button
             color="primary"
@@ -347,7 +344,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.product?.save}
+            {t("save")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -359,7 +356,7 @@ const CreateProduct: React.FC<IPropsCreateProduct> = ({
               color="primary"
               onClick={handleOpenDialogFunction}
             >
-              {t?.product?.add_new_product}
+              {t("add_new_product")}
             </Button>
          
         </Box>

@@ -10,12 +10,11 @@ import EmptyPage from "@/components/util/emptyPage";
 import UpdateBank from "./Update";
 import { useDeleteBankMutation } from "@/hooks/api/definitions/bank/mutations/use-delete-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsBankContainer {
-  t: any;
-}
 
-const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
+const BankContainer= () => {
+  const t = useTranslations("pages")
   const { setHandleError } = useContext(AppContext);
   const [page, setPage] = useState(1);
   const { data: bankList, isLoading } = useGetBankListQuery({ page });
@@ -35,7 +34,7 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
         onSuccess: () => {
           setHandleError({
             open: true,
-            message: t?.pages?.bank?.bank_deleted_successfully,
+            message: t("bank.bank_deleted_successfully"),
             status: "success",
           });
         },
@@ -52,7 +51,7 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.bank?.Banks}
+        {t("bank.Banks")}
       </Typography>
 
       <Box
@@ -61,12 +60,8 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
           display: "flex",
         }}
       >
-        <CreateBank t={t} />
-        {/* {productsState?.count > 0 && (
-          <Box>
-            <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
-          </Box>
-        )} */}
+        <CreateBank />
+        
       </Box>
       {/* {textSearchState !== "" &&
         !loadingPage &&
@@ -80,7 +75,7 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.bank?.Nothing_Found}
+              {t("bank.Nothing_Found")}
             </Typography>
           </Box>
         )} */}
@@ -92,10 +87,10 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
             createdAt={item?.createdAt}
             id={item?._id}
             getIdToAddAction={handleDeleteFunction}
-            t={t}
-            messageTitle={t?.pages?.bank?.delete_title}
-            messageDescription={t?.pages?.bank?.delete_description}
-            UpdateComponent={<UpdateBank t={t} item={item} />}
+
+            messageTitle={t("bank.delete_title")}
+            messageDescription={t("bank.delete_description")}
+            UpdateComponent={<UpdateBank item={item} />}
             editTable
             isLoading={deleteIsLoading}
           >
@@ -113,20 +108,20 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
                 >
                   <Typography variant="caption">
                     {" "}
-                    {t.pages.bank?.Account_Number}
+                    {t("bank.Account_Number")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.accountNumber}
                   </Typography>
                   <Typography variant="caption">
-                    {t?.pages?.bank?.Current_Balance}
+                    {t("bank.Current_Balance")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.cridet?.[0]?.amount}
                     {item?.cridet?.[0]?.currencyId?.name}
                   </Typography>
                   <Typography variant="caption">
-                    {t?.pages?.bank?.Bank_Contact_Number}
+                    {t("bank.Bank_Contact_Number")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.bankPhoneNumber}
@@ -158,8 +153,8 @@ const BankContainer: React.FC<IPropsBankContainer> = ({ t }) => {
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.bank?.no_product_yet_title}
-            discription={t.pages?.bank?.no_product_yet_discription}
+            title={t("(bank.no_product_yet_title")}
+            discription={t("(bank.no_product_yet_discription")}
             // buttonText={t.pages?.bank?.Create_new_Bank}
             // onClick={handleOpenDialogFunction}
           />

@@ -28,11 +28,11 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreate {
-  t: any;
-}
-const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
+
+const CreateComponent = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
   const methods = useForm({
@@ -96,7 +96,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
             onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            dir={t?.home?.dir}
+            dir={t("dir")}
             fullWidth
           >
             <DialogTitle
@@ -109,7 +109,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
               }}
             >
               <Typography>
-                {t?.transactions?.cash_receipt_from_employees}
+                {t("cash_receipt_from_employees")}
               </Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
@@ -122,16 +122,16 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.full_name_of_employee}
+                    {t("full_name_of_employee")}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent dir={t?.home?.dir} name="payerId" />
+                  <EmployeeAutoCompleteComponent dir={t("dir")} name="payerId" />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.received_amount}
+                    {t("received_amount")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -144,19 +144,19 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.currency}
+                    {t("currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent dir={t?.home?.dir} />
+                  <UserCurrenciesComponent dir={t("dir")} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_currency}
+                    {t("calculated_currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" dir={t?.home?.dir} />
+                  <UserCurrenciesComponent name="calculatedTo" dir={t("dir")} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_amount}
+                    {t("calculated_amount")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -166,7 +166,7 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                 </Grid>
                                  <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.recipient}
+                    {t("recipient")}
                   </InputLabel>
                 </Grid>
                 <Grid item xs={4}>
@@ -178,22 +178,22 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                     <FormControlLabel
                       value="Bank"
                       control={<Radio />}
-                      label={t?.transactions?.bank}
+                      label={t("bank")}
                     />
                     <FormControlLabel
                       value="Safe"
                       control={<Radio />}
-                      label={t?.transactions?.cashbox}
+                      label={t("cashbox")}
                     />
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {accountType === "Bank" && <BankAutoComplete name="receiver" dir={t?.home?.dir}/>}
-                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" dir={t?.home?.dir} />}
+                  {accountType === "Bank" && <BankAutoComplete name="receiver" dir={t("dir")}/>}
+                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" dir={t("dir")} />}
                 </Grid>
                 <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -219,17 +219,17 @@ const CreateComponent: React.FC<IPropsCreate> = ({ t }) => {
                 onClick={handleSubmit(onSubmitFunction)}
                 loading={isLoading}
               >
-                {t?.transactions?.save}
+                {t("save")}
               </Button>
               <Button variant="outlined" onClick={handleOpenDialogFunction}>
-                {t?.transactions?.cancel}
+                {t("cancel")}
               </Button>
             </DialogActions>
           </Dialog>
         </form>
       </FormProvider>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t.transactions?.cash_payment_to_employees}
+        {t("cash_payment_to_employees")}
       </Button>
     </Box>
   );
