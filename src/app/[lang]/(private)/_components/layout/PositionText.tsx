@@ -1,12 +1,11 @@
 "use client"
 import { Box, Typography, useTheme } from "@mui/material";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
-interface IPropsPositionText {
-    t:any
-}
-const PositionText:React.FC<IPropsPositionText> = ({t}) => {
-  const theme = useTheme();
+
+const PositionText = () => {
+const t = useTranslations("position_link")
   const pathname = usePathname();
   return (
     <Box >
@@ -14,7 +13,7 @@ const PositionText:React.FC<IPropsPositionText> = ({t}) => {
         if (index === 0) {
           return (
             <Typography component={"span"} key={item}>
-              {t?.home?.home} /{" "}
+              {t("home")} /{" "}
             </Typography>
           );
         }
@@ -27,8 +26,7 @@ const PositionText:React.FC<IPropsPositionText> = ({t}) => {
               key={item}
             >
               {
-                //@ts-ignore
-                t?.position_link?.[item]
+                t(item)
               }
             </Typography>
           );
@@ -36,8 +34,7 @@ const PositionText:React.FC<IPropsPositionText> = ({t}) => {
         return (
           <Typography component="span"  key={item}>
             {
-              //@ts-ignore
-              t?.position_link?.[item]
+              t(item)
             }{" "}
             {pathname?.split("/")?.length - 2 !== index && " /"}
           </Typography>

@@ -1,17 +1,12 @@
 import { Box } from "@mui/material";
 import BankContainer from "./_Components/Container";
-import { getDictionary } from "@/dictionaries";
 
-export default async function BankPage({
-  params,
-}: {
-  params: Promise<{ lang: "en" | "fa" }>;
-}) {
-  const lang = (await params).lang;
-  const tra = await getDictionary(lang);
+
+export default async function BankPage() {
+
   return (
     <Box>
-      <BankContainer t={tra} />
+      <BankContainer  />
     </Box>
   );
 }

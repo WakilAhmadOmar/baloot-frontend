@@ -10,12 +10,12 @@ import EmptyPage from "@/components/util/emptyPage";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { AppContext } from "@/provider/appContext";
 import { UpdateBanksAccounts } from "./Update";
+import { useTranslations } from "next-intl";
 
-interface IPropsBankAccountPages {
-  t: any;
-}
 
-const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
+
+const BanksAccountsPage = () => {
+  const t = useTranslations("pages")
   const [page, setPage] = useState(1);
   const { setHandleError } = useContext(AppContext);
   const { data: bankList, isLoading } = useGetBankListQuery({ page });
@@ -59,12 +59,12 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3">
-        {t?.pages?.bank?.list_of_previous_bank_accounts}
+        {t("bank.list_of_previous_bank_accounts")}
       </Typography>
 
       <Box display={"flex"} justifyContent={"space-between"} mt={4}>
         <Box display={"flex"} width={"100%"}>
-          <AddBanksAccounts t={t} />
+          <AddBanksAccounts />
         </Box>
         {bankList?.count > 0 && (
           <Box>
@@ -100,8 +100,8 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
         >
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.bank?.no_product_yet_title}
-            discription={t.pages?.bank?.no_product_yet_discription}
+            title={t("bank.no_product_yet_title")}
+            discription={t("bank.no_product_yet_discription")}
             // buttonText={t.pages?.bank.Create_new_Bank}
             // onClick={handleOpenDialogFunction}
           />
@@ -117,17 +117,16 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               name={item?.name}
               createdAt={item?.createdAt}
               height="270px"
-              t={t}
-              messageDescription={t?.pages?.bank?.account_delete_description}
-              messageTitle={t?.pages?.bank?.account_delete_title}
+              messageDescription={t("bank.account_delete_description")}
+              messageTitle={t("bank.account_delete_title")}
               id={item?._id}
               getIdToAddAction={handleDeleteAccount}
               isLoading={deleteLoading}
-              UpdateComponent={<UpdateBanksAccounts t={t} item={item} />}
+              UpdateComponent={<UpdateBanksAccounts item={item} />}
             >
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.account_number}
+                  {t("bank.account_number")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {" "}
@@ -153,7 +152,7 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               })}
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.phone_number}
+                  {t("bank.phone_number")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.bankPhoneNumber}
@@ -161,7 +160,7 @@ const BanksAccountsPage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </Typography>
                 <Typography variant="caption" pt={2}>{item?.description}</Typography>
               </Box>

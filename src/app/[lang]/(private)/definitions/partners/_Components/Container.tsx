@@ -12,12 +12,12 @@ import { useDeletePartnerMutation } from "@/hooks/api/definitions/partner/mutati
 import { useContext } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_Components/Skeleton";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
 
-const PartnersPage: React.FC<IProps> = ({ t }) => {
+
+const PartnersPage = () => {
+  const t = useTranslations("pages")
   const { data: partnerList, isLoading } = useGetPartnerList({ page: 1 });
   const {setHandleError} = useContext(AppContext)
   const {mutate , isLoading:deleteIsLoading} = useDeletePartnerMutation()
@@ -44,7 +44,7 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.partner?.partners}
+        {t("partner.partners")}
       </Typography>
 
       <Box
@@ -53,7 +53,7 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
           display: "flex",
         }}
       >
-        <CreatePartner t={t} />
+        <CreatePartner  />
         {/* {productsState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t}/>
@@ -72,7 +72,7 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
           >
             <NotFoundIcon />
             <Typography textAlign={"center"} variant="h6" mt={2}>
-              {t?.pages?.partner?.nothing_found}
+              {t("partner.nothing_found")}
             </Typography>
           </Box>
         )} */}
@@ -86,10 +86,9 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
             getIdToAddAction={handleDeleteFunction}
             // updateProductFunction={handleUpdateProuct}
             height="150px"
-            t={t}
-            messageDescription={t?.pages?.partner?.delete_description}
-            messageTitle={t?.pages?.partner?.delete_title}
-            UpdateComponent={<UpdatePartner t={t} item={item} />}
+            messageDescription={t("partner.delete_description")}
+            messageTitle={t("partner.delete_title")}
+            UpdateComponent={<UpdatePartner item={item} />}
             editTable
             isLoading={deleteIsLoading}
           >
@@ -106,20 +105,20 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
                   rowGap={"1rem"}
                 >
                   <Typography variant="caption">
-                    {t?.pages?.partner?.percentage_of_equity}
+                    {t("partner.percentage_of_equity")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.investPercentage}%
                   </Typography>
                   <Typography variant="caption">
-                    {t?.pages?.partner?.amount_of_money_in_cash}
+                    {t("partner.amount_of_money_in_cash")}
                   </Typography>
                   <Typography variant="caption">
                     {item?.invest?.amount} {item?.invest?.currencyId?.symbol}
                   </Typography>
                   <Typography variant="caption">
                     {" "}
-                    {t?.pages?.partner?.phone_number}
+                    {t("partner.phone_number")}
                   </Typography>
                   <Typography variant="caption">{item?.phoneNumber}</Typography>
                 </Box>
@@ -133,9 +132,9 @@ const PartnersPage: React.FC<IProps> = ({ t }) => {
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.partner.no_partner_yet_title}
-            discription={t.pages?.partner.no_partner_yet_description}
-            // buttonText={t.pages?.partner.add_new_partner_button}
+            title={t("partner.no_partner_yet_title")}
+            discription={t("partner.no_partner_yet_description")}
+            // buttonText={t("partner.add_new_partner_button")}
             // onClick={handleOpenDialogFunction}
           />
         </Box>

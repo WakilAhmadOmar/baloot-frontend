@@ -27,9 +27,9 @@ import { useSchemaCrateForm } from "./create-form.schema";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useUpdateEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-update-employee-pay-off";
+import { useTranslations } from "next-intl";
 
 type UpdateFormProps = {
-  t: any;
   item: any;
 };
 
@@ -43,8 +43,8 @@ interface FormValues {
   payerType?: string;
   description?:string
 }
-const UpdateForm = ({ t, item }: UpdateFormProps) => {
-  console.log("item", item);
+const UpdateForm = ({  item }: UpdateFormProps) => {
+  const t = useTranslations("transactions")
   const defaultValues = useMemo(() => {
     return {
       amount: item?.amount || 0,
@@ -119,7 +119,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
             onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            dir={t?.home?.dir}
+            dir={t("dir")}
             fullWidth
           >
             <DialogTitle
@@ -132,7 +132,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
               }}
             >
               <Typography>
-                {t?.transactions?.update_cash_payment_to_employees}
+                {t("update_cash_payment_to_employees")}
               </Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
@@ -145,9 +145,9 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.full_name_of_customer}
+                    {t("full_name_of_customer")}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent name="receiver" />
+                  <EmployeeAutoCompleteComponent name="receiver" dir={t("dir")} />
                 </Grid>
 
                 <Grid item xs={6}>
@@ -155,7 +155,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.received_amount}
+                    {t("received_amount")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -168,19 +168,19 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.transactions?.currency}
+                    {t("currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent />
+                  <UserCurrenciesComponent dir={t("dir")} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_currency}
+                    {t("calculated_currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" />
+                  <UserCurrenciesComponent name="calculatedTo" dir={t("dir")} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.calculated_amount}
+                    {t("calculated_amount")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -190,7 +190,7 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                 </Grid>
                  <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.recipient}
+                    {t("recipient")}
                   </InputLabel>
                 </Grid>
                 <Grid item xs={4}>
@@ -198,24 +198,24 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                     <FormControlLabel
                       value="Bank"
                       control={<Radio />}
-                      label={t?.transactions?.bank}
+                      label={t("bank")}
                     />
                     <FormControlLabel
                       value="Safe"
                       control={<Radio />}
-                      label={t?.transactions?.cashbox}
+                      label={t("cashbox")}
                     />
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {payerType === "Bank" && <BankAutoComplete name="payerId" />}
+                  {payerType === "Bank" && <BankAutoComplete name="payerId" dir={t("dir")} />}
                   {payerType === "Safe" && (
-                    <CashBoxAutoComplete name="payerId" />
+                    <CashBoxAutoComplete name="payerId"  dir={t("dir")}/>
                   )}
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.transactions?.description}
+                    {t("description")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -241,10 +241,10 @@ const UpdateForm = ({ t, item }: UpdateFormProps) => {
                 onClick={handleSubmit(onSubmitFunction)}
                 loading={isLoading}
               >
-                {t?.transactions?.save}
+                {t("save")}
               </Button>
               <Button variant="outlined" onClick={handleOpenDialogFunction}>
-                {t?.transactions?.cancel}
+                {t("cancel")}
               </Button>
             </DialogActions>
           </Dialog>

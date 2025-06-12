@@ -1,12 +1,11 @@
-import { getDictionary } from "@/dictionaries";
+
 import ExpensesContainer from "./_Components/Container";
 
-export default async function ReceiveEmployeePage({params}:{ params: Promise<{ lang: 'en' | 'fa' }>}) {
-  const lang = (await params).lang
-  const tra = await getDictionary(lang)
+export default async function ReceiveEmployeePage() {
+
   return (
     <div >
-       <ExpensesContainer t={tra} />
+       <ExpensesContainer  />
 
     </div>
   );

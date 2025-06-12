@@ -15,10 +15,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function Create({ t }: { t: any }) {
+export function Create() {
+  const t = useTranslations("pages")
   const theme = useTheme();
   const {setHandleError}= useContext(AppContext)
   const {
@@ -36,7 +38,7 @@ export function Create({ t }: { t: any }) {
     mutate(data, {
       onSuccess: () => {
         setHandleError({
-          message:t?.pages?.unit?.create_successfully,
+          message:t("unit.create_successfully"),
           type: "success",
           open: true,
         });
@@ -61,7 +63,7 @@ export function Create({ t }: { t: any }) {
         mb={2}
       >
         <Button variant="contained" onClick={handleOpenDialogFunction}>
-          {t?.pages?.unit?.add_new_unit}
+          {t("unit.add_new_unit")}
         </Button>
       </Box>
       <Dialog
@@ -69,7 +71,7 @@ export function Create({ t }: { t: any }) {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir="rtl"
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -81,7 +83,7 @@ export function Create({ t }: { t: any }) {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.pages?.unit?.new_unit}</Typography>
+          <Typography variant="button">{t("unit.new_unit")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -95,7 +97,7 @@ export function Create({ t }: { t: any }) {
                   required
                   error={!!errors?.name}
                 >
-                  {t?.pages?.unit?.unit_name}
+                  {t("unit.unit_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -106,7 +108,7 @@ export function Create({ t }: { t: any }) {
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>
-                    {t?.pages?.unit?.unit_name_is_required}
+                    {t("unit.unit_name_is_required")}
                   </Typography>
                 )}
               </Grid>
@@ -117,7 +119,7 @@ export function Create({ t }: { t: any }) {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.unit?.cancel}
+            {t("unit.cancel")}
           </Button>
           <Button
             color="primary"
@@ -125,7 +127,7 @@ export function Create({ t }: { t: any }) {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.unit?.save}
+            {t("unit.save")}
           </Button>
         </DialogActions>
       </Dialog>

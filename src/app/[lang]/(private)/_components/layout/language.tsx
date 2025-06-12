@@ -12,13 +12,14 @@ import {
   import UsaFlag from "../../../../../assets/images/usa-flag.jpg"
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface IPropsLanguage {
-    t:any
     lang:string
 }
 
-  const Language:React.FC<IPropsLanguage> = ({t , lang}) => {
+  const Language:React.FC<IPropsLanguage> = ({ lang}) => {
+    const t = useTranslations("home")
     const theme = useTheme()
     const pathname = usePathname()
     const [language, setLanguage] = useState<string | null>(lang);
@@ -61,13 +62,13 @@ interface IPropsLanguage {
               style={{ borderRadius: "50%" }}
               alt={"fa"}
             />
-            <Typography>{language === "fa" ? t?.home?.fa : t?.home?.en}</Typography>
+            <Typography>{language === "fa" ? t("fa") : t("en")}</Typography>
           </Box>
         )}
       >
         <MenuItem
           value={"fa"}
-          dir={t?.home?.dir}
+          dir={t("dir")}
           sx={{ display: "flex", columnGap: 1, justifyContent: "flex-start" }}
         >
         <Link href={pathname?.replace("/en", "/fa")}>
@@ -79,13 +80,13 @@ interface IPropsLanguage {
             style={{ borderRadius: "50%" }}
             alt={"fa"}
           />
-          <ListItemText primary={t?.home?.fa} sx={{ textAlign: "start" }} />
+          <ListItemText primary={t("fa")} sx={{ textAlign: "start" }} />
           </Box>
         </Link>
         </MenuItem>
         <MenuItem
           value={"en"}
-          dir={t?.home?.dir}
+          dir={t("dir")}
           sx={{ display: "flex", columnGap: 1, justifyContent: "flex-start" }}
         >
         <Link href={pathname?.replace("/fa", "/en")}>
@@ -97,7 +98,7 @@ interface IPropsLanguage {
             style={{ borderRadius: "50%" }}
             alt={""}
           />
-          <ListItemText primary={t?.home?.en} sx={{ textAlign: "start" }} />
+          <ListItemText primary={t("en")} sx={{ textAlign: "start" }} />
         </Box>
         </Link>
         </MenuItem>

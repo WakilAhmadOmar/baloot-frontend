@@ -5,6 +5,9 @@ import AppContextProvider from "@/provider/appContext";
 import Paper from "@mui/material/Paper";
 import ApolloManager from "@/graphql/client";
 import { ReactNode } from "react";
+import { NextIntlClientProvider } from "next-intl"
+import { getLocale, getMessages, getTranslations } from "next-intl/server"
+// import { dmSans, vazirmatn, yakan } from "@config/font"
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,15 +21,20 @@ export default async function RootLayout({
   children: ReactNode;
 
 }>) {
- 
+  const locale = await getLocale()
+ const messages = await getMessages()
   return (
-    <html lang="en">
+    <html  lang={locale}
+      dir={locale === "en" ? "ltr" : "rtl"}>
       <body>
         <ApolloManager>
           <AppContextProvider>
+          <NextIntlClientProvider messages={messages}>
+          
             <ThemeProviderComponent>
               <Paper sx={{minHeight:"100vh"}}>{children}</Paper>
             </ThemeProviderComponent>
+          </NextIntlClientProvider>
           </AppContextProvider>
         </ApolloManager>
       </body>

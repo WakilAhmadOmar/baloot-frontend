@@ -18,12 +18,12 @@ import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
 
-const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
+
+const ReceiveCashContainer = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
  
@@ -51,10 +51,10 @@ const handleDeleteFunction = (id:string) => {
     <Box>
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
-          {t?.transactions?.cash_receipt_from_employees}
+          {t("cash_receipt_from_employees")}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
-          <CreateComponent t={t} />
+          <CreateComponent  />
 
           <Box display={"flex"} columnGap={"2rem"} alignItems={"center"}>
             <IconButton>
@@ -76,13 +76,12 @@ const handleDeleteFunction = (id:string) => {
           key={item?._id}
           name={item?.payerId?.name}
           createdAt={item?.createdAt}
-          t={t}
-          messageDescription={t?.transactions?.description_delete_message}
-          messageTitle={t?.transactions?.title_delete_message}
+          messageDescription={t("description_delete_message")}
+          messageTitle={t("title_delete_message")}
           id={item?._id}
           getIdToAddAction={handleDeleteFunction}
           // updateProductFunction={handleUpdateFunction}
-          UpdateComponent={<UpdateForm t={t} item={item} />}
+          UpdateComponent={<UpdateForm  item={item} />}
           isLoading={deleteIsLoading}
         >
           <Box
@@ -91,19 +90,19 @@ const handleDeleteFunction = (id:string) => {
             rowGap={"1rem"}
           >
             <Typography variant="caption">
-              {t?.transactions?.received_amount}
+              {t("received_amount")}
             </Typography>
             <Typography variant="caption">{item?.amount} {item?.currencyId?.symbol}</Typography>
             <Typography variant="caption">
-              {t?.transactions?.calculated_amount}
+              {t("calculated_amount")}
             </Typography>
             <Typography variant="caption">{item?.amountCalculated} {item?.calculatedTo?.symbol}</Typography>
             <Typography variant="caption">
-              {t?.transactions?.recipient}
+              {t("recipient")}
             </Typography>
             <Typography variant="caption">{item?.receiver?.name}</Typography>
             <Typography variant="caption">
-              {t?.transactions?.description}
+              {t("description")}
             </Typography>
             <Typography variant="caption">
               {item?.description}
@@ -138,7 +137,7 @@ const handleDeleteFunction = (id:string) => {
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             discription=""
-            title={t?.transactions?.no_receipts_have_been_recorded}
+            title={t("no_receipts_have_been_recorded")}
           />
         </Box>
       )}

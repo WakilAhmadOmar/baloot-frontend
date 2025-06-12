@@ -23,12 +23,13 @@ import ProductMeansureComponent from "@/components/util/ProductMeansure";
 import { useAddProductMutation } from "@/hooks/api/definitions/product/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateProductMutation } from "@/hooks/api/definitions/product/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsUpdateProduct {
   product?: any;
-  t: any;
 }
-const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
+const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
+  const t = useTranslations("product")
   const { mutate: updateProductMutation, isLoading } =
     useUpdateProductMutation();
   const theme = useTheme();
@@ -132,7 +133,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
         onSuccess: () => {
           setHandleError({
             open: true,
-            message: t?.product?.product_updated_successfully,
+            message: t("product_updated_successfully"),
             status: "success",
           });
           handleOpenDialogFunction();
@@ -181,7 +182,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -193,7 +194,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.product?.update_product} </Typography>
+          <Typography variant="button">{t("update_product")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -209,7 +210,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
                 {/* <Grid item mt={12} xs={18}> */}
                 <InputLabel sx={{ paddingBottom: "5px" }} required>
                   <Typography variant="subtitle2" component={"samp"}>
-                    {t?.product?.product_name}
+                    {t("product_name")}
                   </Typography>
                 </InputLabel>
                 <TextField
@@ -238,14 +239,14 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
                         sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                       >
                         <Typography component={"span"}>
-                          {t?.product?.count}{" "}
+                          {t("count")}{" "}
                         </Typography>
                         <Typography component={"span"}>
                           {" "}
                           {item?.name}{" "}
                         </Typography>
                         <Typography component={"span"}>
-                          {t?.product?.in_one}
+                          {t("in_one")}
                         </Typography>
                         <Typography component={"span"}>
                           {selectedUnitProduct?.[index - 1]?.name}
@@ -278,7 +279,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                           >
-                            {t?.product?.bought_price} {item?.name}
+                            {t("bought_price")} {item?.name}
                           </InputLabel>
                           <TextField
                             fullWidth
@@ -297,7 +298,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                           >
-                            {t?.product?.sale_price} {item?.name}
+                            {t("sale_price")} {item?.name}
                           </InputLabel>
                           <TextField
                             fullWidth
@@ -318,7 +319,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
-                  {t?.product?.currency}
+                  {t("currency")}
                 </InputLabel>
                 <UserCurrenciesComponent
                   name={"currencyId"}
@@ -330,7 +331,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.product?.expirationDate}
+                  {t("expirationDate")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -347,7 +348,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
 
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1.5rem", paddingBottom: "5px" }}>
-                  {t?.product?.product_code}
+                  {t("product_code")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -363,7 +364,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
+            {t("cancel")}
           </Button>
           <Button
             color="primary"
@@ -371,7 +372,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ t, product }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.product?.save}
+            {t("save")}
           </Button>
         </DialogActions>
       </Dialog>

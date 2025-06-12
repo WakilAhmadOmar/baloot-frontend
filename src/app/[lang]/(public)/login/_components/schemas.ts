@@ -5,10 +5,10 @@ const useSchemaLoginForm = (t:any) => {
 
   return Yup.object().shape({
     email: Yup.string()
-      .email(t.pages?.login?.validate_email)
-      .required(t?.pages?.login?.enter_your_email),
+      .email(t("login.validate_email"))
+      .required(t("login.enter_your_email")),
     password: Yup.string()
-      .required(t?.pages?.login?.enter_your_password),
+      .required(t("login.enter_your_password")),
   });
 };
 

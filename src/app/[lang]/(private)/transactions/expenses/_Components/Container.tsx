@@ -20,10 +20,10 @@ import { useDeleteConsumptionMutation } from "@/hooks/api/transactions/mutations
 import { AppContext } from "@/provider/appContext";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
-type ExpensesProps = {
-  t: any;
-};
-const RegistrationExpensesPage = ({ t }: ExpensesProps) => {
+import { useTranslations } from "next-intl";
+
+const RegistrationExpensesPage = () => {
+  const t = useTranslations("transactions")
   const {setHandleError} = useContext(AppContext)
   const theme = useTheme();
   const [page, setPage] = useState(1);
@@ -57,10 +57,10 @@ const handleDeleteFunction = (id:string) => {
     <Box>
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
-          {t?.transactions?.consumptions}
+          {t("consumptions")}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
-          <CreateCreate t={t} />
+          <CreateCreate  />
 
           <Box display={"flex"} columnGap={"2rem"} alignItems={"center"}>
             <IconButton>
@@ -80,12 +80,11 @@ const handleDeleteFunction = (id:string) => {
             key={item?._id}
             name={item?.consumptionTypeId?.name}
             createdAt={item?.createdAt}
-            messageDescription={t?.transactions?.description_delete_message}
-            messageTitle={t?.transactions?.title_delete_message}
+            messageDescription={t("description_delete_message")}
+            messageTitle={t("title_delete_message")}
             id={item?._id}
-            t={t}
             getIdToAddAction={handleDeleteFunction}
-             UpdateComponent={<UpdateForm t={t} item={item} />}
+             UpdateComponent={<UpdateForm  item={item} />}
              isLoading={deleteIsLoading}
           >
             <Box
@@ -94,17 +93,17 @@ const handleDeleteFunction = (id:string) => {
               rowGap={"1rem"}
             >
               <Typography variant="caption">
-                {t?.transactions?.payed_amount}
+                {t("payed_amount")}
               </Typography>
               <Typography variant="caption">
                 {item?.amount} {item?.currencyId?.symbol}
               </Typography>
               <Typography variant="caption">
-                {t?.transactions?.payer}
+                {t("payer")}
               </Typography>
               <Typography variant="caption">{item?.payer?.name}</Typography>
               <Typography variant="caption">
-                {t?.transactions?.description}
+                {t("description")}
               </Typography>
               <Typography variant="caption">{item?.description}</Typography>
             </Box>
@@ -135,7 +134,7 @@ const handleDeleteFunction = (id:string) => {
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             discription=""
-            title={t?.transactions?.no_expenses_have_been_recorded}
+            title={t("no_expenses_have_been_recorded")}
           />
         </Box>
       )}
@@ -144,4 +143,3 @@ const handleDeleteFunction = (id:string) => {
 };
 
 export default RegistrationExpensesPage;
-RegistrationExpensesPage.requireAuth = true;

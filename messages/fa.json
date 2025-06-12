@@ -123,6 +123,7 @@
     "Inter_Warehouse_Transfer_Report": "گزارش اجناس انتقال شد بین گدام ها"
   },
   "product": {
+    "dir":"rtl",
     "category": "دسته بندی",
     "product_code": "کد محصول",
     "old_amount": "موجودی گذشته",
@@ -167,7 +168,8 @@
 
   },
   "position_link": {
-    "": "صحفه اصلی",
+    "fa": "صحفه اصلی",
+    "home": "خانه",
     "journal": "روز نامچه",
     "definitions": "تعریفات",
     "definitionUnit": "تعریف واحدات",
@@ -184,9 +186,22 @@
     "partners": "تعریف شرکاه",
     "accounts": "ثبت حساب ها",
     "customers": "ثبت حساب مشتریان",
-    "employees": "ثبت حساب کارمندان"
+    "employees": "ثبت حساب کارمندان",
+    "currencies":"ارز ها",
+    "product-category":"دسته بندی اجناس ",
+    "external-income":"عواید بیرونی",
+    "cash-box":"ثبت حساب صندوق ها",
+    "banks":"ثبت حساب بانک ها",
+    "receive-customer":"دریافت نقد از مشتری",
+    "transactions":"دریافت و پرداخت های نقد",
+    "receive-employee":"دریافت نقد از کارمند",
+    "payment-customer":"پرداخت نقد به مشتری",
+    "payment-employee":"پرداخت نقد به کارمند",
+    "expenses":"مصارفات",
+    "employee-salary":"ثبت معاش کارمندان "
   },
   "pages": {
+        "dir": "rtl",
     "currency": {
       "message_title_delete": "آیا مطمئیند این ارز را حذف کنید؟",
       "message_description_delete": " این ارز حذف شود دوباره به آن دسترسی نخواهید داشت.",
@@ -256,6 +271,7 @@
       "bank_deleted_successfully":"بانک موافقانه پاک شد"
     },
     "cashbox": {
+      "safes":"صندوق ها",
       "New_Cashbox_Information": "مشخصات صندوق جدید",
       "Cashbox_Name": " نام صندوق",
       "Cashier": "صندوق دار",
@@ -444,6 +460,9 @@
     }
   },
   "transactions": {
+    "currency_is_required":"انتخاب ارز حتمی است.",
+    "dir":"rtl",
+    "customer":"مشتری",
     "cash_receipt_from_customer": "دریافت نقد از مشتری",
     "update_cash_receipt_from_customer": "اصلاح دریافت نقد از مشتری",
     "cash_payment_to_customer": "پرداخت نقد به مشتری",
@@ -487,7 +506,8 @@
     "monthly_for": "بابت ماه",
     "salary_amount": " مقدار معاش",
     "employee_salary_added_successfully": " معاش کارمند با موفقیت ثبت شد",
-    "no_salary_has_been_recorded": "هیچ معاشی ثبت نشده است"
+    "no_salary_has_been_recorded": "هیچ معاشی ثبت نشده است",
+    "amount_is_required":"مقدار حتمی است"
   },
   "numberToWord": {
     "zero": " صفر",

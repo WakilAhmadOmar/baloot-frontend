@@ -16,14 +16,16 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, Edit } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface IPropsUpdate {
-  t: any;
+
   item: any;
 }
-export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
+export const UpdateCategory = ({  item }: IPropsUpdate) => {
+  const t = useTranslations("product")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -48,7 +50,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
           setHandleError({
             open: true,
             type: "success",
-            message: t?.product?.this_category_updated_successfully,
+            message: t("this_category_updated_successfully"),
           });
           setOpenDialog(false);
         },
@@ -72,7 +74,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -85,7 +87,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
           }}
         >
           <Typography variant="button">
-            {t?.product?.update_category}
+            {t("update_category")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
@@ -99,7 +101,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
                   required
                 >
-                  {t?.product?.category_name}
+                  {t("category_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -120,7 +122,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
+            {t("cancel")}
           </Button>
           <Button
             color="primary"
@@ -128,7 +130,7 @@ export const UpdateCategory = ({ t, item }: IPropsUpdate) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.product?.save}
+            {t("save")}
           </Button>
         </DialogActions>
       </Dialog>

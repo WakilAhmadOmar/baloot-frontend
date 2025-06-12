@@ -17,14 +17,11 @@ import { useContext, useState } from "react";
 import { useForm , FormProvider } from "react-hook-form";
 import { useAddCustomerMutation } from "@/hooks/api/definitions/customer/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateCustomer {
-  t: any;
-}
-const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
- 
-  t,
-}) => {
+
+const CreateCustomer = () => {
+  const t = useTranslations("pages")
   const method = useForm()
   const {
     register,
@@ -56,8 +53,8 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
       onSuccess:() => {
         setHandleError({
           open: true,
-        message: t?.pages?.Customers?.customer_saved_successfully,
-        status: "success",
+        message: t("Customers.customer_saved_successfully"),
+        type: "success",
         })
         setOpenDialog(false)
       },
@@ -65,7 +62,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
         setHandleError({
         open: true,
         message: error.message,
-        status: "error",
+        type: "error",
       });
       }
     })
@@ -79,7 +76,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -91,7 +88,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.pages?.Customers?.add_new_customer}</Typography>
+          <Typography>{t("Customers.add_new_customer")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -101,7 +98,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             <Grid container spacing={2} sx={{mt:"1rem"}}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Customers?.customer_name}
+                  {t("Customers.customer_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -112,7 +109,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Customers?.contact_number}
+                  {t("Customers.contact_number")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -124,7 +121,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Customers?.address}
+                  {t("Customers.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -145,10 +142,10 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.Customers?.save}
+            {t("Customers.save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.Customers?.cancel}
+            {t("Customers.cancel")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -161,7 +158,7 @@ const CreateCustomer: React.FC<IPropsCreateCustomer> = ({
             color="primary"
             onClick={handleOpenDialogFunction}
           >
-            {t?.pages?.Customers?.add_new_customer}
+            {t("Customers.add_new_customer")}
           </Button>
         </Box>
     

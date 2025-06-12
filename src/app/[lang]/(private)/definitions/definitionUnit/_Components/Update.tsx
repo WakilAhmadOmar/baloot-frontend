@@ -16,10 +16,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, Edit } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function UpdateUnit({ t , item}: { t: any , item:any }) {
+export function UpdateUnit({  item}: {  item:any }) {
+  const t = useTranslations("pages")
   const theme = useTheme();
   const {setHandleError}= useContext(AppContext)
   const {
@@ -41,7 +43,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
     mutate({measureId:item?._id , name:data?.name}, {
       onSuccess: () => {
         setHandleError({
-          message:t?.pages?.unit?.create_successfully,
+          message:t("unit.create_successfully"),
           type: "success",
           open: true,
         });
@@ -83,7 +85,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.pages?.unit?.update_unit}({item?.name})</Typography>
+          <Typography variant="button">{t("unit.update_unit")}({item?.name})</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -97,7 +99,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
                   required
                   error={!!errors?.name}
                 >
-                  {t?.pages?.unit?.unit_name}
+                  {t("unit.unit_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -108,7 +110,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>
-                    {t?.pages?.unit?.unit_name_is_required}
+                    {t("unit.unit_name_is_required")}
                   </Typography>
                 )}
               </Grid>
@@ -119,7 +121,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.unit?.cancel}
+            {t("unit.cancel")}
           </Button>
           <Button
             color="primary"
@@ -127,7 +129,7 @@ export function UpdateUnit({ t , item}: { t: any , item:any }) {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.unit?.save}
+            {t("unit.save")}
           </Button>
         </DialogActions>
       </Dialog>

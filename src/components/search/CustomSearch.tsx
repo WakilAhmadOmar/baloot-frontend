@@ -3,15 +3,16 @@ import { InputAdornment, TextField, Divider, useTheme } from "@mui/material";
 import { SearchNormal1 } from "iconsax-react";
 import { debounce } from "lodash";
 import { SearchIcon } from "@/icons";
+import { useTranslations } from "next-intl";
 
 
 interface IPropsSearch {
   getTextSearchFunction?: (text: string) => void;
-  t:any 
+
 }
 
-const CustomSearch: React.FC<IPropsSearch> = ({ getTextSearchFunction  , t}) => {
-
+const CustomSearch: React.FC<IPropsSearch> = ({ getTextSearchFunction  }) => {
+const t = useTranslations("home")
   const theme = useTheme();
   const debounceFunction = debounce((data: string) => {
     if (getTextSearchFunction) {
@@ -28,7 +29,7 @@ const CustomSearch: React.FC<IPropsSearch> = ({ getTextSearchFunction  , t}) => 
     <TextField
       fullWidth
       size="small"
-      placeholder={t.home.search}
+      placeholder={t("search")}
       onChange={handleChangeTextField}
       sx={{
         position: "relative",
@@ -51,7 +52,7 @@ const CustomSearch: React.FC<IPropsSearch> = ({ getTextSearchFunction  , t}) => 
                 borderLeft: `1px solid ${theme.palette.grey[200]}`,
                 top: 0,
                 bottom: 0,
-                ...(t.home.dir === "ltr" ? { left: 40 } : { right: 35 }),
+                ...(t("dir") === "ltr" ? { left: 40 } : { right: 35 }),
               }}
             />
             <SearchIcon />

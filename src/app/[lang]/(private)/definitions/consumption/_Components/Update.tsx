@@ -17,13 +17,15 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateConsumptionTypeMutation } from "@/hooks/api/definitions/consumption/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsCreateConsumetion {
-  t: any;
   item: any;
 }
 
-const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
+const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({  item }) => {
+
+  const t = useTranslations("pages")
   const {
     register,
     handleSubmit,
@@ -52,7 +54,7 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.Expenses?.expense_type_updated_successfully,
+          message: t("Expenses.expense_type_updated_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -74,7 +76,7 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -86,7 +88,7 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.pages?.Expenses.New_Expense} </Typography>
+          <Typography>{t("ExpensesNew_Expense")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -96,7 +98,7 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.Expenses?.Expense_Name}
+                  {t("Expenses.Expense_Name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -117,10 +119,10 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ t, item }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.Expenses?.Save}
+            {t("Expenses.Save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.Expenses?.Cancel}
+            {t("Expenses.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

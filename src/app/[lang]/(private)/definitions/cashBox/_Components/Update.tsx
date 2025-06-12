@@ -19,13 +19,15 @@ import { useForm, FormProvider } from "react-hook-form";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateSafeMutation } from "@/hooks/api/definitions/safe/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsCreateCashBox {
   item: any;
-  t: any;
+
 }
 
-const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
+const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
+  const t = useTranslations("pages")
   const method = useForm({
     defaultValues: {
       name: item?.name,
@@ -61,7 +63,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.cashbox?.safe_updated_successfully,
+          message: t("cashbox.safe_updated_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -83,7 +85,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -95,7 +97,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.pages?.cashbox?.New_Cashbox_Information}</Typography>
+          <Typography>{t("cashbox.New_Cashbox_Information")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -105,7 +107,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.cashbox?.Cashbox_Name}
+                  {t("cashbox.Cashbox_Name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -116,13 +118,13 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.cashbox?.Cashier}
+                  {t("cashbox.Cashier")}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.cashbox?.Cashier_Contact_Number}
+                  {t("cashbox.Cashier_Contact_Number")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -144,10 +146,10 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item, t }) => {
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.cashbox?.Save}
+            {t("cashbox.Save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.cashbox?.Cancel}
+            {t("cashbox.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

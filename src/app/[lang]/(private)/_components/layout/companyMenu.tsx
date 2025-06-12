@@ -10,17 +10,16 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
-interface IPropsCompanyMenu {
-    t:any
-}
 
-const CompanyMenuComponent:React.FC<IPropsCompanyMenu> = ({t}) => {
+
+const CompanyMenuComponent= () => {
   const router = useRouter();
-
+const t = useTranslations("home")
 const pathname = usePathname()
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -69,7 +68,7 @@ const pathname = usePathname()
           },
         }}
       >
-        <Box sx={{ width: "250px", position: "relative" }} dir={t?.home?.dir}>
+        <Box sx={{ width: "250px", position: "relative" }} dir={t("dir")}>
           <Box
             sx={{
               display: "grid",
@@ -85,7 +84,7 @@ const pathname = usePathname()
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
-                    {t?.home?.company_profile}
+                    {t("company_profile")}
                   </Typography>
                 </MenuItem>
               </Link>
@@ -94,7 +93,7 @@ const pathname = usePathname()
               <Link href={"/users"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
-                    {t?.home?.users_permissions}
+                    {t("users_permissions")}
                   </Typography>
                 </MenuItem>
               </Link>
@@ -103,7 +102,7 @@ const pathname = usePathname()
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
-                    {t?.home?.team_info}
+                    {t("team_info")}
                   </Typography>
                 </MenuItem>
               </Link>
@@ -112,7 +111,7 @@ const pathname = usePathname()
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
-                    {t?.home?.about_alpha}
+                    {t("about_alpha")}
                   </Typography>
                 </MenuItem>
               </Link>
@@ -120,7 +119,7 @@ const pathname = usePathname()
             <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem onClick={handleLogout}>
-                  <Typography variant="subtitle2">{t?.home?.logout}</Typography>
+                  <Typography variant="subtitle2">{t("logout")}</Typography>
                 </MenuItem>
               </Link>
             </Box>
@@ -135,7 +134,7 @@ const pathname = usePathname()
               zIndex: 1000,
               transform: "rotate(45deg)",
               borderRadius: "8px",
-              ...(t?.home?.dir === "rtl" ? { left: "20px" } : { right: "20px" }),
+              ...(t("dir") === "rtl" ? { left: "20px" } : { right: "20px" }),
             }}
           ></Box> */}
         </Box>

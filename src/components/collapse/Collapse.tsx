@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { ArrowDown2, Trash, Edit, ArrowUp2, InfoCircle } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 // height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms
@@ -26,7 +27,6 @@ interface IProps {
   height?: string;
   messageTitle:string,
   messageDescription:string,
-  t:any
   editTable?:boolean,
   UpdateComponent?:React.ReactNode,
   isLoading?:boolean
@@ -48,13 +48,13 @@ const CollapseComponent: React.FC<IProps> = ({
   getIdToAddAction,
   updateProductFunction,
   height,
-  t,
   messageDescription,
   messageTitle,
   editTable= true,
   UpdateComponent,
   isLoading= false
 }) => {
+  const t = useTranslations()
   const theme = useTheme();
   const [handleCollapseState, setHandleCollapseState] = useState(false);
   const [handleDeleteState, setHandleDeleteState] = useState(false);
@@ -95,7 +95,7 @@ const CollapseComponent: React.FC<IProps> = ({
         keepMounted
         onClose={handleDeleteFunction}
         aria-describedby="alert-dialog-slide-description"
-        dir={t?.home?.dir}
+        dir={t("home.dir")}
       >
         <DialogTitle className="dialogTitleDelete" display={"flex"} gap={1} alignItems={"center"}justifyContent={"space-between"}>
           <Typography variant="h5">{messageTitle}</Typography>
@@ -109,14 +109,14 @@ const CollapseComponent: React.FC<IProps> = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions className="dialogActionDelete" sx={{ display:"flex" , gap:"1rem"}}>
-          <Button onClick={handleDeleteFunction} variant="outlined">{t?.product?.cancel}</Button>
+          <Button onClick={handleDeleteFunction} variant="outlined">{t("product.cancel")}</Button>
           <Button
             onClick={handleDeleteThisItem}
             variant="contained"
             color="primary"
             loading={isLoading}
           >
-            {t?.product?.yes}
+            {t("product.yes")}
           </Button>
         </DialogActions>
       </Dialog>

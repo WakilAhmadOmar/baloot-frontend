@@ -20,13 +20,11 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 
 import { useAddPartnerMutation } from "@/hooks/api/definitions/partner/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateProduct {
-  t: any;
-}
-const CreatePartner: React.FC<IPropsCreateProduct> = ({
-  t,
-}) => {
+
+const CreatePartner = () => {
+  const t = useTranslations("pages")
   const methods = useForm();
   const {mutate , isLoading } = useAddPartnerMutation()
   const {setHandleError} = useContext(AppContext)
@@ -69,7 +67,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
         setHandleError({
           open:true,
           type:"success",
-          message:t?.pages?.partner?.this_partner_saved_successfully
+          message:t("partner.this_partner_saved_successfully")
         })
         handleOpenDialogFunction()
       },
@@ -92,7 +90,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
+          dir={t("dir")}
           fullWidth
         >
           <DialogTitle
@@ -105,7 +103,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
             }}
           >
             <Typography variant="button">
-              {t?.pages?.partner?.new_partner_details}
+              {t("partner.new_partner_details")}
             </Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
               <CloseSquare />
@@ -118,7 +116,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                   <InputLabel sx={{ paddingBottom: "5px" }} required>
                     <Typography variant="subtitle2" component={"samp"}>
                       {" "}
-                      {t?.pages?.partner?.first_name}
+                      {t("partner.first_name")}
                     </Typography>
                   </InputLabel>
                   <TextField
@@ -130,7 +128,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.partner?.last_name}
+                    {t("partner.last_name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -144,7 +142,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.pages?.partner?.investment_amount}
+                    {t("partner.investment_amount")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -159,11 +157,11 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.pages?.partner?.currency}
+                    {t("partner.currency")}
                   </InputLabel>
                   <UserCurrenciesComponent
                     name="currencyId"
-                    dir={t?.home?.dir}
+                    dir={t("dir")}
                   />
                 </Grid>
 
@@ -171,7 +169,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
                   <InputLabel
                     sx={{ marginTop: "1.5rem", paddingBottom: "5px" }}
                   >
-                    {t?.pages?.partner?.phone_number}
+                    {t("partner.phone_number")}
                   </InputLabel>
                   <TextField
                     type="number"
@@ -193,10 +191,10 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t?.pages?.partner?.save}
+              {t("partner.save")}
             </Button>
             <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t?.pages?.partner?.cancel}
+              {t("partner.cancel")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -208,7 +206,7 @@ const CreatePartner: React.FC<IPropsCreateProduct> = ({
               color="primary"
               onClick={handleOpenDialogFunction}
             >
-              {t.pages?.partner?.add_new_partner}
+              {t("partner.add_new_partner")}
             </Button>
 
         </Box>

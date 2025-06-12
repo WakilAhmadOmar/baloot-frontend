@@ -25,11 +25,11 @@ import { ArrowSwapVertical, CloseSquare, InfoCircle } from "iconsax-react";
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-    t:any
-}
-const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
+
+const DefinitionsCurrency = () => {
+  const t = useTranslations("pages")
   const {
     register,
     handleSubmit,
@@ -205,7 +205,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
         onClose={handleOpenDialogDeleteFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
       >
         <DialogTitle id="alert-dialog-title" className={"dialogTitleDelete"}>
           <Box
@@ -215,7 +215,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
             columnGap={1}
           >
             <Typography variant="h5">
-              {t?.pages?.currency?.message_title_delete}
+              {t("currency.message_title_delete")}
             </Typography>
             <InfoCircle color={theme.palette.warning.main} size={30} />
           </Box>
@@ -223,7 +223,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
         <DialogContent className="dialogContentDelete">
           <Box pt={1}>
             <Typography variant="body1">
-             {t?.pages?.currency?.message_description_delete}
+             {t("currency.message_description_delete")}
             </Typography>
           </Box>
         </DialogContent>
@@ -232,10 +232,10 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogDeleteFunction}>
-            {t?.pages?.currency?.cancel}
+            {t("currency.cancel")}
           </Button>
           <Button color="primary" variant="contained" onClick={deleteFunction}>
-            {t?.pages?.currency?.yes}
+            {t("currency.yes")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -244,7 +244,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -256,7 +256,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t?.pages?.currency?.add_new_currency}</Typography>
+          <Typography variant="button">{t("currency.add_new_currency")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -269,7 +269,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
                   required
                 >
-                  {t?.pages?.currency?.currency_name}
+                  {t("currency.currency_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -279,7 +279,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>
-                    {t?.pages?.currency?.currency_name_is_required}
+                    {t('currency.currency_name_is_required')}
                   </Typography>
                 )}
               </Grid>
@@ -288,7 +288,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
                   required
                 >
-                  {t?.pages?.currency?.symbol}
+                  {t("currency.symbol")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -298,12 +298,12 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                 />
                 {errors?.symbol?.type === "required" && (
                   <Typography color="error" p={1}>
-                    {t?.pages?.currency?.symbol_is_required}
+                    {t("currency.symbol_is_required")}
                   </Typography>
                 )}
               </Grid>
               <Grid item xs={12} mt={5}>
-                <Typography variant="button">{t?.pages?.currency?.set_daily_price}</Typography>
+                <Typography variant="button">{t("currency.set_daily_price")}</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Box
@@ -318,7 +318,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t?.pages?.currency?.daily_rate}
+                      {t("currency.daily_rate")}
                     </InputLabel>
                     <TextField
                       fullWidth
@@ -329,7 +329,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                     />
                     {errors?.rate?.type === "required" && (
                       <Typography color="error" p={1}>
-                        {t?.pages?.currency?.rate_is_required}
+                        {t("currency.rate_is_required")}
                       </Typography>
                     )}
                   </Box>
@@ -349,7 +349,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t?.pages?.currency?.to} {baseCurrency?.name} ({t?.pages?.currency?.base_currency})
+                      {t("currency.to")} {baseCurrency?.name} ({t("currency.base_currency")})
                     </InputLabel>
                     <TextField
                       fullWidth
@@ -360,7 +360,7 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                     />
                     {errors?.baseRate?.type === "required" && (
                       <Typography color="error" p={1}>
-                        {t?.pages?.currency?.base_currency_is_required}
+                        {t("currency.base_currency_is_required")}
                       </Typography>
                     )}
                   </Box>
@@ -383,26 +383,26 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
           >
-            {t?.pages?.currency?.save}
+            {t("currency.save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.currency?.cancel}
+            {t("currency.cancel")}
           </Button>
         </DialogActions>
       </Dialog>
       {productUnits?.length === 0 && loadingPage === false ? (
         <Box className={"empty_page_content"}>
           <EmptyPage
-            buttonText={t?.pages?.add_new_currency}
-            discription={t?.pages?.currency?.you_have_no_currency}
+            buttonText={t("currency.add_new_currency")}
+            discription={t("currency.you_have_no_currency")}
             onClick={handleOpenDialogFunction}
-            title={t?.pages?.currency?.no_currency_registered}
+            title={t("currency.no_currency_registered")}
           />
         </Box>
       ) : (
         <Box>
           <Typography variant="h3" mb={3}>
-            {t?.pages?.currency?.define_currency}
+            {t("currency.define_currency")}
           </Typography>
           <Box
             display={"flex"}
@@ -411,10 +411,10 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
           >
             <Button variant="contained" onClick={handleOpenDialogFunction}>
               {" "}
-              {t?.pages?.currency?.add_new_currency}
+              {t("currency.add_new_currency")}
             </Button>
             <Typography variant="h3">
-              {t?.pages?.currency?.base_currency} ({baseCurrency?.symbol})
+              {t("currency.base_currency")} ({baseCurrency?.symbol})
             </Typography>
           </Box>
           <Box display={"flex"} flexWrap={"wrap"} columnGap={2} rowGap={2}>
@@ -427,7 +427,6 @@ const DefinitionsCurrency:React.FC<IProps> = ({t}) => {
                     onUpdateRate={handleUpdateRate}
                     onDelete={openDialogDeleteFunction}
                     baseCurrency={baseCurrency}
-                    t={t}
                   />
                 </Box>
               );

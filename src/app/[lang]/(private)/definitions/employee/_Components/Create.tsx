@@ -18,13 +18,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import { useAddEmployeeMutation } from "@/hooks/api/definitions/employee/mutations/use-add-mutation";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateEmployee {
-  t: any;
-}
-const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
-  t,
-}) => {
+
+const CreateEmployee = () => {
+  const t = useTranslations("pages")
   const method = useForm();
   const {
     register,
@@ -65,7 +63,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.employee?.employee_saved_successfully,
+          message: t("employee.employee_saved_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -88,7 +86,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
+          dir={t("dir")}
           fullWidth
         >
           <DialogTitle
@@ -100,7 +98,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
               borderBottom: `1px solid ${theme.palette.grey[200]}`,
             }}
           >
-            <Typography>{t?.pages?.employee?.add_new_employee}</Typography>
+            <Typography>{t("employee.add_new_employee")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
               <CloseSquare />
             </IconButton>
@@ -110,7 +108,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item mt={2} xs={6}>
                   <InputLabel sx={{ paddingBottom: "5px" }} required>
-                    {t?.pages?.employee?.name}
+                    {t("employee.name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -121,7 +119,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item mt={2} xs={6}>
                   <InputLabel sx={{ paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.fathers_name}
+                    {t("employee.fathers_name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -132,7 +130,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.date_of_birth}
+                    {t("employee.date_of_birth")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -144,7 +142,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    نمبر تذکره{t?.pages?.employee?.id_number}
+                    نمبر تذکره{t("employee.id_number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -156,7 +154,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.job_title}
+                    {t("employee.job_title")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -167,7 +165,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.start_date}
+                    {t("employee.start_date")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -182,7 +180,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.pages?.employee?.salary_amount}
+                    {t("employee.salary_amount")}
                   </InputLabel>
 
                   <TextField
@@ -198,13 +196,13 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
                   >
-                    {t?.pages?.employee?.currency}
+                    {t("employee.currency")}
                   </InputLabel>
                   <UserCurrenciesComponent />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.phone_number}
+                    {t("employee.phone_number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -216,7 +214,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.email}
+                    {t("employee.email")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -227,7 +225,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.employee?.address}
+                    {t("employee.address")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -248,10 +246,10 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t?.pages?.employee?.save}
+              {t("employee.save")}
             </Button>
             <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t?.pages?.employee?.cancel}
+              {t("employee.cancel")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -262,7 +260,7 @@ const CreateEmployee: React.FC<IPropsCreateEmployee> = ({
             color="primary"
             onClick={handleOpenDialogFunction}
           >
-            {t?.pages?.employee?.add_new_employee}
+            {t("employee.add_new_employee")}
           </Button>
         </Box>
       </FormProvider>

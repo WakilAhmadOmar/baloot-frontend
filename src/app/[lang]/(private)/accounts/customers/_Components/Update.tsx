@@ -26,19 +26,20 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsAddCashBox {
-  t: any;
   item: any;
 }
 
-export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) => {
+export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
+  const t = useTranslations("pages")
   const methods = useForm();
   const { register, handleSubmit, reset } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [employeeDetails, setEmployeeDetails] = useState<any>();
+  const [bankDetails, setBankDetails] = useState<any>();
   const { mutate: addFirstPeriodMutation, isLoading } =
     useAddFirstPeriodOfCreditMutation();
 
@@ -47,7 +48,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
   };
 
   const handleAddNewCredit = () => {
-    setEmployeeDetails((prevState: any) => ({
+    setBankDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: [
         ...(prevState?.firstPeriodCredit?.length > 0
@@ -68,13 +69,13 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
 
   useEffect(() => {
     if (item) {
-      setEmployeeDetails(item);
+      setBankDetails(item);
     }
   }, [item]);
 
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
-    setEmployeeDetails((prevState: any) => ({
+    setBankDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
         (item: any, index: number) => index !== deleteIndex
@@ -88,7 +89,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
   ) => {
     const name = event?.target?.name;
     const value = event?.target?.value;
-    setEmployeeDetails((prevState: any) => {
+    setBankDetails((prevState: any) => {
       const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
         (item: any, inItem: number) => {
           if (index == inItem) {
@@ -108,7 +109,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
   };
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      creditObject: employeeDetails?.firstPeriodCredit?.map(
+      creditObject: bankDetails?.firstPeriodCredit?.map(
         (item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
@@ -116,7 +117,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
         })
       ),
       description: data?.description,
-      accountType: "Employee",
+      accountType: "Customer",
       accountId: item?._id,
     };
 
@@ -141,9 +142,9 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
   };
 
   const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = employeeDetails?.firstPeriodCredit;
+    const allCredit = bankDetails?.firstPeriodCredit;
     allCredit[index].currencyId = currency;
-    setEmployeeDetails((prevState: any) => ({
+    setBankDetails((prevState: any) => ({
       ...prevState,
       firstPeriodCredit: allCredit,
     }));
@@ -155,7 +156,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -168,7 +169,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
           }}
         >
           <Typography>
-            {t?.pages?.employee?.update_record_previous_employee_account} (
+            {t("Customers.update_record_previous_customer_account")} (
             {item?.fullName})
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
@@ -177,21 +178,21 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            {employeeDetails?.firstPeriodCredit?.length > 0 && (
+            {bankDetails?.firstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.previous_account}
+                    {t("bank.previous_account")}
                   </InputLabel>
                 </Grid>
                 <Grid item xs={4}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.bank?.currency}
+                    {t("bank.currency")}
                   </InputLabel>
                 </Grid>
               </Grid>
             )}
-            {employeeDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+            {bankDetails?.firstPeriodCredit?.map((item: any, index: any) => {
               return (
                 <Grid
                   container
@@ -218,7 +219,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
                       name="currencyId"
-                      dir={t?.home?.dir}
+                      dir={t("dir")}
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)
@@ -249,7 +250,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
               display={"grid"}
               justifyContent={"end"}
               sx={{
-                mt: employeeDetails?.firstPeriodCredit?.length > 0 ? 0 : "1rem",
+                mt: bankDetails?.firstPeriodCredit?.length > 0 ? 0 : "1rem",
               }}
             >
               <Button
@@ -258,13 +259,13 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
                 variant="outlined"
                 onClick={handleAddNewCredit}
               >
-                {t?.pages?.bank?.new_currency}
+                {t("bank.new_currency")}
               </Button>
             </Grid>
             <Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -282,7 +283,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.bank?.Cancel}
+            {t("bank.Cancel")}
           </Button>
           <Button
             color="primary"
@@ -290,7 +291,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({ t, item }) 
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.bank?.save}
+            {t("bank.save")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -6,17 +6,17 @@ import { useGetProductCategoryList } from "@/hooks/api/definitions/product-categ
 import BoxItemCategory from "./box-item";
 import { CreateCategory } from "./Create";
 import { SkeletonComponentBox } from "../../_Components/Skeleton-box";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
-const CategoryProductPage: React.FC<IProps> = ({ t }) => {
+
+const CategoryProductPage = () => {
+  const t = useTranslations("product")
   const { data: categoryList, isLoading } = useGetProductCategoryList();
 
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.product?.categories}
+        {t("categories")}
       </Typography>
 
       <Box
@@ -25,7 +25,7 @@ const CategoryProductPage: React.FC<IProps> = ({ t }) => {
         justifyContent={"space-between"}
         mb={2}
       >
-        <CreateCategory t={t} />
+        <CreateCategory/>
 
         {/* <CustomSearch /> */}
       </Box>
@@ -34,7 +34,7 @@ const CategoryProductPage: React.FC<IProps> = ({ t }) => {
         {categoryList?.map((item: any) => {
           return (
             <Box key={item?._id} display={"grid"}>
-              <BoxItemCategory t={t} item={item} />
+              <BoxItemCategory  item={item} />
             </Box>
           );
         })}
@@ -46,8 +46,8 @@ const CategoryProductPage: React.FC<IProps> = ({ t }) => {
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.product.no_product_yet_title_category}
-            discription={t.product.no_product_yet_discription_category}
+            title={t("no_product_yet_title_category")}
+            discription={t("no_product_yet_discription_category")}
           />
         </Box>
       )}

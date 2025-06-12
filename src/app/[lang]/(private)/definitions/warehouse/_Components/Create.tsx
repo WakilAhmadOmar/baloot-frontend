@@ -18,14 +18,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useAddEntrepotMutation } from "@/hooks/api/definitions/warehouse/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-interface IPropsCreateWarehouse {
-  t: any;
-}
 
-const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
-  t,
-}) => {
+
+const CreateWarehouse = () => {
+  const t = useTranslations("pages")
   const methods = useForm();
   const {setHandleError} = useContext(AppContext)
   const {
@@ -55,7 +53,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.warehouse?.warehouse_saved_successfully,
+          message: t("warehouse.warehouse_saved_successfully"),
           status: "success",
         });
         handleOpenDialogFunction()
@@ -79,7 +77,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -91,7 +89,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography> {t?.pages?.warehouse?.add_warehouse}</Typography>
+          <Typography> {t("warehouse.add_warehouse")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -101,7 +99,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.warehouse?.warehouses}
+                  {t("warehouse.warehouses")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -116,11 +114,11 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.pages?.warehouse?.warehouse_responsible}
+                  {t("warehouse.warehouse_responsible")}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
                   name="employeeId"
-                  dir={t?.home?.dir}
+                  dir={t("dir")}
                   // getValue={handleGetEmployeeFunction}
                   // defaultValue={{
                   //   ...item?.responsible,
@@ -131,7 +129,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.warehouse?.address}
+                  {t("warehouse.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -152,10 +150,10 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.warehouse?.save}
+            {t("warehouse.save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.warehouse?.cancel}
+            {t("warehouse.cancel")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -167,7 +165,7 @@ const CreateWarehouse: React.FC<IPropsCreateWarehouse> = ({
             color="primary"
             onClick={handleOpenDialogFunction}
           >
-            {t?.pages?.warehouse?.add_warehouse}
+            {t("warehouse.add_warehouse")}
           </Button>
         </Box>
       

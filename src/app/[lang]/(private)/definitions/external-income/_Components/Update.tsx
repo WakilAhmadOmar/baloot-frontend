@@ -19,16 +19,16 @@ import { useForm } from "react-hook-form";
 import { useAddExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-update-mutation";
+import { useTranslations } from "next-intl";
 
 interface IPropsCreateConsumetion {
-  t: any;
   item: any;
 }
 
 const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
   item,
-  t,
 }) => {
+  const t = useTranslations("pages")
   const {
     register,
     handleSubmit,
@@ -58,7 +58,7 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
       onSuccess: () => {
         setHandleError({
           open: true,
-          message: t?.pages?.income?.external_income_type_updated_successfully,
+          message: t("income.external_income_type_updated_successfully"),
           status: "success",
         });
         setOpenDialog(false);
@@ -80,7 +80,7 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
         fullWidth
       >
         <DialogTitle
@@ -92,7 +92,7 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t?.pages?.income?.update_income}</Typography>
+          <Typography>{t("income.update_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -102,7 +102,7 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.pages?.income?.income_name}
+                  {t("income.income_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -123,10 +123,10 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
             onClick={handleSubmit(onSubmitFunction)}
             loading={isLoading}
           >
-            {t?.pages?.income?.save}
+            {t("income.save")}
           </Button>
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.pages?.income?.cancel}
+            {t("income.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

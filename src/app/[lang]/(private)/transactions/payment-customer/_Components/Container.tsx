@@ -18,12 +18,12 @@ import { useGetCustomerPayOffListQuery } from "@/hooks/api/transactions/queries/
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import { useDeleteCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-delete-customer-pay-off";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
 
-const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
+
+const ReceiveCashContainer = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
 
@@ -51,10 +51,10 @@ const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
     <Box>
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
-          {t?.transactions?.cash_payment_to_customer}
+          {t("cash_payment_to_customer")}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
-          <CreateComponent t={t} />
+          <CreateComponent />
 
           <Box display={"flex"} columnGap={"2rem"} alignItems={"center"}>
             <IconButton>
@@ -75,12 +75,11 @@ const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
               key={item?._id}
               name={item?.receiver?.fullName}
               createdAt={item?.createdAt}
-              t={t}
-              messageDescription={t?.transactions?.description_delete_message}
-              messageTitle={t?.transactions?.title_delete_message}
+              messageDescription={t("description_delete_message")}
+              messageTitle={t("title_delete_message")}
               id={item?._id}
               getIdToAddAction={handleDeleteFunction}
-              UpdateComponent={<UpdateForm t={t} item={item} />}
+              UpdateComponent={<UpdateForm  item={item} />}
               isLoading={deleteIsLoading}
             >
               <Box
@@ -89,25 +88,25 @@ const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
                 rowGap={"1rem"}
               >
                 <Typography variant="caption">
-                  {t?.transactions?.payed_amount}
+                  {t("payed_amount")}
                 </Typography>
                 <Typography variant="caption">
                   {item?.amount} {item?.currencyId?.symbol}
                 </Typography>
                 <Typography variant="caption">
-                  {t?.transactions?.calculated_amount}
+                  {t("calculated_amount")}
                 </Typography>
                 <Typography variant="caption">
                   {item?.amountCalculated} {item?.calculatedTo?.symbol}
                 </Typography>
                 <Typography variant="caption">
-                  {t?.transactions?.recipient}
+                  {t("recipient")}
                 </Typography>
                 <Typography variant="caption">
                   {item?.receiver?.fullName}
                 </Typography>
                 <Typography variant="caption">
-                  {t?.transactions?.description}
+                  {t("description")}
                 </Typography>
                 <Typography variant="caption">{item?.description}</Typography>
               </Box>
@@ -140,7 +139,7 @@ const ReceiveCashContainer: React.FC<IProps> = ({ t }) => {
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             discription=""
-            title={t?.transactions?.no_payments_have_been_recorded}
+            title={t("no_payments_have_been_recorded")}
           />
         </Box>
       )}

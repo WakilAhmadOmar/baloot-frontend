@@ -23,8 +23,10 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useSchemaCrateForm } from "./Create-form-schema";
 import { useSubmitEmployeeSalaryMutation } from "@/hooks/api/transactions/mutations/use-submit-employee-salary-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
 
-export const CreateCreate = ({ t }: { t: any }) => {
+export const CreateCreate = () => {
+  const t = useTranslations("transactions")
   const theme = useTheme();
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
@@ -42,7 +44,6 @@ export const CreateCreate = ({ t }: { t: any }) => {
     setOpenDialog(!openDialog);
   };
   const onSubmitFunction = (data: any) => {
-    console.log("data", data);
     submitEmployeeSalaryMutation({
       employeeId: data?.employeeId,
       creditObject: {
@@ -57,7 +58,7 @@ export const CreateCreate = ({ t }: { t: any }) => {
         methods.reset();
         setHandleError({
           open: true,
-          message: t?.transactions?.employee_salary_added_successfully,
+          message: t("employee_salary_added_successfully"),
           type: "success",
         })
       },
@@ -74,7 +75,7 @@ export const CreateCreate = ({ t }: { t: any }) => {
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t?.transactions?.add_new_salary}
+        {t("add_new_salary")}
       </Button>
       <Dialog
         open={openDialog}
@@ -95,7 +96,7 @@ export const CreateCreate = ({ t }: { t: any }) => {
         >
           <Typography>
             {" "}
-            {t?.transactions?.monthly_employee_salary_entry}
+            {t("monthly_employee_salary_entry")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
@@ -109,19 +110,19 @@ export const CreateCreate = ({ t }: { t: any }) => {
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
                 >
-                  {t?.transactions?.full_name_of_employee}
+                  {t("full_name_of_employee")}
                 </InputLabel>
-                <EmployeeAutoCompleteComponent dir={t?.home?.dir} name={"employeeId"}/>
+                <EmployeeAutoCompleteComponent dir={t("dir")} name={"employeeId"}/>
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.payer}
+                  {t("payer")}
                 </InputLabel>
-                <CashBoxAutoComplete name="safeId" dir={t?.home?.dir} />
+                <CashBoxAutoComplete name="safeId" dir={t("dir")} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.salary_amount}
+                  {t("salary_amount")}
                 </InputLabel>
                 <TextField
                   fullWidth
@@ -132,14 +133,14 @@ export const CreateCreate = ({ t }: { t: any }) => {
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.currency}
+                  {t("currency")}
                 </InputLabel>
-                <CurrenciesAutoComplete dir={t?.home?.dir}/>
+                <CurrenciesAutoComplete dir={t("dir")}/>
               </Grid>
               
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t?.transactions?.description}
+                  {t("description")}
                 </InputLabel>
                 <TextField
                   fullWidth

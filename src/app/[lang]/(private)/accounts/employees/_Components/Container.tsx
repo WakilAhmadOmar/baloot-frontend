@@ -17,114 +17,14 @@ import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/querie
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import EmptyPage from "@/components/util/emptyPage";
 import { UpdateEmployeeAccounts } from "./Update";
+import { useTranslations } from "next-intl";
 
-interface IPropsBankAccountPages {
-  t: any;
-}
 
-const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
+const EmployeePage = () => {
+  const t = useTranslations("pages")
   const { setHandleError } = useContext(AppContext);
-  const client = useApolloClient();
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [textSearchState, setTextSearchState] = useState("");
   const [page, setPage] = useState(1);
   const { data: employeeList, isLoading } = useGetEmployeeListQuery({ page });
-
-  // const getCashboxListFunction = async (searchTerm?: string) => {
-  //   setLoadingPage(true)
-  //   try {
-  //     const variables = {
-  //       page: searchTerm ? 1 : employeeDetails?.page,
-  //       ...(searchTerm ? { searchTerm: searchTerm } : {}),
-  //     };
-  //     const {
-  //       data: { getEmployeeList },
-  //     } = await client.query({
-  //       query: GET_EMPLOYEE_LIST,
-  //       variables,
-  //     });
-
-  //     if (getEmployeeList?.employee) {
-  //       const allBank = [
-  //         ...employeeDetails?.data,
-  //         ...(getEmployeeList?.employee?.length > 0 ? getEmployeeList?.employee : []),
-  //       ];
-  //       const duplicate = allBank?.filter(
-  //         (value, index, self) =>
-  //           index === self.findIndex((t) => t._id === value._id)
-  //       );
-  //       setEmployeeDetails((prevState: any) => ({
-  //         page: searchTerm ? 1 : prevState.page + 1,
-  //         count: getEmployeeList?.count ? getEmployeeList?.count : prevState?.count,
-  //         data: searchTerm ? getEmployeeList?.employee : duplicate,
-  //       }));
-  //     }
-  //     setLoadingPage(false);
-  //   } catch (error: any) {
-  //     setLoadingPage(false)
-  //     setHandleError({
-  //       open: true,
-  //       type: "error",
-  //       message: error.message,
-  //     });
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (employeeDetails?.count === 0) {
-  //     getCashboxListFunction();
-  //   }
-  // }, []);
-
-  // const handleDeleteItem = async (id: string) => {
-  //   setLoading(true);
-  //   try {
-  //     const variables = {
-  //       customerId: id,
-  //     };
-  //     const {
-  //       data: { deleteCustomer },
-  //     } = await client?.mutate({
-  //       mutation: DELETE_CUSTOMER,
-  //       variables,
-  //     });
-  //     if (deleteCustomer?.message) {
-  //       setLoading(false);
-  //       setEmployeeDetails(employeeDetails?.filter((item: any) => item?._id !== id));
-  //     }
-  //   } catch (error: any) {
-  //     setLoading(false);
-  //     setHandleError({
-  //       message: error?.message,
-  //       type: "error",
-  //       open: true,
-  //     });
-  //   }
-  // };
-  // const handleSearchItem = (search: string) => {
-  //   setTextSearchState(search)
-  //   if (search){
-
-  //     getCashboxListFunction(search);
-  //   }else {
-  //     getCashboxListFunction()
-  //   }
-  // };
-
-  // const handleUpdateEmployee = (employee:any) => {
-  //   setEmployeeDetails((prevState:any) => ({
-  //     ...prevState,
-  //     data:prevState?.data?.map((item:any) => {
-  //       if (item?._id === employee?._id){
-  //         return {
-  //           ...item,
-  //           credit:employee?.credit,
-  //           description:employee?.description
-  //         }
-  //       }else return item
-  //     })
-  //   }))
-  // }
 
   const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
     useAddFirstPeriodOfCreditMutation();
@@ -153,17 +53,20 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
       },
     });
   };
+
+  const handleChangePage = (event: React.ChangeEvent<unknown>,value:number) => {
+    setPage(value)
+  }
   return (
     <Box>
-      {loading && <CircularProgressComponent />}
 
       <Typography variant="h3">
-        {t?.pages?.employee?.list_of_employee_accounts}
+        {t("employee.list_of_employee_accounts")}
       </Typography>
 
       <Box display={"flex"} justifyContent={"space-between"} mt={4}>
         <Box display={"flex"} width={"100%"}>
-          <AddCashboxAccounts t={t} />
+          <AddCashboxAccounts />
         </Box>
         {/* {( employeeDetails?.count > 0) && (
           <Box>
@@ -198,8 +101,8 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
         >
           <EmptyPage
             icon={<EmptyProductPageIcon />}
-            title={t.pages?.employee?.no_product_yet_title}
-            discription={t.pages?.employee?.no_product_yet_discription}
+            title={t("employee.no_product_yet_title")}
+            discription={t("employee.no_product_yet_discription")}
             // buttonText={t.pages?.Customers.add_new_customer}
             // onClick={handleOpenDialogFunction}
           />
@@ -214,14 +117,13 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               name={item?.name}
               createdAt={item?.createdAt}
               height="270px"
-              t={t}
-              messageDescription={t?.pages?.employee?.delete_description_account}
-              messageTitle={t?.pages?.employee?.delete_title_account}
+              messageDescription={t("employee.delete_description_account")}
+              messageTitle={t("employee.delete_title_account")}
               id={item?._id}
               editTable={true}
               getIdToAddAction={handleDeleteAccount}
               isLoading={deleteLoading}
-              UpdateComponent={<UpdateEmployeeAccounts t={t} item={item} />}
+              UpdateComponent={<UpdateEmployeeAccounts item={item} />}
             >
               {item?.firstPeriodCredit?.map((credit: any, index: number) => {
                 return (
@@ -242,7 +144,7 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               })}
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.employee?.salary_amount}
+                  {t("employee.salary_amount")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.salary?.amount} {item?.salary?.currencyId?.symbol}
@@ -250,7 +152,7 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.Customers?.contact_number}
+                  {t("Customers.contact_number")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.contactNumber}
@@ -258,7 +160,7 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={"15rem auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.Customers?.address}
+                  {t("Customers.address")}
                 </Typography>
                 <Typography variant="caption" pt={2}>
                   {item?.address}
@@ -266,7 +168,7 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
               </Box>
               <Box display={"grid"} gridTemplateColumns={" auto"}>
                 <Typography variant="caption" pt={2}>
-                  {t?.pages?.bank?.description}
+                  {t("bank.description")}
                 </Typography>
                 <Typography variant="caption">{item?.description}</Typography>
               </Box>
@@ -280,7 +182,7 @@ const EmployeePage: React.FC<IPropsBankAccountPages> = ({ t }) => {
             <Pagination
               count={employeeList?.count / 10}
               size={"medium"}
-              // onChange={handleChangePage}
+              onChange={handleChangePage}
               variant="outlined"
               color="primary"
               shape="rounded"

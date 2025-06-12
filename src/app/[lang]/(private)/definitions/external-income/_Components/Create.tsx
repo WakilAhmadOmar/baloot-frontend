@@ -19,15 +19,11 @@ import {
 
 import { useAddExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
+import { useTranslations } from "next-intl";
   
-  interface IPropsCreateConsumetion {
-    t:any
-  }
   
-  const CreateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
-
-    t
-  }) => {
+  const CreateExternalIncomeType = () => {
+    const t = useTranslations("pages")
     const {
       register,
       handleSubmit,
@@ -57,8 +53,8 @@ import { AppContext } from "@/provider/appContext";
         onSuccess:()=> {
            setHandleError({
           open: true,
-          message: t?.pages?.income?.external_income_type_saved_successfully,
-          status: "success",
+          message: t("income.external_income_type_saved_successfully"),
+          type: "success",
         });
         setOpenDialog(false);
         },
@@ -81,7 +77,7 @@ import { AppContext } from "@/provider/appContext";
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={t?.home?.dir}
+          dir={t("dir")}
           fullWidth
         >
           <DialogTitle
@@ -93,7 +89,7 @@ import { AppContext } from "@/provider/appContext";
               borderBottom: `1px solid ${theme.palette.grey[200]}`,
             }}
           >
-            <Typography>{t?.pages?.income?.new_income}</Typography>
+            <Typography>{t("income.new_income")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
               <CloseSquare />
             </IconButton>
@@ -103,7 +99,7 @@ import { AppContext } from "@/provider/appContext";
               <Grid container spacing={2}sx={{mt:"1rem"}}>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t?.pages?.income?.income_name}
+                    {t("income.income_name")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -124,9 +120,9 @@ import { AppContext } from "@/provider/appContext";
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t?.pages?.income?.save}
+              {t("income.save")}
             </Button>
-            <Button variant="outlined"  onClick={handleOpenDialogFunction}>{t?.pages?.income?.cancel}</Button>
+            <Button variant="outlined"  onClick={handleOpenDialogFunction}>{t("income.cancel")}</Button>
           </DialogActions>
         </Dialog>
 
@@ -136,7 +132,7 @@ import { AppContext } from "@/provider/appContext";
               color="primary"
               onClick={handleOpenDialogFunction}
             >
-              {t?.pages?.income?.new_income}
+              {t("income.new_income")}
             </Button>
           </Box>
 

@@ -7,25 +7,24 @@ import { useGetMeasuresQuery } from "@/hooks/api/definitions/units/queries/use-g
 import { Create } from "./Create";
 import { UnitItem } from "./unit-item";
 import { SkeletonComponentBox } from "../../_Components/Skeleton-box";
+import { useTranslations } from "next-intl";
 
-interface IProps {
-  t: any;
-}
-const DefinitionUnit: React.FC<IProps> = ({ t }) => {
+const DefinitionUnit = () => {
+  const t = useTranslations("pages")
   const { data: getMeasures, isLoading } = useGetMeasuresQuery();
 
   return (
     <Box>
       <Typography variant="h3" mb={2}>
-        {t?.pages?.unit.define_units}
+        {t("unit.define_units")}
       </Typography>
       <Box>
-        <Create t={t} />
+        <Create  />
         <Box display={"flex"} flexWrap={"wrap"} columnGap={2} rowGap={2}>
           {getMeasures?.map((item: any) => {
             return (
               <Box key={item?._id} display={"grid"}>
-                <UnitItem item={item} canDelete={true} t={t} />
+                <UnitItem item={item} canDelete={true} />
               </Box>
             );
           })}
@@ -36,8 +35,8 @@ const DefinitionUnit: React.FC<IProps> = ({ t }) => {
       {getMeasures?.length === 0 && !isLoading && (
         <Box className={"empty_page_content"}>
           <EmptyPage
-            discription={t?.pages?.unit?.no_units_description}
-            title={t?.pages?.unit?.no_unit_registered}
+            discription={t("unit.no_units_description")}
+            title={t("unit.no_unit_registered")}
             icon={<EmptyProductPageIcon />}
           />
         </Box>
