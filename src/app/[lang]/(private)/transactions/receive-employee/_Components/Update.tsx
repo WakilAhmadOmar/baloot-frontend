@@ -41,13 +41,13 @@ interface FormValues {
   receiver: string;
   invoiceType: string;
   payerId: string;
-  receiverType?:string
-  description?:string
+  receiverType?: string;
+  description?: string;
 }
-const UpdateForm = ({  item }: UpdateFormProps) => {
-  const t = useTranslations("transactions")
- const defaultValues = useMemo(()=> {
-    return{
+const UpdateForm = ({ item }: UpdateFormProps) => {
+  const t = useTranslations("transactions");
+  const defaultValues = useMemo(() => {
+    return {
       amount: item?.amount || 0,
       currencyId: item?.currencyId?._id || "",
       calculatedTo: item?.calculatedTo?._id || "",
@@ -55,23 +55,26 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
       receiver: item?.receiver?._id || "",
       invoiceType: item?.invoiceType || "",
       payerId: item?.customerId?._id || "", // Add this line
-      receiverType:item?.receiverType || "",
-      description:item?.description
-
-    }
- },[item])
+      receiverType: item?.receiverType || "",
+      description: item?.description,
+    };
+  }, [item]);
 
   const methods = useForm<FormValues>({
     defaultValues,
-     resolver: yupResolver(useSchemaCrateForm(t)) as Resolver<FormValues, any> ,
+    resolver: yupResolver(useSchemaCrateForm(t)) as Resolver<FormValues, any>,
   });
   const theme = useTheme();
-  const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
-  const { handleSubmit, register  , formState:{errors}} = methods;
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = methods;
   const [receiverType, setReceiverType] = useState(item?.receiverType);
 
-  const {mutate , isLoading } = useUpdateReceiveMutation()
+  const { mutate, isLoading } = useUpdateReceiveMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -83,23 +86,26 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
     setOpenDialog(!openDialog);
   };
 
-  const onSubmitFunction = (data:FormValues) => {
-    mutate({
-      receiveId:item?._id,
-      receiveObject:{
-        ...data,
-        receiverType
+  const onSubmitFunction = (data: FormValues) => {
+    mutate(
+      {
+        receiveId: item?._id,
+        receiveObject: {
+          ...data,
+          receiverType,
+        },
+      },
+      {
+        onSuccess: () => {
+          handleOpenDialogFunction();
+          setHandleError({
+            open: true,
+            message: "Update successfully",
+            type: "success",
+          });
+        },
       }
-    },{
-      onSuccess:()=>{
-        handleOpenDialogFunction()
-        setHandleError({
-          open:true,
-          message:"Update successfully",
-          type:"success"
-        })
-      }
-    })
+    );
   };
 
   return (
@@ -126,9 +132,7 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
                 borderBottom: `1px solid ${theme.palette.grey[200]}`,
               }}
             >
-              <Typography>
-                {t("update_cash_receipt_from_employees")}
-              </Typography>
+              <Typography>{t("update_cash_receipt_from_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
               </IconButton>
@@ -139,16 +143,26 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.payerId}
                   >
                     {t("full_name_of_employee")}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent  name="payerId"dir={t("dir")} />
+                  <EmployeeAutoCompleteComponent
+                    name="payerId"
+                    dir={t("dir")}
+                  />
+                  {errors?.payerId?.type === "optionality" && (
+                    <Typography color="error" p={1}>
+                      {errors?.payerId?.message}
+                    </Typography>
+                  )}
                 </Grid>
-                
+
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.amount}
                   >
                     {t("received_amount")}
                   </InputLabel>
@@ -157,21 +171,36 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
                     size="small"
                     {...register("amount", { required: true })}
                   />
+                  {!!errors?.amount && (
+                    <Typography color="error" p={1}>
+                      {errors?.amount?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.currencyId}
                   >
                     {t("currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent dir={t("dir")}/>
+                  <UserCurrenciesComponent dir={t("dir")} />
+                  {!!errors?.currencyId && (
+                    <Typography color="error" p={1}>
+                      {t("currency_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t("calculated_currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" dir={t("dir")}/>
+                  <UserCurrenciesComponent
+                    name="calculatedTo"
+                    dir={t("dir")}
+                    required={false}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -180,7 +209,7 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("amountCalculated", { required: true })}
+                    {...register("amountCalculated", { required: false })}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -208,24 +237,29 @@ const UpdateForm = ({  item }: UpdateFormProps) => {
                 </Grid>
                 <Grid item xs={8}>
                   {receiverType === "Bank" && (
-                    <BankAutoComplete name="receiver"  dir={t("dir")}/>
+                    <BankAutoComplete name="receiver" dir={t("dir")} />
                   )}
                   {receiverType === "Safe" && (
-                    <CashBoxAutoComplete name="receiver" dir={t("dir")}/>
+                    <CashBoxAutoComplete name="receiver" dir={t("dir")} />
+                  )}
+                  {!!errors?.receiver && (
+                    <Typography color="error" p={1}>
+                      {t("receiver_is_required")}
+                    </Typography>
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t("description")}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  size="small"
-                  {...register("description", { required: true })}
-                />
-              </Grid>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t("description")}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    size="small"
+                    {...register("description", { required: false })}
+                  />
+                </Grid>
               </Grid>
             </DialogContent>
             <DialogActions

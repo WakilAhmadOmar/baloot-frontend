@@ -24,8 +24,8 @@ import { useTranslations } from "next-intl";
 interface IPropsCreateEmployee {
   item: any;
 }
-const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
-  const t = useTranslations("pages")
+const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
+  const t = useTranslations("pages");
   const method = useForm({
     defaultValues: {
       name: item?.name,
@@ -125,7 +125,11 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item mt={2} xs={6}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required>
+                  <InputLabel
+                    sx={{ paddingBottom: "5px" }}
+                    required
+                    error={!!errors?.name}
+                  >
                     {t("employee.name")}
                   </InputLabel>
                   <TextField
@@ -133,7 +137,13 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
                     size="small"
                     {...register("name", { required: true })}
                     name="name"
+                    error={!!errors?.name}
                   />
+                  {errors?.name?.type === "required" && (
+                    <Typography color="error" p={1}>
+                      {t("employee.employee_name_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item mt={2} xs={6}>
                   <InputLabel sx={{ paddingBottom: "5px" }}>
@@ -159,8 +169,11 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    نمبر تذکره{t("employee.id_number")}
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.idNumber}
+                  >
+                    {t("employee.id_number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -168,7 +181,13 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
                     type="number"
                     {...register("idNumber", { required: true })}
                     name="idNumber"
+                    error={!!errors?.idNumber}
                   />
+                  {errors?.idNumber?.type === "required" && (
+                    <Typography color="error" p={1}>
+                      {t("employee.id_number_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -216,7 +235,7 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({  item }) => {
                   >
                     {t("employee.currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent />
+                  <UserCurrenciesComponent required={false} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

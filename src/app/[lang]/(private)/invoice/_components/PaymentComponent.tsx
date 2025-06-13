@@ -64,8 +64,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
     };
     const handlePayFunction =  async() => {
       setLoadingPage(true);
-  
-      console.log("currency" , currency)
+
       try {
         const variables = {
           payOffObject:{
@@ -77,7 +76,6 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
   
           }
         };
-        console.log("variables" , variables)
         const {
           data: { addPayOff },
         } = await client.mutate({
@@ -105,25 +103,12 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
       }
     };
   const handleSelectCurrency = (data:any) => {
-    console.log("seleted currency" , data)
     setCurrency(data)
   }
-    // const handleCloseError = () => {
-    //   setHandleError((prevState) => ({
-    //     ...prevState,
-    //     open: false,
-    //   }));
-    // };
+
   
     return (
       <Box mt={2}>
-        {/* {loadingPage && <CircularProgressComponent />} */}
-        {/* <SnackbarComponent
-          status={handleError?.status}
-          open={handleError?.open}
-          message={handleError?.message}
-          handleClose={handleCloseError}
-        /> */}
         <Dialog
           open={open}
           onClose={handleClickOpen}
@@ -157,11 +142,11 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
             <Grid2 container spacing={3} mt={3}>
               <Grid2  size={6} >
                 <InputLabel required>{t?.invoice?.receiver}</InputLabel>
-                <CashBoxAutoComplete getCashBox={getCashBoxFunction} placeholder="" />
+                <CashBoxAutoComplete  />
               </Grid2>
               <Grid2  size={6}>
                 <InputLabel required> {t?.invoice?.Currency}</InputLabel>
-                <CurrenciesAutoComplete register={register} onSelected={handleSelectCurrency}/>
+                <CurrenciesAutoComplete  onSelected={handleSelectCurrency}/>
               </Grid2>
             </Grid2>
           </DialogContent>

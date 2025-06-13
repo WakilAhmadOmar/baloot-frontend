@@ -217,6 +217,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
                       name="currencyId"
+                      required={false}
                       dir={t("dir")}
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>

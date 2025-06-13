@@ -23,17 +23,16 @@ interface IPropsCreateConsumetion {
   item: any;
 }
 
-const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({  item }) => {
-
-  const t = useTranslations("pages")
+const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ item }) => {
+  const t = useTranslations("pages");
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues:{
-        name:item?.name
-    }
+    defaultValues: {
+      name: item?.name,
+    },
   });
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
@@ -97,7 +96,10 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({  item }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("Expenses.Expense_Name")}
                 </InputLabel>
                 <TextField
@@ -105,7 +107,13 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({  item }) => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("Expenses.expense_name_is_require")}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

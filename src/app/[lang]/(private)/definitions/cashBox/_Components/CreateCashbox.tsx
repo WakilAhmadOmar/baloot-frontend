@@ -21,20 +21,20 @@ import { useAddSafeMutation } from "@/hooks/api/definitions/safe/mutations/use-a
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
-
 const CreateCashBox = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const method = useForm();
-  const { register, handleSubmit } = method;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = method;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
 
   const { mutate, isLoading } = useAddSafeMutation();
-
-
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -98,7 +98,10 @@ const CreateCashBox = () => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("cashbox.Cashbox_Name")}
                 </InputLabel>
                 <TextField
@@ -106,7 +109,13 @@ const CreateCashBox = () => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("cashbox.safe_name_is_require")}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -145,19 +154,16 @@ const CreateCashBox = () => {
           </Button>
         </DialogActions>
       </Dialog>
-  
-       
- 
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-          >
-            {t("cashbox.Create_new_Cashbox")}
-          </Button>
-        </Box>
-   
+
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("cashbox.Create_new_Cashbox")}
+        </Button>
+      </Box>
     </FormProvider>
   );
 };

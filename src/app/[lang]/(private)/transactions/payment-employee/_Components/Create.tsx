@@ -32,9 +32,8 @@ import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplet
 import { useAddEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-add-employee-pay-off";
 import { useTranslations } from "next-intl";
 
-
 const CreateComponent = () => {
-  const t = useTranslations("transactions")
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
@@ -87,17 +86,16 @@ const CreateComponent = () => {
 
           // router.back()
         },
-        onError:(error:any)=>{
+        onError: (error: any) => {
           setHandleError({
             open: true,
             message: error?.message,
             type: "error",
           });
-        }
+        },
       }
     );
   };
-  console.log("errors", errors);
   return (
     <Box>
       <FormProvider {...methods}>
@@ -119,9 +117,7 @@ const CreateComponent = () => {
                 borderBottom: `1px solid ${theme.palette.grey[200]}`,
               }}
             >
-              <Typography>
-                {t("cash_payment_to_employees")}
-              </Typography>
+              <Typography>{t("cash_payment_to_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
               </IconButton>
@@ -130,19 +126,28 @@ const CreateComponent = () => {
               <Grid container spacing={2} mt={1}>
                 <Grid item xs={12}>
                   <InputLabel
-                    sx={{  paddingBottom: "5px" }}
+                    sx={{ paddingBottom: "5px" }}
                     required
+                    error={!!errors?.receiver}
                   >
                     {t("full_name_of_employee")}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent name="receiver" dir={t("dir")}/>
+                  <EmployeeAutoCompleteComponent
+                    name="receiver"
+                    dir={t("dir")}
+                  />
+                  {!!errors?.receiver && (
+                    <Typography color="error" p={1}>
+                      {t("receiver_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
-               
 
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.amount}
                   >
                     {t("received_amount")}
                   </InputLabel>
@@ -150,22 +155,38 @@ const CreateComponent = () => {
                     fullWidth
                     size="small"
                     {...register("amount", { required: true })}
+                    error={!!errors?.amount}
                   />
+                  {!!errors?.amount && (
+                    <Typography color="error" p={1}>
+                      {errors?.amount?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.currencyId}
                   >
                     {t("currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="currencyId" dir={t("dir")}/>
+                  <UserCurrenciesComponent name="currencyId" dir={t("dir")} />
+                  {!!errors?.currencyId && (
+                    <Typography color="error" p={1}>
+                      {t("currency_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t("calculated_currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" dir={t("dir")}/>
+                  <UserCurrenciesComponent
+                    name="calculatedTo"
+                    dir={t("dir")}
+                    required={false}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -174,10 +195,10 @@ const CreateComponent = () => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("amountCalculated", { required: true })}
+                    {...register("amountCalculated", { required: false })}
                   />
                 </Grid>
-                 <Grid item xs={12}>
+                <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem" }}>
                     {t("payer")}
                   </InputLabel>
@@ -202,24 +223,29 @@ const CreateComponent = () => {
                 </Grid>
                 <Grid item xs={8}>
                   {accountType === "Bank" && (
-                    <BankAutoComplete name="payerId"  dir={t("dir")}/>
+                    <BankAutoComplete name="payerId" dir={t("dir")} />
                   )}
                   {accountType === "Safe" && (
                     <CashBoxAutoComplete name="payerId" dir={t("dir")} />
                   )}
+                  {errors?.payerId?.type === "optionality" && (
+                    <Typography color="error" p={1}>
+                      {errors?.payerId?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t("description")}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  size="small"
-                  {...register("description", { required: true })}
-                />
-              </Grid>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t("description")}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    size="small"
+                    {...register("description", { required: false })}
+                  />
+                </Grid>
               </Grid>
             </DialogContent>
             <DialogActions

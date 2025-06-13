@@ -113,8 +113,8 @@ const CreatePartner = () => {
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} mt={"1rem"} sx={{ mt: "1rem" }}>
                 <Grid item md={6} xs={12}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required>
-                    <Typography variant="subtitle2" component={"samp"}>
+                  <InputLabel sx={{ paddingBottom: "5px" }} required error={!!errors?.firstName}>
+                    <Typography variant="subtitle2" component={"samp"} >
                       {" "}
                       {t("partner.first_name")}
                     </Typography>
@@ -123,8 +123,13 @@ const CreatePartner = () => {
                     fullWidth
                     size="small"
                     {...register("firstName", { required: true })}
-                    name="firstName"
+                    name="firstName" error={!!errors?.firstName}
                   />
+                  {errors?.firstName?.type === "required" && (
+                                    <Typography color="error" p={1}>
+                                      {t("partner.partner_name_is_require")}
+                                    </Typography>
+                                  )}
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -162,6 +167,7 @@ const CreatePartner = () => {
                   <UserCurrenciesComponent
                     name="currencyId"
                     dir={t("dir")}
+                    required={false}
                   />
                 </Grid>
 

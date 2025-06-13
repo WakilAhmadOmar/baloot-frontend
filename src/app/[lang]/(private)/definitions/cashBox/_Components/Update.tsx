@@ -23,11 +23,10 @@ import { useTranslations } from "next-intl";
 
 interface IPropsCreateCashBox {
   item: any;
-
 }
 
 const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const method = useForm({
     defaultValues: {
       name: item?.name,
@@ -35,7 +34,11 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
       employeeId: item?.cashier?._id,
     },
   });
-  const { register, handleSubmit } = method;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = method;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -106,7 +109,10 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("cashbox.Cashbox_Name")}
                 </InputLabel>
                 <TextField
@@ -114,7 +120,13 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("cashbox.safe_name_is_require")}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

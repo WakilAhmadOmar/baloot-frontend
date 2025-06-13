@@ -15,29 +15,22 @@ import {
 import { CloseSquare } from "iconsax-react";
 import { ChangeEvent, useContext, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useApolloClient } from "@apollo/client";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-
 import ProductCategoriesComponent from "@/components/util/ProductCategory";
 import ProductMeansureComponent from "@/components/util/ProductMeansure";
 import { useAddProductMutation } from "@/hooks/api/definitions/product/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 const CreateProduct = () => {
-  const t = useTranslations("product")
+  const t = useTranslations("product");
   const { mutate: addProductMutation, isLoading } = useAddProductMutation();
   const method = useForm();
   const theme = useTheme();
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    getValues,
-    setValue,
-    getFieldState,
   } = method;
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -47,9 +40,7 @@ const CreateProduct = () => {
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
- 
   };
-
 
   const onSubmitFunction = async (data: any) => {
     if (selectedUnitProduct?.length === 0) {
@@ -113,7 +104,7 @@ const CreateProduct = () => {
           message: t("product_added_successfully"),
           status: "success",
         });
-        handleOpenDialogFunction()
+        handleOpenDialogFunction();
       },
       onError: (error: any) => {
         setHandleError({
@@ -184,7 +175,11 @@ const CreateProduct = () => {
                     <UploadComponent />
                   </Grid> */}
                 {/* <Grid item mt={12} xs={18}> */}
-                <InputLabel sx={{ paddingBottom: "5px" }} required>
+                <InputLabel
+                  sx={{ paddingBottom: "5px" }}
+                  required
+                  error={!!errors?.name}
+                >
                   <Typography variant="subtitle2" component={"samp"}>
                     {t("product_name")}
                   </Typography>
@@ -194,12 +189,16 @@ const CreateProduct = () => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("product_name_is_required")}
+                  </Typography>
+                )}
                 <ProductMeansureComponent
-                  register={register}
                   getDataSelect={handleGetMeasureFunction}
                   defaultValue={selectedUnitProduct}
-                  t={t}
                 />
                 {/* </Grid> */}
                 {/* </Grid> */}
@@ -213,6 +212,7 @@ const CreateProduct = () => {
                     <Grid item xs={12} md={6} key={item?.name}>
                       <InputLabel
                         sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                        error={!!errors?.["measure" + index]}
                       >
                         <Typography component={"span"}>
                           {t("count")}{" "}
@@ -235,10 +235,16 @@ const CreateProduct = () => {
                         {...register("measure" + index, {
                           required: true,
                         })}
+                        error={!!errors?.["measure" + index]}
                         name={"measure" + index}
                         onChange={handleChangePriceMeasureFunction}
                         id={`${index}`}
                       />
+                      {errors?.["measure" + index]?.type === "required" && (
+                        <Typography color="error" p={1}>
+                          {t("amount_is_required")}
+                        </Typography>
+                      )}
                     </Grid>
                   );
                 })}
@@ -246,10 +252,11 @@ const CreateProduct = () => {
                 {selectedUnitProduct?.length > 0 &&
                   selectedUnitProduct?.map((item: any, index: number) => {
                     return (
-                      <Grid container key={item?.measuer} spacing={2}>
+                      <Grid container key={item?.measure} spacing={2}>
                         <Grid item xs={6} key={item}>
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                            error={!!errors?.["sellPrice " + item?.name]}
                           >
                             {t("bought_price")} {item?.name}
                           </InputLabel>
@@ -261,13 +268,21 @@ const CreateProduct = () => {
                               required: true,
                             })}
                             name={"buyPrice " + item?.name}
+                            error={!!errors?.["sellPrice " + item?.name]}
                             onChange={handleChangePriceMeasureFunction}
                             id={`${index}`}
                           />
+                          {errors?.["buyPrice " + item?.name]?.type ===
+                            "required" && (
+                            <Typography color="error" p={1}>
+                              {t("amount_is_required")}
+                            </Typography>
+                          )}
                         </Grid>
-                        <Grid item xs={6} key={item?.measuer}>
+                        <Grid item xs={6} key={item?.measure}>
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                            error={!!errors?.["sellPrice " + item?.name]}
                           >
                             {t("sale_price")} {item?.name}
                           </InputLabel>
@@ -278,28 +293,41 @@ const CreateProduct = () => {
                             {...register("sellPrice " + item?.name, {
                               required: true,
                             })}
+                            error={!!errors?.["sellPrice " + item?.name]}
                             onChange={handleChangePriceMeasureFunction}
                             name={"sellPrice " + item?.name}
                             id={`${index}`}
                           />
+                          {errors?.["sellPrice " + item?.name]?.type ===
+                            "required" && (
+                            <Typography color="error" p={1}>
+                              {t("amount_is_required")}
+                            </Typography>
+                          )}
                         </Grid>
                       </Grid>
                     );
                   })}
               </Grid>
               <Grid item xs={12} md={6}>
-                <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}
+                  error={!!errors?.currencyId}
+                >
                   {t("currency")}
                 </InputLabel>
                 <UserCurrenciesComponent
+                  dir={t("dir")}
                   // register={register}
                 />
+                {errors?.currencyId?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("currency_is_required")}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <ProductCategoriesComponent
-                  register={register}
-                 
-                />
+                <ProductCategoriesComponent register={register} />
               </Grid>
               <Grid item xs={12} md={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -348,19 +376,16 @@ const CreateProduct = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      
-        <Box>
-          
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenDialogFunction}
-            >
-              {t("add_new_product")}
-            </Button>
-         
-        </Box>
-     
+
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("add_new_product")}
+        </Button>
+      </Box>
     </FormProvider>
   );
 };

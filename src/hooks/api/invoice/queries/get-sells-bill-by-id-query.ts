@@ -10,7 +10,6 @@ export const useGetSellsBillByIdQuery = (variables:any) => {
           query: GET_SELLS_BILL_BY_ID,
           variables,
         });
-        console.log("getSellsBillById" , getSellsBillById)
         return getSellsBillById;
       },
       queryKey: [SELLS_BILL_BY_ID_QUERY_KEY],

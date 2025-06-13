@@ -20,12 +20,10 @@ import { useAddEntrepotMutation } from "@/hooks/api/definitions/warehouse/mutati
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
-
 const CreateWarehouse = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods = useForm();
-  const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
   const {
     register,
     handleSubmit,
@@ -34,11 +32,10 @@ const CreateWarehouse = () => {
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {mutate , isLoading} = useAddEntrepotMutation()
+  const { mutate, isLoading } = useAddEntrepotMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
-    
   };
 
   const onSubmitFunction = async (data: any) => {
@@ -49,14 +46,14 @@ const CreateWarehouse = () => {
         responsible: data?.employeeId,
       },
     };
-    mutate(variables , {
+    mutate(variables, {
       onSuccess: () => {
         setHandleError({
           open: true,
           message: t("warehouse.warehouse_saved_successfully"),
           status: "success",
         });
-        handleOpenDialogFunction()
+        handleOpenDialogFunction();
       },
       onError: (error: any) => {
         setHandleError({
@@ -65,13 +62,11 @@ const CreateWarehouse = () => {
           status: "error",
         });
       },
-    })
-   
+    });
   };
 
   return (
     <FormProvider {...methods}>
-     
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -98,7 +93,10 @@ const CreateWarehouse = () => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("warehouse.warehouses")}
                 </InputLabel>
                 <TextField
@@ -106,7 +104,13 @@ const CreateWarehouse = () => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("warehouse.warehouse_name_is_required")}
+                  </Typography>
+                )}
               </Grid>
 
               <Grid item xs={6}>
@@ -119,12 +123,6 @@ const CreateWarehouse = () => {
                 <EmployeeAutoCompleteComponent
                   name="employeeId"
                   dir={t("dir")}
-                  // getValue={handleGetEmployeeFunction}
-                  // defaultValue={{
-                  //   ...item?.responsible,
-                  //   id: item?.responsible?._id,
-                  //   label: item?.responsible?.name,
-                  // }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -158,17 +156,15 @@ const CreateWarehouse = () => {
         </DialogActions>
       </Dialog>
 
-      
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-          >
-            {t("warehouse.add_warehouse")}
-          </Button>
-        </Box>
-      
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("warehouse.add_warehouse")}
+        </Button>
+      </Box>
     </FormProvider>
   );
 };

@@ -28,9 +28,8 @@ import { AppContext } from "@/provider/appContext";
 import { useAddCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-customer-pay-off-mutation";
 import { useTranslations } from "next-intl";
 
-
 const CreateComponent = () => {
-  const t = useTranslations("transactions")
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
@@ -86,7 +85,6 @@ const CreateComponent = () => {
       }
     );
   };
-  console.log("errors", errors);
   return (
     <Box>
       <FormProvider {...methods}>
@@ -108,9 +106,7 @@ const CreateComponent = () => {
                 borderBottom: `1px solid ${theme.palette.grey[200]}`,
               }}
             >
-              <Typography>
-                {t("cash_payment_to_customer")}
-              </Typography>
+              <Typography>{t("cash_payment_to_customer")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
               </IconButton>
@@ -118,16 +114,26 @@ const CreateComponent = () => {
             <DialogContent>
               <Grid container spacing={2} mt={1}>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required>
+                  <InputLabel
+                    sx={{ paddingBottom: "5px" }}
+                    required
+                    error={!!errors?.receiver}
+                  >
                     {t("recipient")}({t("customer")})
                   </InputLabel>
                   <CustomerAutoComplete name="receiver" dir={t("dir")} />
+                  {!!errors?.receiver && (
+                    <Typography color="error" p={1}>
+                      {t("receiver_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
-                
+
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.amount}
                   >
                     {t("payed_amount")}
                   </InputLabel>
@@ -135,19 +141,28 @@ const CreateComponent = () => {
                     fullWidth
                     size="small"
                     {...register("amount", { required: true })}
+                    error={!!errors?.amount}
                   />
+                  {!!errors?.amount && (
+                    <Typography color="error" p={1}>
+                      {errors?.amount?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.currencyId}
                   >
                     {t("currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent
-                    name="currencyId"
-                    dir={t("dir")}
-                  />
+                  <UserCurrenciesComponent name="currencyId" dir={t("dir")} />
+                  {!!errors?.currencyId && (
+                    <Typography color="error" p={1}>
+                      {t("currency_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -156,6 +171,7 @@ const CreateComponent = () => {
                   <UserCurrenciesComponent
                     name="calculatedTo"
                     dir={t("dir")}
+                    required={false}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -165,7 +181,7 @@ const CreateComponent = () => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("amountCalculated", { required: true })}
+                    {...register("amountCalculated", { required: false })}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -198,6 +214,11 @@ const CreateComponent = () => {
                   {accountType === "Safe" && (
                     <CashBoxAutoComplete name="payerId" dir={t("dir")} />
                   )}
+                  {errors?.payerId?.type === "optionality" && (
+                    <Typography color="error" p={1}>
+                      {errors?.payerId?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -208,7 +229,7 @@ const CreateComponent = () => {
                     multiline
                     rows={4}
                     size="small"
-                    {...register("description", { required: true })}
+                    {...register("description", { required: false })}
                   />
                 </Grid>
               </Grid>

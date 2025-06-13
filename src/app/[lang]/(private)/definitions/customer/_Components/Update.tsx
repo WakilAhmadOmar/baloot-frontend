@@ -23,7 +23,7 @@ interface IPropsCreateCustomer {
   item: any;
 }
 const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const method = useForm({
     defaultValues: {
       fullName: item?.fullName,
@@ -103,7 +103,10 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.fullName}
+                >
                   {t("Customers.customer_name")}
                 </InputLabel>
                 <TextField
@@ -111,7 +114,13 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
                   size="small"
                   {...register("fullName", { required: true })}
                   name="fullName"
+                  error={!!errors?.fullName}
                 />
+                {errors?.fullName?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("Customers.customer_name_is_required")}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

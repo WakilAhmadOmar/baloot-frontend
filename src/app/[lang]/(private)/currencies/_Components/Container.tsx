@@ -122,7 +122,6 @@ const DefinitionsCurrency = () => {
         setOpenDialog(false);
       }
     } catch (error: any) {
-      console.log("error", error.message);
       setLoadingPage(false);
       setHandleError({
         open: true,
