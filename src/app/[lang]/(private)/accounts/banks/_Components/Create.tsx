@@ -24,11 +24,9 @@ import { useApolloClient } from "@apollo/client";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
 
-
-
 const AddBanksAccounts = () => {
   const methods = useForm();
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const {
     register,
     handleSubmit,
@@ -147,7 +145,6 @@ const AddBanksAccounts = () => {
   };
 
   const handleGetBank = (data: any) => {
-    console.log("data", data);
     setBankDetails(data);
   };
   const handleSelectCurrency = (currency: any, index: number) => {
@@ -159,7 +156,6 @@ const AddBanksAccounts = () => {
     }));
   };
 
-  console.log("bankDetails", bankDetails);
   return (
     <FormProvider {...methods}>
       <Dialog
@@ -179,9 +175,7 @@ const AddBanksAccounts = () => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>
-            {t("bank.record_previous_bank_accounts")}
-          </Typography>
+          <Typography>{t("bank.record_previous_bank_accounts")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -242,6 +236,7 @@ const AddBanksAccounts = () => {
                     <UserCurrenciesComponent
                       name="currencyId"
                       dir={t("dir")}
+                      required={false}
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)

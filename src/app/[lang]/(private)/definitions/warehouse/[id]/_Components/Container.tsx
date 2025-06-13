@@ -1,6 +1,5 @@
 "use client";
 
-import CustomSearch from "@/components/search/CustomSearch";
 import { ADD_WARE_TO_ENTREPOT } from "@/graphql/mutation/ADD_WARE_TO_ENTREPOT";
 import { GET_WARE_FROM_ENTREPOT } from "@/graphql/queries/GET_WARE_FROM_ENTREPOT";
 import { AppContext } from "@/provider/appContext";
@@ -118,7 +117,6 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
 
   const handleChangeBillFunction = (event:ChangeEvent<HTMLInputElement> , rowIndex:number , measureIndex:number) => {
     const value = parseInt(event.currentTarget?.value);
-    console.log("value" , value)
     const newRows = rows?.data?.map((item: any, index: number) => {
       if (index === rowIndex) {
         return {

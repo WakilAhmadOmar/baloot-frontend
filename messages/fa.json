@@ -164,7 +164,12 @@
     "product_updated_successfully":"جنس موافقانه اصلاح شد",
     "update_product":"اصلاح جنس",
     "this_category_saved_successfully":"این دسته موافقانه ذخیره شد",
-    "this_category_updated_successfully":"این دسته موافقانه اصلاح شد"
+    "this_category_updated_successfully":"این دسته موافقانه اصلاح شد",
+    "product_name_is_required":"نام جنس حتمی است",
+    "currency_is_required":" انتخاب ارز حتمی است",
+    "measure_is_required":" انتخاب واحد حتمی است",
+    "amount_is_required":"مقدار حتمی است",
+    "category_name_is_required":"نام دسته بندی حتمی است"
 
   },
   "position_link": {
@@ -268,7 +273,8 @@
       "cancel": "خیره",
       "bank_saved_successfully":"بانک موافقانه ذخیره شد",
       "bank_updated_successfully":"بانک موافقانه اصلاح شد",
-      "bank_deleted_successfully":"بانک موافقانه پاک شد"
+      "bank_deleted_successfully":"بانک موافقانه پاک شد",
+      "bank_name_is_require":"نام بانک حتمی است"
     },
     "cashbox": {
       "safes":"صندوق ها",
@@ -296,7 +302,8 @@
       "list_of_previous_cashbox_accounts": "لیست حساب‌های گذشته صندوق ها",
       "safe_saved_successfully":"صدنوق موافقانه ذخیره شد",
       "safe_updated_successfully":"صدنوق موافقانه اصلاح شد",
-      "safe_deleted_successfully":"صدنوق موافقانه پاک شد"
+      "safe_deleted_successfully":"صدنوق موافقانه پاک شد",
+      "safe_name_is_require":"نام صندوق حتمی است"
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -310,9 +317,10 @@
       "Are_you_sure_you_want_to_delete_this_item": "آیا مطمئیند این مصرف را حذف کنید؟",
       "Once_this_item_is_deleted": "این مصرف حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "yes": "بله",
-      "expense_type_saved_successfully":"نوع مصارف موافقانه ذخیره شد",
-      "expense_type_updated_successfully":"نوع مصارف موافقانه اصلاح شد",
-      "expense_type_deleted_successfully":"نوع مصارف موافقانه پاک شد"
+      "expense_type_saved_successfully":"نوع مصرف موافقانه ذخیره شد",
+      "expense_type_updated_successfully":"نوع مصرف موافقانه اصلاح شد",
+      "expense_type_deleted_successfully":"نوع مصرف موافقانه پاک شد",
+      "expense_name_is_require":"نام نوع مصرف حتمی است"
     },
     "Customers": {
       "Customers": "مشتریان",
@@ -341,7 +349,8 @@
       "list_of_customer_accounts": "لیست حساب های مشتریان",
       "record_previous_customer_accounts": "ثبت حساب گذشته  مشتریان",
       "update_record_previous_customer_account": "اصلاح حساب گذشته مشتری ",
-      "customer_saved_successfully":"مشتری موافقانه ذخیره شد"
+      "customer_saved_successfully":"مشتری موافقانه ذخیره شد",
+      "customer_name_is_required":"نام مشتری حتمی است."
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -390,7 +399,9 @@
       "record_previous_employee_accounts": "ثبت حساب گذشته  کارمندان",
       "update_record_previous_employee_account": "اصلاح حساب گذشته کارمند ",
       "employee_saved_successfully":"کارمند موافقانه ذخیره شد",
-      "employee_updated_successfully":"کارمند موافقانه اصلاح شد"
+      "employee_updated_successfully":"کارمند موافقانه اصلاح شد",
+      "employee_name_is_require":"نام کارمند حتمی است",
+      "id_number_is_require":"نمبر تذکره حتمی است"
     },
     "income": {
       "new_income": "عوایید جدید",
@@ -405,7 +416,8 @@
       "delete_description": "این عوایید حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "external_income": "عواید بیرونی",
       "external_income_type_saved_successfully":"نوع عواید بیرونی موافقانه ذخیره شده",
-      "external_income_type_updated_successfully":"نوع عواید بیرونی موافقانه اصلاح شده"
+      "external_income_type_updated_successfully":"نوع عواید بیرونی موافقانه اصلاح شده",
+      "income_name_is_require":"نام نوع عواید حتمی است"
     },
     "partner": {
       "new_partner_details": "مشخصات شریک جدید",
@@ -428,7 +440,8 @@
       "delete_description": "این شریک حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "currency": "ارز",
       "this_partner_saved_successfully":"یک شریک موافقانه ذخیره شده",
-      "this_partner_updated_successfully":" شریک موافقانه اصلاح شده"
+      "this_partner_updated_successfully":" شریک موافقانه اصلاح شده",
+      "partner_name_is_require":"نام شریک حتمی است"
     },
     "warehouse": {
       "initial_period_registration": "ثبت اول دوره",
@@ -456,7 +469,8 @@
       "back": "بازگشت",
       "warehouse_saved_successfully":"گدام موافقانه ذخیره شد",
       "warehouse_updated_successfully":"گدام موافقانه اصلاح شد",
-      "warehouse_deleted_successfully":"گدام موافقانه پاک شد"
+      "warehouse_deleted_successfully":"گدام موافقانه پاک شد",
+      "warehouse_name_is_required":"نام گدام حتمی است"
     }
   },
   "transactions": {
@@ -507,7 +521,9 @@
     "salary_amount": " مقدار معاش",
     "employee_salary_added_successfully": " معاش کارمند با موفقیت ثبت شد",
     "no_salary_has_been_recorded": "هیچ معاشی ثبت نشده است",
-    "amount_is_required":"مقدار حتمی است"
+    "amount_is_required":"مقدار حتمی است",
+    "customer_is_required":"نام مشتری حتمی است",
+    "receiver_is_required":"نام دریافت کننده حتمی است"
   },
   "numberToWord": {
     "zero": " صفر",

@@ -20,9 +20,8 @@ import { AppContext } from "@/provider/appContext";
 import { useAddEmployeeMutation } from "@/hooks/api/definitions/employee/mutations/use-add-mutation";
 import { useTranslations } from "next-intl";
 
-
 const CreateEmployee = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const method = useForm();
   const {
     register,
@@ -31,7 +30,7 @@ const CreateEmployee = () => {
   } = method;
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
- 
+
   const [openDialog, setOpenDialog] = useState(false);
   const { mutate, isLoading } = useAddEmployeeMutation();
 
@@ -107,7 +106,11 @@ const CreateEmployee = () => {
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item mt={2} xs={6}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required>
+                  <InputLabel
+                    sx={{ paddingBottom: "5px" }}
+                    required
+                    error={!!errors?.name}
+                  >
                     {t("employee.name")}
                   </InputLabel>
                   <TextField
@@ -115,7 +118,13 @@ const CreateEmployee = () => {
                     size="small"
                     {...register("name", { required: true })}
                     name="name"
+                    error={!!errors?.name}
                   />
+                  {errors?.name?.type === "required" && (
+                    <Typography color="error" p={1}>
+                      {t("employee.employee_name_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item mt={2} xs={6}>
                   <InputLabel sx={{ paddingBottom: "5px" }}>
@@ -141,8 +150,11 @@ const CreateEmployee = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    نمبر تذکره{t("employee.id_number")}
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.idNumber}
+                  >
+                    {t("employee.id_number")}
                   </InputLabel>
                   <TextField
                     fullWidth
@@ -150,7 +162,13 @@ const CreateEmployee = () => {
                     type="number"
                     {...register("idNumber", { required: true })}
                     name="idNumber"
+                    error={!!errors?.idNumber}
                   />
+                  {errors?.idNumber?.type === "required" && (
+                    <Typography color="error" p={1}>
+                      {t("employee.id_number_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -198,7 +216,7 @@ const CreateEmployee = () => {
                   >
                     {t("employee.currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent />
+                  <UserCurrenciesComponent required={false} />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

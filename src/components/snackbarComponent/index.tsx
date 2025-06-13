@@ -1,5 +1,5 @@
 import { Snackbar, Alert } from "@mui/material";
-import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface IPropsSnackbar {
   status: "success" | "info" | "warning" | "error";
@@ -13,6 +13,7 @@ const SnackbarComponent: React.FC<IPropsSnackbar> = ({
   open,
   status,
 }) => {
+  const t = useTranslations()
   return (
     <Snackbar
       open={open}
@@ -24,7 +25,32 @@ const SnackbarComponent: React.FC<IPropsSnackbar> = ({
         onClose={handleClose}
         variant={"standard"}
         severity={status}
-        sx={{ width: "100%", fontSize:"1.3rem" }}
+        sx={{
+          width: "100%",
+          fontSize: "1.7rem",
+          display: "flex",
+          gap:"2rem",
+          justifyContent: "space-between",
+          alignItems: "center",
+          direction:t("home.dir"),
+          "& .MuiAlert-action":{
+            display:"flex",
+            justifyContent:"flex-end",
+            padding:0,
+            "& .MuiSvgIcon-root":{
+              fontSize:"2rem"
+            }
+          }
+        }}
+        //  sx={{
+        //   width: "100%",
+        //   fontSize: "1.5rem",
+        //   textAlign: 'right', // Align text to right in RTL
+        //   direction: 'rtl', // Set direction for the alert content
+        //   '& .MuiAlert-message': {
+        //     padding: '8px 0', // Adjust padding if needed
+        //   }
+        // }}
       >
         {message}
       </Alert>

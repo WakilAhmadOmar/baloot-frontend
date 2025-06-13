@@ -13,15 +13,14 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import { useContext,  useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAddConsumptionTypeMutation } from "@/hooks/api/definitions/consumption/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 const CreateConsumption = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const {
     register,
     handleSubmit,
@@ -88,7 +87,10 @@ const CreateConsumption = () => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("Expenses.Expense_Name")}
                 </InputLabel>
                 <TextField
@@ -96,7 +98,13 @@ const CreateConsumption = () => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("Expenses.expense_name_is_require")}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>
@@ -118,17 +126,15 @@ const CreateConsumption = () => {
         </DialogActions>
       </Dialog>
 
-        
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-            
-          >
-            {t("Expenses.Add_New_Expense")}
-          </Button>
-        </Box>
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("Expenses.Add_New_Expense")}
+        </Button>
+      </Box>
     </Box>
   );
 };

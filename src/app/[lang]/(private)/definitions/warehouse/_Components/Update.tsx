@@ -21,17 +21,17 @@ import { useUpdateWarehouseMutation } from "@/hooks/api/definitions/warehouse/mu
 import { useTranslations } from "next-intl";
 
 interface IPropsCreateWarehouse {
-  item:any
+  item: any;
 }
 
 const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods = useForm({
-    defaultValues:{
-        employeeId:item?.responsible?._id,
-        name:item?.name,
-        address:item?.address
-    }
+    defaultValues: {
+      employeeId: item?.responsible?._id,
+      name: item?.name,
+      address: item?.address,
+    },
   });
   const { setHandleError } = useContext(AppContext);
   const {
@@ -51,7 +51,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
 
   const onSubmitFunction = async (data: any) => {
     const variables = {
-        entrepotId:item?._id,
+      entrepotId: item?._id,
       entrepotObject: {
         name: data?.name,
         address: data?.address,
@@ -105,7 +105,8 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                error={!!errors?.name}>
                   {t("warehouse.warehouses")}
                 </InputLabel>
                 <TextField
@@ -113,7 +114,13 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("warehouse.warehouse_name_is_required")}
+                  </Typography>
+                )}
               </Grid>
 
               <Grid item xs={6}>

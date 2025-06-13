@@ -10,7 +10,7 @@ import { SkeletonComponentBox } from "../../_Components/Skeleton-box";
 import { useTranslations } from "next-intl";
 
 const DefinitionUnit = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const { data: getMeasures, isLoading } = useGetMeasuresQuery();
 
   return (
@@ -19,7 +19,7 @@ const DefinitionUnit = () => {
         {t("unit.define_units")}
       </Typography>
       <Box>
-        <Create  />
+        <Create />
         <Box display={"flex"} flexWrap={"wrap"} columnGap={2} rowGap={2}>
           {getMeasures?.map((item: any) => {
             return (

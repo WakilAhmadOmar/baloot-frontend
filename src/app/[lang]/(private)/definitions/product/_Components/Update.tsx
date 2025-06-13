@@ -29,7 +29,7 @@ interface IPropsUpdateProduct {
   product?: any;
 }
 const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
-  const t = useTranslations("product")
+  const t = useTranslations("product");
   const { mutate: updateProductMutation, isLoading } =
     useUpdateProductMutation();
   const theme = useTheme();
@@ -41,6 +41,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       expirationDate: product?.expirationDate?.slice(0, 10),
       barcode: product?.barcode,
       currencyId: product?.currencyId?._id,
+      product_measure:product?.measures?.map((meas:any)=> meas?.measureId?.name)
     };
   }, [product]);
   const method = useForm<any>({
@@ -60,6 +61,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       measure: me?.measureId?._id,
       name: me?.measureId?.name,
       sellPrice: me?.sellPrice,
+
     }));
   }, [product]);
 
@@ -208,7 +210,11 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                     <UploadComponent />
                   </Grid> */}
                 {/* <Grid item mt={12} xs={18}> */}
-                <InputLabel sx={{ paddingBottom: "5px" }} required>
+                <InputLabel
+                  sx={{ paddingBottom: "5px" }}
+                  required
+                  error={!!errors?.name}
+                >
                   <Typography variant="subtitle2" component={"samp"}>
                     {t("product_name")}
                   </Typography>
@@ -218,12 +224,16 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("product_name_is_required")}
+                  </Typography>
+                )}
                 <ProductMeansureComponent
-                  register={register}
                   getDataSelect={handleGetMeasureFunction}
                   defaultValue={selectedUnitProduct}
-                  t={t}
                 />
                 {/* </Grid> */}
                 {/* </Grid> */}
@@ -321,10 +331,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                 <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
                   {t("currency")}
                 </InputLabel>
-                <UserCurrenciesComponent
-                  name={"currencyId"}
-                  // register={register}
-                />
+                <UserCurrenciesComponent name={"currencyId"} />
               </Grid>
               <Grid item xs={12} md={6}>
                 <ProductCategoriesComponent register={register} />

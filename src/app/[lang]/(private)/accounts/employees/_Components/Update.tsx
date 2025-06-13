@@ -220,7 +220,8 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
                     <UserCurrenciesComponent
                       name="currencyId"
                       dir={t("dir")}
-                      defaultValue={item?.currencyId?._id}
+                      defaultValue={item?.currencyId?._id} 
+                      required={false}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)
                       }

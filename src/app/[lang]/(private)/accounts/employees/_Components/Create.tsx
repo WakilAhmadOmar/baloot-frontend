@@ -241,6 +241,7 @@ const AddBanksAccounts = () => {
                     <UserCurrenciesComponent
                      name={"currencyId" + index}
                       defaultValue={item?.currencyId?._id}
+                      required={false}
                       dir={t("dir")}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)

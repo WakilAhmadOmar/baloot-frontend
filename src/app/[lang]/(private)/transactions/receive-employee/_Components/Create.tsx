@@ -30,11 +30,10 @@ import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useTranslations } from "next-intl";
 
-
 const CreateComponent = () => {
-  const t = useTranslations("transactions")
+  const t = useTranslations("transactions");
   const theme = useTheme();
-  const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
     // defaultValues,
@@ -50,7 +49,7 @@ const CreateComponent = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const {mutate, error , isLoading} = useAddNewReceiveMutation()
+  const { mutate, error, isLoading } = useAddNewReceiveMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -63,30 +62,32 @@ const CreateComponent = () => {
     setAccountType(value);
   };
   const onSubmitFunction = (data: any) => {
-
-    mutate({
-      receiveObject:{
-        ...data,
-        amount:parseFloat(data?.amount),
-        amountCalculated:parseFloat(data?.amountCalculated),
-        invoiceType:"Cash",
-        receiverType:accountType,
-        payerType:"Employee"
-      }
-    }, {
-      onSuccess: () => {
-        setOpenDialog(false)
-        setHandleError({
-          open:true,
-          message:"This record added successfully",
-          type:"success"
-        })
-
-        // router.back()
+    mutate(
+      {
+        receiveObject: {
+          ...data,
+          amount: parseFloat(data?.amount),
+          amountCalculated: parseFloat(data?.amountCalculated),
+          invoiceType: "Cash",
+          receiverType: accountType,
+          payerType: "Employee",
+        },
       },
-    })
+      {
+        onSuccess: () => {
+          setOpenDialog(false);
+          setHandleError({
+            open: true,
+            message: "This record added successfully",
+            type: "success",
+          });
+
+          // router.back()
+        },
+      }
+    );
   };
-  console.log("errors" , errors)
+
   return (
     <Box>
       <FormProvider {...methods}>
@@ -108,9 +109,7 @@ const CreateComponent = () => {
                 borderBottom: `1px solid ${theme.palette.grey[200]}`,
               }}
             >
-              <Typography>
-                {t("cash_receipt_from_employees")}
-              </Typography>
+              <Typography>{t("cash_receipt_from_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
                 <CloseSquare />
               </IconButton>
@@ -121,15 +120,25 @@ const CreateComponent = () => {
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.payerId}
                   >
                     {t("full_name_of_employee")}
                   </InputLabel>
-                  <EmployeeAutoCompleteComponent dir={t("dir")} name="payerId" />
+                  <EmployeeAutoCompleteComponent
+                    dir={t("dir")}
+                    name="payerId"
+                  />
+                  {errors?.payerId?.type === "optionality" && (
+                    <Typography color="error" p={1}>
+                      {errors?.payerId?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.amount}
                   >
                     {t("received_amount")}
                   </InputLabel>
@@ -137,22 +146,38 @@ const CreateComponent = () => {
                     fullWidth
                     size="small"
                     {...register("amount", { required: true })}
+                    error={!!errors?.amount}
                   />
+                  {!!errors?.amount && (
+                    <Typography color="error" p={1}>
+                      {errors?.amount?.message}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                     required
+                    error={!!errors?.currencyId}
                   >
                     {t("currency")}
                   </InputLabel>
                   <UserCurrenciesComponent dir={t("dir")} />
+                  {!!errors?.currencyId && (
+                    <Typography color="error" p={1}>
+                      {t("currency_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t("calculated_currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent name="calculatedTo" dir={t("dir")} />
+                  <UserCurrenciesComponent
+                    name="calculatedTo"
+                    dir={t("dir")}
+                    required={false}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -161,10 +186,10 @@ const CreateComponent = () => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("amountCalculated", { required: true })}
+                    {...register("amountCalculated", { required: false })}
                   />
                 </Grid>
-                                 <Grid item xs={12}>
+                <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                     {t("recipient")}
                   </InputLabel>
@@ -188,21 +213,30 @@ const CreateComponent = () => {
                   </RadioGroup>
                 </Grid>
                 <Grid item xs={8}>
-                  {accountType === "Bank" && <BankAutoComplete name="receiver" dir={t("dir")}/>}
-                  {accountType === "Safe" && <CashBoxAutoComplete name="receiver" dir={t("dir")} />}
+                  {accountType === "Bank" && (
+                    <BankAutoComplete name="receiver" dir={t("dir")} />
+                  )}
+                  {accountType === "Safe" && (
+                    <CashBoxAutoComplete name="receiver" dir={t("dir")} />
+                  )}
+                  {!!errors?.receiver && (
+                    <Typography color="error" p={1}>
+                      {t("receiver_is_required")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t("description")}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  size="small"
-                  {...register("description", { required: true })}
-                />
-              </Grid>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                    {t("description")}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    size="small"
+                    {...register("description", { required: false })}
+                  />
+                </Grid>
               </Grid>
             </DialogContent>
             <DialogActions

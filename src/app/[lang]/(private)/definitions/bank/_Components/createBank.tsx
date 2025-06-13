@@ -25,7 +25,7 @@ import { useTranslations } from "next-intl";
 const CreateBank = () => {
   const t = useTranslations("pages")
   const methods = useForm();
-  const { register, handleSubmit } = methods;
+  const { register, handleSubmit , formState:{errors} } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -92,15 +92,20 @@ const CreateBank = () => {
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.name}>
                     {t("bank.Bank_Name")}
                   </InputLabel>
                   <TextField
                     fullWidth
                     size="small"
                     {...register("name", { required: true })}
-                    name="name"
+                    name="name" error={!!errors?.name}
                   />
+                  {errors?.name?.type === "required" && (
+                                    <Typography color="error" p={1}>
+                                      {t("bank.bank_name_is_require")}
+                                    </Typography>
+                                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

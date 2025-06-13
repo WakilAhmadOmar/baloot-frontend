@@ -217,6 +217,7 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
                     <UserCurrenciesComponent
                       name="currencyId"
                       dir={t("dir")}
+                      required={false}
                       defaultValue={item?.currencyId?._id}
                       onSelected={(currency) =>
                         handleSelectCurrency(currency, index)

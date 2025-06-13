@@ -163,7 +163,12 @@
     "product_updated_successfully": "Product update successfully",
     "update_product": "Update Product",
     "this_category_saved_successfully": "This category saved successfully",
-    "this_category_updated_successfully": "This category updated successfully"
+    "this_category_updated_successfully": "This category updated successfully",
+    "product_name_is_required":"Product name is required",
+     "currency_is_required":"Currency is required",
+     "measure_is_required":" Measure is required",
+     "amount_is_required":"Amount is required",
+     "category_name_is_required":"Category name is required"
   },
 
   "position_link": {
@@ -268,7 +273,8 @@
       "cancel": "Cancel",
       "bank_saved_successfully": "Bank saved successfully",
       "bank_updated_successfully": "Bank updated successfully",
-      "bank_deleted_successfully": "Bank deleted successfully"
+      "bank_deleted_successfully": "Bank deleted successfully",
+      "bank_name_is_require":"Bank name is require"
     },
     "cashbox": {
       "safes":"Safes",
@@ -292,7 +298,8 @@
       "no_product_yet_discription": "You have no Safe in our system. Click the button below to add or import your cashboxes.",
       "safe_saved_successfully": "Safe saved successfully",
       "safe_updated_successfully": "Safe updated successfully",
-      "safe_deleted_successfully": "Safe deleted successfully"
+      "safe_deleted_successfully": "Safe deleted successfully",
+      "safe_name_is_require":"Safe name is require"
     },
     "Expenses": {
       "Expenses": "Expenses",
@@ -308,7 +315,8 @@
       "yes": "Yes",
       "expense_type_saved_successfully": "Expense type saved successfully",
       "expense_type_updated_successfully": "Expense type updated successfully",
-      "expense_type_deleted_successfully": "Expense type deleted successfully"
+      "expense_type_deleted_successfully": "Expense type deleted successfully",
+      "expense_name_is_require":"Expense name is require"
     },
     "Customers": {
       "Customers": "Customers",
@@ -386,7 +394,9 @@
       "record_previous_employee_accounts": "record Previous Employee Accounts",
       "update_record_previous_employee_account": "Update record previous Employee Account",
       "employee_saved_successfully": "Employee saved successfully",
-      "employee_updated_successfully": "Employee updated successfully"
+      "employee_updated_successfully": "Employee updated successfully",
+      "employee_name_is_require":"Employee name is require",
+      "id_number_is_require":"ID number is require"
     },
     "income": {
       "new_income": "New Income",
@@ -401,7 +411,8 @@
       "delete_description": "Once this external-income is deleted, you will no longer have access to it.",
       "external_income": "External Income",
       "external_income_type_saved_successfully": "External income type saved successfully",
-      "external_income_type_updated_successfully": "External income type updated successfully"
+      "external_income_type_updated_successfully": "External income type updated successfully",
+      "income_name_is_require":"Income name is require"
     },
     "partner": {
       "new_partner_details": "New Partner Details",
@@ -422,7 +433,8 @@
       "delete_description": "Once this partner is deleted, you will no longer have access to it.",
       "currency": "Currency",
       "this_partner_saved_successfully": "This partner saved successfully",
-      "this_partner_updated_successfully": "This partner updated successfully"
+      "this_partner_updated_successfully": "This partner updated successfully",
+       "partner_name_is_require":"Partner name is require"
     },
     "warehouse": {
       "initial_period_registration": "Initial Period Registration",
@@ -450,7 +462,9 @@
       "back": "Back",
       "warehouse_saved_successfully": "Warehouse saved successfully",
       "warehouse_updated_successfully": "Warehouse updated successfully",
-      "warehouse_deleted_successfully": "Warehouse deleted successfully"
+      "warehouse_deleted_successfully": "Warehouse deleted successfully",
+      "warehouse_name_is_required":"Warehouse name is require",
+      "customer_name_is_required":"Customer name is require"
     }
   },
   "transactions": {
@@ -479,10 +493,10 @@
     "save": "Save",
     "bank": "Bank",
     "cashbox": "Cashbox",
-    "receiver_is_required": "Receiver is required",
-    "customer_is_required": "Customer is required",
-    "currency_is_required": "Currency is required",
-    "amount_is_required": "Amount is required",
+    "receiver_is_required": "Receiver is require",
+    "customer_is_required": "Customer is require",
+    "currency_is_required": "Currency is require",
+    "amount_is_required": "Amount is require",
     "description_to_much": "The max length of description is 255 characters.",
     "payed_amount": "Payed Amount",
     "receipt_amount": "Receipt Amount",

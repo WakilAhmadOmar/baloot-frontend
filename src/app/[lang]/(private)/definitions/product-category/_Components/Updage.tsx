@@ -100,6 +100,7 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
                 <InputLabel
                   sx={{ paddingBottom: "5px", marginTop: "10px" }}
                   required
+                  error={!!errors?.name}
                 >
                   {t("category_name")}
                 </InputLabel>
@@ -108,10 +109,11 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>
-                    نام دسته بندی حتمی است
+                    {t("category_name_is_required")}
                   </Typography>
                 )}
               </Grid>

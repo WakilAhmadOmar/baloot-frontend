@@ -49,7 +49,7 @@ export default async function MiniDrawer({
     >
       <CssBaseline />
       <AppBar position="fixed" open={true} drawerwidth={drawerWidth} >
-        <CustomToolbar t={tra} lang={lang}/>
+        <CustomToolbar  lang={lang}/>
       </AppBar>
       <Drawer
         variant="permanent"
@@ -73,7 +73,7 @@ export default async function MiniDrawer({
             open
             text={tra.layout.dashboard}
             key={"Dashboard"}
-            t={tra}
+
           />
           <LinkLayout
             Icon={ <Book size={25} color="gray"/>}
@@ -82,7 +82,7 @@ export default async function MiniDrawer({
             open
             text={tra.layout.journal_book}
             key={"journal"}
-            t={tra}
+
           />
           <LinkLayout
             Icon={  <Wallet1 size={25} color="gray"/>}
@@ -91,9 +91,9 @@ export default async function MiniDrawer({
             open
             text={tra.layout.currencies}
             key={"currencies"}
-            t={tra}
+
           />
-        <CollapseContainer t={tra} lang={lang} open />
+        <CollapseContainer  lang={lang} open />
         </List>
       </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 , direction:tra?.home?.dir }}>

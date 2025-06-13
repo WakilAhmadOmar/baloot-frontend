@@ -98,15 +98,20 @@ import { useTranslations } from "next-intl";
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2}sx={{mt:"1rem"}}>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!errors?.name}>
                     {t("income.income_name")}
                   </InputLabel>
                   <TextField
                     fullWidth
                     size="small"
                     {...register("name", { required: true })}
-                    name="name"
+                    name="name" error={!errors?.name}
                   />
+                  {errors?.name?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("income.income_name_is_require")}
+                  </Typography>
+                )}
                 </Grid>
               </Grid>
             </form>

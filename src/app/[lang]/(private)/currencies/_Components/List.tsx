@@ -43,7 +43,7 @@ interface IPropsCurrency {
   onUpdateRate: (item: any) => void;
   onDelete: (id: string) => void;
 
-  baseCurrency:any
+  baseCurrency: any;
 }
 const CurrencyComponent: React.FC<IPropsCurrency> = ({
   item,
@@ -52,7 +52,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
   onDelete,
   baseCurrency,
 }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const theme = useTheme();
   const client = useApolloClient();
   const [open, setOpen] = React.useState(false);
@@ -60,11 +60,8 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    getValues,
     setValue,
-    getFieldState,
   } = useForm();
   const [updateCurrency, setUpdateCurrency] = useState(false);
 
@@ -88,9 +85,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
         variables,
       });
       setIsActiveCurrency(updateUserCurrencyStatus?.isActive);
-    } catch (error: any) {
-      console.log("error", error.message);
-    }
+    } catch (error: any) {}
   };
   const handleToDayPriceFunction = () => {
     setValue("rate", item?.rate);
@@ -154,7 +149,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
             borderBottom: `2px solid ${theme.palette.grey[100]}`,
             // pt: "5px",
             pb: "5px",
-            textTransform:"none"
+            textTransform: "none",
           }}
         >
           <Box
@@ -334,8 +329,20 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
         <IconButton onClick={updateCurrencyFunction} size="large">
           <Edit size={20} color={theme.palette.primary.main} />
         </IconButton>
-        <IconButton size="large" onClick={onClickDelteButton} disabled={item?.isBase} color="primary">
-          <Trash size={20} color={item?.isBase ? theme.palette?.grey[600] : theme.palette.primary.main} />
+        <IconButton
+          size="large"
+          onClick={onClickDelteButton}
+          disabled={item?.isBase}
+          color="primary"
+        >
+          <Trash
+            size={20}
+            color={
+              item?.isBase
+                ? theme.palette?.grey[600]
+                : theme.palette.primary.main
+            }
+          />
         </IconButton>
       </Box>
     </Card>
