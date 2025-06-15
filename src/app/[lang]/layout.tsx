@@ -6,7 +6,6 @@ import Paper from "@mui/material/Paper";
 import ApolloManager from "@/graphql/client";
 import { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl"
-import {  getMessages,} from "next-intl/server"
 
 
 export const metadata: Metadata = {
@@ -24,7 +23,7 @@ params
 
 }) {
   const locale =  (await params).lang
- const messages = await getMessages()
+ const messages = (await import(`../../../messages/${locale}.json`)).default
   return (
     <html  lang={locale}
       dir={locale === "en" ? "ltr" : "rtl"}>
