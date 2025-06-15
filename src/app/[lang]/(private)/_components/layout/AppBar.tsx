@@ -14,7 +14,7 @@ export const AppBar = styled(MuiAppBar, {
   backgroundImage:"none",
   boxShadow: "none",
   color:"inherit !important",
-  height: "7rem",
+  height: "8.3rem",
   marginInlineStart:drawerwidth,
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
