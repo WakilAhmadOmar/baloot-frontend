@@ -77,7 +77,7 @@ dir="ltr",
               fullWidth
               size={"small"}
               value={value}
-              error={!!errors?.currencyId}
+              error={!!errors?.[name || "cashboxId"] }
               required
               onChange={(event)=> {
                 onChange(event);

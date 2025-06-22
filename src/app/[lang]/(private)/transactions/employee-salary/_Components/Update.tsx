@@ -17,19 +17,33 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { CloseSquare } from "iconsax-react";
+import { CloseSquare, Edit } from "iconsax-react";
 import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSchemaCrateForm } from "./Create-form-schema";
 import { useSubmitEmployeeSalaryMutation } from "@/hooks/api/transactions/mutations/use-submit-employee-salary-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
+import { useUpdateEmployeeSalaryMutation } from "@/hooks/api/transactions/mutations/use-update-employee-salary";
 
-export const CreateCreate = () => {
+interface IUpdateEmployeeSalaryProps {
+  salary: any;
+}
+
+export const UpdateEmployeeSalary = ({
+  salary,
+}: IUpdateEmployeeSalaryProps) => {
   const t = useTranslations("transactions");
   const theme = useTheme();
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues: {
+      payerId: salary?.payerId?._id,
+      receiver: salary?.receiver?._id,
+      amount: salary?.amount.toString(),
+      currencyId: salary?.currencyId?._id,
+      description: salary?.description,
+    },
   });
   const {
     register,
@@ -38,15 +52,16 @@ export const CreateCreate = () => {
   } = methods;
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const { mutate: submitEmployeeSalaryMutation, isLoading } =
-    useSubmitEmployeeSalaryMutation();
+  const { mutate: updateEmployeeSalaryMutation, isLoading } =
+    useUpdateEmployeeSalaryMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
   const onSubmitFunction = (data: any) => {
-    submitEmployeeSalaryMutation(
+    updateEmployeeSalaryMutation(
       {
+        transactionId:salary?._id,
         salaryObject: {
           ...data,
           amount: parseFloat(data?.amount),
@@ -75,9 +90,9 @@ export const CreateCreate = () => {
   };
   return (
     <FormProvider {...methods}>
-      <Button variant="contained" onClick={handleOpenDialogFunction}>
-        {t("add_new_salary")}
-      </Button>
+      <IconButton onClick={handleOpenDialogFunction}>
+        <Edit size={20} color={theme.palette.primary.contrastText} />
+      </IconButton>
       <Dialog
         open={openDialog}
         onClose={handleOpenDialogFunction}
@@ -95,7 +110,7 @@ export const CreateCreate = () => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography> {t("monthly_employee_salary_entry")}</Typography>
+          <Typography> {t("update_employee_salary")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>

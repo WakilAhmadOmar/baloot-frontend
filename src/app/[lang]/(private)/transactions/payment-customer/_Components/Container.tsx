@@ -14,10 +14,10 @@ import { useContext } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
-import { useGetCustomerPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-customer-pay-off-list-query";
+import {  useGetPayToCustomerListQuery } from "@/hooks/api/transactions/queries/use-get-pay-to-customer-list-query";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
-import { useDeleteCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-delete-customer-pay-off";
+import { useDeletePayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-delete-pay-to-customer";
 import { useTranslations } from "next-intl";
 
 
@@ -27,8 +27,8 @@ const ReceiveCashContainer = () => {
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
 
-  const { data, isLoading } = useGetCustomerPayOffListQuery({ page: 1 });
-  const { mutate, isLoading: deleteIsLoading } = useDeleteCustomerPayOffMutation();
+  const { data, isLoading } = useGetPayToCustomerListQuery({ page: 1 });
+  const { mutate, isLoading: deleteIsLoading } = useDeletePayToCustomerMutation();
 
   const handleDeleteFunction = (id: string) => {
     mutate(
@@ -81,6 +81,7 @@ const ReceiveCashContainer = () => {
               getIdToAddAction={handleDeleteFunction}
               UpdateComponent={<UpdateForm  item={item} />}
               isLoading={deleteIsLoading}
+              
             >
               <Box
                 display={"grid"}

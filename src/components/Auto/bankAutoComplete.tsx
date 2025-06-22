@@ -82,7 +82,7 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
           fullWidth
           size={"small"}
           value={value}
-          error={!!errors?.currencyId}
+          error={!!errors?.[name || "bankId"]}
           // helperText={errors?.currencyId?.message}
           required
           onChange={(event)=>{

@@ -1,11 +1,10 @@
 import { gql } from "@apollo/client";
 
-const GET_RECEIVE_LIST = gql`
-query Receive($payerType: PayerTypeForReceiveEnum!, $page: Int) {
-  getReceiveList(payerType: $payerType, page: $page) {
+const GET_RECEIVE_FROM_CUSTOMER_LIST = gql`
+query getReceiveFromCustomerList( $page: Int) {
+  getReceiveFromCustomerList( page: $page) {
     receive {
       _id
-      payerType
       receiver {
         _id
         name
@@ -36,4 +35,4 @@ query Receive($payerType: PayerTypeForReceiveEnum!, $page: Int) {
   }
 }
 `;
-export { GET_RECEIVE_LIST };
+export { GET_RECEIVE_FROM_CUSTOMER_LIST };

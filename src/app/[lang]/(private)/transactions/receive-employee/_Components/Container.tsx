@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import { ExportSquare, Printer } from "iconsax-react";
 import CreateComponent from "./Create";
-import { useGetReceiveListQuery } from "@/hooks/api/transactions/queries/use-get-receive-list-query";
-import { useDeleteReceiveMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-mutation";
+// import { useDeleteReceiveMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-from-customer-mutation";
 import { useContext } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
@@ -19,6 +18,8 @@ import UpdateForm from "./Update";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import { useTranslations } from "next-intl";
+import { useGetReceiveFromEmployeeListQuery } from "@/hooks/api/transactions/queries/use-get-receive-from-employee-list";
+import { useDeleteReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-from_employee";
 
 
 
@@ -28,8 +29,8 @@ const ReceiveCashContainer = () => {
   const {setHandleError} = useContext(AppContext)
  
 
-  const {data , isLoading} = useGetReceiveListQuery({page:1 , payerType:"Employee"})
-  const {mutate , isLoading:deleteIsLoading} = useDeleteReceiveMutation()
+  const {data , isLoading} = useGetReceiveFromEmployeeListQuery({page:1 })
+  const {mutate , isLoading:deleteIsLoading} = useDeleteReceiveFromEmployeeMutation()
 
 const handleDeleteFunction = (id:string) => {
   mutate({

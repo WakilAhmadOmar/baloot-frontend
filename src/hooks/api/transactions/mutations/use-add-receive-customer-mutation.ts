@@ -1,23 +1,23 @@
 import { client } from "@/config/http-client";
-import { RECEIVE_LIST_QUERY_KEY } from "@/constants/queries-key";
-import { ADD_NEW_RECEIVE } from "@/graphql/mutation/ADD_NEW_RECEIVE";
+import { GET_RECEIVE_FROM_CUSTOMER_LIST_QUERY_KEY } from "@/constants/queries-key";
+import {  ADD_RECEIVE_FROM_CUSTOMER } from "@/graphql/mutation/ADD_RECEIVE_FROM_CUSTOMER";
 import { ClientError } from "@/types";
 import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
 
 
-export const useAddNewReceiveMutation = (options: UseMutationOptions<{}, ClientError, {}> = {}) => {
+export const useAddReceiveCustomerMutation = (options: UseMutationOptions<{}, ClientError, {}> = {}) => {
   const queryClient = useQueryClient()
      const mutationFn = async (variables:any) => {
-         const {data: {addNewReceive} } =  await client.mutate({
-          mutation: ADD_NEW_RECEIVE,
+         const {data: {addReceiveFromCUstomer} } =  await client.mutate({
+          mutation: ADD_RECEIVE_FROM_CUSTOMER,
           variables,
         })
-        return addNewReceive
+        return addReceiveFromCUstomer
       }
     
     const onSuccess = ()=> {
       // queryClient.invalidateQueries({ queryKey: [RECEIVE_LIST_QUERY_KEY] })
-      queryClient.refetchQueries({ queryKey: [RECEIVE_LIST_QUERY_KEY] });
+      queryClient.refetchQueries({ queryKey: [GET_RECEIVE_FROM_CUSTOMER_LIST_QUERY_KEY] });
 
     }
     return useMutation({

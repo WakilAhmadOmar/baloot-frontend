@@ -26,7 +26,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
-import { useUpdateEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-update-employee-pay-off";
+import { useUpdatePayToEmployeeMutation } from "@/hooks/api/transactions/mutations/use-update-employee-pay-off";
 import { useTranslations } from "next-intl";
 
 type UpdateFormProps = {
@@ -72,7 +72,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
   } = methods;
   const [payerType, setPayerType] = useState(item?.payerType);
 
-  const { mutate, isLoading } = useUpdateEmployeePayOffMutation();
+  const { mutate, isLoading } = useUpdatePayToEmployeeMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -100,6 +100,13 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             open: true,
             message: "Update successfully",
             type: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
           });
         },
       }

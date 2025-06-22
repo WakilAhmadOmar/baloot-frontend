@@ -24,7 +24,7 @@ import { FormProvider, Resolver, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
-import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/use-update-receive-mutation";
+import { useUpdateReceiveFromCustomerMutation } from "@/hooks/api/transactions/mutations/use-update-receive-from-customer-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
@@ -49,11 +49,11 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
     return {
       amount: item?.amount || 0,
       currencyId: item?.currencyId?._id || "",
-      calculatedTo: item?.calculatedTo?._id || "",
-      amountCalculated: item?.amountCalculated || 0,
+      calculatedTo: item?.calculatedTo?._id ,
+      amountCalculated: item?.amountCalculated ,
       receiver: item?.receiver?._id || "",
       invoiceType: item?.invoiceType || "",
-      payerId: item?.customerId?._id || "", // Add this line
+      payerId: item?.payerId?._id || "", // Add this line
       receiverType: item?.receiverType || "",
       description: item?.description,
     };
@@ -73,7 +73,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
   } = methods;
   const [receiverType, setReceiverType] = useState(item?.receiverType);
 
-  const { mutate, isLoading } = useUpdateReceiveMutation();
+  const { mutate, isLoading } = useUpdateReceiveFromCustomerMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -92,7 +92,6 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
         receiveObject: {
           ...data,
           receiverType,
-          payerType: "Customer",
         },
       },
       {
@@ -102,6 +101,13 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             open: true,
             message: "Update successfully",
             type: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
           });
         },
       }
@@ -145,7 +151,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                     required
                     error={!!errors?.payerId}
                   >
-                    {t("full_name_of_customer")}
+                    {t("full_name_of_customer")}({t("payer")})
                   </InputLabel>
                   <CustomerAutoComplete name="payerId" dir={t("dir")} />
                   {errors?.payerId?.type === "optionality" && (

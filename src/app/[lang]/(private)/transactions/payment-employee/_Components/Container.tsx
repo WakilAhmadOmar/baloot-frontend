@@ -16,8 +16,8 @@ import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
-import { useGetEmployeePayOffListQuery } from "@/hooks/api/transactions/queries/use-get-employee-pay-off-list-query";
-import { useDeleteEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-delete-employee-pay-off";
+import { useGetPayToEmployeeListQuery } from "@/hooks/api/transactions/queries/use-get-employee-pay-off-list-query";
+import { useDeletePayToEmployeeMutation } from "@/hooks/api/transactions/mutations/use-delete-employee-pay-off";
 import { useTranslations } from "next-intl";
 
 
@@ -27,8 +27,8 @@ const ReceiveCashContainer = () => {
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
 
-  const {data , isLoading} = useGetEmployeePayOffListQuery({page:1})
-  const {mutate , isLoading:deleteIsLoading } = useDeleteEmployeePayOffMutation()
+  const {data , isLoading} = useGetPayToEmployeeListQuery({page:1})
+  const {mutate , isLoading:deleteIsLoading } = useDeletePayToEmployeeMutation()
 
 const handleDeleteFunction = (id:string) => {
   mutate({
