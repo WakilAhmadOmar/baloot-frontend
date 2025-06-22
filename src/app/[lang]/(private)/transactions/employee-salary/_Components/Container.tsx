@@ -4,12 +4,6 @@ import CollapseComponent from "@/components/collapse/Collapse";
 import CustomSearch from "@/components/search/CustomSearch";
 import {
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
   IconButton,
   InputLabel,
   Pagination,
@@ -20,29 +14,57 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
-import { useGetCustomerPayOffListQuery } from "@/hooks/api/transactions/queries/use-get-customer-pay-off-list-query";
+import { useGetPayToCustomerListQuery } from "@/hooks/api/transactions/queries/use-get-pay-to-customer-list-query";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import SkeletonComponent from "../../_components/Skeleton";
 import { useTranslations } from "next-intl";
+import { useGetEmployeeSalaryListQuery } from "@/hooks/api/transactions/queries/use-get-employee-salary-list";
+import { UpdateEmployeeSalary } from "./Update";
+import { useDeleteReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-from_employee";
+import { AppContext } from "@/provider/appContext";
 
 const RegistrationEmployeeSalaryPage = () => {
   const t = useTranslations("transactions")
   const theme = useTheme();
   const [page, setPage] = useState(1);
-  const { data: payoffList, isLoading } = useGetCustomerPayOffListQuery({
+  const { setHandleError } = useContext(AppContext);
+  const { data: paySalaryList, isLoading } = useGetEmployeeSalaryListQuery({
     page,
     // receiverType: "Employee",
   });
+
+  const { mutate: deleteSalaryMutation , isLoading: deleteIsLoading  } = useDeleteReceiveFromEmployeeMutation();
 
    const handleChangePage = (
     event: React.ChangeEvent<unknown>,
     page: number
   ) => {
     setPage(page);
+  };
+
+  const handleDeleteSalaryFunction = (id: string) => {
+    // Call the delete mutation here
+    // For example:
+    deleteSalaryMutation({ receiveId: id }, {
+      onSuccess: ({ message }) => {
+        setHandleError({
+          open: true,
+          status: "success",
+          message,
+        });
+      },
+      onError: (error:any) => {
+        setHandleError({
+          open: true,
+          status: "error",
+          message: error.message,
+        });
+      },
+    });
   };
   return (
     <Box>
@@ -51,7 +73,7 @@ const RegistrationEmployeeSalaryPage = () => {
           {t("monthly_employee_salary_entry")}
         </Typography>
         <Box display={"flex"} justifyContent={"space-between"}>
-          <CreateCreate t={t} />
+          <CreateCreate  />
 
           <Box display={"flex"} columnGap={"2rem"} alignItems={"center"}>
             <IconButton>
@@ -61,22 +83,25 @@ const RegistrationEmployeeSalaryPage = () => {
               <Printer color={theme.palette.primary.main} />
             </IconButton>
             <Box> {/* <DateRangePickerComponent /> */}</Box>
-            <CustomSearch t={t} />
+            {/* <CustomSearch  /> */}
           </Box>
         </Box>
       </Box>
       <Box>
-        {payoffList?.payOff?.map((item: any) => {
+        {paySalaryList?.receive?.map((item: any) => {
           return (
             <CollapseComponent
               key={item?._id}
-              name={item?.receiver?.name}
+              name={item?.payerId?.name}
               createdAt={item?.createdAt}
-              messageDescription=""
-              messageTitle=""
-              // id={item?._id}
-              // getIdToAddAction={handleDelteProductFunction}
-              // updateProductFunction={handleUpdateProuct}
+              messageDescription={t("description_delete_message")}
+              messageTitle={t("title_delete_message")}
+              UpdateComponent={<UpdateEmployeeSalary salary={item} />}
+              
+              id={item?._id}
+              getIdToAddAction={handleDeleteSalaryFunction}
+              isLoading={deleteIsLoading}
+
             >
               <Box
                 display={"grid"}
@@ -84,16 +109,16 @@ const RegistrationEmployeeSalaryPage = () => {
                 rowGap={"1rem"}
               >
                 <Typography variant="caption">
-                  {t("receipt_amount")}
+                  {t("salary_amount")}
                 </Typography>
                 <Typography variant="caption">
                   {item?.amount} {item?.currencyId?.symbol}
                 </Typography>
                 <Typography variant="caption">
                   {" "}
-                  {t("payer")}{" "}
+                  {t("recipient")}{" "}
                 </Typography>
-                <Typography variant="caption">{item?.payerId?.name}</Typography>
+                <Typography variant="caption">{item?.receiver?.name}</Typography>
                 <Typography variant="caption">
                   {t("description")}
                 </Typography>
@@ -107,7 +132,7 @@ const RegistrationEmployeeSalaryPage = () => {
       <Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination
-            count={Math.ceil(payoffList?.count / 10)}
+            count={Math.ceil(paySalaryList?.count / 10)}
             size={"medium"}
             shape="rounded"
             variant="outlined"
@@ -120,7 +145,7 @@ const RegistrationEmployeeSalaryPage = () => {
           />
         </Stack>
       </Box>
-      {payoffList?.count === 0 && !isLoading && (
+      {paySalaryList?.count === 0 && !isLoading && (
         <Box mt={"10rem"}>
           {" "}
           <EmptyPage

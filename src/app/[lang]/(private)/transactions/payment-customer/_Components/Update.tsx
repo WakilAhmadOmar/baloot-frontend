@@ -25,7 +25,7 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { AppContext } from "@/provider/appContext";
-import { useUpdateCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-update-customer-pay-off";
+import { useUpdatePayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-update-pay-to-customer";
 import { useTranslations } from "next-intl";
 
 type UpdateFormProps = {
@@ -71,7 +71,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
   } = methods;
   const [payerType, setPayerType] = useState(item?.payerType);
 
-  const { mutate, isLoading } = useUpdateCustomerPayOffMutation();
+  const { mutate, isLoading } = useUpdatePayToCustomerMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -99,6 +99,13 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             open: true,
             message: "Update successfully",
             type: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
           });
         },
       }

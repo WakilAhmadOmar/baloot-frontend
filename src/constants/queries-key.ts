@@ -1,7 +1,9 @@
 
-export const RECEIVE_LIST_QUERY_KEY = "getReceiveList"
-export const GET_CUSTOMER_PAY_OFF_LIST_QUERY_KEY = "getCustomerPayOffList"
-export const GET_EMPLOYEE_PAY_OFF_LIST_QUERY_KEY = "getEmployeePayOffList"
+export const GET_RECEIVE_FROM_CUSTOMER_LIST_QUERY_KEY = "getReceiveFromCustomerList"
+export const GET_RECEIVE_FROM_EMPLOYEE_LIST_QUERY_KEY = "getReceiveFromEmployeeList"
+export const GET_PAY_TO_CUSTOMER_LIST_QUERY_KEY = "getPayToCustomerList"
+export const GET_EMPLOYEE_SALARY_LIST_QUERY_KEY = "getEmployeeSalaryList"
+export const GET_PAY_TO_EMPLOYEE_LIST_QUERY_KEY = "getPayToEmployeeList"
 export const SELLS_BILL_LIST_QUERY_KEY = "getSellsBillList"
 export const SELLS_BILL_BY_ID_QUERY_KEY = "getSellsBillById"
 export const GET_CONSUMPTION_LIST_QUERY_KEY = "getConsumptionList"

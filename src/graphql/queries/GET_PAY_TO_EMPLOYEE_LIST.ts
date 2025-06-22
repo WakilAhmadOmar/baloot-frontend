@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-const GET_EMPLOYEE_PAY_OFF_LIST = gql`
-query GetEmployeePayOffList($page: Int ) {
-  getEmployeePayOffList(page: $page) {
+const GET_PAY_TO_EMPLOYEE_LIST = gql`
+query getPayToEmployeeList($page: Int ) {
+  getPayToEmployeeList(page: $page) {
    
     count
     employeePayOff {
@@ -34,4 +34,4 @@ query GetEmployeePayOffList($page: Int ) {
   }
 }
 `
-export {GET_EMPLOYEE_PAY_OFF_LIST}
+export {GET_PAY_TO_EMPLOYEE_LIST}

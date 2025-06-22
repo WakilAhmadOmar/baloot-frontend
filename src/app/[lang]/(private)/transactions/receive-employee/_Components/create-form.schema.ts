@@ -7,7 +7,9 @@ return object().shape({
     currencyId: string().required(t("currency_is_required")),
     amount:number().typeError(t("amount_is_required")).required(t("amount_is_required")),
     calculatedTo:string(),
-    amountCalculated:number(),
+    amountCalculated:number()
+      .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+      .notRequired(),
     invoiceType:string(),
     billId:string(),
     description:string().max(255 , t("description_to_much"))

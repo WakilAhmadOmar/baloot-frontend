@@ -3,15 +3,10 @@ import { gql } from "@apollo/client";
 
 
 const SUBMIT_EMPLOYEE_SALARY = gql`
-mutation SubmitEmployeeSalary($creditObject: PersonCreditInput, $employeeId: ID!) {
-  submitEmployeeSalary(creditObject: $creditObject, employeeId: $employeeId) {
+mutation SubmitEmployeeSalary($salaryObject: SubmitSalaryObjectInput! ) {
+  submitEmployeeSalary(salaryObject: $salaryObject) {
     _id
-    credit {
-      amount
-      currencyId {
-        _id
-      }
-    }
+
   }
 }
 `

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-const GET_CUSTOMER_PAY_OFF_LIST = gql`
-  query getCustomerPayOffList($page: Int) {
-    getCustomerPayOffList(page: $page) {
+const GET_PAY_TO_CUSTOMER_LIST = gql`
+  query getPayToCustomerList($page: Int) {
+    getPayToCustomerList(page: $page) {
       count
       customerPayOff {
         _id
@@ -34,4 +34,4 @@ const GET_CUSTOMER_PAY_OFF_LIST = gql`
     }
   }
 `;
-export { GET_CUSTOMER_PAY_OFF_LIST };
+export { GET_PAY_TO_CUSTOMER_LIST };

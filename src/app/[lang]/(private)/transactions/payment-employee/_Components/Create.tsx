@@ -11,7 +11,6 @@ import {
   InputLabel,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Typography,
   useTheme,
@@ -22,14 +21,11 @@ import { useForm, FormProvider } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
 import { AppContext } from "@/provider/appContext";
-import { useAddPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-pay-of-mutation";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
-import { useAddEmployeePayOffMutation } from "@/hooks/api/transactions/mutations/use-add-employee-pay-off";
+import { useAddPayToEmployeeMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_employee";
 import { useTranslations } from "next-intl";
 
 const CreateComponent = () => {
@@ -51,7 +47,7 @@ const CreateComponent = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddEmployeePayOffMutation();
+  const { mutate, error, isLoading } = useAddPayToEmployeeMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -81,7 +77,7 @@ const CreateComponent = () => {
           setHandleError({
             open: true,
             message: "This record added successfully",
-            type: "success",
+            status: "success",
           });
 
           // router.back()
@@ -90,9 +86,9 @@ const CreateComponent = () => {
           setHandleError({
             open: true,
             message: error?.message,
-            type: "error",
+            status: "error",
           });
-        },
+        }
       }
     );
   };

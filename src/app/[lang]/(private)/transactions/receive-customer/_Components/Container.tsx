@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { ExportSquare, Printer } from "iconsax-react";
 import CreateComponent from "./Create";
-import { useGetReceiveListQuery } from "@/hooks/api/transactions/queries/use-get-receive-list-query";
-import { useDeleteReceiveMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-mutation";
+import { useGetReceiveFromCustomerListQuery } from "@/hooks/api/transactions/queries/use-get-receive-from-customer-list-query";
+import { useDeleteReceiveFromCustomerMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-from-customer-mutation";
 import { useContext, useState } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
@@ -27,11 +27,10 @@ const ReceiveCashContainer = () => {
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
 
-  const { data, isLoading } = useGetReceiveListQuery({
+  const { data, isLoading } = useGetReceiveFromCustomerListQuery({
     page: 1,
-    payerType: "Customer",
   });
-  const { mutate, isLoading: deleteIsLoading } = useDeleteReceiveMutation();
+  const { mutate, isLoading: deleteIsLoading } = useDeleteReceiveFromCustomerMutation();
 
   const handleDeleteFunction = (id: string) => {
     mutate(

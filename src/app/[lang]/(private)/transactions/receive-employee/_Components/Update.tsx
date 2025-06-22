@@ -24,10 +24,10 @@ import { FormProvider, Resolver, useForm } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./create-form.schema";
-import { useUpdateReceiveMutation } from "@/hooks/api/transactions/mutations/use-update-receive-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useTranslations } from "next-intl";
+import { useUpdateReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-update-receive-from-employee";
 
 type UpdateFormProps = {
   item: any;
@@ -50,11 +50,11 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
     return {
       amount: item?.amount || 0,
       currencyId: item?.currencyId?._id || "",
-      calculatedTo: item?.calculatedTo?._id || "",
-      amountCalculated: item?.amountCalculated || 0,
+      calculatedTo: item?.calculatedTo?._id ,
+      amountCalculated: item?.amountCalculated ,
       receiver: item?.receiver?._id || "",
       invoiceType: item?.invoiceType || "",
-      payerId: item?.customerId?._id || "", // Add this line
+      payerId: item?.payerId?._id || "", // Add this line
       receiverType: item?.receiverType || "",
       description: item?.description,
     };
@@ -74,7 +74,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
   } = methods;
   const [receiverType, setReceiverType] = useState(item?.receiverType);
 
-  const { mutate, isLoading } = useUpdateReceiveMutation();
+  const { mutate, isLoading } = useUpdateReceiveFromEmployeeMutation();
 
   const onChangeHandler = (
     event: ChangeEvent<HTMLInputElement>,
@@ -101,7 +101,14 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
           setHandleError({
             open: true,
             message: "Update successfully",
-            type: "success",
+            status: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            status: "error",
           });
         },
       }
@@ -145,7 +152,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                     required
                     error={!!errors?.payerId}
                   >
-                    {t("full_name_of_employee")}
+                    {t("full_name_of_employee")}({t("payer")})
                   </InputLabel>
                   <EmployeeAutoCompleteComponent
                     name="payerId"

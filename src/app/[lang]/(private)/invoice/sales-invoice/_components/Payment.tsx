@@ -26,7 +26,7 @@ import { AppContext } from "@/provider/appContext";
 import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { InvoiceContext } from "../../_components/invoiceContext";
-import { ADD_NEW_RECEIVE } from "@/graphql/mutation/ADD_NEW_RECEIVE";
+import { ADD_NEW_RECEIVE } from "@/graphql/mutation/ADD_RECEIVE_FROM_CUSTOMER";
 import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import { useFormContext } from "react-hook-form";
 

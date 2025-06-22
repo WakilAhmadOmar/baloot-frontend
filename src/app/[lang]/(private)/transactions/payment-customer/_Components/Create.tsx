@@ -25,7 +25,7 @@ import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { AppContext } from "@/provider/appContext";
-import { useAddCustomerPayOffMutation } from "@/hooks/api/transactions/mutations/use-add-customer-pay-off-mutation";
+import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
 import { useTranslations } from "next-intl";
 
 const CreateComponent = () => {
@@ -47,7 +47,7 @@ const CreateComponent = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddCustomerPayOffMutation();
+  const { mutate, error, isLoading } = useAddPayToCustomerMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -81,6 +81,13 @@ const CreateComponent = () => {
           });
 
           // router.back()
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            type: "error",
+          });
         },
       }
     );

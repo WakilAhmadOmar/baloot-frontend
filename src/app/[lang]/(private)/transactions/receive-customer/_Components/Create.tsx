@@ -24,7 +24,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
+import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-receive-customer-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
@@ -44,7 +44,7 @@ const CreateComponent = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddNewReceiveMutation();
+  const { mutate, error, isLoading } = useAddReceiveCustomerMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -62,10 +62,11 @@ const CreateComponent = () => {
         receiveObject: {
           ...data,
           amount: parseFloat(data?.amount),
-          amountCalculated: parseFloat(data?.amountCalculated),
+          ...(parseFloat(data?.amountCalculated) <= 0
+            ? {}
+            : { amountCalculated: parseFloat(data?.amountCalculated) }),
           invoiceType: "Cash",
           receiverType: accountType,
-          payerType: "Customer",
         },
       },
       {
@@ -74,10 +75,17 @@ const CreateComponent = () => {
           setHandleError({
             open: true,
             message: "This record added successfully",
-            type: "success",
+            status: "success",
           });
 
           // router.back()
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            status: "error",
+          });
         },
       }
     );
@@ -117,7 +125,7 @@ const CreateComponent = () => {
                     required
                     error={!!errors?.payerId}
                   >
-                    {t("full_name_of_customer")}
+                    {t("full_name_of_customer")}({t("payer")})
                   </InputLabel>
                   <CustomerAutoComplete name="payerId" dir={t("dir")} />
                   {errors?.payerId?.type === "optionality" && (
@@ -129,7 +137,8 @@ const CreateComponent = () => {
                 <Grid item xs={6}>
                   <InputLabel
                     sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                    required error={!!errors?.amount}
+                    required
+                    error={!!errors?.amount}
                   >
                     {t("received_amount")}
                   </InputLabel>
@@ -137,7 +146,7 @@ const CreateComponent = () => {
                     fullWidth
                     size="small"
                     {...register("amount", { required: true })}
-                     error={!!errors?.amount}
+                    error={!!errors?.amount}
                   />
                   {!!errors?.amount && (
                     <Typography color="error" p={1}>
@@ -178,6 +187,8 @@ const CreateComponent = () => {
                     fullWidth
                     size="small"
                     {...register("amountCalculated", { required: false })}
+                    name="amountCalculated"
+                    type="number"
                   />
                 </Grid>
                 <Grid item xs={12}>

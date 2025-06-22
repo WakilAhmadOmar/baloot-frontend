@@ -22,13 +22,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { useSchemaCrateForm } from "./create-form.schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import { useAddNewReceiveMutation } from "@/hooks/api/transactions/mutations/use-add-new-receive-mutation";
 import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useTranslations } from "next-intl";
+import { useAddReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-add-receive-from-employee";
 
 const CreateComponent = () => {
   const t = useTranslations("transactions");
@@ -49,7 +48,7 @@ const CreateComponent = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
 
-  const { mutate, error, isLoading } = useAddNewReceiveMutation();
+  const { mutate, error, isLoading } = useAddReceiveFromEmployeeMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -70,7 +69,7 @@ const CreateComponent = () => {
           amountCalculated: parseFloat(data?.amountCalculated),
           invoiceType: "Cash",
           receiverType: accountType,
-          payerType: "Employee",
+          // payerType: "Employee",
         },
       },
       {
@@ -79,10 +78,19 @@ const CreateComponent = () => {
           setHandleError({
             open: true,
             message: "This record added successfully",
-            type: "success",
+            status: "success",
           });
 
           // router.back()
+        },
+        onError: (error:any) => {
+          
+            setHandleError({
+              open: true,
+              message: error?.message,
+              status: "error",
+            });
+          
         },
       }
     );
@@ -122,7 +130,7 @@ const CreateComponent = () => {
                     required
                     error={!!errors?.payerId}
                   >
-                    {t("full_name_of_employee")}
+                    {t("full_name_of_employee")}({t("payer")})
                   </InputLabel>
                   <EmployeeAutoCompleteComponent
                     dir={t("dir")}
