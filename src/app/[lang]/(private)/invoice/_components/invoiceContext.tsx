@@ -6,7 +6,7 @@ export const InvoiceContext = createContext<any>({});
 const InvoiceContextProvider = ({ children }: PropsWithChildren) => {
   const [customer, setCustomer] = useState();
   const [warehouse, setWarehouse] = useState();
-  const [currency, setCurrency] = useState();
+  const [baseCurrency, setBaseCurrency] = useState();
   const [paymentOff, setPaymentOff] = useState<any>({});
   const [sellBillPrice, setSellBillPrice] = useState({
     totalPrice: 0,
@@ -14,7 +14,7 @@ const InvoiceContextProvider = ({ children }: PropsWithChildren) => {
     price: 0,
     payment: 0,
   });
-    const [rows, setRows] = useState<any>([]);
+  const [rows, setRows] = useState<any>([]);
   const [billPrice, setBillPrice] = useState({
     totalPrice: 0,
     consumption: 0,
@@ -29,16 +29,18 @@ const InvoiceContextProvider = ({ children }: PropsWithChildren) => {
         setCustomer,
         warehouse,
         setWarehouse,
-        currency,
-        setCurrency,
+        baseCurrency,
+        setBaseCurrency,
         paymentOff,
         setPaymentOff,
         billPrice,
         setBillPrice,
         productBilState,
         setProductBilState,
-        rows, setRows,
-        sellBillPrice, setSellBillPrice
+        rows,
+        setRows,
+        sellBillPrice,
+        setSellBillPrice,
       }}
     >
       {children}

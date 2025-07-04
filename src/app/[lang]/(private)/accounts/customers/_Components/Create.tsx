@@ -21,13 +21,17 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
 import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 
 
 const AddBanksAccounts= () => {
   const t = useTranslations("pages")
-  const methods = useForm();
-  const { register, handleSubmit } = methods;
+  const methods = useForm({
+    resolver:yupResolver(useSchemaCrateForm(t)),
+  });
+  const { register, handleSubmit , formState:{errors} } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -48,7 +52,7 @@ const AddBanksAccounts= () => {
           : []),
         {
           amount: 0,
-          creditType: "Credit",
+          creditType: "Debit",
           currencyId: {
             _id: "",
             name: "",
@@ -103,14 +107,14 @@ const AddBanksAccounts= () => {
       ),
       description: data?.description,
       accountType: "Customer",
-      accountId: data?.customerId,
+      accountId: data?.accountId,
     };
 
     addFirstPeriodMutation(variables, {
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message,
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction();
@@ -119,8 +123,8 @@ const AddBanksAccounts= () => {
       onError: (error: any) => {
         setHandleError({
           open: true,
-          message: error.message,
-          type: "error",
+          message: error?.message,
+          status: "error",
         });
       },
     });
@@ -153,6 +157,8 @@ const AddBanksAccounts= () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -163,7 +169,7 @@ const AddBanksAccounts= () => {
             {t("Customers.record_previous_customer_accounts")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -179,7 +185,13 @@ const AddBanksAccounts= () => {
                 <CustomerAutoComplete
                   getCustomer={handleGetBank}
                   dir={t("dir")}
+                  name="accountId"
                 />
+                {errors?.accountId && (
+                  <Typography variant="caption" color="error">
+                    {errors?.accountId?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
             {customerDetails?.firstPeriodCredit?.length > 0 && (
@@ -264,7 +276,9 @@ const AddBanksAccounts= () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                error={!!errors?.description} 
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -274,7 +288,13 @@ const AddBanksAccounts= () => {
                   size="small"
                   {...register("description", { required: false })}
                   name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

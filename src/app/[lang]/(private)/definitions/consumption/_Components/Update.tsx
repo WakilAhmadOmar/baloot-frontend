@@ -81,6 +81,8 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ item }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -89,7 +91,7 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ item }) => {
         >
           <Typography>{t("ExpensesNew_Expense")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

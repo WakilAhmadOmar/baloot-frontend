@@ -27,6 +27,8 @@ import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 interface IPropsAddCashBox {
   item: any;
@@ -34,8 +36,15 @@ interface IPropsAddCashBox {
 
 export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
   const t = useTranslations("pages")
-  const methods = useForm();
-  const { register, handleSubmit, reset } = methods;
+  const methods = useForm({
+    resolver:yupResolver(useSchemaCrateForm(t)),
+    defaultValues:{
+      description: item?.description,
+      accountId: item?._id,
+      currencyId: item?.currencyId?._id ,
+    }
+  });
+  const { register, handleSubmit, reset , formState:{errors}} = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -56,7 +65,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
           : []),
         {
           amount: 0,
-          creditType: "Credit",
+          creditType: "Debit",
           currencyId: {
             _id: "",
             name: "",
@@ -125,7 +134,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message ?? "",
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction();
@@ -135,7 +144,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
         setHandleError({
           open: true,
           message: error?.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -162,6 +171,8 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -173,7 +184,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
             {item?.fullName})
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -265,7 +276,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description} >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -275,7 +286,16 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
                   size="small"
                   {...register("description", { required: false })}
                   name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography
+                    variant="caption"
+                    color="error"
+                  >
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

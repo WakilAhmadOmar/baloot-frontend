@@ -40,7 +40,7 @@ export const CreateCategory = () => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          type: "success",
+          status: "success",
           message: t("this_category_saved_successfully"),
         });
         setOpenDialog(false);
@@ -48,7 +48,7 @@ export const CreateCategory = () => {
       onError: (error: any) => {
         setHandleError({
           open: true,
-          type: "error",
+          status: "error",
           message: error?.message,
         });
       },
@@ -71,6 +71,8 @@ export const CreateCategory = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px:2,
+            py:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -79,7 +81,7 @@ export const CreateCategory = () => {
         >
           <Typography variant="button">{t("add_new_category")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

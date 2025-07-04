@@ -12,6 +12,7 @@
     "logout": "خروج از حساب"
   },
   "invoice": {
+    "dir":"rtl",
     "New_Purchase_Invoice": "صدور فاکتور خرید جدید",
     "Company_Name": "نام شرکت",
     "Contact_Number": "شماره تماس",
@@ -56,12 +57,21 @@
     "customer_name_is_required": "نام مشتری حتمی است.",
     "warehouse_is_required": "انتخاب گدام حتمی است.",
     "currency_is_required": "انتخاب ارز حتمی است.",
-    "discount": "فیصدی تخفیف",
+    "discount_percentage": "فیصدی تخفیف",
     "delete_title": "آیا مطمئیند این فاکتور را حذف کنید؟",
     "delete_description": "این فاکتور حذف شود دوباره به آن دسترسی نخواهید داشت.",
     "discount_amount": "مبلغ تخفیف",
     "quantity": "تعداد",
-    "units": "واحدات"
+    "units": "واحدات",
+    "payer":"پرداخت کننده",
+    "safe":" صندوق",
+    "at_least_one_product_is_require":"احداقل یک جنس باید اضافه کنید",
+    "total_products":"مجموعه اجناس",
+    "total_invoice_amount_after_discount":"جمله کل فاکتور بعد از تخفیف",
+    "sell_invoices":"فاکتور های فروش",
+    "yes":"بله",
+    "calculated_currency": "ارز محاسبه شده",
+    "amount_calculated":"مقدار محاسبه شده"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -203,7 +213,10 @@
     "payment-customer":"پرداخت نقد به مشتری",
     "payment-employee":"پرداخت نقد به کارمند",
     "expenses":"مصارفات",
-    "employee-salary":"ثبت معاش کارمندان "
+    "employee-salary":"ثبت معاش کارمندان ",
+    "invoice":"فاکتور خرید و فروش",
+    "sales-invoice":"فاکتور فروش",
+    "initial_inventory_registration":"ثبت اول دوره اجناس "
   },
   "pages": {
         "dir": "rtl",
@@ -227,7 +240,10 @@
       "you_have_no_currency": "شما هیچ ارزی در سیستم ما ندارید. برای افزودن یا وارد کردن ارز خود روی دکمه زیر کلیک کنید.",
       "no_currency_registered": "هیچ ارزی ثبت نشده است",
       "define_currency": "تعریف ارز",
-      "current_rate_in_base_currency": " قیمت روز به ارز معیاری"
+      "current_rate_in_base_currency": " قیمت روز به ارز معیاری",
+      "currency_updated_successfully":"ارز موافقانه اصلاح شد",
+      "currency_saved_successfully":"ارز موافقانه خیره شد",
+      "currency_rate_successfully_updated":"نرخ روز ارز موافقانه اصلاح شد"
     },
     "login": {
       "welcome_to_alpha_accounting_software": "به برنامه حسابداری آلفا خوش آمدید",
@@ -274,7 +290,11 @@
       "bank_saved_successfully":"بانک موافقانه ذخیره شد",
       "bank_updated_successfully":"بانک موافقانه اصلاح شد",
       "bank_deleted_successfully":"بانک موافقانه پاک شد",
-      "bank_name_is_require":"نام بانک حتمی است"
+      "bank_name_is_require":"نام بانک حتمی است",
+      "please_add_at_least_one_credit":"لطفا حداقل یک حساب اضافه کنید",
+      "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
+      "currency_is_required":"انتخاب ارز حتمی است.",
+      "bank_is_required":"انتخاب بانک حتمی است."
     },
     "cashbox": {
       "safes":"صندوق ها",
@@ -303,7 +323,11 @@
       "safe_saved_successfully":"صدنوق موافقانه ذخیره شد",
       "safe_updated_successfully":"صدنوق موافقانه اصلاح شد",
       "safe_deleted_successfully":"صدنوق موافقانه پاک شد",
-      "safe_name_is_require":"نام صندوق حتمی است"
+      "safe_name_is_require":"نام صندوق حتمی است",
+      "currency_is_required":"انتخاب ارز حتمی است.",
+      "please_add_at_least_one_credit":"لطفا حداقل یک حساب اضافه کنید ",
+      "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
+      "cashbox_is_required":"انتخاب صندوق حتمی است."
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -350,7 +374,10 @@
       "record_previous_customer_accounts": "ثبت حساب گذشته  مشتریان",
       "update_record_previous_customer_account": "اصلاح حساب گذشته مشتری ",
       "customer_saved_successfully":"مشتری موافقانه ذخیره شد",
-      "customer_name_is_required":"نام مشتری حتمی است."
+      "customer_name_is_required":"نام مشتری حتمی است.",
+      "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
+      "currency_is_required":"انتخاب ارز حتمی است.",
+      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد."
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -401,7 +428,11 @@
       "employee_saved_successfully":"کارمند موافقانه ذخیره شد",
       "employee_updated_successfully":"کارمند موافقانه اصلاح شد",
       "employee_name_is_require":"نام کارمند حتمی است",
-      "id_number_is_require":"نمبر تذکره حتمی است"
+      "id_number_is_require":"نمبر تذکره حتمی است",
+      "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
+      "currency_is_required":"انتخاب ارز حتمی است.",
+      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد."
+
     },
     "income": {
       "new_income": "عوایید جدید",
@@ -470,7 +501,11 @@
       "warehouse_saved_successfully":"گدام موافقانه ذخیره شد",
       "warehouse_updated_successfully":"گدام موافقانه اصلاح شد",
       "warehouse_deleted_successfully":"گدام موافقانه پاک شد",
-      "warehouse_name_is_required":"نام گدام حتمی است"
+      "warehouse_name_is_required":"نام گدام حتمی است",
+      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد.",
+      "expiration_date":"تاریخ انقضاء",
+      "initial_inventory_saved_successfully": "اول دوره اجناس ذخیره شد"
+      
     }
   },
   "transactions": {
@@ -524,7 +559,27 @@
     "no_salary_has_been_recorded": "هیچ معاشی ثبت نشده است",
     "amount_is_required":"مقدار حتمی است",
     "customer_is_required":"نام مشتری حتمی است",
-    "receiver_is_required":"نام دریافت کننده حتمی است"
+    "receiver_is_required":"نام دریافت کننده حتمی است",
+    "this_receive_successfully_saved":"این دریافت موافقانه ذخیره شد",
+    "this_receive_successfully_updated":"این دریافت موافقانه اصلاح شد",
+    "this_payment_successfully_saved":"این پرداخت موافقانه ذخیره شد",
+    "this_payment_successfully_updated":"این پرداخت موافقانه اصلاح شد",
+    "this_expense_successfully_saved":"این مصرف موافقانه ذخیره شد",
+    "this_expense_successfully_updated":"این مصرف موافقانه اصلاح شد",
+    "this_external_income_successfully_saved":"این عواید بیرونی موافقانه ذخ یره شد",
+    "this_external_income_successfully_updated":"این عواید بیرونی موافقانه اصلاح شد",
+    "are_you_sure_to_delete_this_receive":"آیا مطمئیند این دریافت را حذف کنید؟",
+    "this_receive_will_be_deleted":"این دریافت حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "are_you_sure_to_delete_this_payment":"آیا مطمئیند این پرداخت را حذف کنید؟",
+    "this_payment_will_be_deleted":"این پرداخت حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "are_you_sure_to_delete_this_expense":"آیا مطمئیند این مصرف را حذف کنید؟",
+    "this_expense_will_be_deleted":"این مصرف حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "are_you_sure_to_delete_this_external_income":"آیا مطمئیند این عواید بیرونی را حذف کنید؟",
+    "this_external_income_will_be_deleted":"این عواید بیرونی حذف شود دوباره به آن دسترسی نخواهید داشت.",
+    "are_you_sure_to_delete_this_salary":"آیا مطمئیند این معاش را حذف کنید؟",
+    "this_salary_will_be_deleted":"این معاش حذف شود دوباره به آن دسترسی نخواهید داشت."
+
+
   },
   "numberToWord": {
     "zero": " صفر",

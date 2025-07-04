@@ -9,7 +9,8 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -38,6 +39,8 @@ interface IPropsSelect {
   name?: string;
   getDataSelect?: (data: any[], idNumber?: number) => void;
   idNumber?: number;
+
+
 }
 
 const CustomSelectMeasure: React.FC<IPropsSelect> = ({
@@ -46,11 +49,21 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   name,
   getDataSelect,
   idNumber,
+
 }) => {
   const theme = useTheme();
+  const t = useTranslations("home")
   const [personName, setPersonName] = React.useState<string[]>([
-    ...(data && data?.length > 0 ? [data?.[0]?.measureId?.name] : []),
+    ...(data && data?.length > 0 ? [data?.[0]?.measureName] : []),
   ]);
+
+  useEffect(() => {
+  // When data changes, set the first measure as selected
+  if (data && data.length > 0) {
+    setPersonName([data[0].measureName]);
+    if (getDataSelect) getDataSelect([data[0]], idNumber);
+  }
+}, [data]);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
@@ -62,13 +75,12 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
     let measure: any = [];
     for (let index = 0; index < value.length; index++) {
       const dataArray: any = data?.filter(
-        (item) => item?.measureId?.name === value[index]
+        (item) => item?.measureName === value[index]
       );
-      measure = [...measure, ...dataArray];
+      measure = [...measure, ...dataArray ];
     }
     if (getDataSelect) getDataSelect(measure, idNumber);
   };
-
   return (
     <Select
       multiple
@@ -76,6 +88,7 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
       size="small"
       //   {...register(name, { require: true })}
       value={personName}
+
       onChange={handleChange}
       // placeholder={"واحد"}
       sx={{
@@ -112,19 +125,19 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
     >
       {data?.map((name) => (
         <MenuItem
-          key={name?.measureId?._id}
-          value={name?.measureId?.name}
+          key={name?.measureId}
+          value={name?.measureName}
           // style={getStyles(name?.measure?.name, personName, theme)}
           sx={{
             display: "flex",
             justifyContent: "start",
-            direction: "rtl",
+            direction: t("dir"),
           }}
         >
           {/* {name?.measure?.name} */}
-          <Checkbox checked={personName.indexOf(name?.measureId?.name) > -1} />
+          <Checkbox checked={personName.indexOf(name?.measureName) > -1} />
           <ListItemText
-            primary={name?.measureId?.name}
+            primary={name?.measureName}
             sx={{ width: "fit-content", textAlign: "start" }}
           />
         </MenuItem>

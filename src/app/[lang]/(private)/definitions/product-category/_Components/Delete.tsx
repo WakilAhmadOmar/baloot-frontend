@@ -12,13 +12,15 @@ import {
   useTheme,
 } from "@mui/material";
 import { InfoCircle, Trash } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 
 interface IPropsUpdate {
-  t: any;
+
   id: string;
 }
-export const DeleteCategory = ({ t, id }: IPropsUpdate) => {
+export const DeleteCategory = ({  id }: IPropsUpdate) => {
+  const t = useTranslations("product")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -35,7 +37,7 @@ export const DeleteCategory = ({ t, id }: IPropsUpdate) => {
           setHandleError({
             open: true,
             type: "success",
-            message: t?.product?.this_category_updated_successfully,
+            message:t("this_category_updated_successfully"),
           });
           setOpenDialog(false);
         },
@@ -59,7 +61,7 @@ export const DeleteCategory = ({ t, id }: IPropsUpdate) => {
         onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        dir={t?.home?.dir}
+        dir={t("dir")}
       >
         <DialogContent>
           <Box
@@ -71,14 +73,13 @@ export const DeleteCategory = ({ t, id }: IPropsUpdate) => {
           >
             <InfoCircle color={theme.palette.warning.main} />
             <Typography variant="h5">
-              {t?.product?.Are_you_sure_you_want_to_delete_this_category}
+              {t("Are_you_sure_you_want_to_delete_this_category")}
             </Typography>
           </Box>
           <Box pt={1} sx={{ paddingInlineStart: "3rem" }}>
             <Typography variant="body1">
               {
-                t?.product
-                  ?.Once_this_category_is_deleted_you_will_no_longer_have_access_to_it
+                t("Once_this_category_is_deleted_you_will_no_longer_have_access_to_it")
               }
             </Typography>
           </Box>
@@ -87,14 +88,14 @@ export const DeleteCategory = ({ t, id }: IPropsUpdate) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t?.product?.cancel}
+            {t("cancel")}
           </Button>
           <Button
             color="primary"
             variant="contained"
             onClick={onSubmitFunction}
           >
-            {t?.product?.yes}
+            {t("yes")}
           </Button>
         </DialogActions>
       </Dialog>

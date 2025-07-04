@@ -86,6 +86,8 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -94,14 +96,14 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
         >
           <Typography>{t("income.update_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray"/>
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 36, pb: 5 }}>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}  error={!!errors?.name}>
                   {t("income.income_name")}
                 </InputLabel>
                 <TextField
@@ -109,7 +111,13 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
+                  error={!!errors?.name}
                 />
+                {errors?.name && (
+                  <Typography color="error" variant="caption">
+                    {t("income.income_name_is_require")}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

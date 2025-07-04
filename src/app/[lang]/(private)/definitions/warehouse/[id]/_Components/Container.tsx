@@ -7,7 +7,9 @@ import { useApolloClient } from "@apollo/client";
 import {
   Box,
   Button,
+  Pagination,
   Paper,
+  Stack,
   TextField,
   Typography,
   useTheme,
@@ -16,22 +18,85 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
+import { useGetWareFromEntrepotQuery } from "@/hooks/api/definitions/warehouse/queries/use-get-ware-from-entrepot";
+import { useAddWareToEntrepotMutation } from "@/hooks/api/definitions/warehouse/mutations/use-add-ware-to-entrepot";
 
 interface IPropsContainer {
   id: string;
 }
-
+type FormType = {
+  wareObject: Array<{
+    productId: string;
+    productName?: string;
+    measures: Array<{
+      measureName?: string;
+      measureId: string;
+      amountOfProduct: number;
+    }>;
+    expireInDate?: string;
+  }>;
+};
 const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
+  const [page, setPage] = useState(1);
+  const { data: getWareFromEntrepot, isLoading } = useGetWareFromEntrepotQuery({
+    entrepotId: id,
+    existProduct: false,
+    page,
+  });
+  const { mutate: addWareToEntrepot, isLoading: addLoading } =
+    useAddWareToEntrepotMutation();
+  const [rows, setRows] = useState<any>({
+    page: 1,
+    pageSize: 10,
+    data: [],
+    count: 0,
+  });
+
+  const defaultValues: FormType = useMemo(
+    () => ({
+      wareObject:
+        getWareFromEntrepot?.ware?.map((item: any) => ({
+          productId: item?.productId?._id,
+          productName: item?.productId?.name,
+          measures: item?.productId?.measures?.map((measure: any) => ({
+            measureName: measure?.measureId?.name,
+            measureId: measure?.measureId?._id,
+            amountOfProduct:0,
+          })),
+          expireInDate: new Date().toISOString().slice(0, 10), // ISO string for date input
+        })) || [],
+    }),
+    [getWareFromEntrepot?.ware?.length]
+  );
+  
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues,
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "wareObject",
+  });
+
   const paginationModel = { page: 1, pageSize: 10 };
   const client = useApolloClient();
-  const {setHandleError } = useContext(AppContext)
-  const [loadingPage, setLoadingPage] = useState(true);
+  const { setHandleError } = useContext(AppContext);
   const theme = useTheme();
-   const pathname = usePathname();
-    const lang = pathname.split("/")[1];
-    const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1];
+  const searchParams = useSearchParams();
   const name = searchParams.get("name");
 
   const style = {
@@ -67,78 +132,23 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       },
     },
   };
-  const [rows, setRows] = useState<any>({
-    page: 1,
-    pageSize: 10,
-    data: [],
-    count: 0,
-  });
 
-  const getProductsFunction = async () => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        entrepotId: id,
-        existProduct: false,
-        page: rows?.page,
-      };
-      const {
-        data: { getWareFromEntrepot },
-      } = await client.query({
-        query: GET_WARE_FROM_ENTREPOT,
-        variables,
-      });
-
-      if (getWareFromEntrepot?.count > 0) {
-        const allData =[...rows?.data || [], ...getWareFromEntrepot?.ware?.map((item: any, index: number) => ({
-          ...item,
-          id: item?.productId?._id || index,
-        }))];
-        const duplicate = allData?.filter(
-          (value, index, self) =>
-            index === self.findIndex((t) => t.id === value?.id)
-        );
-        setRows((prevState: any) => ({
-          ...prevState,
-          page: prevState?.page + 1,
-          data: duplicate,
-          count: getWareFromEntrepot?.count,
-        }));
-      }
-      setLoadingPage(false);
-    } catch (error) {
-      setLoadingPage(false);
-    }
-  };
-
-  useEffect(() => {
-    getProductsFunction();
-  }, []);
-
-  const handleChangeBillFunction = (event:ChangeEvent<HTMLInputElement> , rowIndex:number , measureIndex:number) => {
-    const value = parseInt(event.currentTarget?.value);
-    const newRows = rows?.data?.map((item: any, index: number) => {
-      if (index === rowIndex) {
-        return {
-          ...item,
-          measures: item?.measures?.map((measureItem: any, measureIndexItem: number) => {
-            if (measureIndexItem === measureIndex) {
-              return {
-                ...measureItem,
-                amountOfProduct: value,
-              };
-            }
-            return measureItem;
-          }),
-        };
-      }
-      return item;
-    });
-    setRows((prevState: any) => ({
-      ...prevState,
-      data: newRows,
-    }));
-  }
+  // useEffect(() => {
+  //   if (getWareFromEntrepot?.ware?.length) {
+  //     reset({
+  //       wareObject: getWareFromEntrepot.ware.map((item: any) => ({
+  //         productId: item?.productId?._id,
+  //         productName: item?.productId?.name,
+  //         measures: item?.measures?.map((measure: any) => ({
+  //           measureName: measure?.measureId?.name,
+  //           measureId: measure?.measureId?._id,
+  //           amountOfProduct: measure?.amountOfProduct,
+  //         })),
+  //         expireInDate: new Date().toISOString().slice(0, 10),
+  //       })),
+  //     });
+  //   }
+  // }, [getWareFromEntrepot?.ware, reset]);
 
   const columns: GridColDef[] = [
     {
@@ -164,8 +174,40 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       renderCell: ({ row }) => {
         return (
           <Typography variant="body1" my={"auto"} height={"fit-content"}>
-            {row?.productId?.name || ""}
+            {row?.productName || ""}
           </Typography>
+        );
+      },
+    },
+    {
+      field: "expirationDate",
+      headerName: t("warehouse.expiration_date"),
+      width: 230,
+      cellClassName: "pointer",
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+
+        return (
+          <Controller
+            control={control}
+            name={`wareObject.${rowIndex}.expireInDate`}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                type="date"
+                size="small"
+                sx={{
+                  '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                    filter:
+                      theme.palette.mode === "dark" ? "invert(1)" : "none",
+                  },
+                }}
+              />
+            )}
+          />
         );
       },
     },
@@ -176,12 +218,11 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => {
+
         return (
           <Box display={"grid"} my={1} gap={2}>
             {row?.measures?.map((item: any) => (
-              <Typography key={item?.measureId?._id}>
-                {item?.measureId?.name}
-              </Typography>
+              <Typography key={item?.measureId}>{item?.measureName}</Typography>
             ))}
           </Box>
         );
@@ -194,23 +235,25 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => {
-        const rowIndex = rows?.data?.findIndex(
-          (r: any) => r?.productId?._id === row?.productId?._id
-        );
+        const rowIndex = row._fieldIndex;
+
         return (
           <Box display={"grid"} my={1} gap={1}>
             {row?.measures?.map((item: any, measureIndex: number) => (
-              <TextField
+              <Controller
                 key={item?.measureId?._id}
-                sx={style}
-                size="small"
-                type="number"
-                placeholder="quantity"
-                value={item?.amountOfProduct}
-                name="quantity"
-                onChange={(event:ChangeEvent<HTMLInputElement>) =>
-                  handleChangeBillFunction(event, rowIndex, measureIndex)
-                }
+                control={control}
+                name={`wareObject.${rowIndex}.measures.${measureIndex}.amountOfProduct`}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    sx={style}
+                    size="small"
+                    type="number"
+                    placeholder="quantity"
+                    fullWidth
+                  />
+                )}
               />
             ))}
           </Box>
@@ -219,93 +262,121 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
     },
   ];
 
-  const handleSaveProduct = async() => {
-    try{
-      const variables = {
-        entrepotId:id,
-        wareObject:rows?.data?.map((item:any) => ({
-          productId:item?.productId?._id,
-          measures:item?.measures?.map((measureItem:any) => ({
-            measureId:measureItem?.measureId?._id,
-            amountOfProduct:measureItem?.amountOfProduct
-          }))
-        })),
-        isFirstPeriodWare:true
-      }
-      const { data : { addWareToEntrepot }} = await client.mutate({
-        mutation:ADD_WARE_TO_ENTREPOT,
-        variables
-      }) 
-      if (addWareToEntrepot?.id) {
-      const allRows =  rows?.data?.filter((item:any) => {
-          return item?.measures?.some((measureItem:any) => measureItem.amountOfProduct > 0)
-        })
-        setRows((prev:any)=>({
-          ...prev,
-          data:allRows
-        }))
-        setHandleError({
-          open:true,
-          message:"Products added successfully",
-          type:"success"
-        })
-      }
-    }catch(error:any){
-      setLoadingPage(false);
-      setHandleError({
-        open:true,
-        message:error?.message,
-        type:"error"
-      })
-    }
+  const handleSaveProduct = async (data: any) => {
+    const variables = {
+      entrepotId: id,
+      wareObject: data?.wareObject?.map((item: any) => {
+        const measures = item?.measures?.map((measure: any) => ({
+          measureId: measure?.measureId,
+          amountOfProduct:measure?.amountOfProduct
+        }));
+        
+        return {
+          productId:item?.productId,
+          measures,
+          expireInDate:item?.expireInDate,
 
-  }
+        }
+      }),
+      isFirstPeriodWare: true,
+    };
+    addWareToEntrepot(variables, {
+      onSuccess:()=>{
+        setHandleError({
+          status:"error",
+          open:true,
+          message:t("warehouse.initial_inventory_saved_successfully")
+        })
+      },
+      onError:(error:any)=>{
+        setHandleError({
+          status:"error",
+          open:true,
+          message:error.message
+        })
+      }
+    })
+  };
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
+  };
   return (
     <Box>
-        <Box>
-          <Typography variant="h3" mb={2}>
-            {t("warehouse.initial_inventory_entry_in_warehouse")}({name})
-          </Typography>
-        </Box>
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        my={2}
-      >
-        <Box display={"flex"} gap="2rem" alignItems={"center"}>
-          <Link href={`/${lang}/definitions/warehouse`}>
-          <Button variant="outlined">{t("warehouse.back")}</Button>
-          </Link>
-          <Button variant="contained" onClick={handleSaveProduct}>{t("warehouse.save")}</Button>
-        </Box>
-        <Box>
-        </Box>
+      <Box>
+        <Typography variant="h3" mb={2}>
+          {t("warehouse.initial_inventory_entry_in_warehouse")}({name})
+        </Typography>
       </Box>
-      <Paper sx={{ width: "100%" }}>
-        <DataGrid
-          rows={loadingPage ? [] : rows?.data || []}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection={false}
-          //   sx={tableStyle}
-          loading={loadingPage}
-          rowCount={rows?.count || 0}
-          paginationModel={{ page: rows?.page, pageSize: rows?.page }}
-          //   onPaginationModelChange={setPaginationModel}
-          paginationMode="server"
-          sx={{
-            "& .MuiDataGrid-cell": {
-              display: "flex",
-              alignItems: "center",
-              // justifyContent: "center",
-            },
-          }}
-          getRowHeight={() => "auto"}
-          disableRowSelectionOnClick
-        />
-      </Paper>
+      <form>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          my={2}
+        >
+          <Box display={"flex"} gap="2rem" alignItems={"center"}>
+            <Link href={`/${lang}/definitions/warehouse`}>
+              <Button variant="outlined">{t("warehouse.back")}</Button>
+            </Link>
+            <Button
+              variant="contained"
+              onClick={handleSubmit(handleSaveProduct)}
+              loading={addLoading}
+            >
+              {t("warehouse.save")}
+            </Button>
+          </Box>
+          <Box></Box>
+        </Box>
+        <Paper sx={{ width: "100%" }}>
+          <DataGrid
+            rows={  fields.map((item: any, index) => ({
+              ...item,
+              id: item.productId?._id || index,
+              _fieldIndex: index, // add this!
+            }))}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            // pageSizeOptions={[10, 25, 50]}
+            checkboxSelection={false}
+            //   sx={tableStyle}
+            loading={isLoading}
+            rowCount={getWareFromEntrepot?.count || 0}
+            // paginationModel={{ page: rows?.page, pageSize: rows?.page }}
+            //   onPaginationModelChange={setPaginationModel}
+            // paginationMode="server"
+            hideFooter
+            sx={{
+              "& .MuiDataGrid-cell": {
+                display: "flex",
+                alignItems: "center",
+                // justifyContent: "center",
+              },
+            }}
+            getRowHeight={() => "auto"}
+            disableRowSelectionOnClick
+          />
+          {getWareFromEntrepot?.count > 9 && (
+            <Stack spacing={2} p={2}>
+              <Pagination
+                count={Math.ceil(getWareFromEntrepot?.count / 10)}
+                size={"medium"}
+                onChange={handleChangePage}
+                variant="outlined"
+                color="primary"
+                shape="rounded"
+                sx={{
+                  fontSize: "2rem !important",
+                }}
+              />
+            </Stack>
+          )}
+        </Paper>
+      </form>
     </Box>
   );
 };

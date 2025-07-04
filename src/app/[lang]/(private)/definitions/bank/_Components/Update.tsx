@@ -92,6 +92,8 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -100,7 +102,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
           >
             <Typography>{t("bank.update_Bank_Information")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent>
@@ -150,7 +152,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                     {t("bank.description")}
                   </InputLabel>
                   <TextField
@@ -161,7 +163,13 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
                     size="small"
                     {...register("description", { required: false })}
                     name="description"
+                    error={!!errors?.description}
                   />
+                  {errors?.description && (
+                    <Typography color="error" >
+                      {t("bank.description_to_much")}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </form>

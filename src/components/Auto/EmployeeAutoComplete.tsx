@@ -61,7 +61,7 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
         })),
       }));
     } catch (error: any) {
-      console.log(error.message);
+      
     }
   };
 

@@ -12,6 +12,7 @@
     "logout": "خروج از حساب"
   },
   "invoice": {
+    "dir":"ltr",
     "New_Purchase_Invoice": "New Purchase Invoice",
     "Company_Name": "Company Name",
     "Contact_Number": "Contact Number",
@@ -55,11 +56,20 @@
     "customer_name_is_required": "Customer name is Require",
     "warehouse_is_required": "Warehouse is Require",
     "currency_is_required": "Currency is Require",
-    "discount": "Discount Percentage",
+    "discount_percentage": "Discount Percentage",
+    "discount_amount": "Discount Amount",
     "delete_title": "Are you sure you want to delete this invoice?",
     "delete_description": "Once this invoice is deleted, you will no longer have access to it.",
     "quantity": "Quantity",
-    "units": "Units"
+    "units": "Units",
+    "safe":"Safe",
+    "at_least_one_product_is_require":"At least one product is require",
+    "total_products":"Total Products",
+    "total_invoice_amount_after_discount":"Total invoice amount after discount",
+    "sell_invoices":"Sell invoices",
+    "yes":"Yes",
+    "calculated_currency": "Calculated Currency",
+    "amount_calculated":"Amount Calculated"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -122,7 +132,7 @@
     "discount_amount": "Discount Amount"
   },
   "product": {
-    "dir":"ltr",
+    "dir": "ltr",
     "category": "Category",
     "product_code": "Product Code",
     "old_amount": "Old Amount",
@@ -164,11 +174,11 @@
     "update_product": "Update Product",
     "this_category_saved_successfully": "This category saved successfully",
     "this_category_updated_successfully": "This category updated successfully",
-    "product_name_is_required":"Product name is required",
-     "currency_is_required":"Currency is required",
-     "measure_is_required":" Measure is required",
-     "amount_is_required":"Amount is required",
-     "category_name_is_required":"Category name is required"
+    "product_name_is_required": "Product name is required",
+    "currency_is_required": "Currency is required",
+    "measure_is_required": " Measure is required",
+    "amount_is_required": "Amount is required",
+    "category_name_is_required": "Category name is required"
   },
 
   "position_link": {
@@ -192,18 +202,21 @@
     "customers": "Add Customers Accounts",
     "employees": "Add Employees Accounts",
     "cashBoxes": "Add Cash Boxes",
-    "currencies":"Currencies",
-      "product-category":"Product Category",
-      "external-income":"External Income",
-      "cash-box":"Safes Account",
-      "banks":"Banks Account",
-      "receive-customer":"Receive Customer",
-      "transactions":"Transactions",
-      "receive-employee":"Receive Employee",
-      "payment-customer":"Payment Customer",
-      "payment-employee":"Payment Employee",
-      "expenses":"Expenses",
-       "employee-salary":"Employee salary"
+    "currencies": "Currencies",
+    "product-category": "Product Category",
+    "external-income": "External Income",
+    "cash-box": "Safes Account",
+    "banks": "Banks Account",
+    "receive-customer": "Receive Customer",
+    "transactions": "Transactions",
+    "receive-employee": "Receive Employee",
+    "payment-customer": "Payment Customer",
+    "payment-employee": "Payment Employee",
+    "expenses": "Expenses",
+    "employee-salary": "Employee salary",
+    "invoice": "Invoice",
+    "sales-invoice": "Sales Invoice",
+    "initial_inventory_registration":"Initial inventory registration"
   },
   "pages": {
     "dir": "ltr",
@@ -227,7 +240,10 @@
       "you_have_no_currency": "You have no currency in our system. Click the button below to add or import your currency.",
       "no_currency_registered": "No Currency Registered",
       "define_currency": "Define Currency",
-      "current_rate_in_base_currency": "Current Rate in Base Currency "
+      "current_rate_in_base_currency": "Current Rate in Base Currency ",
+       "currency_updated_successfully":"currency updated successfully",
+      "currency_saved_successfully":"Currency saved successfully",
+      "currency_rate_successfully_updated":"Currency rate successfully updated."
     },
     "login": {
       "welcome_to_alpha_accounting_software": "Welcome to alpha Accounting Software",
@@ -274,10 +290,14 @@
       "bank_saved_successfully": "Bank saved successfully",
       "bank_updated_successfully": "Bank updated successfully",
       "bank_deleted_successfully": "Bank deleted successfully",
-      "bank_name_is_require":"Bank name is require"
+      "bank_name_is_require": "Bank name is require",
+      "please_add_at_least_one_credit": "Please add at least one credit",
+      "description_to_much": "The max length of description is 255 characters.",
+      "currency_is_required": "Currency is required",
+      "bank_is_required":" Bank is required"
     },
     "cashbox": {
-      "safes":"Safes",
+      "safes": "Safes",
       "New_Cashbox_Information": "New Safe Information",
       "Cashbox_Name": "Safe Name",
       "Cashier": "Cashier",
@@ -299,7 +319,7 @@
       "safe_saved_successfully": "Safe saved successfully",
       "safe_updated_successfully": "Safe updated successfully",
       "safe_deleted_successfully": "Safe deleted successfully",
-      "safe_name_is_require":"Safe name is require"
+      "safe_name_is_require": "Safe name is require"
     },
     "Expenses": {
       "Expenses": "Expenses",
@@ -316,7 +336,7 @@
       "expense_type_saved_successfully": "Expense type saved successfully",
       "expense_type_updated_successfully": "Expense type updated successfully",
       "expense_type_deleted_successfully": "Expense type deleted successfully",
-      "expense_name_is_require":"Expense name is require"
+      "expense_name_is_require": "Expense name is require"
     },
     "Customers": {
       "Customers": "Customers",
@@ -345,7 +365,8 @@
       "list_of_customer_accounts": "List of Customer Accounts",
       "record_previous_customer_accounts": "record Previous Customer Accounts",
       "update_record_previous_customer_account": "Update Record Previous Customer Account",
-      "customer_saved_successfully": "Customer saved successfully"
+      "customer_saved_successfully": "Customer saved successfully",
+      "address_is_too_long": "Address must not exceed 255 characters."
     },
     "unit": {
       "define_units": "Define Units",
@@ -395,8 +416,11 @@
       "update_record_previous_employee_account": "Update record previous Employee Account",
       "employee_saved_successfully": "Employee saved successfully",
       "employee_updated_successfully": "Employee updated successfully",
-      "employee_name_is_require":"Employee name is require",
-      "id_number_is_require":"ID number is require"
+      "employee_name_is_require": "Employee name is require",
+      "id_number_is_require": "ID number is require",
+      "description_to_much": "The max length of description is 255 characters.",
+      "currency_is_required": "Currency is required",
+      "address_is_too_long": "Address must not exceed 255 characters."
     },
     "income": {
       "new_income": "New Income",
@@ -412,7 +436,7 @@
       "external_income": "External Income",
       "external_income_type_saved_successfully": "External income type saved successfully",
       "external_income_type_updated_successfully": "External income type updated successfully",
-      "income_name_is_require":"Income name is require"
+      "income_name_is_require": "Income name is require"
     },
     "partner": {
       "new_partner_details": "New Partner Details",
@@ -434,7 +458,7 @@
       "currency": "Currency",
       "this_partner_saved_successfully": "This partner saved successfully",
       "this_partner_updated_successfully": "This partner updated successfully",
-       "partner_name_is_require":"Partner name is require"
+      "partner_name_is_require": "Partner name is require"
     },
     "warehouse": {
       "initial_period_registration": "Initial Period Registration",
@@ -463,13 +487,17 @@
       "warehouse_saved_successfully": "Warehouse saved successfully",
       "warehouse_updated_successfully": "Warehouse updated successfully",
       "warehouse_deleted_successfully": "Warehouse deleted successfully",
-      "warehouse_name_is_required":"Warehouse name is require",
-      "customer_name_is_required":"Customer name is require"
+      "warehouse_name_is_required": "Warehouse name is require",
+      "customer_name_is_required": "Customer name is require",
+      "address_is_too_long":"Address must not exceed 255 characters.",
+      "expiration_date":"Expiration Date",
+      "initial_inventory_saved_successfully": "Initial inventory saved successfully"
+      
     }
   },
   "transactions": {
-    "dir":"ltr",
-    "customer":"Customer",
+    "dir": "ltr",
+    "customer": "Customer",
     "cash_receipt_from_customer": "Cash Receipt from Customer",
     "update_cash_receipt_from_customer": "Update Cash Receipt from Customer",
     "cash_payment_to_customer": "Cash Payment to Customer",
@@ -518,7 +546,25 @@
     "monthly_for": "Monthly for...",
     "salary_amount": "Salary Amount",
     "employee_salary_added_successfully": "Employee Salary Added Successfully",
-    "no_salary_has_been_recorded": "No salary has been recorded"
+    "no_salary_has_been_recorded": "No salary has been recorded",
+    "this_receive_successfully_saved": "This receive successfully saved",
+    "this_receive_successfully_updated": "This receive successfully updated",
+    "this_payment_successfully_saved": "This payment successfully saved",
+    "this_payment_successfully_updated": "This payment successfully updated",
+    "this_expense_successfully_saved": "This expense successfully saved",
+    "this_expense_successfully_updated": "This expense successfully updated",
+    "this_external_income_successfully_saved": "This external income successfully saved",
+    "this_external_income_successfully_updated": "This external income successfully updated",
+    "are_you_sure_to_delete_this_receive": "Are you sure to delete this receive?",
+    "this_receive_will_be_deleted": "Once this receive is deleted, you will no longer have access to it.",
+    "are_you_sure_to_delete_this_payment": "Are you sure to delete this payment?",
+    "this_payment_will_be_deleted": "Once this payment is deleted, you will no longer have access to it.",
+    "are_you_sure_to_delete_this_expense": "Are you sure to delete this expense?",
+    "this_expense_will_be_deleted": "Once this expense is deleted, you will no longer have access to it.",
+    "are_you_sure_to_delete_this_external_income": "Are you sure to delete this external income?",
+    "this_external_income_will_be_deleted": "Once this external income is deleted, you will no longer have access to it.",
+    "are_you_sure_to_delete_this_salary": "Are you sure to delete this salary?",
+    "this_salary_will_be_deleted": "Once this salary is deleted, you will no longer have access to it."
   },
   "numberToWord": {
     "zero": "Zero",

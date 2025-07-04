@@ -39,8 +39,15 @@ const handleDeleteFunction = (id:string) => {
     onSuccess:({message})=>{
       setHandleError({
         open:true,
-        type:"success",
+        status:"success",
         message
+      })
+    },
+    onError:(error:any)=>{
+      setHandleError({
+        open:true,
+        status:"error",
+        message:error?.message
       })
     }
   })
@@ -77,8 +84,8 @@ const handleDeleteFunction = (id:string) => {
           key={item?._id}
           name={item?.payerId?.name}
           createdAt={item?.createdAt}
-          messageDescription={t("description_delete_message")}
-          messageTitle={t("title_delete_message")}
+          messageDescription={t("this_receive_will_be_deleted")}
+          messageTitle={t("are_you_sure_to_delete_this_receive")}
           id={item?._id}
           getIdToAddAction={handleDeleteFunction}
           // updateProductFunction={handleUpdateFunction}

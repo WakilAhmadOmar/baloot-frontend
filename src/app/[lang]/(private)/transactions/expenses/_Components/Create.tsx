@@ -58,21 +58,21 @@ export const CreateCreate = () => {
           handleOpenDialogFunction();
           setHandleError({
             open: true,
-            type: "success",
-            message: "Consumption successfully created.",
+            status: "success",
+            message: t("this_expense_successfully_saved"),
           });
         },
         onError: (error: any) => {
           setHandleError({
             open: true,
-            type: "error",
+            status: "error",
             message: error?.message,
           });
         },
       }
     );
   };
-  console.log("error", errors);
+  
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
@@ -140,7 +140,7 @@ export const CreateCreate = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                   {t("description")}
                 </InputLabel>
                 <TextField
@@ -149,7 +149,15 @@ export const CreateCreate = () => {
                   rows={4}
                   size="small"
                   {...register("description", { required: true })}
+                  name="description"
+                  error={!!errors?.description}
+
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

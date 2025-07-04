@@ -25,7 +25,7 @@ export const EditForm = ({ id, t , getDefaultValue }: EditFormPrice) => {
       setValue("customerId" , sellsBill?.customerId?._id)
       setValue("contactNumber" , sellsBill?.customerId?.contactNumber)
       setValue("currencyId" , sellsBill?.currencyId?._id)
-      console.log("sellsBill" , sellsBill)
+      
       setRows(sellsBill?.products?.map((item:any)=> ({...item , id:item?.productId?._id})))
     }
   }, [sellsBill?._id])

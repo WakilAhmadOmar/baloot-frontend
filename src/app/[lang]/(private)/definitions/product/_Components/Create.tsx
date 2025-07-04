@@ -155,6 +155,8 @@ const CreateProduct = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px:2,
+            py:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -163,7 +165,7 @@ const CreateProduct = () => {
         >
           <Typography variant="button">{t("create_title")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

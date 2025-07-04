@@ -1,7 +1,7 @@
 import { Box, Card, Typography, useTheme } from "@mui/material";
 
 import Moment from "react-moment";
-import { UpdateCategory } from "./Updage";
+import { UpdateCategory } from "./Update";
 import { useTranslations } from "next-intl";
 // import { DeleteCategory } from "./Delete";
 interface IPropsUnitProduct {

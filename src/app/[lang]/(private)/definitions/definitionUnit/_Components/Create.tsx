@@ -39,7 +39,7 @@ export function Create() {
       onSuccess: () => {
         setHandleError({
           message:t("unit.create_successfully"),
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction()
@@ -48,7 +48,7 @@ export function Create() {
         setHandleError({
           open: true,
           message: error?.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -77,6 +77,8 @@ export function Create() {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -85,7 +87,7 @@ export function Create() {
         >
           <Typography variant="button">{t("unit.new_unit")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

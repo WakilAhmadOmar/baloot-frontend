@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Add, Trash } from "iconsax-react";
-import { MouseEvent, useContext, useState } from "react";
+import { MouseEvent, useContext, useEffect,  useState } from "react";
 import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
 import Moment from "react-moment";
 import { numberToWords } from "@/utils/numberToWords";
@@ -25,18 +25,33 @@ import { InvoiceContext } from "../../_components/invoiceContext";
 import { useApolloClient } from "@apollo/client";
 import { GET_PRODUCT_COUNT_IN_ENTREPOT } from "@/graphql/queries/GET_PRODUCT_COUNT_IN_ENTREPOT";
 import { AppContext } from "@/provider/appContext";
-import { useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext, Controller } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
-interface IPropsTable {
-  t: any;
- 
-}
-export default function DataTable({ t }: IPropsTable) {
+export default function DataTable() {
+  const t = useTranslations("invoice");
   const theme = useTheme();
   const client = useApolloClient();
-  const {register} = useFormContext()
-  const { rows, setRows, sellBillPrice, setSellBillPrice, paymentOff } =
+  const { register, control, watch, setValue } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "products",
+  });
+  const { paymentOff } =
     useContext(InvoiceContext);
+  const [calculateSellBill, setCalculateSellBill] = useState<{
+    total: number;
+    discount?: number;
+    totalAfterDiscount:number,
+    receipt:number,
+    remain:number
+  }>({
+    total: 0,
+    discount: 0,
+    totalAfterDiscount: 0,
+    receipt: 0,
+    remain: 0,
+  });
   const { setHandleError } = useContext(AppContext);
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
 
@@ -75,14 +90,21 @@ export default function DataTable({ t }: IPropsTable) {
   };
 
   const handleAddNewRow = () => {
-    setRows([...rows, { id: rows?.length + 1 }]);
+    append({
+      productId: "",
+      measures: [],
+      warehouse: null,
+    });
+  
   };
 
-  const sumBillFunction = (filterItems: any[]) => {
+const products:any = watch("products");
+
+   useEffect( () => {
     const initialValue = 0;
     let discount = 0;
     let price = 0;
-    const sumWithInitial = filterItems?.reduce((accumulator, product) => {
+    const sumWithInitial = products?.reduce((accumulator:any, product:any) => {
       const measures = 0;
       const sumMeasures = product?.measures?.reduce(
         (accum: number, measure: any) => {
@@ -97,181 +119,64 @@ export default function DataTable({ t }: IPropsTable) {
       );
       return accumulator + sumMeasures;
     }, initialValue);
-    setSellBillPrice((prevState: any) => ({
-      ...prevState,
-      price,
-      totalPrice: sumWithInitial,
-      discount: discount,
-    }));
-  };
+    setCalculateSellBill({
+      receipt:0,
+      remain:price,
+      total:price,
+      totalAfterDiscount:price - discount,
+      discount
+    })
 
-  const handleGetSelectedProduct = (product: any, indexItem: number) => {
-    setRows((prev: any[]) => {
-      const allRow = prev?.map((item, index) => {
-        if (index === indexItem) {
-          return {
-            id: product?._id,
-            ...product,
-            measures: product?.measures?.map((item: any, index: number) => ({
-              ...item,
-              selected: index === 0,
-              ...(index === 0 ? { totalPrice: item?.buyPrice, amount: 1 } : {}),
-            })),
-          };
-        } else return item;
-      });
-      sumBillFunction(allRow);
-      return allRow;
-    });
-  };
+  },[JSON.stringify(products)]);
 
-  const handleGetMeasureFunction = (data: any[], idNumber: number) => {
-    setRows((prev: any) =>{
-      const allRows = prev?.map((item: any, index: number) => {
-        if (index === idNumber) {
-          return {
-            ...item,
-            measures: item?.measures?.map((measure: any) =>
-              data.some((d) => d?.measureId._id === measure?.measureId?._id)
-                ? { ...measure, selected: true ,totalPrice: measure?.buyPrice, }
-                : { ...measure, selected: false , totalPrice: null}
-            ),
-          };
-        }
-        return item;
-      })
-      sumBillFunction(allRows);
-      return allRows;
-    }
-    );
-  };
 
-  const handleChangeBillFunction = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    index: number,
-    measureIndex: number
-  ) => {
-    const name = event?.currentTarget?.name;
-    const value = parseInt(event?.currentTarget?.value) || 0;
-    let productBill = [...rows];
-    let sellPrice =
-      productBill?.[index as number]?.measures?.[measureIndex]?.sellPrice || 0;
-    let amount =
-      productBill?.[index as number]?.measures?.[measureIndex]?.amount || 0;
-    let consumption =
-      productBill?.[index as number]?.measures?.[measureIndex]?.consumption ||
-      0;
-
-    let totalPrice = (sellPrice + consumption) * amount;
-
-    let measures = productBill?.[index]?.measures;
-
-    if (name === "amount" && value) {
-      totalPrice = (sellPrice + consumption) * value;
-
-      measures[measureIndex] = {
-        ...measures?.[measureIndex],
-        [name]: value > 1 ? value : 1,
-        totalPrice: parseFloat(totalPrice.toFixed(2)),
-      };
-      productBill[index as number] = {
-        ...productBill?.[index as number],
-        measures: measures,
-      };
-    }
-
-    if (name === "sellPrice") {
-      totalPrice = (value + consumption) * amount;
-
-      measures[measureIndex] = {
-        ...measures?.[measureIndex],
-        [name]: value <= 0 ? 0 : value,
-        // discountAmount: discountAmount,
-        totalPrice: parseFloat(totalPrice.toFixed(2)),
-      };
-      productBill[index as number] = {
-        ...productBill?.[index as number],
-        measures: measures,
-      };
-    }
-    if (name === "discount") {
-      totalPrice = sellPrice * amount - ((sellPrice * value) / 100) * amount;
-      measures[measureIndex] = {
-        ...measures?.[measureIndex],
-        [name]: value > 0 ? value : 0,
-        totalPrice: parseFloat(totalPrice.toFixed(2)),
-        overPrice: sellPrice + value,
-      };
-
-      productBill[index as number] = {
-        ...productBill?.[index as number],
-        measures: measures,
-      };
-    }
-    sumBillFunction(productBill);
-    setRows(productBill);
-  };
   const handleDeleteFunction = (event: MouseEvent<HTMLButtonElement>) => {
     const id = parseInt(event?.currentTarget?.id);
-    setRows(rows?.filter((item: any, index: number) => index !== id));
+    remove(id);
   };
 
-  const handleGetWarehouse = async (warehouse: any, rowIndex: number) => {
-    try {
-      const variables = {
-        entrepotId: warehouse?._id,
-        productId: rows?.[rowIndex]?._id,
-      };
-      const {
-        data: { getProductCountInEntrepot },
-      } = await client.query({
-        query: GET_PRODUCT_COUNT_IN_ENTREPOT,
-        variables,
-      });
-
-      const existProduct = getProductCountInEntrepot?.measures?.some(
-        (d: any) => d?.amountOfProduct > 0
-      );
-      setRows((prevState: any) => {
-        const allRow = prevState?.map((item: any, index: number) => {
-          if (index === rowIndex) {
-            return {
-              ...item,
-              warehouse: warehouse,
-              error: !existProduct,
-            };
-          } else return item;
-        });
-        return allRow;
-      });
-      if (!existProduct) {
-        setHandleError({
-          open: true,
-          message: "this product is not exist in this warehouse.",
-          type: "error",
-        });
-      }
-    } catch (error) {}
-  };
   const columns: GridColDef[] = [
     {
       field: "Product Name",
-      headerName: t?.invoice?.product_name,
+      headerName: t("product_name"),
       sortable: false,
       filterable: false,
       width: 200,
       renderCell: ({ row }) => {
-        const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+        const rowIndex = row._fieldIndex;
         return (
           <>
-            <ProductsAutoComplete
-              getProduct={(product) =>
-                handleGetSelectedProduct(product, rowIndex)
-              }
-              defaultValue={{ ...row, id: row?._id, label: row?.name }}
-              t={t}
-              isTable
-              productIds={rows?.map((item: any) => item?.id)}
+            <Controller
+              control={control}
+              name={`products.${rowIndex}.productId`}
+              render={({ field }) => (
+                <ProductsAutoComplete
+                  getProduct={
+                    (product) => {
+                      
+                      remove(rowIndex);
+                      field.onChange(product?._id);
+                      append({
+                        productId: product?._id,
+                        measures: product?.measures?.map(
+                          (measure: any, index: number) => ({
+                            measureId: measure?.measureId?._id,
+                            amount: 1,
+                            sellPrice: measure?.sellPrice,
+                            discount: measure?.discount,
+                            selected: index === 0,
+                            measureName: measure?.measureId?.name,
+                          })
+                        ),
+                        warehouse: null,
+                      });
+                    }
+                  }
+                  defaultValue={{ ...row, id: row?._id, label: row?.name }}
+                  isTable
+                  productIds={fields?.map((item: any) => item?.productId)}
+                />
+              )}
             />
           </>
         );
@@ -279,18 +184,25 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "warehouse",
-      headerName: t?.invoice?.warehouse,
+      headerName: t("warehouse"),
       sortable: false,
       filterable: false,
       width: 200,
       renderCell: ({ row }) => {
-        const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+        const rowIndex = row._fieldIndex;
         return (
           <>
-            <WarehouseAutoComplete
-              // register={register}
-              getWarehouse={(data: any) => handleGetWarehouse(data, rowIndex)}
-              defaultValue={{ ...row?.warehouse, id: row?.warehouse?._id }}
+            <Controller
+              control={control}
+              name={`products.${rowIndex}.warehouse`}
+              render={({ field }) => (
+                <WarehouseAutoComplete
+                  name="warehouse"
+                  getWarehouse={(data: any) => {
+                    field.onChange(data?._id);
+                  }}
+                />
+              )}
             />
           </>
         );
@@ -298,44 +210,77 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "Unit",
-      headerName: t?.invoice?.unit,
+      headerName: t("unit"),
       sortable: false,
       filterable: false,
       width: 200,
       renderCell: ({ row }) => {
-        const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+        const rowIndex = row._fieldIndex;
         return (
-          <CustomSelectMeasure
-            // idNumber={index}
-            data={row?.measures || undefined}
-            getDataSelect={(data) => handleGetMeasureFunction(data, rowIndex)}
+          <Controller
+            control={control}
+            name={`products.${rowIndex}.measures`}
+            render={({ field }) => (
+              <CustomSelectMeasure
+                data={row?.measures || undefined}
+                getDataSelect={(selectedMeasures) => {
+                  const updatedMeasures = (row?.measures || []).map(
+                    (measure: any) => ({
+                      ...measure,
+                      selected: selectedMeasures.some(
+                        (sel) => sel.measureId === measure.measureId
+                      ),
+                    })
+                  );
+                  field.onChange(updatedMeasures);
+                }}
+              />
+            )}
           />
         );
       },
     },
     {
       field: "amount",
-      headerName: t?.invoice?.amount,
+      headerName: t("amount"),
       sortable: false,
       filterable: false,
       width: 120,
       renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+        const measures = watch(`products.${rowIndex}.measures`);
         return (
-          <Box display={"grid"}>
-            {row?.measures?.map((measure: any, measureIndex: number) => {
-              const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+          <Box display={"grid"} rowGap={1}>
+            {measures?.map((measure: any, measureIndex: number) => {
               if (measure?.selected) {
                 return (
-                  <TextField
-                    sx={style}
-                    size="small"
-                    type="number"
-                    placeholder="تعداد"
-                    value={measure?.amount || 1}
-                    name="amount"
-                    onChange={(event) =>
-                      handleChangeBillFunction(event, rowIndex, measureIndex)
-                    }
+                  <Controller
+                    control={control}
+                    name={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                    render={({ field }) => {
+                      return (
+                        <TextField
+                          {...field}
+                          sx={style}
+                          size="small"
+                          type="number"
+                          placeholder="تعداد"
+                          name="amount"
+                          onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          field.onChange(value);
+                          const discountPercentage = measures[measureIndex]?.discountPercentage || 0;
+                          const sellPrice =
+                            measures[measureIndex]?.sellPrice || 0;
+                          const discountAmount = ((sellPrice * value * discountPercentage) / 100).toFixed(2);
+                          setValue(
+                            `products.${rowIndex}.measures.${measureIndex}.discount`,
+                            Number(discountAmount)
+                          );
+                        }}
+                        />
+                      );
+                    }}
                   />
                 );
               } else return <></>;
@@ -346,27 +291,82 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "Price",
-      headerName: t?.invoice?.price,
+      headerName: t("price"),
       sortable: false,
       filterable: false,
       width: 120,
       renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+        const measures = watch(`products.${rowIndex}.measures`);
         return (
-          <Box display={"grid"}>
-            {row?.measures?.map((measure: any, measureIndex: number) => {
-              const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+          <Box display={"grid"} rowGap={1}>
+            {measures?.map((measure: any, measureIndex: number) => {
               if (measure?.selected) {
                 return (
-                  <TextField
-                    sx={style}
-                    size="small"
-                    type="number"
-                    placeholder="sellPrice"
-                    value={measure?.sellPrice || 1}
-                    name="sellPrice"
-                    onChange={(event) =>
-                      handleChangeBillFunction(event, rowIndex, measureIndex)
-                    }
+                  <Controller
+                    control={control}
+                    name={`products.${rowIndex}.measures.${measureIndex}.sellPrice`}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        sx={style}
+                        size="small"
+                        type="number"
+                        placeholder="sellPrice"
+                        name="sellPrice"
+  
+                      />
+                    )}
+                  />
+                );
+              } else return <></>;
+            })}
+          </Box>
+        );
+      },
+    },
+    {
+      field: "discountPercentage",
+      headerName: t("discount_percentage"),
+      sortable: false,
+      filterable: false,
+      width: 120,
+      renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+        const measures = watch(`products.${rowIndex}.measures`);
+        return (
+          <Box display={"grid"} rowGap={1}>
+            {measures?.map((measure: any, measureIndex: number) => {
+              if (measure?.selected) {
+                return (
+                  <Controller
+                    control={control}
+                    name={`products.${rowIndex}.measures.${measureIndex}.discountPercentage`}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        sx={style}
+                        size="small"
+                        type="number"
+                        placeholder="discount"
+                        name="discountPercentage"
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          field.onChange(value);
+                          const sellPrice =
+                            measures[measureIndex]?.sellPrice || 0;
+                          const amount = measures[measureIndex]?.amount || 1;
+                          const discountAmount = (
+                            (sellPrice * amount * value) /
+                            100
+                          ).toFixed(2);
+                          setValue(
+                            `products.${rowIndex}.measures.${measureIndex}.discount`,
+                            Number(discountAmount)
+                          );
+                        }}
+                      />
+                    )}
                   />
                 );
               } else return <></>;
@@ -377,27 +377,48 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "discount",
-      headerName: t?.invoice?.discount,
+      headerName: t("discount_amount"),
       sortable: false,
       filterable: false,
       width: 120,
       renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+        const measures = watch(`products.${rowIndex}.measures`);
         return (
-          <Box display={"grid"}>
-            {row?.measures?.map((measure: any, measureIndex: number) => {
-              const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+          <Box display={"grid"} rowGap={1}>
+            {measures?.map((measure: any, measureIndex: number) => {
               if (measure?.selected) {
                 return (
-                  <TextField
-                    sx={style}
-                    size="small"
-                    type="number"
-                    placeholder="discount"
-                    value={measure?.discount || 0}
-                    name="discount"
-                    onChange={(event) =>
-                      handleChangeBillFunction(event, rowIndex, measureIndex)
-                    }
+                  <Controller
+                    control={control}
+                    name={`products.${rowIndex}.measures.${measureIndex}.discount`}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        sx={style}
+                        size="small"
+                        type="number"
+                        placeholder="discount"
+                        name="discount"
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          field.onChange(value);
+                          const sellPrice =
+                            measures[measureIndex]?.sellPrice || 0;
+                          const amount = measures[measureIndex]?.amount || 1;
+                          const discountPercentage =
+                            sellPrice * amount > 0
+                              ? ((value / (sellPrice * amount)) * 100).toFixed(
+                                  2
+                                )
+                              : 0;
+                          setValue(
+                            `products.${rowIndex}.measures.${measureIndex}.discountPercentage`,
+                            Number(discountPercentage)
+                          );
+                        }}
+                      />
+                    )}
                   />
                 );
               } else return <></>;
@@ -408,27 +429,36 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "total",
-      headerName: t?.invoice?.total,
+      headerName: t("total"),
       sortable: false,
       filterable: false,
       width: 120,
       renderCell: ({ row }) => {
+        const rowIndex = row._fieldIndex;
+        const measures = watch(`products.${rowIndex}.measures`);
         return (
-          <Box display={"grid"}>
-            {row?.measures?.map((measure: any, index: number) => {
-              return (
-                <Typography key={index + measure?.totalPrice}>
-                  {measure?.totalPrice}
-                </Typography>
-              );
-            })}
+          <Box display={"grid"} rowGap={1}>
+            {measures
+              ?.filter((item: any) => item?.selected)
+              ?.map((measure: any, index: number) => {
+                const discount = measure?.discount || 0;
+                const amount = measure?.amount || 1;
+                const sellPrice = measure?.sellPrice || 0;
+                const total =
+                  sellPrice * amount - ((sellPrice * discount) / 100) ;
+                return (
+                  <Typography key={measure?.measureId}>
+                    {total.toFixed(2)}
+                  </Typography>
+                );
+              })}
           </Box>
         );
       },
     },
     {
       field: "expirationDate",
-      headerName: t?.invoice?.expiration_date,
+      headerName: t("expiration_date"),
       sortable: false,
       filterable: false,
       width: 120,
@@ -442,12 +472,12 @@ export default function DataTable({ t }: IPropsTable) {
     },
     {
       field: "action",
-      headerName: t?.invoice?.actions,
+      headerName: t("actions"),
       sortable: false,
       filterable: false,
       width: 120,
       renderCell: ({ row }) => {
-        const rowIndex = rows.findIndex((r: any) => r._id === row._id);
+        const rowIndex = row._fieldIndex;
         return (
           <IconButton
             size="small"
@@ -477,42 +507,40 @@ export default function DataTable({ t }: IPropsTable) {
       setStatusPayment(values);
     }
   };
+
   return (
     <Box sx={{ width: "100%", my: 3 }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        getRowClassName={(params) => (params.row.error ? "error-row" : "")}
-        sx={{
-          py: 4,
-          border: 0,
-          "& .error-row": {
-            border: "2px solid #fe12128f", // Red border for error row
-            backgroundColor: "#ffebee33", // Light red background
-          },
-          "& .MuiDataGrid-main": {
-            paddingBottom: "3rem",
-          },
-          "& .MuiDataGrid-cell": {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-        }}
-        hideFooter
-        getRowHeight={() => "auto"}
-        disableRowSelectionOnClick
-      />
-      {/* <Box my={3}>
-        <Button
-          startIcon={<Add style={{ margin: "0 1rem" }} />}
-          variant={"outlined"}
-          size={"small"}
-          onClick={handleAddNewRow}
-        >
-          {t?.invoice?.insert_new_row}
-        </Button>
-      </Box> */}
+      {fields?.length > 0 && (
+        <DataGrid
+          rows={fields?.map((item: any, index) => ({
+            ...item,
+            id: item.productId?._id || index,
+            _fieldIndex: index,
+          }))}
+          columns={columns}
+          getRowClassName={(params) => (params.row.error ? "error-row" : "")}
+          sx={{
+            py: 4,
+            border: 0,
+            "& .error-row": {
+              border: "2px solid #fe12128f", // Red border for error row
+              backgroundColor: "#ffebee33", // Light red background
+            },
+            "& .MuiDataGrid-main": {
+              paddingBottom: "3rem",
+            },
+            "& .MuiDataGrid-cell": {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }}
+          hideFooter
+          getRowHeight={() => "auto"}
+          disableRowSelectionOnClick
+        />
+      )}
+      
       <Box
         sx={{
           backgroundColor: theme.palette.grey[100],
@@ -530,16 +558,16 @@ export default function DataTable({ t }: IPropsTable) {
           onClick={handleAddNewRow}
           disabled={paymentOff?._id ? true : false}
         >
-          {t?.invoice?.insert_new_row}
+          {t("insert_new_row")}
         </Button>
-        <Typography variant="overline">{t?.invoice?.total_products}</Typography>
+        <Typography variant="overline">{t("total_products")}</Typography>
         <Typography
           variant="overline"
           bgcolor={theme.palette.grey[100]}
           minWidth={"15rem"}
           sx={{ paddingInlineStart: "1rem", borderRadius: "5px" }}
         >
-          {rows?.length}
+          {fields?.length}
         </Typography>
       </Box>
       <Grid2
@@ -561,39 +589,20 @@ export default function DataTable({ t }: IPropsTable) {
               <FormControlLabel
                 value="cash"
                 control={<Radio />}
-                label={t?.invoice?.cash_payment}
+                label={t("cash_payment")}
               />
               <FormControlLabel
                 value="loan"
                 control={<Radio />}
-                label={t?.invoice?.total_invoice_on_credit}
+                label={t("total_invoice_on_credit")}
               />
             </RadioGroup>
           </FormControl>
-          {/* <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="پرداخت بصورت نقدی ( پرداخت کننده صندوق مرکزی)"
-              />
-            </Box>
-            <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="کل فاکتور به صورت قرض"
-              />
-            </Box>
-            <Box>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="حساب گذشته مبلغ 2300 افغانی"
-              />
-            </Box> */}
           <PaymentReceiver
             customer={"Ahmad"}
-            amount={sellBillPrice?.totalPrice}
+            amount={calculateSellBill?.total}
             customerId={""}
             paymentStatus={statusPayment}
-            t={t}
           />
         </Grid2>
         <Grid2 size={4} marginTop={3}>
@@ -609,10 +618,10 @@ export default function DataTable({ t }: IPropsTable) {
               paddingInlineStart={2}
             >
               {" "}
-              <Typography>{t?.invoice?.total_invoice_amount}</Typography>
+              <Typography>{t("total_invoice_amount")}</Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {sellBillPrice.price}
+              {calculateSellBill.total}
             </Typography>
           </Box>
           <Box
@@ -627,10 +636,10 @@ export default function DataTable({ t }: IPropsTable) {
               paddingInlineStart={2}
             >
               {" "}
-              <Typography>{t?.invoice?.total_expense}</Typography>
+              <Typography>{t("discount_amount")}</Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {sellBillPrice?.discount}
+              {calculateSellBill.discount}
             </Typography>
           </Box>
           <Box
@@ -646,11 +655,11 @@ export default function DataTable({ t }: IPropsTable) {
             >
               {" "}
               <Typography>
-                {t?.invoice?.total_invoice_after_expense}{" "}
+                {t("total_invoice_amount_after_discount")}
               </Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {sellBillPrice?.totalPrice}
+              {calculateSellBill?.totalAfterDiscount}
             </Typography>
           </Box>
           <Box
@@ -666,10 +675,10 @@ export default function DataTable({ t }: IPropsTable) {
               paddingInlineStart={2}
             >
               {" "}
-              <Typography>{t?.invoice?.receipt}</Typography>
+              <Typography>{t("receipt")}</Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {/* {paymentOff?.payAmount || 0} */}
+              {paymentOff?.payAmount || calculateSellBill?.receipt}
             </Typography>
           </Box>
           <Box
@@ -684,21 +693,20 @@ export default function DataTable({ t }: IPropsTable) {
               paddingInlineStart={2}
             >
               {" "}
-              <Typography>{t?.invoice?.remaining}</Typography>
+              <Typography>{t("remaining")}</Typography>
             </Box>
             <Typography>
-              {/* {sellBillPrice?.totalPrice - (paymentOff?.payAmount || 0)} */}
-              {sellBillPrice?.totalPrice}
+              {calculateSellBill?.remain}
             </Typography>
           </Box>
         </Grid2>
       </Grid2>
       <Box display="flex" columnGap={"1rem"}>
         <Typography variant="overline" bgcolor={theme.palette.grey[100]}>
-          {t?.invoice?.total_invoice_after_discount_in_words} :
+          {t("total_invoice_after_discount_in_words")} :
         </Typography>
         <Typography variant="overline">
-          {numberToWords(sellBillPrice?.totalPrice, t)}
+          {numberToWords(calculateSellBill?.total)}
         </Typography>
       </Box>
     </Box>

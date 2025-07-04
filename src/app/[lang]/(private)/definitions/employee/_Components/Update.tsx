@@ -110,6 +110,8 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -118,7 +120,7 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
           >
             <Typography>{t("employee.add_new_employee")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent>
@@ -261,7 +263,7 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
                     {t("employee.address")}
                   </InputLabel>
                   <TextField
@@ -269,7 +271,13 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
                     size="small"
                     {...register("address", { required: false })}
                     name="address"
+                    error={!!errors?.address}
                   />
+                  {errors?.address && (
+                    <Typography color="error" p={1}>
+                      {t("employee.address_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </form>

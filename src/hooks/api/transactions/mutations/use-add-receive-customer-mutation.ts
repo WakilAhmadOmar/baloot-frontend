@@ -5,14 +5,14 @@ import { ClientError } from "@/types";
 import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
 
 
-export const useAddReceiveCustomerMutation = (options: UseMutationOptions<{}, ClientError, {}> = {}) => {
+export const useAddReceiveCustomerMutation = (options: UseMutationOptions<{addReceiveFromCustomer:any}, ClientError, {}> = {}) => {
   const queryClient = useQueryClient()
      const mutationFn = async (variables:any) => {
-         const {data: {addReceiveFromCUstomer} } =  await client.mutate({
+         const {data: {addReceiveFromCustomer} } =  await client.mutate({
           mutation: ADD_RECEIVE_FROM_CUSTOMER,
           variables,
         })
-        return addReceiveFromCUstomer
+        return addReceiveFromCustomer
       }
     
     const onSuccess = ()=> {

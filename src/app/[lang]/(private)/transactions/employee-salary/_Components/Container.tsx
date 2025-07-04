@@ -94,8 +94,8 @@ const RegistrationEmployeeSalaryPage = () => {
               key={item?._id}
               name={item?.payerId?.name}
               createdAt={item?.createdAt}
-              messageDescription={t("description_delete_message")}
-              messageTitle={t("title_delete_message")}
+              messageDescription={t("this_salary_will_be_deleted")}
+              messageTitle={t("are_you_sure_to_delete_this_salary")}
               UpdateComponent={<UpdateEmployeeSalary salary={item} />}
               
               id={item?._id}

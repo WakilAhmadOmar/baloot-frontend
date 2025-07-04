@@ -23,11 +23,10 @@ import { useUpdatePartnerMutation } from "@/hooks/api/definitions/partner/mutati
 import { useTranslations } from "next-intl";
 
 interface IPropsCreateProduct {
-
   item: any;
 }
 const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods = useForm({
     defaultValues: {
       firstName: item?.firstName,
@@ -75,7 +74,7 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
       onSuccess: () => {
         setHandleError({
           open: true,
-          type: "success",
+          status: "success",
           message: t("partner.this_partner_updated_successfully"),
         });
         handleOpenDialogFunction();
@@ -104,6 +103,8 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -114,14 +115,18 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
               {t("partner.new_partner_details")}
             </Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} mt={"1rem"} sx={{ mt: "1rem" }}>
                 <Grid item md={6} xs={12}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required error={!!errors?.firstName}>
+                  <InputLabel
+                    sx={{ paddingBottom: "5px" }}
+                    required
+                    error={!!errors?.firstName}
+                  >
                     <Typography variant="subtitle2" component={"samp"}>
                       {" "}
                       {t("partner.first_name")}
@@ -131,13 +136,14 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
                     fullWidth
                     size="small"
                     {...register("firstName", { required: true })}
-                    name="firstName" error={!!errors?.firstName}
+                    name="firstName"
+                    error={!!errors?.firstName}
                   />
-                   {errors?.firstName?.type === "required" && (
-                                                      <Typography color="error" p={1}>
-                                                        {t("partner.partner_name_is_require")}
-                                                      </Typography>
-                                                    )}
+                  {errors?.firstName?.type === "required" && (
+                    <Typography color="error" p={1}>
+                      {t("partner.partner_name_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -172,10 +178,7 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
                   >
                     {t("partner.currency")}
                   </InputLabel>
-                  <UserCurrenciesComponent
-                    name="currencyId"
-                    dir={t("dir")}
-                  />
+                  <UserCurrenciesComponent name="currencyId" dir={t("dir")} />
                 </Grid>
 
                 <Grid item xs={12} md={6}>

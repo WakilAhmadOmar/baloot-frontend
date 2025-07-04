@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { MouseEvent } from "react";
 import Moment from "react-moment";
 import EditSalesInvoice from "./edit-form/Edit";
+import { useTranslations } from "next-intl";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -22,12 +23,12 @@ interface IPropsRow {
   createdAt:string,
   id:string,
   onDelete: (event:MouseEvent) => void , 
-  t:any
   lang:"en" | "fa"
 }
 
-const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onDelete , t , lang }) => {
+const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onDelete , lang }) => {
   const theme = useTheme();
+  const t = useTranslations("invoice")
   const [open, setOpen] = React.useState(false);
 
   const handleOpenDialog = () => {
@@ -41,27 +42,27 @@ const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onD
             keepMounted
             onClose={handleOpenDialog}
             aria-describedby="alert-dialog-slide-description"
-            dir={t?.home?.dir}
+            dir={t("dir")}
           >
             <DialogTitle className="dialogTitleDelete" display={"flex"} gap={1} alignItems={"center"}justifyContent={"space-between"}>
-              <Typography variant="h5">{t.invoice.delete_title}</Typography>
+              <Typography variant="h5">{t("delete_title")}</Typography>
               <InfoCircle size="32" color={theme.palette.warning.main} />
             </DialogTitle>
             <DialogContent className="dialogContentDelete">
               <DialogContentText id="alert-dialog-slide-description">
                 <Typography variant="body1">
-                  {t?.invoice?.delete_description}
+                  {t("delete_description")}
                 </Typography>
               </DialogContentText>
             </DialogContent>
             <DialogActions className="dialogActionDelete" sx={{ display:"flex" , gap:"1rem"}}>
-              <Button onClick={handleOpenDialog} variant="outlined">{t?.product?.cancel}</Button>
+              <Button onClick={handleOpenDialog} variant="outlined">{t("cancel")}</Button>
               <Button
                 onClick={onDelete}
                 variant="contained"
                 color="primary"
               >
-                {t?.product?.yes}
+                {t("yes")}
               </Button>
             </DialogActions>
           </Dialog>

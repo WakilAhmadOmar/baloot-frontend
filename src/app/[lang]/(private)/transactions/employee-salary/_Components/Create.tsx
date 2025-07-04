@@ -89,6 +89,8 @@ export const CreateCreate = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -97,7 +99,7 @@ export const CreateCreate = () => {
         >
           <Typography> {t("monthly_employee_salary_entry")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray"/>
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -171,7 +173,7 @@ export const CreateCreate = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                   {t("description")}
                 </InputLabel>
                 <TextField
@@ -180,7 +182,13 @@ export const CreateCreate = () => {
                   rows={4}
                   size="small"
                   {...register("description")}
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

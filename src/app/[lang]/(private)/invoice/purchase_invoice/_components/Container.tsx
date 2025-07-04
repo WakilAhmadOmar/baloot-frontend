@@ -78,7 +78,7 @@ import {
       // consumptionPrice: Float
       // recieve: Float
       // rest: Float
-      //   console.log("entrepot onSubmitFunction: ", entrepot);
+      //   
       const newData: any = [];
       //   const billProductsData = productBilState?.map((item: any) => {
       //     const data = item?.selectedMeasure?.map((measure: any) => {
@@ -109,14 +109,14 @@ import {
           },
         };
   
-        console.log("variables", variables);
+        
         // const {data : { addBuyBill }} = await client.mutate({
         //   mutation:ADD_BUY_BILL,
         //   variables
         // })
-        // console.log("addBuyBill" , addBuyBill)
+        // 
       } catch (error: any) {
-        console.log("error", error);
+        
       }
     };
     return (

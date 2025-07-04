@@ -32,6 +32,8 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
       name: item?.name,
       cashierPhoneNumber: item?.cashier?.phoneNumber,
       employeeId: item?.cashier?._id,
+      description: item?.description,
+
     },
   });
   const {
@@ -42,7 +44,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
-  const { setHandleError } = useContext(AppContext);
+  const { setHandleError } = useContext(AppContext)
 
   const { mutate, isLoading } = useUpdateSafeMutation();
 
@@ -94,6 +96,8 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -102,7 +106,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
         >
           <Typography>{t("cashbox.New_Cashbox_Information")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -146,6 +150,26 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
                   name="cashierPhoneNumber"
                 />
               </Grid>
+              <Grid item xs={12}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                    {t("bank.description")}
+                  </InputLabel>
+                  <TextField
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    type="text"
+                    size="small"
+                    {...register("description", { required: false })}
+                    name="description"
+                    error={!!errors?.description}
+                  />
+                  {errors?.description && (
+                    <Typography color="error" >
+                      {t("bank.description_to_much")}
+                    </Typography>
+                  )}
+                </Grid>
             </Grid>
           </form>
         </DialogContent>

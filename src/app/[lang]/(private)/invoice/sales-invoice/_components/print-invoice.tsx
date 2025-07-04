@@ -36,7 +36,7 @@ interface IPropsPrint {
 
 export function PrintInvoice({ t }: IPropsPrint) {
   const { rows } = useContext(InvoiceContext);
-  console.log("rows", rows);
+  
   const componentRef = useRef<HTMLDivElement>(null);
 
   const reactToPrintFn = useReactToPrint({
@@ -275,8 +275,9 @@ export function PrintInvoice({ t }: IPropsPrint) {
               fontSize: "1.5rem",
               fontWeight: "bold",
               "@media print": {
-                "-webkit-print-color-adjust": "exact",
-                "print-color-adjust": "exact",
+                // "-webkit-print-color-adjust": "exact",
+                "webkitPrintColorAdjust": "exact",
+                "printColorAdjust": "exact",
               },
             },
             "& .MuiDataGrid-row": {

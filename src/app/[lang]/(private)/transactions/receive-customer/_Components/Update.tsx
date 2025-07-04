@@ -99,15 +99,15 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
           handleOpenDialogFunction();
           setHandleError({
             open: true,
-            message: "Update successfully",
-            type: "success",
+            message: t("this_receive_successfully_updated"),
+            status: "success",
           });
         },
         onError: (error: any) => {
           setHandleError({
             open: true,
             message: error?.message,
-            type: "error",
+            status: "error",
           });
         },
       }
@@ -132,6 +132,8 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             <DialogTitle
               id="alert-dialog-title"
               sx={{
+                px: 2,
+                py: 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -140,7 +142,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             >
               <Typography>{t("update_cash_receipt_from_customer")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare />
+                <CloseSquare size={20} color="gray"/>
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -252,7 +254,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                     {t("description")}
                   </InputLabel>
                   <TextField
@@ -261,7 +263,14 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                     rows={4}
                     size="small"
                     {...register("description", { required: false })}
+                    name="description"
+                    error={!!errors?.description}
                   />
+                  {errors?.description && (
+                    <Typography variant="caption" color="error">
+                      {errors?.description?.message}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>
