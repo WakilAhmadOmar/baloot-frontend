@@ -44,7 +44,7 @@ export function UpdateUnit({  item}: {  item:any }) {
       onSuccess: () => {
         setHandleError({
           message:t("unit.create_successfully"),
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction()
@@ -53,7 +53,7 @@ export function UpdateUnit({  item}: {  item:any }) {
         setHandleError({
           open: true,
           message: error?.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -79,6 +79,8 @@ export function UpdateUnit({  item}: {  item:any }) {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -87,7 +89,7 @@ export function UpdateUnit({  item}: {  item:any }) {
         >
           <Typography variant="button">{t("unit.update_unit")}({item?.name})</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

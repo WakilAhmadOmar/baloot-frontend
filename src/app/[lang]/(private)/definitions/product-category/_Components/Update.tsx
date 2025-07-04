@@ -49,7 +49,7 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
         onSuccess: () => {
           setHandleError({
             open: true,
-            type: "success",
+            status: "success",
             message: t("this_category_updated_successfully"),
           });
           setOpenDialog(false);
@@ -57,7 +57,7 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
         onError: (error: any) => {
           setHandleError({
             open: true,
-            type: "error",
+            status: "error",
             message: error?.message,
           });
         },
@@ -80,6 +80,8 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px:2,
+            py:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -90,7 +92,7 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
             {t("update_category")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

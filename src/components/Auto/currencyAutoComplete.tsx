@@ -1,20 +1,15 @@
 "use client";
 import {
   Box,
-  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
-  Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-
-import { useApolloClient } from "@apollo/client";
-import { GET_USER_CURRENCIES } from "../../graphql/queries/GET_USER_CURRENCIES";
-import { AppContext } from "@/provider/appContext";
 
 import { Controller, useFormContext } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { useGetUserCurrenciesQuery } from "@/hooks/api/currencies/queries/use-get-user-currencies";
+import { useContext, useEffect } from "react";
+import { InvoiceContext } from "@/app/[lang]/(private)/invoice/_components/invoiceContext";
 
 interface IPropsUserCurrencies {
   defaultValue?: string;
@@ -22,6 +17,9 @@ interface IPropsUserCurrencies {
   name?: string;
   dir?: string;
   required?: boolean;
+  disabled?:boolean
+  isBaseCurrency?:boolean
+  
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
@@ -29,49 +27,24 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   name,
   dir = "ltr",
   required = true,
+  disabled = false,
+  isBaseCurrency = false
+
 }) => {
-  const client = useApolloClient();
-  const { setHandleError } = useContext(AppContext);
-  const [userCurrenciesState, setUserCurrenciesState] = useState<any[]>([]);
+const { setBaseCurrency} = useContext(InvoiceContext)
+    const {data:currencies , isLoading} = useGetUserCurrenciesQuery()
 
   const {
     formState: { errors },
     control,
     register,
+    setValue
   } = useFormContext();
-
-  // user selected curencies
-  const getUserCurrenciesFunction = async () => {
-    try {
-      const {
-        data: { getUserCurrencies },
-      } = await client.query({
-        query: GET_USER_CURRENCIES,
-      });
-      if (userCurrenciesState?.length === 0 && onSelected && !defaultValue) {
-        onSelected(getUserCurrencies?.[0]);
-      }
-      setUserCurrenciesState(getUserCurrencies);
-    } catch (error: any) {
-      setHandleError((prevState: any) => ({
-        ...prevState,
-        open: true,
-        status: "error",
-        message: error?.message,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    if (userCurrenciesState?.length === 0) {
-      getUserCurrenciesFunction();
-    }
-  }, [defaultValue]);
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedId = event.target.value as string;
-    const selectedItem = userCurrenciesState?.find(
-      (item) => item?._id === selectedId
+    const selectedItem = currencies?.find(
+      (item:any) => item?._id === selectedId
     );
 
     if (onSelected && selectedItem) {
@@ -79,9 +52,17 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
     }
   };
 
+  useEffect(() =>{
+    if (isBaseCurrency && disabled && currencies){
+      const findBaseCurrency = currencies?.filter((item:any) => item?.isBase)
+      setBaseCurrency(findBaseCurrency?.[0])
+      setValue("currencyId" , findBaseCurrency?.[0]?._id)
+    }
+  },[isBaseCurrency , disabled , currencies])
+
   return (
     <Box>
-      {userCurrenciesState?.length > 0 && (
+      {currencies?.length > 0 && (
         <Controller
           control={control}
           {...register(name || "currencyId", { required })}
@@ -92,6 +73,7 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
               fullWidth
               size={"small"}
               value={value}
+              disabled={disabled}
               defaultValue={defaultValue}
               // options={PROGRAM_STATUS}
               // placeholder="Please select status"
@@ -103,7 +85,7 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
                 handleChange(event);
               }}
             >
-              {userCurrenciesState?.map((item) => {
+              {currencies?.map((item:any) => {
                 return (
                   <MenuItem key={item?._id} value={item?._id} dir={dir}>
                     {item?.name}

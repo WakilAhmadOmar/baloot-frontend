@@ -1,43 +1,44 @@
+import { useTranslations } from "next-intl";
 
 
-export function numberToWords(number: number , t:any) {
-  
+export function numberToWords(number: number , ) {
+  const t = useTranslations("numberToWord")
   function numberToWords(number: number): string {
     const ones = [
-      t.numberToWord.zero,
-      t.numberToWord.one,
-      t.numberToWord.two,
-      t.numberToWord.three,
-      t.numberToWord.four,
-      t.numberToWord.five,
-      t.numberToWord.six,
-      t.numberToWord.seven,
-      t.numberToWord.eight,
-      t.numberToWord.nine,
+      t("zero"),
+      t("one"),
+      t("two"),
+      t("three"),
+      t("four"),
+      t("five"),
+      t("six"),
+      t("seven"),
+      t("eight"),
+      t("nine"),
     ];
     const teens = [
-      t.numberToWord.ten,
-      t.numberToWord.eleven,
-      t.numberToWord.twelve,
-      t.numberToWord.thirteen,
-      t.numberToWord.fourteen,
-      t.numberToWord.fifteen,
-      t.numberToWord.sixteen,
-      t.numberToWord.seventeen,
-      t.numberToWord.eighteen,
-      t.numberToWord.nineteen,
+      t("ten"),
+      t("eleven"),
+      t("twelve"),
+      t("thirteen"),
+      t("fourteen"),
+      t("fifteen"),
+      t("sixteen"),
+      t("seventeen"),
+      t("eighteen"),
+      t("nineteen"),
     ];
     const tens = [
       "",
       "",
-      t.numberToWord.twenty,
-      t.numberToWord.thirty,
-      t.numberToWord.forty,
-      t.numberToWord.fifty,
-      t.numberToWord.sixty,
-      t.numberToWord.seventy,
-      t.numberToWord.eighty,
-      t.numberToWord.ninety,
+      t("twenty"),
+      t("thirty"),
+      t("forty"),
+      t("fifty"),
+      t("sixty"),
+      t("seventy"),
+      t("eighty"),
+      t("ninety"),
     ];
 
     if (number < 10) {
@@ -52,31 +53,31 @@ export function numberToWords(number: number , t:any) {
     } else if (number < 1000) {
       return (
         ones[Math.floor(number / 100)] +
-        t.numberToWord.hundred +
+        t("hundred") +
         (number % 100 !== 0 ? " " + numberToWords(number % 100) : "")
       );
     } else if (number < 1000000) {
       return (
         numberToWords(Math.floor(number / 1000)) +
-        t.numberToWord.thousand +
+        t("thousand") +
         (number % 1000 !== 0 ? " " + numberToWords(number % 1000) : "")
       );
     } else if (number < 1000000000) {
       return (
         numberToWords(Math.floor(number / 1000000)) +
-        t.numberToWord.million +
+        t("million") +
         (number % 1000000 !== 0 ? " " + numberToWords(number % 1000000) : "")
       );
     } else if (number < 1000000000000) {
       return (
         numberToWords(Math.floor(number / 1000000000)) +
-        t.numberToWord.billion +
+        t("billion") +
         (number % 1000000000 !== 0
           ? " " + numberToWords(number % 1000000000)
           : "")
       );
     } else {
-      return t.numberToWord.number_is_too_large_to_convert_to_words;
+      return t("number_is_too_large_to_convert_to_words");
     }
   }
 

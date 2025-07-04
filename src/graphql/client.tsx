@@ -47,12 +47,12 @@ const ApolloManager: React.FC<any> = (props) => {
     //   const variables = {
     //     refreshToken: localStorage.getItem(REFRESH_TOKEN_KEY),
     //   };
-    //   console.log("variable refresh token ", variables);
+    //   
     //   const tokenRefresh = await client.mutate({
     //     mutation: REFRESH_TOKEN,
     //     variables,
     //   });
-    //   console.log("token refresh", tokenRefresh);
+    //   
     //   if (tokenRefresh?.data?.refreshToken?.accessToken) {
     //     localStorage.setItem(
     //       ACCESS_TOKEN_KEY,
@@ -66,7 +66,7 @@ const ApolloManager: React.FC<any> = (props) => {
     //     return tokenRefresh?.data?.refreshToken?.accessToken;
     //   }
     // } catch (error: any) {
-    //   console.log("eeeeee", error);
+    //   
     //   if (
     //     error?.message === "invalid signature" ||
     //     error?.message === "jwt expired" ||

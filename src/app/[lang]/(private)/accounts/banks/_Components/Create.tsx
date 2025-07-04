@@ -20,13 +20,17 @@ import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
-import { useApolloClient } from "@apollo/client";
+
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 const AddBanksAccounts = () => {
-  const methods = useForm();
   const t = useTranslations("pages");
+  const methods = useForm({
+      resolver: yupResolver(useSchemaCrateForm(t)),
+    });
   const {
     register,
     handleSubmit,
@@ -111,6 +115,14 @@ const AddBanksAccounts = () => {
     });
   };
   const onSubmitFunction = async (data: any) => {
+    if (bankDetails?.firstPeriodCredit?.[0]?.currencyId?._id  === "") {
+     return setHandleError({
+        open: true,
+        message: t("bank.please_add_at_least_one_credit"),
+        status: "error",
+      });
+      
+    }
     const variables = {
       creditObject: bankDetails?.firstPeriodCredit?.map(
         (item: any, index: number) => ({
@@ -169,6 +181,8 @@ const AddBanksAccounts = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -177,7 +191,7 @@ const AddBanksAccounts = () => {
         >
           <Typography>{t("bank.record_previous_bank_accounts")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray"/>
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -187,6 +201,7 @@ const AddBanksAccounts = () => {
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
+                  error={!!errors?.bankId}
                 >
                   {t("bank.bank_name")}
                 </InputLabel>
@@ -195,6 +210,11 @@ const AddBanksAccounts = () => {
                   name="bankId"
                   getBank={handleGetBank}
                 />
+                {errors?.bankId && (
+                  <Typography variant="caption" color="error">
+                    {errors?.bankId?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
             {bankDetails?.firstPeriodCredit?.length > 0 && (
@@ -242,6 +262,11 @@ const AddBanksAccounts = () => {
                         handleSelectCurrency(currency, index)
                       }
                     />
+                    {errors?.currencyId && (
+                      <Typography variant="caption" color="error">
+                        {t("bank.currency_is_required")}
+                      </Typography>
+                    )}
                   </Grid>
                   {index > 0 && (
                     <Grid item xs={1}>
@@ -273,7 +298,9 @@ const AddBanksAccounts = () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                error={!!errors?.description}
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -283,7 +310,13 @@ const AddBanksAccounts = () => {
                   size="small"
                   {...register("description", { required: false })}
                   name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

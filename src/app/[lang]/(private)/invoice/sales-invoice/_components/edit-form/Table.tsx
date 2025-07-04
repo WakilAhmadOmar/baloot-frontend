@@ -262,7 +262,7 @@ export default function DataTable({ t }: IPropsTable) {
       width: 200,
       renderCell: ({ row }) => {
         const rowIndex = rows.findIndex((r: any) => r._id === row._id);
-        console.log("rowwww" , row)
+        
         return (
           <>
             <ProductsAutoComplete
@@ -270,7 +270,7 @@ export default function DataTable({ t }: IPropsTable) {
                 handleGetSelectedProduct(product, rowIndex)
               }
               defaultValue={{ ...row.productId, id: row?.productId?._id, label: row?.productId?.name }}
-              t={t}
+       
               isTable
               productIds={rows?.map((item: any) => item?.id)}
             />
@@ -531,7 +531,7 @@ export default function DataTable({ t }: IPropsTable) {
         >
           {t?.invoice?.insert_new_row}
         </Button>
-        <Typography variant="overline">{t?.invoice?.total_products}</Typography>
+        <Typography variant="overline">{t("total_products")}</Typography>
         <Typography
           variant="overline"
           bgcolor={theme.palette.grey[100]}
@@ -592,7 +592,7 @@ export default function DataTable({ t }: IPropsTable) {
             amount={sellBillPrice?.totalPrice}
             customerId={""}
             paymentStatus={statusPayment}
-            t={t}
+
           />
         </Grid2>
         <Grid2 size={4} marginTop={3}>
@@ -697,7 +697,7 @@ export default function DataTable({ t }: IPropsTable) {
           {t?.invoice?.total_invoice_after_discount_in_words} :
         </Typography>
         <Typography variant="overline">
-          {numberToWords(sellBillPrice?.totalPrice, t)}
+          {numberToWords(sellBillPrice?.totalPrice)}
         </Typography>
       </Box>
     </Box>

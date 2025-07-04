@@ -13,12 +13,13 @@ import { AppContext } from "@/provider/appContext";
 import { DELETE_SELLS_BILL } from "@/graphql/mutation/DELETE_SELLS_BILL";
 import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useGetSellsBillList } from "@/hooks/api/invoice/queries/use-get-sale-invoice";
+import { useTranslations } from "next-intl";
 
 interface IProps {
-  t: any;
   lang:"en" | "fa"
 }
-const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
+const PurchaseInvoicePage: React.FC<IProps> = ({  lang}) => {
+  const t = useTranslations("invoice")
   const client = useApolloClient();
   const { setHandleError } = useContext(AppContext);
   const [loading , setLoading] = useState(false)
@@ -36,7 +37,7 @@ const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
       endDate:""
     }
   })
-  console.log("data", data?.sellBill)
+
   // const getBillList = async () => {
   //   try {
       // const variables = {
@@ -121,16 +122,11 @@ const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
     }
   };
 
-  const handleGetTextSearch = (text: string) => {
-    setSearchText(text);
-    refetch({queryKey:["getSellsBillList"],  })
-  } 
 
   return (
     <InvoiceContextProvider>
-      {loading && <CircularProgressComponent />}
       <Box>
-        <Typography variant="h3">فاکتور های خرید</Typography>
+        <Typography variant="h3">{t("sell_invoices")}</Typography>
         <Box
           display={"flex"}
           justifyContent={"space-between"}
@@ -138,7 +134,7 @@ const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
           mt={2}
           mb={2}
         >
-          <CreateSalesInvoice t={t} />
+          <CreateSalesInvoice  />
           <Box
             display={"flex"}
             justifyContent={"space-between"}
@@ -178,7 +174,7 @@ const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
               {/* <SingleInputDateRangePicker /> */}
             </Box>
             <Box display={"flex"} alignItems={"center"}>
-              <CustomSearch t={t} getTextSearchFunction={handleGetTextSearch} />
+              {/* <CustomSearch  getTextSearchFunction={handleGetTextSearch} /> */}
             </Box>
           </Box>
         </Box>
@@ -191,7 +187,6 @@ const PurchaseInvoicePage: React.FC<IProps> = ({ t , lang}) => {
               id={item?._id}
               name={item?.customerId?.fullName}
               onDelete={handleDeleteFunction}
-              t={t}
               lang={lang}
             />
           ))}

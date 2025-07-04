@@ -14,18 +14,20 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
-import {  useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useAddBankMutation } from "@/hooks/api/definitions/bank/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
-
 const CreateBank = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods = useForm();
-  const { register, handleSubmit , formState:{errors} } = methods;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -71,12 +73,14 @@ const CreateBank = () => {
           onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          dir={("dir")}
+          dir={"dir"}
           fullWidth
         >
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -85,27 +89,31 @@ const CreateBank = () => {
           >
             <Typography>{t("bank.New_Bank_Information")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} sx={{ mt: "1rem" }}>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.name}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.name}
+                  >
                     {t("bank.Bank_Name")}
                   </InputLabel>
                   <TextField
                     fullWidth
                     size="small"
                     {...register("name", { required: true })}
-                    name="name" error={!!errors?.name}
+                    name="name"
+                    error={!!errors?.name}
                   />
                   {errors?.name?.type === "required" && (
-                                    <Typography color="error" p={1}>
-                                      {t("bank.bank_name_is_require")}
-                                    </Typography>
-                                  )}
+                    <Typography color="error" p={1}>
+                      {t("bank.bank_name_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -131,7 +139,7 @@ const CreateBank = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                     {t("bank.description")}
                   </InputLabel>
                   <TextField
@@ -142,7 +150,13 @@ const CreateBank = () => {
                     size="small"
                     {...register("description", { required: false })}
                     name="description"
+                    error={!!errors?.description}
                   />
+                  {errors?.description && (
+                    <Typography color="error" >
+                      {t("bank.description_to_much")}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </form>

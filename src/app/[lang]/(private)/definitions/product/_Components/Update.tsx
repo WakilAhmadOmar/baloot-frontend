@@ -190,6 +190,8 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px:2,
+            py:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -198,7 +200,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
         >
           <Typography variant="button">{t("update_product")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>

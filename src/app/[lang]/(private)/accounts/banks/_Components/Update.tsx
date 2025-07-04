@@ -27,6 +27,8 @@ import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 interface IPropsAddCashBox {
   item: any;
@@ -36,8 +38,15 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
   item,
 }) => {
   const t = useTranslations("pages")
-  const methods = useForm();
-  const { register, handleSubmit, reset } = methods;
+  const methods = useForm({
+  resolver:yupResolver(useSchemaCrateForm(t)),
+    defaultValues: {
+      bankId: item?._id,
+      description: item?.description,
+      currencyId: item?.currencyId,
+    },
+  });
+  const { register, handleSubmit, reset , formState:{errors} } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -58,7 +67,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
           : []),
         {
           amount: 0,
-          creditType: "Credit",
+          creditType: "Debit",
           currencyId: {
             _id: "",
             name: "",
@@ -110,6 +119,14 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
     });
   };
   const onSubmitFunction = async (data: any) => {
+     if (bankDetails?.firstPeriodCredit?.[0]?.currencyId?._id  === "") {
+     return setHandleError({
+        open: true,
+        message: t("bank.please_add_at_least_one_credit"),
+        status: "error",
+      });
+      
+    }
     const variables = {
       creditObject: bankDetails?.firstPeriodCredit?.map(
         (item: any, index: number) => ({
@@ -127,7 +144,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message ?? "",
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction();
@@ -137,7 +154,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
         setHandleError({
           open: true,
           message: error?.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -164,6 +181,8 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -174,7 +193,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
             {t("bank.update_record_previous_bank_account")} ({item?.name})
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -263,7 +282,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors.description}>
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -274,6 +293,11 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
                   {...register("description", { required: false })}
                   name="description"
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

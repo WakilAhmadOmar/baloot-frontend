@@ -54,7 +54,7 @@ const CreateCustomer = () => {
         setHandleError({
           open: true,
         message: t("Customers.customer_saved_successfully"),
-        type: "success",
+        status: "success",
         })
         setOpenDialog(false)
       },
@@ -62,7 +62,7 @@ const CreateCustomer = () => {
         setHandleError({
         open: true,
         message: error.message,
-        type: "error",
+        status: "error",
       });
       }
     })
@@ -82,6 +82,8 @@ const CreateCustomer = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -90,7 +92,7 @@ const CreateCustomer = () => {
         >
           <Typography>{t("Customers.add_new_customer")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -125,15 +127,21 @@ const CreateCustomer = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
                   {t("Customers.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("address", { required: false })}
+                  {...register("address", { required: false , maxLength:255})}
                   name="address"
+                  error={!!errors?.address}
                 />
+                {errors?.address?.type === "maxLength" && (
+                  <Typography color="error" >
+                    {t("Customers.address_is_too_long")}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

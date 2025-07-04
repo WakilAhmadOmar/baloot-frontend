@@ -82,14 +82,14 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
           handleOpenDialogFunction();
           setHandleError({
             open: true,
-            type: "success",
-            message: "Consumption successfully updated.",
+            status: "success",
+            message: t("this_expense_successfully_updated"),
           });
         },
         onError:(error:any)=> {
             setHandleError({
                 open:true,
-                type:"error",
+                status:"error",
                 message:error.message
             })
         }
@@ -165,7 +165,7 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                   {t("description")}
                 </InputLabel>
                 <TextField
@@ -174,7 +174,14 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
                   rows={4}
                   size="small"
                   {...register("description", { required: true })}
+                  name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

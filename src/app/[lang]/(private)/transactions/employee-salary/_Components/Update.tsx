@@ -104,6 +104,8 @@ export const UpdateEmployeeSalary = ({
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2, 
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -112,7 +114,7 @@ export const UpdateEmployeeSalary = ({
         >
           <Typography> {t("update_employee_salary")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray"/>
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -186,7 +188,8 @@ export const UpdateEmployeeSalary = ({
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}>
                   {t("description")}
                 </InputLabel>
                 <TextField
@@ -195,7 +198,14 @@ export const UpdateEmployeeSalary = ({
                   rows={4}
                   size="small"
                   {...register("description")}
+                  name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

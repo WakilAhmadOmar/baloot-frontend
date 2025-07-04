@@ -15,13 +15,16 @@ const GET_WARE_FROM_ENTREPOT = gql`
         productId {
           _id
           name
-        }
-        measures {
-          amountOfProduct
-          measureId {
-            _id
-            name
+          measures {
+            measureId {
+              _id
+              name
+            }
           }
+        }
+        productInfo {
+          amountOfProduct
+          expireInDate
         }
       }
       count

@@ -90,6 +90,8 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px:2,
+            py:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -98,7 +100,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
         >
           <Typography> {t("warehouse.update_warehouse")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -136,7 +138,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
                   {t("warehouse.address")}
                 </InputLabel>
                 <TextField
@@ -144,7 +146,11 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
                   size="small"
                   {...register("address", { required: false })}
                   name="address"
+                  error={!!errors?.address}
                 />
+                 {errors?.address && (
+                  <Typography>{t("warehouse.address_is_too_long")}</Typography>
+                )}
               </Grid>
             </Grid>
           </form>

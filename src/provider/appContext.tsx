@@ -1,13 +1,20 @@
 "use client";
 import SnackbarComponent from "@/components/snackbarComponent";
 import { THEME_KEY } from "@/libs/constants";
-import { createContext, PropsWithChildren, useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 export const AppContext = createContext<any>({});
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [translate , setTranslate]= useState()
+  const [translate, setTranslate] = useState();
+  const [baseCurrency, setBaseCurrency] = useState();
   const [handleError, setHandleError] = useState<{
     status: "success" | "info" | "warning" | "error";
     open: boolean;
@@ -23,13 +30,22 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
       setIsDarkMode(false);
     }
   }, []);
-  
+
   const handleCloseError = useCallback(() => {
-    setHandleError((prev)=>({...prev , open:false}))
-  },[handleError?.open])
+    setHandleError((prev) => ({ ...prev, open: false }));
+  }, [handleError?.open]);
   return (
     <AppContext.Provider
-      value={{ isDarkMode, setIsDarkMode, handleError, setHandleError, translate , setTranslate }}
+      value={{
+        isDarkMode,
+        setIsDarkMode,
+        handleError,
+        setHandleError,
+        translate,
+        setTranslate,
+        baseCurrency,
+        setBaseCurrency,
+      }}
     >
       <SnackbarComponent
         status={handleError?.status}

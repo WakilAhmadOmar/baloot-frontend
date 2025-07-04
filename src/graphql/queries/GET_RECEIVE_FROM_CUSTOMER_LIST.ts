@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 const GET_RECEIVE_FROM_CUSTOMER_LIST = gql`
-query getReceiveFromCustomerList( $page: Int) {
-  getReceiveFromCustomerList( page: $page) {
+query getReceiveFromCustomerList( $page: Int , $filter:ReceiveInvoiceType!) {
+  getReceiveFromCustomerList( page: $page , filter: $filter) {
     receive {
       _id
       receiver {

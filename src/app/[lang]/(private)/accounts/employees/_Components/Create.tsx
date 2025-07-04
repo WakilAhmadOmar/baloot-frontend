@@ -25,27 +25,28 @@ import { ADD_FIRST_PERIOD_OF_CREDIT } from "@/graphql/mutation/ADD_FIRST_PERIOD_
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 
 const AddBanksAccounts = () => {
   const t = useTranslations("pages")
-  const client = useApolloClient();
-  const methods = useForm();
+  const methods = useForm({
+    resolver:yupResolver(useSchemaCrateForm(t)),
+  });
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
   const { setHandleError } = useContext(AppContext);
   const [employeeDetails, setEmployeeDetails] = useState<any>({
     firstPeriodCredit: [
       {
         amount: 0,
-        creditType: "Credit",
+        creditType: "Debit",
         currencyId: {
           _id: "",
           name: "",
@@ -69,7 +70,7 @@ const AddBanksAccounts = () => {
         ...(prevState?.firstPeriodCredit?.length > 0 ? prevState?.firstPeriodCredit : []),
         {
           amount: 0,
-          creditType: "Credit",
+          creditType: "Debit",
           currencyId: {
             _id: "",
             name: "",
@@ -123,7 +124,7 @@ const AddBanksAccounts = () => {
         ),
         description: data?.description,
         accountType: "Employee",
-        accountId: data?.employeeId,
+        accountId: data?.accountId,
       };
         addFirstPeriodMutation(variables, {
       onSuccess: ({ message }: any) => {
@@ -170,6 +171,8 @@ const AddBanksAccounts = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -180,7 +183,7 @@ const AddBanksAccounts = () => {
             {t("employee.record_previous_employee_accounts")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -190,13 +193,22 @@ const AddBanksAccounts = () => {
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
+                  error={!!errors?.accountId}
                 >
                   {t("employee.name")}
                 </InputLabel>
                 <EmployeeAutoCompleteComponent
                   getEmployee={handleGetBank}
-                  name={"employeeId"}
+                  name={"accountId"}
                 />
+                {errors?.accountId && (
+                  <Typography
+                    variant="caption"
+                    color="error"
+                  >
+                    {errors?.accountId?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
             {employeeDetails?.firstPeriodCredit?.length > 0 && (
@@ -279,7 +291,7 @@ const AddBanksAccounts = () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -289,7 +301,16 @@ const AddBanksAccounts = () => {
                   size="small"
                   {...register("description", { required: false })}
                   name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography
+                    variant="caption"
+                    color="error"
+                  >
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

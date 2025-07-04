@@ -45,7 +45,7 @@ const CreateConsumption = () => {
         setHandleError({
           open: true,
           message: t("Expenses.expense_type_saved_successfully"),
-          type: "success",
+          status: "success",
         });
         setOpenDialog(false);
       },
@@ -53,7 +53,7 @@ const CreateConsumption = () => {
         setHandleError({
           open: true,
           message: error.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -72,6 +72,8 @@ const CreateConsumption = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -80,7 +82,7 @@ const CreateConsumption = () => {
         >
           <Typography>{t("ExpensesNew_Expense")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -106,6 +108,7 @@ const CreateConsumption = () => {
                   </Typography>
                 )}
               </Grid>
+              
             </Grid>
           </form>
         </DialogContent>

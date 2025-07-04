@@ -76,8 +76,8 @@ const CreateComponent = () => {
           setOpenDialog(false);
           setHandleError({
             open: true,
-            message: "This record added successfully",
-            type: "success",
+            message: t("this_payment_successfully_saved"),
+            status: "success",
           });
 
           // router.back()
@@ -86,7 +86,7 @@ const CreateComponent = () => {
           setHandleError({
             open: true,
             message: error?.message,
-            type: "error",
+            status: "error",
           });
         },
       }
@@ -228,7 +228,7 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                     {t("description")}
                   </InputLabel>
                   <TextField
@@ -237,7 +237,14 @@ const CreateComponent = () => {
                     rows={4}
                     size="small"
                     {...register("description", { required: false })}
+                    name="description"
+                    error={!!errors?.description}
                   />
+                  {errors?.description && (
+                    <Typography variant="caption" color="error">
+                      {errors?.description?.message}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>

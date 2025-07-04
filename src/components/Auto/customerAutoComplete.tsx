@@ -13,11 +13,13 @@ interface IProps {
   name?: string;
   dir?:string
   getCustomer?: (customer: any) => void;
+  disabled?:boolean
 }
 const CustomerAutoComplete: React.FC<IProps> = ({
   dir="ltr",
   name,
   getCustomer,
+  disabled= false
 }) => {
   const client = useApolloClient();
   const {
@@ -79,6 +81,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
               value={value}
               error={!!errors?.[name || "customerId"]}
               required
+              disabled={disabled}
               onChange={(event)=> {
                 onChange(event);
                 if (getCustomer) {

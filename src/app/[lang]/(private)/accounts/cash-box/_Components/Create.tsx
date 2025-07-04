@@ -21,10 +21,14 @@ import SelectWithInput from "@/components/search/SelectWIthInput";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useSchemaCrateForm } from "./Create-form-schema";
 
 const AddBanksAccounts = () => {
   const t = useTranslations("pages")
-  const methods = useForm();
+  const methods = useForm({
+    resolver:yupResolver(useSchemaCrateForm(t)),
+  });
   const {
     register,
     handleSubmit,
@@ -117,13 +121,13 @@ const AddBanksAccounts = () => {
       ),
       description: data?.description,
       accountType: "Safe",
-      accountId: data?.cashboxId,
+      accountId: data?.accountId,
     };
     addFirstPeriodMutation(variables, {
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message,
-          type: "success",
+          status: "success",
           open: true,
         });
         handleOpenDialogFunction();
@@ -133,7 +137,7 @@ const AddBanksAccounts = () => {
         setHandleError({
           open: true,
           message: error.message,
-          type: "error",
+          status: "error",
         });
       },
     });
@@ -179,6 +183,8 @@ const AddBanksAccounts = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -189,7 +195,7 @@ const AddBanksAccounts = () => {
             {t("cashbox.record_previous_cashbox_accounts")}
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare />
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -199,14 +205,20 @@ const AddBanksAccounts = () => {
                 <InputLabel
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   required
+                  error={!!errors?.accountId}
                 >
                   {t("cashbox.Cashbox_Name")}
                 </InputLabel>
                 <CashBoxAutoComplete
                   getCashbox={handleGetBank}
-                  name="cashboxId"
+                  name="accountId"
                   dir={t("dir")}
                 />
+                {errors?.accountId && (
+                  <Typography variant="caption" color="error">
+                    {errors?.accountId?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
             {cashboxDetails?.firstPeriodCredit?.length > 0 && (
@@ -294,7 +306,9 @@ const AddBanksAccounts = () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} 
+                error={!!errors?.description}
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -304,7 +318,13 @@ const AddBanksAccounts = () => {
                   size="small"
                   {...register("description", { required: false })}
                   name="description"
+                  error={!!errors?.description}
                 />
+                {errors?.description && (
+                  <Typography variant="caption" color="error">
+                    {errors?.description?.message}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </form>

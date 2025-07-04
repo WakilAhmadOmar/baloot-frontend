@@ -22,12 +22,11 @@ import { useAddPartnerMutation } from "@/hooks/api/definitions/partner/mutations
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 const CreatePartner = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods = useForm();
-  const {mutate , isLoading } = useAddPartnerMutation()
-  const {setHandleError} = useContext(AppContext)
+  const { mutate, isLoading } = useAddPartnerMutation();
+  const { setHandleError } = useContext(AppContext);
   const {
     register,
     handleSubmit,
@@ -36,12 +35,9 @@ const CreatePartner = () => {
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
-
-
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
-
 
   const onSubmitFunction = async (data: any) => {
     const variables = {
@@ -62,28 +58,27 @@ const CreatePartner = () => {
       },
     };
 
-    mutate(variables , {
-      onSuccess:() =>{
+    mutate(variables, {
+      onSuccess: () => {
         setHandleError({
-          open:true,
-          type:"success",
-          message:t("partner.this_partner_saved_successfully")
-        })
-        handleOpenDialogFunction()
+          open: true,
+          status: "success",
+          message: t("partner.this_partner_saved_successfully"),
+        });
+        handleOpenDialogFunction();
       },
-      onError: (error:any)=> {
+      onError: (error: any) => {
         setHandleError({
-        open: true,
-        message: error.message,
-        status: "error",
-      });
-      }
-    })
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
+    });
   };
 
   return (
     <Box>
-      
       <FormProvider {...methods}>
         <Dialog
           open={openDialog}
@@ -96,6 +91,8 @@ const CreatePartner = () => {
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -106,16 +103,19 @@ const CreatePartner = () => {
               {t("partner.new_partner_details")}
             </Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent>
             <form onSubmit={handleSubmit(onSubmitFunction)}>
               <Grid container spacing={2} mt={"1rem"} sx={{ mt: "1rem" }}>
                 <Grid item md={6} xs={12}>
-                  <InputLabel sx={{ paddingBottom: "5px" }} required error={!!errors?.firstName}>
+                  <InputLabel
+                    sx={{ paddingBottom: "5px" }}
+                    required
+                    error={!!errors?.firstName}
+                  >
                     <Typography variant="subtitle2" component={"samp"} >
-                      {" "}
                       {t("partner.first_name")}
                     </Typography>
                   </InputLabel>
@@ -123,13 +123,14 @@ const CreatePartner = () => {
                     fullWidth
                     size="small"
                     {...register("firstName", { required: true })}
-                    name="firstName" error={!!errors?.firstName}
+                    name="firstName"
+                    error={!!errors?.firstName}
                   />
                   {errors?.firstName?.type === "required" && (
-                                    <Typography color="error" p={1}>
-                                      {t("partner.partner_name_is_require")}
-                                    </Typography>
-                                  )}
+                    <Typography color="error" p={1}>
+                      {t("partner.partner_name_is_require")}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -205,18 +206,15 @@ const CreatePartner = () => {
           </DialogActions>
         </Dialog>
       </FormProvider>
-        <Box>
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenDialogFunction}
-            >
-              {t("partner.add_new_partner")}
-            </Button>
-
-        </Box>
-
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("partner.add_new_partner")}
+        </Button>
+      </Box>
     </Box>
   );
 };

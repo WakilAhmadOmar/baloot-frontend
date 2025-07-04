@@ -91,7 +91,7 @@ name,
     getWarehouseFunction();
   }, 500);
   const handleSearch = (event: React.ChangeEvent<{}>, value: any | null) => {
-    console.log("search value", value);
+    
     if (
       value &&
       !autoCompleteState?.data?.some((option) => option.name === value.name)

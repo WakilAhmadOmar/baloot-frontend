@@ -2,8 +2,8 @@ import { gql } from "@apollo/client";
 
 
 const ADD_RECEIVE_FROM_CUSTOMER = gql`
-mutation($receiveObject:ReceiveObjectInput!){
-  addReceiveFromCustomer(receiveObject:$receiveObject){
+mutation($receiveObject:ReceiveObjectInput!) {
+  addReceiveFromCustomer(receiveObject:$receiveObject) {
     _id
     payerType
     receiver{

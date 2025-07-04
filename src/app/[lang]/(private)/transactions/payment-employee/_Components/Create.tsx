@@ -76,7 +76,7 @@ const CreateComponent = () => {
           setOpenDialog(false);
           setHandleError({
             open: true,
-            message: "This record added successfully",
+            message: t("this_payment_successfully_saved"),
             status: "success",
           });
 
@@ -107,6 +107,8 @@ const CreateComponent = () => {
             <DialogTitle
               id="alert-dialog-title"
               sx={{
+                px: 2,
+                py: 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -115,7 +117,7 @@ const CreateComponent = () => {
             >
               <Typography>{t("cash_payment_to_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare />
+                <CloseSquare size={20} color="gray"/>
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -182,6 +184,7 @@ const CreateComponent = () => {
                     name="calculatedTo"
                     dir={t("dir")}
                     required={false}
+                    disabled={true}
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -231,7 +234,7 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
+                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
                     {t("description")}
                   </InputLabel>
                   <TextField
@@ -240,7 +243,14 @@ const CreateComponent = () => {
                     rows={4}
                     size="small"
                     {...register("description", { required: false })}
+                    name="description"
+                    error={!!errors?.description}
                   />
+                  {errors?.description && (
+                    <Typography variant="caption" color="error">
+                      {errors?.description?.message}
+                    </Typography>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>

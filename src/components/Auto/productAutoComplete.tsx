@@ -14,7 +14,7 @@ interface IPropsProduct {
   isTable?: boolean;
   index?: number;
   defaultValue?: any;
-  t: any;
+
   name?:string
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
@@ -24,8 +24,9 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   index,
   defaultValue,
   name,
-  t,
+  
 }) => {
+  
   const { control } = useFormContext()
   const client = useApolloClient();
   const theme = useTheme();

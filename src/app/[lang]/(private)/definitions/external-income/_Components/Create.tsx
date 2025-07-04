@@ -54,7 +54,7 @@ import { useTranslations } from "next-intl";
            setHandleError({
           open: true,
           message: t("income.external_income_type_saved_successfully"),
-          type: "success",
+          status: "success",
         });
         setOpenDialog(false);
         },
@@ -83,6 +83,8 @@ import { useTranslations } from "next-intl";
           <DialogTitle
             id="alert-dialog-title"
             sx={{
+              px: 2,
+              py: 1,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -91,7 +93,7 @@ import { useTranslations } from "next-intl";
           >
             <Typography>{t("income.new_income")}</Typography>
             <IconButton size="medium" onClick={handleOpenDialogFunction}>
-              <CloseSquare />
+              <CloseSquare size={20} color="gray" />
             </IconButton>
           </DialogTitle>
           <DialogContent sx={{ pt: 36, pb: 5 }}>

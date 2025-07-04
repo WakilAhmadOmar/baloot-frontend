@@ -133,7 +133,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
           transactionId: paymentOff?._id,
         },
       };
-      console.log("varialbess", variables);
+      
       const {
         data: { addSellsBill },
       } = await client.mutate({
@@ -162,7 +162,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
   const handleGetDefaultValue =  (values:any) => {
     setBillDetails(values)
   }
-  console.log("errors", errors);
+  
   return (
     <FormProvider {...methods}>
       <IconButton onClick={handleOpenDialogBox}>
