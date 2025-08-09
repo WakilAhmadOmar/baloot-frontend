@@ -26,9 +26,10 @@ const ReceiveCashContainer = () => {
   const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
+  const [page ,setPage] = useState(1)
 
   const { data, isLoading } = useGetReceiveFromCustomerListQuery({
-    page: 1,
+    page,
     filter:"Cash"
   });
   const { mutate, isLoading: deleteIsLoading } = useDeleteReceiveFromCustomerMutation();
@@ -57,6 +58,12 @@ const ReceiveCashContainer = () => {
     );
   };
 
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
+  };
   return (
     <Box>
       <Box pb={3}>
@@ -89,7 +96,6 @@ const ReceiveCashContainer = () => {
               messageTitle={t("are_you_sure_to_delete_this_receive")}
               id={item?._id}
               getIdToAddAction={handleDeleteFunction}
-              // updateProductFunction={handleUpdateFunction}
               UpdateComponent={<UpdateForm item={item} />}
               isLoading={deleteIsLoading}
             >
@@ -126,7 +132,7 @@ const ReceiveCashContainer = () => {
         })}
       </Box>
       {isLoading && <SkeletonComponent />}
-      {data?.count > 0 && (
+      {data?.count > 9 && (
         <Box display="flex" justifyContent={"end"} mt={2}>
           <Stack spacing={2} p={1}>
             <Pagination
@@ -135,7 +141,7 @@ const ReceiveCashContainer = () => {
               shape="rounded"
               variant="outlined"
               color="primary"
-              // onChange={handleChangePage}
+              onChange={handleChangePage}
               sx={{
                 fontSize: "2rem !important",
                 direction: "ltr",

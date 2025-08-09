@@ -67,9 +67,23 @@
     "total_products":"Total Products",
     "total_invoice_amount_after_discount":"Total invoice amount after discount",
     "sell_invoices":"Sell invoices",
+    "sell_invoice":"Sell invoice",
     "yes":"Yes",
     "calculated_currency": "Calculated Currency",
-    "amount_calculated":"Amount Calculated"
+    "amount_calculated":"Amount Calculated",
+    "invoice_number":"Invoice Number",
+    "created_at":"Created At",
+    "this_bill_successfully_saved":"This Bill Successfully saved",
+    "invoice_date":"Invoice Date",
+    "invoice_currency":"Invoice Currency",
+    "seller_signature":"Seller's Signature",
+    "customer_signature":"Customer's Signature",
+    "the_payment_term_is_up_to_3_months":"The payment term is up to 3 months",
+    "previous_balance":"Previous Balance",
+    "email":"Email",
+    "warehouse_delivery_note":"Warehouse delivery note",
+    "print_warehouse_note":"Print Warehouse Note",
+    "details":"Details"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -220,6 +234,9 @@
   },
   "pages": {
     "dir": "ltr",
+    "journal":{
+          "journal_book":"Journal Book"
+        },
     "currency": {
       "message_title_delete": "Are you sure you want to delete this currency",
       "message_description_delete": "Once this currency is deleted, you will no longer have access to it.",

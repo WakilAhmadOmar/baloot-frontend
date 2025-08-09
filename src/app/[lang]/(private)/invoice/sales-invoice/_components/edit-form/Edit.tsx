@@ -255,7 +255,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
               {/* <Button variant="outlined" disabled>
                 {t?.invoice?.print_invoice}
               </Button> */}
-              <PrintInvoice t={t} />
+              <PrintInvoice  />
               {/* <PrintTable /> */}
               <Button variant="outlined" disabled>
                 {t?.invoice?.print_warehouse_receipt}

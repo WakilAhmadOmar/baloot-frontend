@@ -16,11 +16,14 @@ export function AmountCalculated() {
 
   useEffect(() => {
     if (calculatedTo && currencyId) {
-      const findSelectedCurrency = currencies?.find(
+      const selectedCurrency = currencies?.find(
         (item: any) => item?._id === currencyId
       );
-      if (findSelectedCurrency) {
-        const result = amount / findSelectedCurrency.rate;
+      const calculatedToCurrency = currencies?.find(
+        (item: any) => item?._id === calculatedTo
+      );
+      if (calculatedToCurrency && selectedCurrency) {
+        const result = (amount * calculatedToCurrency.rate) / selectedCurrency?.rate ;
         const formattedResult = Number.isInteger(result)
           ? result
           : result.toFixed(2);
@@ -31,7 +34,7 @@ export function AmountCalculated() {
 
   return (
     <Box>
-      <InputLabel required >{t("amount_calculated")}</InputLabel>
+      <InputLabel  sx={{ marginTop: "1rem", paddingBottom: "5px" }}>{t("amount_calculated")}</InputLabel>
       <TextField
         fullWidth
         size="small"

@@ -12,9 +12,11 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { getAuthUser } from "@/utils/getAuthUser";
+import { appConfig } from "@/config/config";
 
 
-const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL
+// const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL
+const graphqlEndPoint = appConfig.apiUrl
 
 
 const ApolloManager: React.FC<any> = (props) => {

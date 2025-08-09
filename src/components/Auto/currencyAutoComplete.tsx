@@ -1,15 +1,9 @@
 "use client";
-import {
-  Box,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from "@mui/material";
+import { Box, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 import { Controller, useFormContext } from "react-hook-form";
 import { useGetUserCurrenciesQuery } from "@/hooks/api/currencies/queries/use-get-user-currencies";
-import { useContext, useEffect } from "react";
-import { InvoiceContext } from "@/app/[lang]/(private)/invoice/_components/invoiceContext";
+import { useEffect } from "react";
 
 interface IPropsUserCurrencies {
   defaultValue?: string;
@@ -17,9 +11,8 @@ interface IPropsUserCurrencies {
   name?: string;
   dir?: string;
   required?: boolean;
-  disabled?:boolean
-  isBaseCurrency?:boolean
-  
+  disabled?: boolean;
+  isBaseCurrency?: boolean;
 }
 const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   defaultValue,
@@ -28,37 +21,45 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
   dir = "ltr",
   required = true,
   disabled = false,
-  isBaseCurrency = false
-
+  isBaseCurrency = false,
 }) => {
-const { setBaseCurrency} = useContext(InvoiceContext)
-    const {data:currencies , isLoading} = useGetUserCurrenciesQuery()
+  const { data: currencies } = useGetUserCurrenciesQuery();
 
   const {
     formState: { errors },
     control,
     register,
-    setValue
+    setValue,
+    watch,
   } = useFormContext();
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedId = event.target.value as string;
     const selectedItem = currencies?.find(
-      (item:any) => item?._id === selectedId
+      (item: any) => item?._id === selectedId
     );
 
     if (onSelected && selectedItem) {
       onSelected(selectedItem);
     }
   };
+  const value = watch(name || "currencyId");
 
-  useEffect(() =>{
-    if (isBaseCurrency && disabled && currencies){
-      const findBaseCurrency = currencies?.filter((item:any) => item?.isBase)
-      setBaseCurrency(findBaseCurrency?.[0])
-      setValue("currencyId" , findBaseCurrency?.[0]?._id)
+  useEffect(() => {
+    if (!value && currencies && !isBaseCurrency) {
+      setValue(name || "currencyId", currencies?.[0]?._id);
+      // if (onSelected && currencies) {
+      //   onSelected(currencies?.[0]);
+      // }
     }
-  },[isBaseCurrency , disabled , currencies])
+    if (isBaseCurrency) {
+      const findBaseCurrency = currencies?.filter((item: any) => item?.isBase);
+      setValue(name || "currencyId", findBaseCurrency?.[0]?._id);
+      if (onSelected && findBaseCurrency) {
+        onSelected(findBaseCurrency?.[0]);
+      }
+    }
+  }, [value, currencies]);
 
   return (
     <Box>
@@ -69,23 +70,19 @@ const { setBaseCurrency} = useContext(InvoiceContext)
           name={name || "currencyId"}
           render={({ field: { onChange, value } }) => (
             <Select
-              // label="Status"
               fullWidth
               size={"small"}
               value={value}
               disabled={disabled}
               defaultValue={defaultValue}
-              // options={PROGRAM_STATUS}
-              // placeholder="Please select status"
               error={!!errors?.[name || "currencyId"]}
-              // helperText={errors?.currencyId?.message}
               required
               onChange={(event) => {
                 onChange(event);
                 handleChange(event);
               }}
             >
-              {currencies?.map((item:any) => {
+              {currencies?.map((item: any) => {
                 return (
                   <MenuItem key={item?._id} value={item?._id} dir={dir}>
                     {item?.name}
@@ -95,23 +92,7 @@ const { setBaseCurrency} = useContext(InvoiceContext)
             </Select>
           )}
         />
-        // <Select
-        //   fullWidth
-        //   size={"small"}
-        //   defaultValue={defaultValue?._id || userCurrenciesState?.[0]?._id}
-        //   {...(register ?  register("currencyId" , {required:isRequired}) : {})}
-        //   onChange={handleChange}
-        // >
-        // {userCurrenciesState?.map((item) => {
-        //   return (
-        //     <MenuItem key={item?._id} value={item?._id}>
-        //       {item?.name}
-        //     </MenuItem>
-        //   );
-        // })}
-        // </Select>
       )}
-      
     </Box>
   );
 };

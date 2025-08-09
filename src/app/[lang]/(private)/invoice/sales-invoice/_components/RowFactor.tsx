@@ -23,10 +23,9 @@ interface IPropsRow {
   createdAt:string,
   id:string,
   onDelete: (event:MouseEvent) => void , 
-  lang:"en" | "fa"
 }
 
-const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onDelete , lang }) => {
+const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onDelete  }) => {
   const theme = useTheme();
   const t = useTranslations("invoice")
   const [open, setOpen] = React.useState(false);
@@ -83,14 +82,14 @@ const RowFactor:React.FC<IPropsRow> = ({name , billNumber , createdAt , id , onD
         <Box display={"flex"} columnGap={"5rem"} alignItems={"center"}>
           <Box display="flex" columnGap={"5px"} alignItems={"center"}>
             <Typography variant="body2" component={"span"}>
-              شماره فاکتور{" - "}
+              {t("invoice_number")}{" - "}
             </Typography>
             <Typography variant="h5" component={"span"}>
               {billNumber}
             </Typography>
           </Box>
           <Typography variant="body2">
-            تاریخ صدور فاکتور - <Moment format="mm dd YYYY">{createdAt}</Moment>
+            {t("created_at")} - <Moment format="mm dd YYYY">{createdAt}</Moment>
           </Typography>
           <Box>
             <IconButton onClick={handleOpenDialog} id={id}>

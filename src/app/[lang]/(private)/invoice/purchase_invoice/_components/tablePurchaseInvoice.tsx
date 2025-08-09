@@ -324,7 +324,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
       <Box>
         <Box maxWidth={"40rem"} mb={2}>
             <ProductsAutoComplete 
-            t={t}
               getProduct={handleGetProductFunction}
               productIds={productBilState?.map((item:any) => item?._id)}
             />
@@ -382,7 +381,6 @@ const TablePurchaseInvoice: React.FC<IPropsTableFactore> = ({
                   defaultValue={item}
                   index={index}
                   // name={"productName"}
-                  t={t}
                   isTable
                   productIds={productBilState?.map((item: any) => item?._id)}
                 />

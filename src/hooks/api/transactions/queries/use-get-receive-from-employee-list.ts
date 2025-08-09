@@ -7,13 +7,13 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetReceiveFromEmployeeListQuery({page , }:{page:number }) {
+export function useGetReceiveFromEmployeeListQuery({page ,filter }:{page:number , filter:"Cash" | "ReceiveBill"}) {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getReceiveFromEmployeeList  }} = await client.query({
         query:GET_RECEIVE_FROM_EMPLOYEE_LIST,
-        variables:{page},
+        variables:{page , filter },
         fetchPolicy:"network-only"
       })
      return getReceiveFromEmployeeList

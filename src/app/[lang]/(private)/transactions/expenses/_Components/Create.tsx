@@ -31,7 +31,6 @@ export const CreateCreate = () => {
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
-    // defaultValues,
   });
   const {
     register,

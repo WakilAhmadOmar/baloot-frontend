@@ -11,7 +11,6 @@ import {
   InputLabel,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Typography,
   useTheme,
@@ -28,6 +27,7 @@ import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useTranslations } from "next-intl";
 import { useAddReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-add-receive-from-employee";
+import { AmountCalculated } from "../../_components/AmountCalculated";
 
 const CreateComponent = () => {
   const t = useTranslations("transactions");
@@ -35,15 +35,12 @@ const CreateComponent = () => {
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
-    // defaultValues,
   });
 
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors },
-    setError,
   } = methods;
   const [openDialog, setOpenDialog] = useState(false);
   const [accountType, setAccountType] = useState("Bank");
@@ -69,7 +66,6 @@ const CreateComponent = () => {
           amountCalculated: parseFloat(data?.amountCalculated),
           invoiceType: "Cash",
           receiverType: accountType,
-          // payerType: "Employee",
         },
       },
       {
@@ -191,15 +187,7 @@ const CreateComponent = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t("calculated_amount")}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("amountCalculated", { required: false })}
-                    disabled
-                  />
+                  <AmountCalculated />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -270,7 +258,6 @@ const CreateComponent = () => {
               <Button
                 color="primary"
                 variant="contained"
-                // type="submit"
                 onClick={handleSubmit(onSubmitFunction)}
                 loading={isLoading}
               >

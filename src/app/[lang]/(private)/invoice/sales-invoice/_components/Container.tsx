@@ -1,24 +1,19 @@
 "use client";
 
 import { Box, Pagination, Stack, Typography } from "@mui/material";
-import React, { MouseEvent, useCallback, useContext, useEffect, useState } from "react";
+import React, { MouseEvent, useContext, useState } from "react";
 import RowFactor from "./RowFactor";
-import CustomSearch from "@/components/search/CustomSearch";
 import { useApolloClient } from "@apollo/client";
 import CreateSalesInvoice from "./Create";
 import InvoiceContextProvider from "../../_components/invoiceContext";
-import { GET_SELLS_BILL_LIST } from "@/graphql/queries/GET_SELLS_BILL_LIST";
 import SkeletonComponent from "../../_components/Skeleton";
 import { AppContext } from "@/provider/appContext";
 import { DELETE_SELLS_BILL } from "@/graphql/mutation/DELETE_SELLS_BILL";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 import { useGetSellsBillList } from "@/hooks/api/invoice/queries/use-get-sale-invoice";
 import { useTranslations } from "next-intl";
 
-interface IProps {
-  lang:"en" | "fa"
-}
-const PurchaseInvoicePage: React.FC<IProps> = ({  lang}) => {
+
+const PurchaseInvoicePage = () => {
   const t = useTranslations("invoice")
   const client = useApolloClient();
   const { setHandleError } = useContext(AppContext);
@@ -37,51 +32,6 @@ const PurchaseInvoicePage: React.FC<IProps> = ({  lang}) => {
       endDate:""
     }
   })
-
-  // const getBillList = async () => {
-  //   try {
-      // const variables = {
-      //   page: pageData?.page,
-      //   searchTerm:"",
-      //   dateFilter:{
-      //     startDate: "",
-      //     endDate:""
-      //   }
-      // };
-  //     const {
-  //       data: { getSellsBillList },
-  //     } = await client.query({
-  //       query: GET_SELLS_BILL_LIST,
-  //       variables,
-  //     });
-  //     const allRows = [
-  //       ...(pageData?.rows?.length > 0 ? pageData?.rows : []),
-  //       ...getSellsBillList?.sellBill,
-  //     ];
-  //     const duplicate: any[] = allRows?.filter(
-  //       (value, index, self) =>
-  //         index === self.findIndex((t) => t._id === value._id)
-  //     );
-  //     setPageData((prevState: any) => ({
-  //       ...prevState,
-  //       page: prevState?.page + 1,
-  //       rows: duplicate,
-  //       count: getSellsBillList?.count,
-  //     }));
-  //     setLoadingPage(false);
-  //   } catch (error: any) {
-  //     setLoadingPage(false);
-  //     setHandleError({
-  //       open: true,
-  //       type: "error",
-  //       message: error.message,
-  //     });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getBillList();
-  // }, []);
 
   const handleDeleteFunction = async (event: MouseEvent) => {
     const id = event?.currentTarget?.id;
@@ -187,7 +137,6 @@ const PurchaseInvoicePage: React.FC<IProps> = ({  lang}) => {
               id={item?._id}
               name={item?.customerId?.fullName}
               onDelete={handleDeleteFunction}
-              lang={lang}
             />
           ))}
         </Box>

@@ -50,24 +50,25 @@ export default function DataTable() {
         disableVirtualization
         getRowHeight={() => "auto"}
         sx={{
+          direction:"rtl"
           // backgroundColor: "white",
-          height: "100%",
-          "& .MuiDataGrid-columnSeparator": {
-            display: "none", // This removes the line between headers
-          },
-          "& .MuiDataGrid-container--top [role=row]":{
-            background:"rgb(238, 0, 0) !important"
-          },
-          "& .MuiDataGrid-cell": {
-            borderTop: "1px solid #E1E1E1 !important",
-            textAlign: " right",
-            padding: "10px !important",
-            wordBreak: "break-word",
-            boxSizing: "border-box",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
+          // height: "100%",
+          // "& .MuiDataGrid-columnSeparator": {
+          //   display: "none", // This removes the line between headers
+          // },
+          // "& .MuiDataGrid-container--top [role=row]":{
+          //   background:"rgb(238, 0, 0) !important"
+          // },
+          // "& .MuiDataGrid-cell": {
+          //   borderTop: "1px solid #E1E1E1 !important",
+          //   textAlign: " right",
+          //   padding: "10px !important",
+          //   wordBreak: "break-word",
+          //   boxSizing: "border-box",
+          //   display: "flex",
+          //   justifyContent: "center",
+          //   alignItems: "center",
+          // },
         }}
         hideFooter
         hideFooterSelectedRowCount

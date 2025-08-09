@@ -170,19 +170,19 @@ import {
                 <SingleInputDateRangePicker />
               </Box>
               <Box display={"flex"} alignItems={"center"}>
-                <CustomSearch t={t}/>
+                <CustomSearch />
               </Box>
             </Box>
           </Box>
           <Box>
+            {/* <RowFactor />
             <RowFactor />
             <RowFactor />
             <RowFactor />
             <RowFactor />
             <RowFactor />
             <RowFactor />
-            <RowFactor />
-            <RowFactor />
+            <RowFactor /> */}
           </Box>
           <Box display="flex" justifyContent={"end"} mt={2}>
             <Stack spacing={2} p={1}>

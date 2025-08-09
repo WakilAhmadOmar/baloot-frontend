@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { ExportSquare, Printer } from "iconsax-react";
 import CreateComponent from "./Create";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
@@ -26,8 +26,9 @@ const ReceiveCashContainer = () => {
   const t = useTranslations("transactions")
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
+  const [page ,setPage] = useState(1)
 
-  const { data, isLoading } = useGetPayToCustomerListQuery({ page: 1 });
+  const { data, isLoading } = useGetPayToCustomerListQuery({ page  , filter:"Cash"});
   const { mutate, isLoading: deleteIsLoading } = useDeletePayToCustomerMutation();
 
   const handleDeleteFunction = (id: string) => {
@@ -53,7 +54,12 @@ const ReceiveCashContainer = () => {
       }
     );
   };
-
+const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
+  };
   return (
     <Box>
       <Box pb={3}>
@@ -132,7 +138,7 @@ const ReceiveCashContainer = () => {
               shape="rounded"
               variant="outlined"
               color="primary"
-              // onChange={handleChangePage}
+              onChange={handleChangePage}
               sx={{
                 fontSize: "2rem !important",
                 direction: "rtl",

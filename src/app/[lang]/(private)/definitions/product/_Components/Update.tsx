@@ -84,7 +84,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
     }
     const productObject = {
       name: data?.name,
-      measures: selectedUnitProduct?.map((item, index: number) => {
+      price: selectedUnitProduct?.map((item, index: number) => {
         return {
           measureId: item?.measure,
           buyPrice: parseInt(item?.buyPrice),
@@ -123,7 +123,6 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       ...(data?.barcode ? { barcode: data?.barcode } : {}),
       // isNewProduct: data?.isNewProduct === "newProduct",
       currencyId: data?.currencyId,
-      baseMeasureAmount: 10,
     };
 
     updateProductMutation(

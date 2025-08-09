@@ -27,11 +27,11 @@ import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useSchemaCrateForm, { CreateFormSchema } from "./create-form.schema";
 import { useApolloClient } from "@apollo/client";
-import { ADD_SELLS_BILL } from "@/graphql/mutation/ADD_SELLS_BILL";
 import { AppContext } from "@/provider/appContext";
 import { PrintInvoice } from "./print-invoice";
-import PrintTable from "./table-print";
 import { useTranslations } from "next-intl";
+import { useAddSellsBillMutation } from "@/hooks/api/invoice/mutations/use-add-sells-bill";
+import { PrintWarehouseReceipt } from "./print-warehouse-receipt";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -42,11 +42,7 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-interface IProps {
-  onCreated?: (billInfo: any) => void;
-}
-
-const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
+const CreateSalesInvoice = () => {
   const t = useTranslations("invoice");
 
   const methods = useForm<CreateFormSchema>({
@@ -55,11 +51,15 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
       customerId: "",
       warehouseId: "",
       currencyId: "",
+      totalPrice: 0,
+      contact_number: "",
+      totalPriceAfterDiscount: 0,
       products: [
         {
           productId: "",
           measures: [],
           warehouse: null,
+          expireInDate: new Date(),
         },
       ],
     },
@@ -72,16 +72,19 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
     formState: { errors },
     setError,
     reset,
+    setValue,
   } = methods;
 
-  const { customer, paymentOff, rows, setRows, sellBillPrice } =
-    useContext(InvoiceContext);
+  const { customer, paymentOff } = useContext(InvoiceContext);
   const { setHandleError } = useContext(AppContext);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
+  // const [loadingPage, setLoadingPage] = useState(false);
   const client = useApolloClient();
   const theme = useTheme();
+
+  const { mutate: addSellsBillMutation, isLoading } = useAddSellsBillMutation();
+
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
   };
@@ -95,64 +98,57 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
   //   setCurrency(data);
   // };
   const onSubmitFunction = async (data: CreateFormSchema) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        sellBillObject: {
-          billDate: new Date(),
-          currencyId: data?.currencyId,
-          customerId: data?.customerId,
-          entrepotId: data?.warehouseId,
-          // isPaid: paymentOff?._id ? true : false,
-          products: rows?.map((item: any) => {
-            const allProduct = item?.measures
-              ?.filter((measure: any) => measure?.selected)
-              ?.map((dataItem: any) => ({
-                count: dataItem?.amount,
-                discountPercentage: dataItem?.discount || 0,
-                entrepotId: item?.warehouse?._id || data?.warehouseId,
-                measureId: dataItem?.measureId?._id,
-                pricePerMeasure: dataItem?.sellPrice,
-                productId: item?._id,
-              }));
-            return {
-              ...allProduct?.[0],
-            };
-          }),
-          // status: "Accepted",
-          totalPrice: sellBillPrice?.totalPrice,
-          totalPriceAfterDiscount: sellBillPrice?.totalPrice,
-          transactionId: paymentOff?._id,
-          receiveAmount: paymentOff?.amount,
-        },
-      };
-      const {
-        data: { addSellsBill },
-      } = await client.mutate({
-        mutation: ADD_SELLS_BILL,
-        variables,
-      });
-      if (addSellsBill?._id && onCreated) {
-        onCreated(addSellsBill);
-      }
-      setLoadingPage(false);
-      setHandleError({
-        message: "Action successfully recorded.",
-        type: "success",
-        open: true,
-      });
-    } catch (error: any) {
-      setLoadingPage(false);
-      setHandleError({
-        type: "error",
-        message: error?.message,
-        open: true,
-      });
-    }
+    const variables = {
+      sellBillObject: {
+        billDate: new Date(),
+        currencyId: data?.currencyId,
+        customerId: data?.customerId,
+        entrepotId: data?.warehouseId,
+        // isPaid: paymentOff?._id ? true : false,
+        products: data?.products?.map((item: any) => {
+          const allProduct = item?.measures
+            ?.filter((measure: any) => measure?.selected)
+            ?.map((dataItem: any) => ({
+              count: dataItem?.amount,
+              discountPercentage: dataItem?.discount || 0,
+              entrepotId: item?.warehouse?._id || data?.warehouseId,
+              measureId: dataItem?.measureId,
+              pricePerMeasure: dataItem?.sellPrice,
+              productId: item?.productId,
+              expireInDate: item?.expireInDate,
+            }));
+          return {
+            ...allProduct?.[0],
+          };
+        }),
+        // status: "Accepted",
+        totalPrice: data?.totalPrice,
+        totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
+        transactionId: paymentOff?._id,
+        receiveAmount: paymentOff?.amount,
+      },
+    };
+    
+    addSellsBillMutation(variables, {
+      onSuccess: () => {
+        setHandleError({
+          message: t("this_bill_successfully_saved"),
+          status: "success",
+          open: true,
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          status: "error",
+          message: error?.message,
+          open: true,
+        });
+      },
+    });
   };
+
   const resetInvoiceFunction = useCallback(() => {
     reset();
-    setRows(null);
   }, []);
   return (
     <FormProvider {...methods}>
@@ -195,7 +191,12 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
             <Grid2 container columnSpacing={3} rowSpacing={3}>
               <Grid2 size={3} gap={1} display={"grid"}>
                 <InputLabel>{t("customer_name")}</InputLabel>
-                <CustomerAutoComplete/>
+                <CustomerAutoComplete
+                  getCustomer={(customer) => {
+                    setValue("contact_number", customer?.contactNumber);
+                  }}
+                  dir={t("dir")}
+                />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("Contact_Number")}</InputLabel>
@@ -203,16 +204,18 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
                   fullWidth
                   size="small"
                   disabled
-                  value={customer?.contactNumber ?? ""}
+                  // value={customer?.contactNumber ?? ""}
+                  {...register("contact_number")}
+                  name={"contact_number"}
                 />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("Warehouse")} </InputLabel>
-                <WarehouseAutoComplete/>
+                <InputLabel>{t("warehouse")} </InputLabel>
+                <WarehouseAutoComplete dir={t("dir")} />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("Currency")}</InputLabel>
-                <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency/>
+                <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
               </Grid2>
             </Grid2>
             <DataTable />
@@ -231,18 +234,19 @@ const CreateSalesInvoice: React.FC<IProps> = ({ onCreated }) => {
                 <Button
                   variant="contained"
                   onClick={handleSubmit(onSubmitFunction)}
-                  loading={loadingPage}
+                  loading={isLoading}
                 >
                   {t("save")}
                 </Button>
                 {/* <Button variant="outlined" disabled>
                 {t("print_invoice")}
               </Button> */}
-                <PrintInvoice t={t} />
+                <PrintInvoice />
                 {/* <PrintTable /> */}
-                <Button variant="outlined" disabled>
+                {/* <Button variant="outlined">
                   {t("print_warehouse_receipt")}
-                </Button>
+                </Button> */}
+                <PrintWarehouseReceipt />
               </Box>
             </Box>
           </DialogActions>

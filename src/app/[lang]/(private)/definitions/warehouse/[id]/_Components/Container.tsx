@@ -1,9 +1,6 @@
 "use client";
 
-import { ADD_WARE_TO_ENTREPOT } from "@/graphql/mutation/ADD_WARE_TO_ENTREPOT";
-import { GET_WARE_FROM_ENTREPOT } from "@/graphql/queries/GET_WARE_FROM_ENTREPOT";
 import { AppContext } from "@/provider/appContext";
-import { useApolloClient } from "@apollo/client";
 import {
   Box,
   Button,
@@ -19,7 +16,6 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useState } from "react";
-
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSchemaCrateForm } from "./Create-form-schema";
@@ -51,12 +47,6 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
   });
   const { mutate: addWareToEntrepot, isLoading: addLoading } =
     useAddWareToEntrepotMutation();
-  const [rows, setRows] = useState<any>({
-    page: 1,
-    pageSize: 10,
-    data: [],
-    count: 0,
-  });
 
   const defaultValues: FormType = useMemo(
     () => ({
@@ -64,17 +54,17 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
         getWareFromEntrepot?.ware?.map((item: any) => ({
           productId: item?.productId?._id,
           productName: item?.productId?.name,
-          measures: item?.productId?.measures?.map((measure: any) => ({
+          measures: item?.productId?.price?.map((measure: any) => ({
             measureName: measure?.measureId?.name,
             measureId: measure?.measureId?._id,
-            amountOfProduct:0,
+            amountOfProduct: 0,
           })),
           expireInDate: new Date().toISOString().slice(0, 10), // ISO string for date input
         })) || [],
     }),
-    [getWareFromEntrepot?.ware?.length]
+    [getWareFromEntrepot?.ware]
   );
-  
+
   const {
     control,
     handleSubmit,
@@ -85,13 +75,13 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
     defaultValues,
   });
 
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "wareObject",
   });
 
   const paginationModel = { page: 1, pageSize: 10 };
-  const client = useApolloClient();
   const { setHandleError } = useContext(AppContext);
   const theme = useTheme();
   const pathname = usePathname();
@@ -133,22 +123,23 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
     },
   };
 
-  // useEffect(() => {
-  //   if (getWareFromEntrepot?.ware?.length) {
-  //     reset({
-  //       wareObject: getWareFromEntrepot.ware.map((item: any) => ({
-  //         productId: item?.productId?._id,
-  //         productName: item?.productId?.name,
-  //         measures: item?.measures?.map((measure: any) => ({
-  //           measureName: measure?.measureId?.name,
-  //           measureId: measure?.measureId?._id,
-  //           amountOfProduct: measure?.amountOfProduct,
-  //         })),
-  //         expireInDate: new Date().toISOString().slice(0, 10),
-  //       })),
-  //     });
-  //   }
-  // }, [getWareFromEntrepot?.ware, reset]);
+  useEffect(() => {
+    if (getWareFromEntrepot?.ware?.length) {
+      reset({
+        wareObject:  getWareFromEntrepot?.ware?.map((item: any) => ({
+          productId: item?.productId?._id,
+          productName: item?.productId?.name,
+          measures: item?.productId?.price?.map((measure: any) => ({
+            measureName: measure?.measureId?.name,
+            measureId: measure?.measureId?._id,
+            amountOfProduct: 0,
+          })),
+          expireInDate: new Date().toISOString().slice(0, 10), // ISO string for date input
+        })) || [],
+      });
+    }
+  }, [getWareFromEntrepot?.ware, reset]);
+
 
   const columns: GridColDef[] = [
     {
@@ -157,11 +148,8 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       width: 70,
       sortable: false,
       filterable: false,
-      renderCell: ({ row }) => {
-        const rowIndex = rows?.data?.findIndex(
-          (r: any) => r?.productId?._id === row?.productId?._id
-        );
-        return rowIndex + 1;
+      renderCell: ({ row  }) => {
+        return row?._fieldIndex + 1;
       },
     },
     {
@@ -218,7 +206,6 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => {
-
         return (
           <Box display={"grid"} my={1} gap={2}>
             {row?.measures?.map((item: any) => (
@@ -268,34 +255,33 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
       wareObject: data?.wareObject?.map((item: any) => {
         const measures = item?.measures?.map((measure: any) => ({
           measureId: measure?.measureId,
-          amountOfProduct:measure?.amountOfProduct
+          amountOfProduct: measure?.amountOfProduct,
         }));
-        
-        return {
-          productId:item?.productId,
-          measures,
-          expireInDate:item?.expireInDate,
 
-        }
-      }),
+        return {
+          productId: item?.productId,
+          measures,
+          expireInDate: item?.expireInDate,
+        };
+      }).filter((item:any) => item?.measures?.length > 0),
       isFirstPeriodWare: true,
     };
     addWareToEntrepot(variables, {
-      onSuccess:()=>{
+      onSuccess: () => {
         setHandleError({
-          status:"error",
-          open:true,
-          message:t("warehouse.initial_inventory_saved_successfully")
-        })
+          status: "error",
+          open: true,
+          message: t("warehouse.initial_inventory_saved_successfully"),
+        });
       },
-      onError:(error:any)=>{
+      onError: (error: any) => {
         setHandleError({
-          status:"error",
-          open:true,
-          message:error.message
-        })
-      }
-    })
+          status: "error",
+          open: true,
+          message: error.message,
+        });
+      },
+    });
   };
 
   const handleChangePage = (
@@ -334,7 +320,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
         </Box>
         <Paper sx={{ width: "100%" }}>
           <DataGrid
-            rows={  fields.map((item: any, index) => ({
+            rows={fields.map((item: any, index) => ({
               ...item,
               id: item.productId?._id || index,
               _fieldIndex: index, // add this!

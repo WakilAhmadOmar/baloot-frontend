@@ -1,5 +1,5 @@
 import { client } from "@/config/http-client";
-import {  SELLS_BILL_LIST_QUERY_KEY } from "@/constants/queries-key";
+import {  GET_SELLS_BILL_LIST_QUERY_KEY } from "@/constants/queries-key";
 import { GET_SELLS_BILL_LIST } from "@/graphql/queries/GET_SELLS_BILL_LIST";;
 import { useQuery } from "react-query";
 
@@ -12,7 +12,7 @@ export const useGetSellsBillList = (variables:any) => {
         });
         return getSellsBillList;
       },
-      queryKey: [SELLS_BILL_LIST_QUERY_KEY],
+      queryKey: [GET_SELLS_BILL_LIST_QUERY_KEY],
       refetchOnWindowFocus: false,
     });
   };

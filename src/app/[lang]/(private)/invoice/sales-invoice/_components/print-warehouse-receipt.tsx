@@ -25,7 +25,7 @@ const printStyle = {
   },
 };
 
-export function PrintInvoice() {
+export function PrintWarehouseReceipt() {
   const theme = useTheme();
   const t = useTranslations("invoice");
   const { watch } = useFormContext();
@@ -186,131 +186,30 @@ export function PrintInvoice() {
       ),
     },
     {
-      field: "price",
-      headerName: t("price"),
+      field: "warehouse",
+      headerName: t("warehouse"),
       sortable: false,
       filterable: false,
       minWidth: 70,
       flex: 1,
       hideable: false,
       align: t("dir") === "ltr" ? "left" : "right",
-      renderCell: ({ row }) => (
-        <Box
-          display={"flex"}
-          width={"100%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {row?.measures
-            ?.filter((item: any) => item?.selected)
-            ?.map((item: any, index: number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
-                {item?.sellPrice}
-              </Box>
-            ))}
-        </Box>
-      ),
+      renderCell:({row})=>{
+        
+        return row?.warehouse?.name
+      }
+    
     },
     {
-      field: "discount",
-      headerName: t("discount_percentage"),
-      sortable: false,
-      filterable: false,
-      minWidth: 100,
-      flex: 1,
-      hideable: false,
-      align: t("dir") === "ltr" ? "left" : "right",
-      renderCell: ({ row }) => (
-        <Box
-          display={"flex"}
-          width={"100%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {row?.measures
-            ?.filter((item: any) => item?.selected)
-            ?.map((item: any, index: number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
-                {item?.discount || 0}
-              </Box>
-            ))}
-        </Box>
-      ),
-    },
-    {
-      field: "discount-amount",
-      headerName: t("discount_amount"),
-      sortable: false,
-      filterable: false,
-      minWidth: 90,
-      flex: 1,
-      hideable: false,
-      align: t("dir") === "ltr" ? "left" : "right",
-      renderCell: ({ row }) => (
-        <Box
-          display={"flex"}
-          width={"100%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {row?.measures
-            ?.filter((item: any) => item?.selected)
-            ?.map((item: any, index: number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
-                {item?.discount || 0}
-              </Box>
-            ))}
-        </Box>
-      ),
-    },
-    {
-      field: "total",
-      headerName: t("total"),
-      sortable: false,
-      filterable: false,
-      minWidth: 70,
-      flex: 1,
-      hideable: false,
-      align: t("dir") === "ltr" ? "left" : "right",
-      renderCell: ({ row }) => (
-        <Box
-          display={"flex"}
-          width={"100%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {row?.measures
-            ?.filter((item: any) => item?.selected)
-            ?.map((measure: any, index: number) => {
-              const discount = measure?.discount || 0;
-              const amount = measure?.amount || 1;
-              const sellPrice = measure?.sellPrice || 0;
-              const total = sellPrice * amount - (sellPrice * discount) / 100;
-              return (
-                <Box key={measure?.measureId} mt={index > 0 ? 2 : 0}>
-                  {Number.isInteger(total) ? total : total.toFixed(2)}
-                </Box>
-              );
-            })}
-        </Box>
-      ),
-    },
-    {
-      field: "expirationDate",
-      headerName: t("expiration_date"),
+      field: "Details",
+      headerName: t("details"),
       sortable: false,
       filterable: false,
       hideable: false,
-      minWidth: 150,
+      minWidth: 250,
       flex: 1,
       headerClassName: "wrap-header", // Add this line
       align: t("dir") === "ltr" ? "left" : "right",
-      renderCell: ({ row }) =>
-        row?.expirationDate !== "" ? (
-          <Moment format="YYYY/MM/DD">{row?.expirationDate}</Moment>
-        ) : (
-          ""
-        ),
     },
   ];
 
@@ -343,51 +242,29 @@ export function PrintInvoice() {
       >
         <Box
           display={"grid"}
-          gridTemplateColumns={"auto 2rem"}
-          borderBottom={"1px solid #000"}
+          gridTemplateColumns={"auto"}
+          // borderBottom={"1px solid #000"}
         >
-          <Box>
             <Box display={"flex"} justifyContent={"center"} mt={1}>
-              <Typography variant="h4">شرکت برادران ابراهیم زاده</Typography>
-              <Typography variant="h4">
-                Ebrahimzadeh Brothers Company
-              </Typography>
+              <Typography variant="h4">{t("warehouse_delivery_note")}</Typography>
             </Box>
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              mt={1}
-            >
-              <Typography variant="subtitle2">334455667788990000</Typography>
-              <Typography variant="subtitle2">
-                0799989898 - 0789989898
-              </Typography>
-              <Typography variant="subtitle2">
-                {t("email")}: Ebrahimzadeh.brothers@gmail.com
-              </Typography>
-            </Box>
-          </Box>
-          <Box>logo</Box>
         </Box>
         <Box
           display={"flex"}
-          justifyContent={"space-between"}
+          justifyContent={"start"}
           alignItems={"center"}
           my={1}
+          gap={3}
         >
           <Box display={"flex"} gap={2}>
             <Typography variant="subtitle2"> {t("invoice_number")}: 200009 </Typography>
-            <Typography variant="subtitle2"> {t("customer_name")} : احسان سفیر </Typography>
-          </Box>
-          <Box>
-            <Typography variant="h4">{t("sell_invoice")}</Typography>
+            <Typography variant="subtitle2">  {t("customer_name")}: احسان سفیر </Typography>
           </Box>
           <Box display={"flex"} gap={2}>
             <Typography variant="subtitle2">
-               {t("invoice_date")}: 1403/2/23{" "}
+              تاریخ صدور فاکتور: 1403/2/23{" "}
             </Typography>
-            <Typography variant="subtitle2"> {t("invoice_currency")} : افغانی</Typography>
+            <Typography variant="subtitle2">   {t("warehouse")} : گدام مرگزی</Typography>
           </Box>
         </Box>
         <DataGrid
@@ -454,16 +331,16 @@ export function PrintInvoice() {
             <Grid2 size={2} display={"grid"} alignItems={"center"}>
               <Typography textAlign={"center"} variant="body1">{t("seller_signature")}</Typography>
             </Grid2>
-            <Grid2 size={2} display={"grid"} alignItems={"center"}>
+            <Grid2 size={3} display={"grid"} alignItems={"center"}>
               <Typography textAlign={"center"} variant="body1">{t("customer_signature")}</Typography>
             </Grid2>
-            <Grid2 size={8}>
+            <Grid2 size={5}>
               <Grid2 container sx={{
                 border:`1px solid ${theme.palette.grey[200]}`,
                 borderRadius:"1rem",
                 overflow:"hidden"
               }}>
-                <Grid2 size={6}>
+                <Grid2 size={12}>
                   <Box
                     display={"grid"}
                     gridTemplateColumns={"50% 50%"}
@@ -480,135 +357,30 @@ export function PrintInvoice() {
                         },
                       }}
                     >
-                      <Typography variant="body1">{t("total_invoice_amount")}</Typography>
+                      <Typography variant="body1">{t("total_number_of_products")} </Typography>
                     </Box>
                     <Box
                       sx={{
                         padding: "1rem 2rem",
                       }}
                     >
-                      <Typography variant="body1">123123</Typography>
+                      <Typography variant="body1">{products?.length}</Typography>
                     </Box>
-                  </Box>
-                  <Box
-                    display={"grid"}
-                    gridTemplateColumns={"50% 50%"}
-                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#F5F5F5",
-                        padding: "1rem 2rem",
-                        "@media print": {
-                          backgroundColor: "#F5F5F5", // enforce for print
-                          WebkitPrintColorAdjust: "exact",
-                          printColorAdjust: "exact",
-                        },
-                      }}
-                    >
-                      <Typography variant="body1">{t("discount_amount")}</Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        padding: "1rem 2rem",
-                      }}
-                    >
-                      <Typography variant="body1">2</Typography>
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Typography variant="body1" px={"2rem"} py={"1rem"}>{t("the_payment_term_is_up_to_3_months")}</Typography>
                   </Box>
                 </Grid2>
-                <Grid2 size={6}>
-                  <Box
-                    display={"grid"}
-                    gridTemplateColumns={"50% 50%"}
-                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#F5F5F5",
-                        padding: "1rem 2rem",
-                        "@media print": {
-                          backgroundColor: "#F5F5F5", // enforce for print
-                          WebkitPrintColorAdjust: "exact",
-                          printColorAdjust: "exact",
-                        },
-                      }}
-                    >
-                      <Typography variant="body1">{t("receipt")}</Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        padding: "1rem 2rem",
-                      }}
-                    >
-                      <Typography variant="body1">123123</Typography>
-                    </Box>
-                  </Box>
-                  <Box
-                    display={"grid"}
-                    gridTemplateColumns={"50% 50%"}
-                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#F5F5F5",
-                        padding: "1rem 2rem",
-                        "@media print": {
-                          backgroundColor: "#F5F5F5", // enforce for print
-                          WebkitPrintColorAdjust: "exact",
-                          printColorAdjust: "exact",
-                        },
-                      }}
-                    >
-                      <Typography variant="body1">{t("previous_balance")}</Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        padding: "1rem 2rem",
-                      }}
-                    >
-                      <Typography variant="body1">2</Typography>
-                    </Box>
-                  </Box>
-                  <Box
-                    display={"grid"}
-                    gridTemplateColumns={"50% 50%"}
-                    
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: "#F5F5F5",
-                        padding: "1rem 2rem",
-                        "@media print": {
-                          backgroundColor: "#F5F5F5", // enforce for print
-                          WebkitPrintColorAdjust: "exact",
-                          printColorAdjust: "exact",
-                        },
-                      }}
-                    >
-                      <Typography variant="body1">{t("remaining")}</Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        padding: "1rem 2rem",
-                      }}
-                    >
-                      <Typography variant="body1">2</Typography>
-                    </Box>
-                  </Box>
-                  
-                </Grid2>
+                
                 
               </Grid2>
             </Grid2>
+            <Grid2 size={2}>
+                logo
+                  
+                </Grid2>
           </Grid2>
         </Box>
       </Box>
       <Button
-        variant="contained"
+        variant="outlined"
         onClick={() => {
           if (componentRef.current) {
             componentRef.current.style.height = "auto";
@@ -616,7 +388,7 @@ export function PrintInvoice() {
           reactToPrintFn();
         }}
       >
-        {t("print_invoice")}
+        {t("print_warehouse_note")}
       </Button>
     </div>
   );

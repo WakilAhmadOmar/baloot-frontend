@@ -290,7 +290,6 @@ export default function DataTable({ t }: IPropsTable) {
           <>
             <WarehouseAutoComplete
               getWarehouse={(data: any) => handleGetWarehouse(data, rowIndex)}
-              defaultValue={{ ...row?.entrepotId, id: row?.entrepotId?._id }}
             />
           </>
         );

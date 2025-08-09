@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 const GET_PAY_TO_EMPLOYEE_LIST = gql`
-query getPayToEmployeeList($page: Int ) {
-  getPayToEmployeeList(page: $page) {
+query getPayToEmployeeList($page: Int , $filter:PayOffInvoiceType!) {
+  getPayToEmployeeList(page: $page , filter:$filter) {
    
     count
     employeePayOff {

@@ -1,10 +1,8 @@
 "use client";
-import { useApolloClient } from "@apollo/client";
-import { Autocomplete, MenuItem, Select, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
-
-import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
+import { MenuItem, Select } from "@mui/material";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-list-query";
 interface IProps {
   dir?: string;
   name?: string;
@@ -18,85 +16,28 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
   getEmployee
 }) => {
   const {
-    register,
     formState: { errors },
     control,
+    watch,
+    setValue
   } = useFormContext();
-  const client = useApolloClient();
-  const [optionsAuto, setOptionAuto] = useState<{
-    page: number;
-    options: any[];
-  }>({
-    page: 1,
-    options: [],
-  });
-
-  const getProductsFunction = async (searchTerm?: string) => {
-    try {
-      const variables = {
-        ...(searchTerm
-          ? { searchTerm: searchTerm }
-          : { page: optionsAuto?.page }),
-      };
-      const {
-        data: { getEmployeeList },
-      } = await client.query({
-        query: GET_EMPLOYEE_LIST,
-        variables,
-      });
-      const allCustomer = [
-        ...optionsAuto?.options,
-        ...getEmployeeList?.employee,
-      ];
-      const duplicate = allCustomer?.filter(
-        (value, index, self) =>
-          index === self.findIndex((t) => t._id === value._id)
-      );
-      setOptionAuto((prevState) => ({
-        page: prevState?.page + 1,
-        options: duplicate?.map((item) => ({
-          ...item,
-          id: item?._id,
-          label: item?.name,
-        })),
-      }));
-    } catch (error: any) {
-      
-    }
-  };
-
-  useEffect(() => {
-    if (!optionsAuto?.options?.length) {
-      getProductsFunction();
-    }
-  }, []);
 
 
+  const { data:getEmployeeList } = useGetEmployeeListQuery({page:1})
+
+  const value = watch(name || "employeeId")
+   useEffect(() => {
+     if (getEmployeeList?.employee?.length && !value) {
+       const defaultCustomer = getEmployeeList?.employee[0];
+       setValue(name || "employeeId", defaultCustomer._id);
+      //  if (getEmployee) {
+      //    getEmployee(defaultCustomer);
+      //  }
+     }
+   }, [getEmployeeList, setValue, getEmployee, name, value]);
 
   return (
     <>
-      {/* {optionsAuto?.options?.length > 0 && <Autocomplete
-        disablePortal={false}
-        {...register("employee", { required: true })}
-        onChange={handleSelectItem}
-        fullWidth
-        size="small"
-        id="combo-box-demo"
-        options={optionsAuto?.options}
-        defaultValue={
-          (optionsAuto?.options && defaultValue?._id)
-            ? optionsAuto?.options?.filter((item) =>defaultValue?._id === item?._id)?.[0]
-            : {}
-        }
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder={placeholder}
-            {...register("employee", { required: true })}
-          />
-        )}
-      />} */}
-      {optionsAuto?.options?.length > 0 && (
         <Controller
           name={name || "employeeId"}
           control={control}
@@ -110,12 +51,12 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
               onChange={(event)=> {
                 onChange(event)
                 if (getEmployee){
-                  const selectedOption = optionsAuto?.options?.find((item) => item?._id === event.target.value);
+                  const selectedOption = getEmployeeList?.employee?.find((item:any) => item?._id === event.target.value);
                   getEmployee(selectedOption)
                 }
               }}
             >
-              {optionsAuto?.options?.map((item) => {
+              {getEmployeeList?.employee?.map((item:any) => {
                 return (
                   <MenuItem
                     key={item?._id}
@@ -129,7 +70,7 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
             </Select>
           )}
         />
-      )}
+      
     </>
   );
 };

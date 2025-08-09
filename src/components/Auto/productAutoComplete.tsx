@@ -81,6 +81,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
         query: GET_PRODUCTS,
         variables,
       });
+      console.log("getProducts", getProducts);
       const mapData = getProducts?.product.map((item: any) => {
         return { id: item?._id, label: item?.name, ...item };
       });

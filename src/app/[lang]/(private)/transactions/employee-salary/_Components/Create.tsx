@@ -3,7 +3,6 @@ import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -12,7 +11,6 @@ import {
   Grid,
   IconButton,
   InputLabel,
-  Select,
   TextField,
   Typography,
   useTheme,

@@ -16,7 +16,7 @@ dir="ltr",
     control,
     formState: { errors },
   } = useFormContext();
-  const {data:consumptionTypeList } = useGetConsumptionTypeQuery({page:1})
+  const {data:consumptionTypeList } = useGetConsumptionTypeQuery()
 
   return (
     <Controller

@@ -16,7 +16,6 @@
     "New_Purchase_Invoice": "صدور فاکتور خرید جدید",
     "Company_Name": "نام شرکت",
     "Contact_Number": "شماره تماس",
-    "Warehouse": "گدام",
     "Currency": "ارز",
     "Purchase_Invoice": "فاکتور خرید",
     "product_name": "نام جنس",
@@ -53,7 +52,6 @@
     "customer_name": "نام مشتری",
     "amount": "تعداد",
     "consumption": " مصارفات",
-
     "customer_name_is_required": "نام مشتری حتمی است.",
     "warehouse_is_required": "انتخاب گدام حتمی است.",
     "currency_is_required": "انتخاب ارز حتمی است.",
@@ -69,9 +67,23 @@
     "total_products":"مجموعه اجناس",
     "total_invoice_amount_after_discount":"جمله کل فاکتور بعد از تخفیف",
     "sell_invoices":"فاکتور های فروش",
+    "sell_invoice":"فاکتور فروش",
     "yes":"بله",
     "calculated_currency": "ارز محاسبه شده",
-    "amount_calculated":"مقدار محاسبه شده"
+    "amount_calculated":"مقدار محاسبه شده",
+    "invoice_number":"شماره فاکتور",
+    "created_at":"تاریخ صدور فاکتور ",
+    "this_bill_successfully_saved":"این فاکتور موافقانه ذخیره شد ",
+    "invoice_date":"تاریخ صدور فاکتور",
+    "invoice_currency":"ارز فاکتور",
+    "seller_signature":"امضاء فروشنده",
+    "customer_signature":"امضاء مشتری",
+    "the_payment_term_is_up_to_3_months":"مدت تسویه بل الی مدت 3 ماه میباشد",
+    "previous_balance":"حساب گذشته ",
+    "email":"ایمیل",
+    "warehouse_delivery_note":"حواله گدام",
+    "print_warehouse_note":"چاپ حواله گدام",
+    "details":"توضیحات"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -220,6 +232,9 @@
   },
   "pages": {
         "dir": "rtl",
+        "journal":{
+          "journal_book":"روز نامجه"
+        },
     "currency": {
       "message_title_delete": "آیا مطمئیند این ارز را حذف کنید؟",
       "message_description_delete": " این ارز حذف شود دوباره به آن دسترسی نخواهید داشت.",
