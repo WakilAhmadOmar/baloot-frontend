@@ -39,8 +39,6 @@ interface IPropsSelect {
   name?: string;
   getDataSelect?: (data: any[], idNumber?: number) => void;
   idNumber?: number;
-
-
 }
 
 const CustomSelectMeasure: React.FC<IPropsSelect> = ({
@@ -54,16 +52,15 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   const theme = useTheme();
   const t = useTranslations("home")
   const [personName, setPersonName] = React.useState<string[]>([
-    ...(data && data?.length > 0 ? [data?.[0]?.measureName] : []),
   ]);
 
   useEffect(() => {
   // When data changes, set the first measure as selected
-  if (data && data.length > 0) {
+  if (data && data.length > 0 && personName?.length === 0) {
     setPersonName([data[0].measureName]);
     if (getDataSelect) getDataSelect([data[0]], idNumber);
   }
-}, [data]);
+}, [data , personName]);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {

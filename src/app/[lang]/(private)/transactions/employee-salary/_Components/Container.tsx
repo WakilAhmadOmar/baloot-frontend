@@ -1,23 +1,16 @@
 "use client";
 import CollapseComponent from "@/components/collapse/Collapse";
-// import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
-import CustomSearch from "@/components/search/CustomSearch";
 import {
   Box,
   IconButton,
-  InputLabel,
   Pagination,
-  Select,
   Stack,
-  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
-import { CloseSquare, ExportSquare, Printer } from "iconsax-react";
+import {  ExportSquare, Printer } from "iconsax-react";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
 import { CreateCreate } from "./Create";
-import { useGetPayToCustomerListQuery } from "@/hooks/api/transactions/queries/use-get-pay-to-customer-list-query";
 import EmptyPage from "@/components/util/emptyPage";
 import { EmptyProductPageIcon } from "@/icons";
 import SkeletonComponent from "../../_components/Skeleton";
@@ -34,7 +27,6 @@ const RegistrationEmployeeSalaryPage = () => {
   const { setHandleError } = useContext(AppContext);
   const { data: paySalaryList, isLoading } = useGetEmployeeSalaryListQuery({
     page,
-    // receiverType: "Employee",
   });
 
   const { mutate: deleteSalaryMutation , isLoading: deleteIsLoading  } = useDeleteReceiveFromEmployeeMutation();
@@ -47,8 +39,6 @@ const RegistrationEmployeeSalaryPage = () => {
   };
 
   const handleDeleteSalaryFunction = (id: string) => {
-    // Call the delete mutation here
-    // For example:
     deleteSalaryMutation({ receiveId: id }, {
       onSuccess: ({ message }) => {
         setHandleError({
@@ -129,7 +119,7 @@ const RegistrationEmployeeSalaryPage = () => {
         })}
       </Box>
       {isLoading && <SkeletonComponent />}
-      <Box display="flex" justifyContent={"end"} mt={2}>
+     {paySalaryList?.count > 9 && <Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination
             count={Math.ceil(paySalaryList?.count / 10)}
@@ -144,7 +134,7 @@ const RegistrationEmployeeSalaryPage = () => {
             }}
           />
         </Stack>
-      </Box>
+      </Box>}
       {paySalaryList?.count === 0 && !isLoading && (
         <Box mt={"10rem"}>
           {" "}

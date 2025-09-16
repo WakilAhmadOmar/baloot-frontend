@@ -7,12 +7,17 @@ query GetProductCountInEntrepot($entrepotId: ID!, $productId: ID!) {
       _id
       name
     }
-    measures {
-      measureId {
-        name
-        _id
+    productInfo {
+      expireInDate
+      info {
+        amountOfProduct
+        buyPrice
+        sellPrice
+        measureId {
+          _id
+          name
+        }
       }
-      amountOfProduct
     }
   }
 }

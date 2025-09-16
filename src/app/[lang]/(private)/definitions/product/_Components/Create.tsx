@@ -53,7 +53,7 @@ const CreateProduct = () => {
     const variables = {
       productObject: {
         name: data?.name,
-        measures: selectedUnitProduct?.map((item, index: number) => {
+        price: selectedUnitProduct?.map((item, index: number) => {
           return {
             measureId: item?.measure,
             buyPrice: parseInt(item?.buyPrice),
@@ -88,13 +88,13 @@ const CreateProduct = () => {
             }
           : {}),
         category: data?.category,
-        ...(data?.expirationDate
-          ? { expirationDate: data?.expirationDate }
-          : {}),
+        // ...(data?.expirationDate
+        //   ? { expirationDate: data?.expirationDate }
+        //   : {}),
         ...(data?.barcode ? { barcode: data?.barcode } : {}),
         // isNewProduct: data?.isNewProduct === "newProduct",
         currencyId: data?.currencyId,
-        baseMeasureAmount: 10,
+
       },
     };
     addProductMutation(variables, {

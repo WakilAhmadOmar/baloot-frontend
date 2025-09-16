@@ -1,7 +1,5 @@
 "use client";
 import CollapseComponent from "@/components/collapse/Collapse";
-// import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
-// import CustomSearch from "@/components/search/CustomSearch";
 import {
   Box,
   IconButton,
@@ -118,7 +116,7 @@ const handleDeleteFunction = (id:string) => {
         ))}
       </Box>
       {isLoading && <SkeletonComponent />}
-      <Box display="flex" justifyContent={"end"} mt={2}>
+      {externalIncomeList?.count > 9 &&<Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination 
             count={Math.ceil(externalIncomeList?.count / 10)}
@@ -134,7 +132,7 @@ const handleDeleteFunction = (id:string) => {
             }}
           />
         </Stack>
-      </Box>
+      </Box>}
       {externalIncomeList?.count === 0 && !isLoading && (
         <Box mt={"10rem"}>
           {" "}

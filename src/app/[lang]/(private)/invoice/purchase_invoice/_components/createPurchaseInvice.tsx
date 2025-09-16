@@ -146,7 +146,7 @@ const CreatePurchaseInvoicePage:React.FC<IPropsCreatePurchaseInvoice> = ({t}) =>
           <Grid2 container columnSpacing={3} rowSpacing={3}>
             <Grid2 size={3}>
               <InputLabel>{t?.invoice?.Company_Name}</InputLabel>
-              <CustomerAutoComplete   register={register} getCustomer={handleGetCustomer}/>
+              <CustomerAutoComplete    getCustomer={handleGetCustomer}/>
             </Grid2>
             <Grid2 size={2}>
               <InputLabel>{t?.invoice?.Contact_Number}</InputLabel>
@@ -159,11 +159,11 @@ const CreatePurchaseInvoicePage:React.FC<IPropsCreatePurchaseInvoice> = ({t}) =>
             </Grid2>
             <Grid2 size={2}>
               <InputLabel>{t.invoice?.Warehouse} </InputLabel>
-              <WarehouseAutoComplete  register={register}/>
+              <WarehouseAutoComplete  />
             </Grid2>
             <Grid2 size={2}>
               <InputLabel>{t?.invoice?.Currency}</InputLabel>
-              <CurrenciesAutoComplete   register={register} onSelected={handleSelectCurrency}/>
+              <CurrenciesAutoComplete   onSelected={handleSelectCurrency}/>
             </Grid2>
             {/* <Grid2 size={4}>
               <ProductsAutoComplete getProduct={handleGetSelectedProduct}  />
@@ -296,7 +296,7 @@ const CreatePurchaseInvoicePage:React.FC<IPropsCreatePurchaseInvoice> = ({t}) =>
                             {t?.invoice?.total_invoice_after_discount_in_words} :
                     </Typography>
                     <Typography variant="overline">
-                      {numberToWords(billPrice?.totalPrice, t)}
+                      {numberToWords(billPrice?.totalPrice)}
                     </Typography>
                   </Box>
         </DialogContent>

@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import { ExportSquare, Printer } from "iconsax-react";
 import CreateComponent from "./Create";
-// import { useDeleteReceiveMutation } from "@/hooks/api/transactions/mutations/use-delete-receive-from-customer-mutation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_components/Skeleton";
 import UpdateForm from "./Update";
@@ -27,9 +26,10 @@ const ReceiveCashContainer = () => {
   const t = useTranslations("transactions")
   const theme = useTheme();
   const {setHandleError} = useContext(AppContext)
+  const [page , setPage] = useState(1)
  
 
-  const {data , isLoading} = useGetReceiveFromEmployeeListQuery({page:1 })
+  const {data , isLoading} = useGetReceiveFromEmployeeListQuery({page , filter:"Cash" })
   const {mutate , isLoading:deleteIsLoading} = useDeleteReceiveFromEmployeeMutation()
 
 const handleDeleteFunction = (id:string) => {
@@ -53,7 +53,12 @@ const handleDeleteFunction = (id:string) => {
   })
 }
 
-
+const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
+  };
 
   return (
     <Box>
@@ -88,7 +93,6 @@ const handleDeleteFunction = (id:string) => {
           messageTitle={t("are_you_sure_to_delete_this_receive")}
           id={item?._id}
           getIdToAddAction={handleDeleteFunction}
-          // updateProductFunction={handleUpdateFunction}
           UpdateComponent={<UpdateForm  item={item} />}
           isLoading={deleteIsLoading}
         >
@@ -123,7 +127,7 @@ const handleDeleteFunction = (id:string) => {
         }
       </Box>
       {isLoading && <SkeletonComponent />}
-      <Box display="flex" justifyContent={"end"} mt={2}>
+      {data?.count > 9 &&<Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
           <Pagination
             count={Math.ceil(data?.count / 10)}
@@ -131,14 +135,14 @@ const handleDeleteFunction = (id:string) => {
             shape="rounded"
             variant="outlined"
             color="primary"
-            // onChange={handleChangePage}
+            onChange={handleChangePage}
             sx={{
               fontSize: "2rem !important",
               direction:"ltr"
             }}
           />
         </Stack>
-      </Box>
+      </Box>}
       {data?.count === 0 && !isLoading && (
         <Box mt={"10rem"}>
           {" "}

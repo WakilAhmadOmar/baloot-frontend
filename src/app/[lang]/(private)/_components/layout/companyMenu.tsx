@@ -79,8 +79,8 @@ const pathname = usePathname()
           >
             <Avatar variant="circular" sx={{ width: 70, height: 70 }} />
           </Box>
-          <Box py={2} px={4}>
-            {/* <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
+          <Box py={2} >
+            <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
               <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">
@@ -89,7 +89,7 @@ const pathname = usePathname()
                 </MenuItem>
               </Link>
             </Box>
-            <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
+            {/* <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
               <Link href={"/users"} locale={`${pathname?.split("/")?.[0]}`}>
                 <MenuItem>
                   <Typography variant="subtitle2">

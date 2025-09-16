@@ -1,21 +1,16 @@
 import {
   Box,
   Button,
-  Chip,
-  styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Grid2,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useContext, useRef } from "react";
+import {  useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { InvoiceContext } from "../../_components/invoiceContext";
 import Moment from "react-moment";
+import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 const printStyle = {
   visibility: "hidden",
@@ -30,13 +25,12 @@ const printStyle = {
   },
 };
 
-interface IPropsPrint {
-  t: any;
-}
+export function PrintInvoice() {
+  const theme = useTheme();
+  const t = useTranslations("invoice");
+  const { watch } = useFormContext();
 
-export function PrintInvoice({ t }: IPropsPrint) {
-  const { rows } = useContext(InvoiceContext);
-  
+
   const componentRef = useRef<HTMLDivElement>(null);
 
   const reactToPrintFn = useReactToPrint({
@@ -44,39 +38,108 @@ export function PrintInvoice({ t }: IPropsPrint) {
     preserveAfterPrint: true,
     // documentTitle: "print invoice",
     pageStyle: `
-    @page { size: auto; margin: 10mm; }
+    @page { size: auto; margin: 10mm;}
      @media print {
         body { visibility: hidden; }
+       .print-container {
+        visibility: visible !important;
+        position: relative !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-width: 100vw !important;
+        left: 0 !important;
+        top: 0 !important;
+        padding: 0 !important;
+         
+      }
+      .MuiDataGrid-root,
+      .MuiDataGrid-main,
+      .MuiDataGrid-virtualScroller,
+      .MuiDataGrid-window,
+      .MuiDataGrid-renderingZone,
+      .MuiDataGrid-row,
+      .MuiDataGrid-cell {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-width: 100vw !important;
+        box-sizing: border-box !important;
+        
+      }
+      .MuiDataGrid-virtualScrollerContent {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-width: 100vw !important;
+      }
+        .MuiDataGrid-columnHeaders {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        min-width: 100vw !important;
+        table-layout: fixed !important;
+      }
+        .MuiDataGrid-columnHeader {
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+  
+    }
+      .MuiDataGrid-row {
+        display: flex !important;
+        width: 100vw !important;
+      }
+      .MuiDataGrid-cell {
+        flex: 1 1 0 !important;
+        min-width: 88px !important;
+         box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+      table {
+        table-layout: fixed !important;
+        width: 100vw !important;
+      }
+        .mui-print-table {
+    display: table !important;
+  }
   }
   `,
   });
+  const products = watch("products");
 
   const columns: GridColDef[] = [
     {
-      field: "name",
-      headerName: t?.invoice?.product_name,
+      field: "productName",
+      headerName: t("product_name"),
       sortable: false,
       filterable: false,
-      width: 120,
+      flex: 1,
+      minWidth: 150,
       hideable: false,
       resizable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
     },
     {
       field: "measure",
-      headerName: t?.invoice?.units,
+      headerName: t("units"),
       sortable: false,
       filterable: false,
-      width: 70,
+      minWidth: 70,
+      flex: 1,
       hideable: false,
       resizable: false,
-      // align: t?.home?.dir === "ltr" ? "left" : "right",
-      
+
+
       renderCell: ({ row }) => (
-        <Box display={"grid"}  >
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any , index:number) => (
+            ?.map((item: any, index: number) => (
               <Box
                 key={item?.measureId?._id}
                 width={45}
@@ -87,12 +150,9 @@ export function PrintInvoice({ t }: IPropsPrint) {
                 display={"flex"}
                 justifyContent={"center"}
                 alignItems={"center"}
-                style={{backgroundColor:"red !important"}}
                 mt={index > 0 ? 1 : 0}
               >
-                
-                {item?.measureId?.name}
-              
+                {item?.measureName}
               </Box>
             ))}
         </Box>
@@ -100,115 +160,186 @@ export function PrintInvoice({ t }: IPropsPrint) {
     },
     {
       field: "quantity",
-      headerName: t?.invoice?.quantity,
+      headerName: t("quantity"),
       sortable: false,
       filterable: false,
-      width: 60,
+      minWidth: 60,
+      flex: 1,
       hideable: false,
       resizable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
       renderCell: ({ row }) => (
-        <Box>
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any , index:number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>{item?.amount || 1}</Box>
+            ?.map((item: any, index: number) => (
+              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
+                {item?.amount || 1}
+              </Box>
             ))}
         </Box>
       ),
     },
     {
       field: "price",
-      headerName: t?.invoice?.price,
+      headerName: t("price"),
       sortable: false,
       filterable: false,
-      width: 70,
+      minWidth: 70,
+      flex: 1,
       hideable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
       renderCell: ({ row }) => (
-        <Box>
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any , index:number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>{item?.sellPrice}</Box>
+            ?.map((item: any, index: number) => (
+              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
+                {item?.sellPrice}
+              </Box>
             ))}
         </Box>
       ),
     },
     {
       field: "discount",
-      headerName: t?.invoice?.discount,
+      headerName: t("discount_percentage"),
       sortable: false,
       filterable: false,
-      width: 100,
+      minWidth: 100,
+      flex: 1,
       hideable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
       renderCell: ({ row }) => (
-        <Box>
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any , index:number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0} >{item?.discount || 0}</Box>
+            ?.map((item: any, index: number) => (
+              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
+                {item?.discount || 0}
+              </Box>
             ))}
         </Box>
       ),
     },
     {
       field: "discount-amount",
-      headerName: t?.invoice?.discount_amount,
+      headerName: t("discount_amount"),
       sortable: false,
       filterable: false,
-      width: 90,
+      minWidth: 90,
+      flex: 1,
       hideable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
       renderCell: ({ row }) => (
-        <Box>
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any, index:number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>{item?.discount || 0}</Box>
+            ?.map((item: any, index: number) => (
+              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>
+                {item?.discount || 0}
+              </Box>
             ))}
         </Box>
       ),
     },
     {
       field: "total",
-      headerName: t?.invoice?.total,
+      headerName: t("total"),
       sortable: false,
       filterable: false,
-      width: 70,
+      minWidth: 70,
+      flex: 1,
       hideable: false,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
+      align: t("dir") === "ltr" ? "left" : "right",
       renderCell: ({ row }) => (
-        <Box>
+        <Box
+          display={"flex"}
+          width={"100%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
           {row?.measures
             ?.filter((item: any) => item?.selected)
-            ?.map((item: any , index:number) => (
-              <Box key={item?.measureId?._id} mt={index > 0 ? 2 : 0}>{item?.totalPrice}</Box>
-            ))}
+            ?.map((measure: any, index: number) => {
+              const discount = measure?.discount || 0;
+              const amount = measure?.amount || 1;
+              const sellPrice = measure?.sellPrice || 0;
+              const total = sellPrice * amount - (sellPrice * discount) / 100;
+              return (
+                <Box key={measure?.measureId} mt={index > 0 ? 2 : 0}>
+                  {Number.isInteger(total) ? total : total.toFixed(2)}
+                </Box>
+              );
+            })}
         </Box>
       ),
     },
     {
       field: "expirationDate",
-      headerName: t?.invoice?.expiration_date,
+      headerName: t("expiration_date"),
       sortable: false,
       filterable: false,
       hideable: false,
-      width: 150,
-      align: t?.home?.dir === "ltr" ? "left" : "right",
-      renderCell: ({ row }) => (
-        <Moment format="YYYY/MM/DD">{row?.expirationDate}</Moment>
-      ),
+      minWidth: 150,
+      flex: 1,
+      headerClassName: "wrap-header", // Add this line
+      align: t("dir") === "ltr" ? "left" : "right",
+      renderCell: ({ row }) =>
+        row?.expirationDate !== "" ? (
+          <Moment format="YYYY/MM/DD">{row?.expirationDate}</Moment>
+        ) : (
+          ""
+        ),
     },
   ];
 
+  const MIN_ROWS = 22; // Set this to the minimum number of rows you want to show
+
+  // Fill with empty rows if needed
+  const filledRows = [
+    ...products.map((item: any) => ({ id: item?.productId, ...item })),
+    ...Array.from(
+      { length: Math.max(0, MIN_ROWS - products.length) },
+      (_, idx) => ({
+        id: `empty-${idx}`,
+        productName: "",
+        measures: [],
+        quantity: "",
+        price: "",
+        discount: "",
+        "discount-amount": "",
+        total: "",
+        expirationDate: "",
+      })
+    ),
+  ];
   return (
     <div>
       <Box
         ref={componentRef}
         className="print-container"
-        sx={[printStyle, { direction: t?.home?.dir, padding: "2rem" }]}
+        sx={[printStyle, { direction: t("dir"), padding: "2rem" }]}
       >
         <Box
           display={"grid"}
@@ -233,7 +364,7 @@ export function PrintInvoice({ t }: IPropsPrint) {
                 0799989898 - 0789989898
               </Typography>
               <Typography variant="subtitle2">
-                Email. Ebrahimzadeh.brothers@gmail.com
+                {t("email")}: Ebrahimzadeh.brothers@gmail.com
               </Typography>
             </Box>
           </Box>
@@ -246,54 +377,53 @@ export function PrintInvoice({ t }: IPropsPrint) {
           my={1}
         >
           <Box display={"flex"} gap={2}>
-            <Typography variant="subtitle2">شماره فاکتور: 200009 </Typography>
-            <Typography variant="subtitle2"> نام مشتری: احسان سفیر </Typography>
+            <Typography variant="subtitle2"> {t("invoice_number")}: 200009 </Typography>
+            <Typography variant="subtitle2"> {t("customer_name")} : احسان سفیر </Typography>
           </Box>
           <Box>
-            <Typography variant="h4">فاکتور فروش</Typography>
+            <Typography variant="h4">{t("sell_invoice")}</Typography>
           </Box>
           <Box display={"flex"} gap={2}>
             <Typography variant="subtitle2">
-              تاریخ صدور فاکتور: 1403/2/23{" "}
+               {t("invoice_date")}: 1403/2/23{" "}
             </Typography>
-            <Typography variant="subtitle2"> ارز فاکتور: افغانی</Typography>
+            <Typography variant="subtitle2"> {t("invoice_currency")} : افغانی</Typography>
           </Box>
         </Box>
         <DataGrid
-          rows={rows}
+          rows={filledRows}
           columns={columns}
           disableVirtualization
           getRowHeight={() => "auto"}
           sx={{
-            width: "100%", 
+            width: "100%",
             border: "2px solid #e1e1e1",
             borderRadius: "8px",
             "& .MuiDataGrid-columnHeaders": {
-              direction: t?.home?.dir,
-              width: "100%", 
+              direction: t("dir"),
+              width: "100%",
               borderBottom: "none !important",
               fontSize: "1.5rem",
               fontWeight: "bold",
               "@media print": {
                 // "-webkit-print-color-adjust": "exact",
-                "webkitPrintColorAdjust": "exact",
-                "printColorAdjust": "exact",
+                webkitPrintColorAdjust: "exact",
+                printColorAdjust: "exact",
               },
             },
             "& .MuiDataGrid-row": {
-              direction: t?.home?.dir,
+              direction: t("dir"),
               width: "100% !important", // Force rows to fill width
               display: "flex",
               borderBottom: "none !important",
               borderTop: "none !important",
-              backgroundColor: "red !important",
             },
             "& .MuiDataGrid-columnSeparator": {
               display: "none", // This removes the line between headers
             },
             "& .MuiDataGrid-cell": {
               borderTop: "1px solid #E1E1E1 !important",
-              textAlign: "left",
+              textAlign: "center",
               padding: "10px 0px !important",
               // wordBreak: "break-word",
               // boxSizing: "border-box",
@@ -303,6 +433,14 @@ export function PrintInvoice({ t }: IPropsPrint) {
               borderBottom: "none !important",
               color: "#000",
             },
+            "& .wrap-header .MuiDataGrid-columnHeaderTitle": {
+              whiteSpace: "normal",
+              lineHeight: "1.2",
+              // textAlign: "center",
+              // wordBreak: "break-word",
+              wordBreak: "inherit",
+              justifyContent: "center",
+            },
           }}
           hideFooter
           // hideFooterSelectedRowCount
@@ -311,9 +449,166 @@ export function PrintInvoice({ t }: IPropsPrint) {
           // disableColumnFilter
           // disableColumnSelector
         />
+        <Box mt={3}>
+          <Grid2 container spacing={2}>
+            <Grid2 size={2} display={"grid"} alignItems={"center"}>
+              <Typography textAlign={"center"} variant="body1">{t("seller_signature")}</Typography>
+            </Grid2>
+            <Grid2 size={2} display={"grid"} alignItems={"center"}>
+              <Typography textAlign={"center"} variant="body1">{t("customer_signature")}</Typography>
+            </Grid2>
+            <Grid2 size={8}>
+              <Grid2 container sx={{
+                border:`1px solid ${theme.palette.grey[200]}`,
+                borderRadius:"1rem",
+                overflow:"hidden"
+              }}>
+                <Grid2 size={6}>
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"50% 50%"}
+                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: "#F5F5F5",
+                        padding: "1rem 2rem",
+                        "@media print": {
+                          backgroundColor: "#F5F5F5", // enforce for print
+                          WebkitPrintColorAdjust: "exact",
+                          printColorAdjust: "exact",
+                        },
+                      }}
+                    >
+                      <Typography variant="body1">{t("total_invoice_amount")}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "1rem 2rem",
+                      }}
+                    >
+                      <Typography variant="body1">123123</Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"50% 50%"}
+                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: "#F5F5F5",
+                        padding: "1rem 2rem",
+                        "@media print": {
+                          backgroundColor: "#F5F5F5", // enforce for print
+                          WebkitPrintColorAdjust: "exact",
+                          printColorAdjust: "exact",
+                        },
+                      }}
+                    >
+                      <Typography variant="body1">{t("discount_amount")}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "1rem 2rem",
+                      }}
+                    >
+                      <Typography variant="body1">2</Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Typography variant="body1" px={"2rem"} py={"1rem"}>{t("the_payment_term_is_up_to_3_months")}</Typography>
+                  </Box>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"50% 50%"}
+                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: "#F5F5F5",
+                        padding: "1rem 2rem",
+                        "@media print": {
+                          backgroundColor: "#F5F5F5", // enforce for print
+                          WebkitPrintColorAdjust: "exact",
+                          printColorAdjust: "exact",
+                        },
+                      }}
+                    >
+                      <Typography variant="body1">{t("receipt")}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "1rem 2rem",
+                      }}
+                    >
+                      <Typography variant="body1">123123</Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"50% 50%"}
+                    borderBottom={`2px solid ${theme.palette.grey[200]}`}
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: "#F5F5F5",
+                        padding: "1rem 2rem",
+                        "@media print": {
+                          backgroundColor: "#F5F5F5", // enforce for print
+                          WebkitPrintColorAdjust: "exact",
+                          printColorAdjust: "exact",
+                        },
+                      }}
+                    >
+                      <Typography variant="body1">{t("previous_balance")}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "1rem 2rem",
+                      }}
+                    >
+                      <Typography variant="body1">2</Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    display={"grid"}
+                    gridTemplateColumns={"50% 50%"}
+                    
+                  >
+                    <Box
+                      sx={{
+                        backgroundColor: "#F5F5F5",
+                        padding: "1rem 2rem",
+                        "@media print": {
+                          backgroundColor: "#F5F5F5", // enforce for print
+                          WebkitPrintColorAdjust: "exact",
+                          printColorAdjust: "exact",
+                        },
+                      }}
+                    >
+                      <Typography variant="body1">{t("remaining")}</Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "1rem 2rem",
+                      }}
+                    >
+                      <Typography variant="body1">2</Typography>
+                    </Box>
+                  </Box>
+                  
+                </Grid2>
+                
+              </Grid2>
+            </Grid2>
+          </Grid2>
+        </Box>
       </Box>
-      <Button 
-      variant="contained"
+      <Button
+        variant="contained"
         onClick={() => {
           if (componentRef.current) {
             componentRef.current.style.height = "auto";
@@ -321,7 +616,7 @@ export function PrintInvoice({ t }: IPropsPrint) {
           reactToPrintFn();
         }}
       >
-        Print
+        {t("print_invoice")}
       </Button>
     </div>
   );

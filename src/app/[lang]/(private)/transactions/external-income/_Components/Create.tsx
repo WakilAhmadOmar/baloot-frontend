@@ -1,5 +1,4 @@
 import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
-import { useAddNewConsumptionMutation } from "@/hooks/api/transactions/mutations/use-add-new-consumption";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,
@@ -19,8 +18,6 @@ import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSchemaCrateForm } from "./Create-form.schema";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-
-import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
 import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income-type";
 import { useAddNewExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-add-new-external-income-mutation";

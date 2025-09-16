@@ -1,137 +1,88 @@
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { useApolloClient } from "@apollo/client";
-import { GET_ENTREPOT_LIST } from "../../graphql/queries/GET_ENTREPOT_LIST";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { AppContext } from "@/provider/appContext";
-import { debounce } from "lodash";
-import { Controller, useForm, useFormContext } from "react-hook-form";
+
+import { useEffect } from "react";
+import { Controller,  useFormContext } from "react-hook-form";
 import { MenuItem, Select } from "@mui/material";
+import { useGetWarehouseList } from "@/hooks/api/definitions/warehouse/queries/use-get-list";
 
 interface IPropsFormFactore {
   getWarehouse?: (warehouse: any) => void;
-  defaultValue?: any;
   name?:string
+  dir?:string
+  error?:boolean
 }
 const WarehouseAutoComplete: React.FC<IPropsFormFactore> = ({
   getWarehouse,
 name,
-  defaultValue,
+dir="ltr",
+error= false
 }) => {
 
-  const { register ,control , formState:{errors}} = useFormContext()
-  const { setHandleError } = useContext(AppContext);
-  const client = useApolloClient();
-  const [selectedValue, setSelectedValue] = useState<any>(null);
-  const [autoCompleteState, setAutoCompleteState] = useState<{
-    data: any[];
-    page: number;
-  }>({
-    data: [],
-    page: 1,
-  });
+  const { control , formState:{errors} , watch , setValue} = useFormContext()
 
-  const getWarehouseFunction = async () => {
-    try {
-      const variables = {
-        page: autoCompleteState?.page,
-      };
-      const {
-        data: { getEntrepotList },
-      } = await client.query({
-        query: GET_ENTREPOT_LIST,
-        variables,
-      });
-      // const mapData = getEntrepotList?.entrepot.map((item: any) => {
-      //   return { id: item?._id, label: item?.name, ...item };
-      // });
-      const allCustomer = [...getEntrepotList?.entrepot, ...autoCompleteState?.data];
-      const duplicate = allCustomer?.filter(
-        (value, index, self) =>
-          index === self.findIndex((t) => t._id === value._id)
-      );
-      if (autoCompleteState?.data?.length === 0 && getWarehouse && !defaultValue) {
-        getWarehouse(duplicate?.[0]);
-      }
-      if (selectedValue === null) {
-        setSelectedValue(duplicate?.[0]);
-      }
-      setAutoCompleteState((prevState) => ({
-        ...prevState,
-        page: prevState.page + 1,
-        data: duplicate,
-      }));
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        status: "error",
-        message: error.message,
-      });
-    }
-  };
+  
+
+  const {data:getEntrepotList , isLoading } = useGetWarehouseList({page:1})
+
+
   const handleChangeCustomerSearch = (
     event: any,
   ) => {
     const id = event.target?.value
     
-    const objectItem = autoCompleteState?.data?.filter((item) => item?._id ===id )?.[0]
+    const objectItem = getEntrepotList?.entrepot?.filter((item:any) => item?._id ===id )?.[0]
 
-    setSelectedValue(objectItem);
     if (objectItem?._id && getWarehouse) {
       getWarehouse(objectItem);
     }
-    // getCustomerFunction();
   };
 
-  useEffect(() => {
-    getWarehouseFunction();
-  }, []);
+const value = watch(name || "warehouseId")
 
-  const handleDebounce = debounce((value) => {
-    getWarehouseFunction();
-  }, 500);
-  const handleSearch = (event: React.ChangeEvent<{}>, value: any | null) => {
-    
-    if (
-      value &&
-      !autoCompleteState?.data?.some((option) => option.name === value.name)
-    ) {
-      handleDebounce(value);
+ useEffect(() => {
+    if (getEntrepotList?.entrepot?.length && !value) {
+      const defaultWarehouse = getEntrepotList?.entrepot[0];
+      setValue(name || "warehouseId", defaultWarehouse._id);
+      setValue("warehouseName", defaultWarehouse.name);
+      // if (getWarehouse) {
+      //   getWarehouse(defaultWarehouse);
+      // }
     }
-  };
+  }, [getEntrepotList, setValue, getWarehouse, name, value]);
+  
 
   return (
 
-     <Controller
+    <>
+    {!isLoading && <Controller
           name={name || "warehouseId"}
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
-              // label="Status"
               fullWidth
               size={"small"}
               value={value}
-              // placeholder={placeholder}
-              // options={PROGRAM_STATUS}
-              // placeholder="Please select status"
-              error={!!errors?.warehouseId}
+              defaultValue={value}
+              defaultOpen={false}
+              error={ error || !!errors?.warehouseId}
               // helperText={errors?.currencyId?.message}
               required
               onChange={(event)=> {
                 onChange(event);
                 handleChangeCustomerSearch(event)
               }}
+
             >
-              {autoCompleteState?.data?.map((item) => {
+              {getEntrepotList?.entrepot?.map((item:any) => {
                 return (
-                  <MenuItem key={item?._id} value={item?._id}>
+                  <MenuItem key={item?._id} value={item?._id} dir={dir}>
                     {item?.name}
                   </MenuItem>
                 );
               })}
             </Select>
           )}
-        />
+        />}
+    </>
    
         // <Autocomplete
         //   disablePortal={false}

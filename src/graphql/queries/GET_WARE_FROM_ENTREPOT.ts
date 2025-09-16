@@ -15,7 +15,7 @@ const GET_WARE_FROM_ENTREPOT = gql`
         productId {
           _id
           name
-          measures {
+          price {
             measureId {
               _id
               name

@@ -46,7 +46,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
     useContext(InvoiceContext);
   const t = useTranslations("invoice");
   const { setHandleError } = useContext(AppContext);
-  const { register, handleSubmit, watch, setValue } = useFormContext();
+  const { register, handleSubmit, watch, setValue , formState:{errors} } = useFormContext();
   const [open, setOpen] = React.useState(false);
 
   const { mutate: addReceiveCustomer, isLoading } =
@@ -96,6 +96,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
       setValue("calculatedTo", currencyId);
     }
   }, [currencyId]);
+
 
   return (
     <Box mt={2}>

@@ -1,5 +1,4 @@
 import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
-import { useAddNewConsumptionMutation } from "@/hooks/api/transactions/mutations/use-add-new-consumption";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,

@@ -42,7 +42,7 @@ const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
           {/* <DateRangePickerComponent /> */}
         </Box>
         <Box pt={1}>
-          <CustomSearch t={t} />
+          <CustomSearch  />
         </Box>
       </Box>
       <Box

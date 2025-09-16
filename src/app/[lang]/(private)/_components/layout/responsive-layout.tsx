@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 import { Stack, useMediaQuery, useTheme } from "@mui/material";
 import SideMenuMobile from "./sidebarMobile";
 import { usePathname } from "next/navigation";
+import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
 
 const drawerWidth = "36rem";
 
@@ -30,6 +31,7 @@ export default function MiniDrawerResponsive({
   const theme = useTheme();
   const pathname = usePathname()
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading , setIsLoading] = useState(true)
 
   const isTablet = useMediaQuery(theme.breakpoints.down("md")); // 600px - 1200px
   const isDesktop = useMediaQuery(theme.breakpoints.up("md")); // >1200px
@@ -39,7 +41,11 @@ export default function MiniDrawerResponsive({
   };
 useEffect(()=>{
   setIsMobile(false)
+  setIsLoading(false)
 }, [pathname])
+if(isLoading){
+  return <CircularProgressComponent />
+}
   return (
     <Box
       sx={{ display: "flex", position: "relative" }}

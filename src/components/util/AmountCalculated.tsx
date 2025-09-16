@@ -31,7 +31,7 @@ export function AmountCalculated() {
 
   return (
     <Box>
-      <InputLabel required>{t("amount_calculated")}</InputLabel>
+      <InputLabel required >{t("amount_calculated")}</InputLabel>
       <TextField
         fullWidth
         size="small"

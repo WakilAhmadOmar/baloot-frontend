@@ -1,6 +1,5 @@
 import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
-import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import {
   Box,
   Button,
@@ -28,6 +27,7 @@ import { AppContext } from "@/provider/appContext";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { useTranslations } from "next-intl";
 import { useUpdateReceiveFromEmployeeMutation } from "@/hooks/api/transactions/mutations/use-update-receive-from-employee";
+import { AmountCalculated } from "../../_components/AmountCalculated";
 
 type UpdateFormProps = {
   item: any;
@@ -212,14 +212,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t("calculated_amount")}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("amountCalculated", { required: false })}
-                  />
+                <AmountCalculated />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

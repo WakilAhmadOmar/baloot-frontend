@@ -27,6 +27,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
 import { useTranslations } from "next-intl";
+import { AmountCalculated } from "../../_components/AmountCalculated";
 
 const CreateComponent = () => {
   const t = useTranslations("transactions");
@@ -182,14 +183,7 @@ const CreateComponent = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                    {t("calculated_amount")}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    {...register("amountCalculated", { required: false })}
-                  />
+                 <AmountCalculated />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem" }}>

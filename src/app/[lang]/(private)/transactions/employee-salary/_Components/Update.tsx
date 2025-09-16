@@ -3,7 +3,6 @@ import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
 import EmployeeAutoCompleteComponent from "@/components/Auto/EmployeeAutoComplete";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -12,7 +11,6 @@ import {
   Grid,
   IconButton,
   InputLabel,
-  Select,
   TextField,
   Typography,
   useTheme,
@@ -21,7 +19,6 @@ import { CloseSquare, Edit } from "iconsax-react";
 import { useContext, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSchemaCrateForm } from "./Create-form-schema";
-import { useSubmitEmployeeSalaryMutation } from "@/hooks/api/transactions/mutations/use-submit-employee-salary-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 import { useUpdateEmployeeSalaryMutation } from "@/hooks/api/transactions/mutations/use-update-employee-salary";

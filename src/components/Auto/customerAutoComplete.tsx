@@ -1,112 +1,75 @@
 "use client";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { useApolloClient } from "@apollo/client";
-import { GET_CUSTOMER_LIST } from "../../graphql/queries/GET_CUSTOMER_LIST";
-import { useContext, useEffect, useState, useCallback } from "react";
-import { debounce } from "lodash";
-import { AppContext } from "@/provider/appContext";
 import { Controller, useFormContext } from "react-hook-form";
 import { MenuItem, Select } from "@mui/material";
+import { useGetCustomerListQuery } from "@/hooks/api/definitions/customer/queries/use-get-customer-list-query";
+import { useEffect } from "react";
 
 interface IProps {
   name?: string;
-  dir?:string
+  dir?: string;
   getCustomer?: (customer: any) => void;
-  disabled?:boolean
+  disabled?: boolean;
 }
 const CustomerAutoComplete: React.FC<IProps> = ({
-  dir="ltr",
+  dir = "ltr",
   name,
   getCustomer,
-  disabled= false
+  disabled = false,
 }) => {
-  const client = useApolloClient();
   const {
     control,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext();
-  const { setHandleError } = useContext(AppContext);
-  const [autoCompleteState, setAutoCompleteState] = useState<{
-    data: any[];
-    page: number;
-  }>({
-    data: [],
-    page: 1,
-  });
 
-  const getCustomerFunction = useCallback(async () => {
-    try {
-      const variables = {
-        page: autoCompleteState?.page,
-      };
-      const {
-        data: { getCustomerList },
-      } = await client.query({
-        query: GET_CUSTOMER_LIST,
-        variables,
-      });
+  const { data: getCustomerList , isLoading } = useGetCustomerListQuery({ page: 1 });
 
-      // setValue(name || "customerId", getCustomerList?.customer?.[0]?._id);
-      setAutoCompleteState((prevState) => ({
-        ...prevState,
-        page: prevState.page + 1,
-        data: getCustomerList?.customer,
-      }));
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        status: "error",
-        message: error.message,
-      });
-    }
-  }, [autoCompleteState?.page]);
-  
+  const value = watch(name || "customerId");
 
   useEffect(() => {
-    getCustomerFunction();
-  }, []);
+    if (getCustomerList?.customer?.length && !value) {
+      const defaultCustomer = getCustomerList?.customer?.[0];
 
+      setValue(name || "customerId", defaultCustomer._id);
+      // if (getCustomer) {
+      //   getCustomer(defaultCustomer);
+      // }
+    }
+  }, [getCustomerList, setValue, getCustomer, name, value]);
   return (
     <>
-      {autoCompleteState?.data?.length > 0 && (
-        <Controller
-          name={name || "customerId"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              fullWidth
-              size={"small"}
-              value={value}
-              error={!!errors?.[name || "customerId"]}
-              required
-              disabled={disabled}
-              onChange={(event)=> {
-                onChange(event);
-                if (getCustomer) {
-                  const selectedCustomer = autoCompleteState?.data?.find(
-                    (item) => item?._id === event.target.value
-                  );
-                  getCustomer(selectedCustomer);
-                }
-              }}
-            >
-              {autoCompleteState?.data?.map((item) => {
-                return (
-                  <MenuItem
-                    key={item?._id}
-                    value={item?._id}
-                    dir={dir}
-                  >
-                    {item?.fullName}
-                  </MenuItem>
+      {!isLoading && <Controller
+        name={name || "customerId"}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            fullWidth
+            size={"small"}
+            value={value}
+            error={!!errors?.[name || "customerId"]}
+            required
+            disabled={disabled}
+            onChange={(event) => {
+              onChange(event);
+              if (getCustomer) {
+                const selectedCustomer = getCustomerList?.customer?.find(
+                  (item: any) => item?._id === event.target.value
                 );
-              })}
-            </Select>
-          )}
-        />
-      )}
+                getCustomer(selectedCustomer);
+              }
+            }}
+          >
+            {getCustomerList?.customer?.map((item: any) => {
+              return (
+                <MenuItem key={item?._id} value={item?._id} dir={dir}>
+                  {item?.fullName}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        )}
+      />}
     </>
   );
 };

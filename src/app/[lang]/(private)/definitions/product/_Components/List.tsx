@@ -64,7 +64,7 @@ const ProductList = () => {
             messageDescription={t("delete_description")}
             messageTitle={t("delete_title")}
             isLoading={deleteLoading}
-            UpdateComponent={<UpdateProduct  product={item} />}
+            UpdateComponent={<UpdateProduct product={item} />}
           >
             <Grid container spacing={2}>
               <Grid
@@ -83,47 +83,52 @@ const ProductList = () => {
                     {t("product_name")}
                   </Typography>
                   <Typography variant="caption">{item?.name}</Typography>
-                  <Typography variant="caption">
-                    {" "}
-                    {t("units")}{" "}
-                  </Typography>
+                  <Typography variant="caption"> {t("units")} </Typography>
                   <Box>
-                    {item?.measures?.map((measure: any) => (
+                    {item?.price?.map((measure: any, index: number) => (
                       <Typography
                         component={"span"}
                         key={measure?.measureId?._id}
                       >
                         {" "}
-                        {measure?.measureId?.name}{" "}
+                        {measure?.measureId?.name}
+                        {item?.price?.length - 1 === index ? "" : " ,"}
                       </Typography>
                     ))}
                   </Box>
+                  <Typography variant="caption">{t("category")}</Typography>
                   <Typography variant="caption">
-                    {t("product_quantity")}
+                    {item?.category?.name}
                   </Typography>
-                  <Typography variant="caption">
-                    {item?.baseMeasureAmount}
-                  </Typography>
+                  <Typography variant="caption">{t("barcode")}</Typography>
+                  <Typography variant="caption">{item?.barcode}</Typography>
                 </Box>
-                <Box>
-                  {item?.measures?.map((measure: any) => {
+                <Box
+                  display={"grid"}
+                  gridTemplateColumns={"20rem auto"}
+                  rowGap={"1rem"}
+                  columnGap={"3rem"}
+                >
+                  {item?.price?.map((measure: any) => {
                     return (
                       <Box
-                        key={measure?.measure?._id}
+                        key={measure?.measureId?._id}
                         display="grid"
                         gridTemplateColumns={"15rem auto"}
+                        alignContent={"start"}
+                        rowGap={"1rem"}
                       >
                         <Typography variant="caption">
                           {t("bought_price")} {measure?.measureId?.name}{" "}
                         </Typography>
-                        <Typography variant="caption">
-                          {measure?.buyPrice}
+                        <Typography variant="caption" minWidth={"30rem"}>
+                          {measure?.buyPrice} {item?.currencyId?.symbol}
                         </Typography>
-                        <Typography variant="caption">
+                        <Typography variant="caption" >
                           {t("sale_price")} {measure?.measureId?.name}{" "}
                         </Typography>
-                        <Typography variant="caption">
-                          {measure?.sellPrice}
+                        <Typography variant="caption" minWidth={"30rem"}>
+                          {measure?.sellPrice} {item?.currencyId?.symbol}
                         </Typography>
                       </Box>
                     );
