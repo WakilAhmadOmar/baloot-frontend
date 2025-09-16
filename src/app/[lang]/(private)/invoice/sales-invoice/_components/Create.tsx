@@ -22,16 +22,17 @@ import { TransitionProps } from "@mui/material/transitions";
 import { CloseSquare } from "iconsax-react";
 import { forwardRef, useCallback, useContext, useState } from "react";
 import { InvoiceContext } from "../../_components/invoiceContext";
-import DataTable from "./Table";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useSchemaCrateForm, { CreateFormSchema } from "./create-form.schema";
-import { useApolloClient } from "@apollo/client";
 import { AppContext } from "@/provider/appContext";
 import { PrintInvoice } from "./print-invoice";
 import { useTranslations } from "next-intl";
 import { useAddSellsBillMutation } from "@/hooks/api/invoice/mutations/use-add-sells-bill";
 import { PrintWarehouseReceipt } from "./print-warehouse-receipt";
+import EditableProductTable from "./Table";
+import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-receive-customer-mutation";
+import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -54,12 +55,15 @@ const CreateSalesInvoice = () => {
       totalPrice: 0,
       contact_number: "",
       totalPriceAfterDiscount: 0,
+      paymentMethod: "cash",
+      receiver: "",
       products: [
         {
           productId: "",
+          productName: "",
           measures: [],
           warehouse: null,
-          expireInDate: new Date(),
+          expireInDate: [],
         },
       ],
     },
@@ -67,68 +71,98 @@ const CreateSalesInvoice = () => {
 
   const {
     register,
-    control,
     handleSubmit,
-    formState: { errors },
-    setError,
     reset,
     setValue,
   } = methods;
 
-  const { customer, paymentOff } = useContext(InvoiceContext);
+  const { paymentOff ,setPaymentOff} = useContext(InvoiceContext);
   const { setHandleError } = useContext(AppContext);
 
   const [openDialog, setOpenDialog] = useState(false);
-  // const [loadingPage, setLoadingPage] = useState(false);
-  const client = useApolloClient();
   const theme = useTheme();
 
   const { mutate: addSellsBillMutation, isLoading } = useAddSellsBillMutation();
+  const { mutate: addReceiveCustomer , isLoading: isLoadingReceive } = useAddReceiveCustomerMutation({
+    onSuccess: (data) => {
+ 
+    },
+  });
 
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
+    setPaymentOff(null)
+    resetInvoiceFunction();
   };
-  // const handleGetCustomer = (data: any) => {
-  //   setCustomer(data);
-  // };
-  // const handleGetWarehouse = (data: any) => {
-  //   setWarehouse(data);
-  // };
-  // const handleSelectCurrency = (data: any) => {
-  //   setCurrency(data);
-  // };
+
   const onSubmitFunction = async (data: CreateFormSchema) => {
+    const variablesPayment = {
+      receiveObject: {
+        amount: parseFloat(`${data?.totalPriceAfterDiscount}`),
+        payerId: data?.customerId,
+        receiver: data?.receiver,
+        currencyId: data?.currencyId,
+        invoiceType: "ReceiveBill",
+        receiverType: "Safe",
+      },
+    };
+
+    let paymentMethod 
+    if (!paymentOff?._id){
+
+      paymentMethod = await new Promise((resolve, reject) => {
+       addReceiveCustomer(variablesPayment, {
+         onSuccess: (result) => {
+           resolve(result);
+         },
+         onError: (error: any) => {
+           setHandleError({
+             message: error.message,
+             status: "error",
+             open: true,
+           });
+           reject(error);
+         },
+       });
+     });
+    }
+
     const variables = {
       sellBillObject: {
         billDate: new Date(),
         currencyId: data?.currencyId,
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
-        // isPaid: paymentOff?._id ? true : false,
         products: data?.products?.map((item: any) => {
-          const allProduct = item?.measures
+          const [day, month, year] = item?.expireInDateSelected
+            .split("/")
+            .map(Number);
+          const expireInDate = new Date(`${year}-${month}-${day + 1}`);
+          const productMeasures = item?.measures
             ?.filter((measure: any) => measure?.selected)
-            ?.map((dataItem: any) => ({
-              count: dataItem?.amount,
-              discountPercentage: dataItem?.discount || 0,
-              entrepotId: item?.warehouse?._id || data?.warehouseId,
-              measureId: dataItem?.measureId,
-              pricePerMeasure: dataItem?.sellPrice,
-              productId: item?.productId,
-              expireInDate: item?.expireInDate,
-            }));
+            ?.map((dataItem: any) => {
+              return {
+                measureId: dataItem?.measureId,
+                amountOfProduct: dataItem?.amount,
+                pricePerMeasure: dataItem?.sellPrice,
+                discountPercentage: dataItem?.discount || 0,
+              };
+            });
           return {
-            ...allProduct?.[0],
+            productId: item?.productId,
+            productMeasures,
+            entrepotId: item?.warehouse?._id || data?.warehouseId,
+            expireInDate: expireInDate?.toISOString()?.split("T")[0],
           };
         }),
-        // status: "Accepted",
         totalPrice: data?.totalPrice,
         totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
-        transactionId: paymentOff?._id,
-        receiveAmount: paymentOff?.amount,
+        transactionId: paymentOff?._id  || (paymentMethod as any)?._id,
+        receiveAmount: paymentOff?.amount || data?.totalPriceAfterDiscount,
+        
       },
     };
-    
+
     addSellsBillMutation(variables, {
       onSuccess: () => {
         setHandleError({
@@ -148,6 +182,9 @@ const CreateSalesInvoice = () => {
   };
 
   const resetInvoiceFunction = useCallback(() => {
+    //reset the context
+setPaymentOff(null)
+
     reset();
   }, []);
   return (
@@ -204,7 +241,6 @@ const CreateSalesInvoice = () => {
                   fullWidth
                   size="small"
                   disabled
-                  // value={customer?.contactNumber ?? ""}
                   {...register("contact_number")}
                   name={"contact_number"}
                 />
@@ -217,8 +253,15 @@ const CreateSalesInvoice = () => {
                 <InputLabel>{t("Currency")}</InputLabel>
                 <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
               </Grid2>
+              <Grid2 size={2} gap={1} display={"grid"}>
+               <InputLabel required>
+                {" "}
+                {t("safe")} ( {t("receiver")} ){" "}
+              </InputLabel>
+              <CashBoxAutoComplete name={"receiver"} />
+              </Grid2>
             </Grid2>
-            <DataTable />
+            <EditableProductTable />
           </DialogContent>
           <DialogActions>
             <Box display={"flex"} justifyContent="space-between" width={"100%"}>
@@ -234,7 +277,7 @@ const CreateSalesInvoice = () => {
                 <Button
                   variant="contained"
                   onClick={handleSubmit(onSubmitFunction)}
-                  loading={isLoading}
+                  loading={isLoading || isLoadingReceive}
                 >
                   {t("save")}
                 </Button>

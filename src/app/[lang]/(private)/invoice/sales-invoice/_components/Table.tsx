@@ -1,12 +1,35 @@
-"use client";
+import React, { MouseEvent, useContext, useEffect, useState } from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
+import WarehouseAutoComplete from "@/components/Auto/WarehouseAutoComplete";
+import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
+import { uniqueId } from "lodash";
 import {
   Box,
   Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid2,
   IconButton,
+  InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
@@ -16,44 +39,19 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Add, Trash } from "iconsax-react";
-import {
-  MouseEvent,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
-import Moment from "react-moment";
-import { numberToWords } from "@/utils/numberToWords";
-import WarehouseAutoComplete from "@/components/Auto/WarehouseAutoComplete";
+import { useTranslations } from "next-intl";
+import { Add, InfoCircle, Trash } from "iconsax-react";
 import PaymentReceiver from "./Payment";
 import { InvoiceContext } from "../../_components/invoiceContext";
-import { useApolloClient } from "@apollo/client";
-import { GET_PRODUCT_COUNT_IN_ENTREPOT } from "@/graphql/queries/GET_PRODUCT_COUNT_IN_ENTREPOT";
-import { AppContext } from "@/provider/appContext";
-import {
-  useFieldArray,
-  useFormContext,
-  Controller,
-  useWatch,
-} from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { numberToWords } from "@/utils/numberToWords";
 import { useGetProductCountInEntrepotQuery } from "@/hooks/api/invoice/queries/use-get-product-count-in-entrepot";
-import { ProductSchema } from "./create-form.schema";
+import Moment from "react-moment";
 
-export default function DataTable() {
+export default function BasicTable() {
   const t = useTranslations("invoice");
   const theme = useTheme();
-  const { register, control, watch, setValue } = useFormContext();
-  const { fields, append, remove, update } = useFieldArray({
-    control,
-    name: "products",
-  });
   const { paymentOff } = useContext(InvoiceContext);
+  const [modalSelectProduct, setModalSelectProduct] = useState(false);
   const [calculateSellBill, setCalculateSellBill] = useState<{
     total: number;
     discount?: number;
@@ -67,8 +65,93 @@ export default function DataTable() {
     receipt: 0,
     remain: 0,
   });
-  const { setHandleError } = useContext(AppContext);
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
+  const {
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+    getValues,
+  } = useFormContext();
+  const { fields, append, remove, update } = useFieldArray({
+    control,
+    name: "products",
+  });
+  const [productCount, setProductCount] = useState<{
+    productId: string;
+    entrepotId: string;
+    rowIndex: number | undefined;
+  }>({
+    productId: "",
+    entrepotId: "",
+    rowIndex: 0,
+  });
+  const [notFoundProduct, setNotFoundProduct] = useState({
+    productName: "",
+    warehouseName: "",
+  });
+  const {
+    data: selectedProduct,
+    isLoading,
+    remove: removeProductCountQuery,
+  } = useGetProductCountInEntrepotQuery(
+    productCount,
+    Boolean(productCount.productId && productCount.entrepotId)
+  );
+
+  useEffect(() => {
+    if (
+      selectedProduct?.productId?._id &&
+      typeof productCount.rowIndex === "number" &&
+      !isLoading
+    ) {
+      const entrepotId = watch("warehouseId");
+
+      const error = selectedProduct?.productInfo?.[0]?.info?.some(
+        (item: any) => item?.amountOfProduct > 0
+      );
+      if (error) {
+        const products = watch(`products.${productCount?.rowIndex}`);
+        const measures = selectedProduct?.productInfo?.[0]?.info.map(
+          (item: any, index: number) => ({
+            measureId: item?.measureId?._id,
+            amount: 1,
+            sellPrice: item?.sellPrice,
+            discount: item?.discount,
+            selected: index === 0,
+            measureName: item?.measureId?.name,
+            discountPercentage: 0,
+          })
+        );
+        const newProduct = {
+          ...products,
+          expireInDate: selectedProduct?.productInfo?.map(
+            (item: any) => item?.expireInDate
+          ),
+          measures,
+        };
+
+        setValue(`products.${productCount?.rowIndex}`, newProduct);
+        setProductCount({
+          productId: "",
+          entrepotId: entrepotId,
+          rowIndex: undefined,
+        });
+        setModalSelectProduct(false);
+      } else {
+        setModalSelectProduct(true);
+        setNotFoundProduct({
+          productName: selectedProduct?.productId?.name,
+          warehouseName: watch("warehouseName"),
+        });
+      }
+    }
+  }, [
+    selectedProduct,
+    productCount?.entrepotId,
+    productCount?.productId,
+    isLoading,
+  ]);
 
   const style = {
     width: "100%",
@@ -103,69 +186,25 @@ export default function DataTable() {
       },
     },
   };
-
-  const products: any = useWatch({ name: "products" });
-
-  const [productCount, setProductCount] = useState<{
-    productId: string;
-    entrepotId: string;
-    rowIndex: number | undefined;
-  }>({
-    productId: "",
-    entrepotId: "",
-    rowIndex: 0,
-  });
-
-  const { data: selectedProduct, isLoading } =
-    useGetProductCountInEntrepotQuery(
-      productCount,
-      Boolean(productCount.productId && productCount.entrepotId)
-    );
-  useEffect(() => {
-    if (
-      selectedProduct?.productId?._id &&
-      typeof productCount.rowIndex === "number" &&
-      !isLoading
-    ) {
-      const currentRow = fields[productCount.rowIndex];
-
-      const error = selectedProduct?.productInfo?.some(
-        (item: any) => item?.amountOfProduct > 0
-      );
-
-      update(productCount.rowIndex, {
-        ...currentRow,
-        measures: selectedProduct?.productInfo?.map(
-          (item: any, index: number) => ({
-            measureId: item?.measureId?._id,
-            amount: 1,
-            sellPrice: item?.sellPrice || 1,
-            discount: 0,
-            discountPercentage: 0,
-            selected: index === 0,
-            measureName: item?.measureId?.name,
-          })
-        ),
-        expireInDate: selectedProduct?.productInfo?.[0]?.expireInDate,
-        error: !error,
-      });
-      setProductCount({
-        productId: "",
-        entrepotId: watch("warehouseId"),
-        rowIndex: undefined,
-      });
-    }
-  }, [selectedProduct, productCount, isLoading]);
-
-  const handleAddNewRow = () => {
+  const handleAddNewProduct = () => {
     append({
+      id: uniqueId(),
       productId: "",
-      measures: [],
       productName: "",
-      warehouse: null,
+      measures: [],
+      warehouse: "",
     });
   };
-
+  const handleChangePaymentStatus = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    if (value === "cash" || value === "loan") {
+      setValue("paymentMethod", value);
+      setStatusPayment(value);
+    }
+  };
+  const products: any = useWatch({ name: "products" });
   useEffect(() => {
     const initialValue = 0;
     let discount = 0;
@@ -189,6 +228,7 @@ export default function DataTable() {
       },
       initialValue
     );
+
     setCalculateSellBill({
       receipt: 0,
       remain: price,
@@ -205,166 +245,342 @@ export default function DataTable() {
     remove(id);
   };
 
-  const columns: GridColDef[] = useMemo(
-    () => [
-      {
-        field: "Product Name",
-        headerName: t("product_name"),
-        sortable: false,
-        filterable: false,
-        width: 200,
-        // renderCell:renderAmountCell
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          return (
-            <>
+  const handleOpenDialogSelectProduct = () => {
+    setModalSelectProduct(!modalSelectProduct);
+  };
+
+  return (
+    <Box sx={{ width: "100%", my: 3 }}>
+      <Dialog
+        open={modalSelectProduct}
+        keepMounted
+        onClose={handleOpenDialogSelectProduct}
+        aria-describedby="alert-dialog-slide-description"
+        dir={t("dir")}
+        fullWidth
+      >
+        <DialogTitle
+          className="dialogTitleDelete"
+          display={"flex"}
+          gap={1}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Typography variant="h5">
+            {notFoundProduct?.productName} {t("in_warehouse")}(
+            {notFoundProduct.warehouseName}){t("not_available")}
+          </Typography>
+          <InfoCircle size="32" color={theme.palette.warning.main} />
+        </DialogTitle>
+        <DialogContent className="dialogContentDelete">
+          <DialogContentText id="alert-dialog-slide-description">
+            <Typography variant="body1" mb={3}>{t("add_new_product")}</Typography>
+          </DialogContentText>
+          <Grid2 container spacing={3}>
+            <Grid2 size={6}>
+              <InputLabel>{t("product_name")}</InputLabel>
               <Controller
                 control={control}
-                name={`products.${rowIndex}.productId`}
+                name={`products.${productCount?.rowIndex}.productId`}
                 render={({ field }) => (
                   <ProductsAutoComplete
-                    getProduct={(product) => {
+                    getProduct={async (product) => {
+                      removeProductCountQuery();
                       field.onChange(product?._id);
-                      // update(rowIndex, {
-                      //   productId: product?._id,
-                      //   productName: product?.name,
-                      //   expireInDate: product?.expireInDate,
-                      //   measures: product?.price?.map(
-                      //     (measure: any, index: number) => ({
-                      //       measureId: measure?.measureId?._id,
-                      //       amount: 1,
-                      //       sellPrice: measure?.sellPrice,
-                      //       discount: measure?.discount,
-                      //       selected: index === 0,
-                      //       measureName: measure?.measureId?.name,
-                      //     })
-                      //   ),
-                      //   warehouse: null,
-                      // });
-                      setProductCount({
+                      setValue(
+                        `products.${productCount?.rowIndex}.productId`,
+                        product?._id
+                      );
+                      setValue(
+                        `products.${productCount?.rowIndex}.productName`,
+                        product?.name
+                      );
+                      setProductCount((prevState) => ({
+                        ...prevState,
                         productId: product?._id,
-                        entrepotId: watch("warehouseId"),
-                        rowIndex,
-                      });
+                      }));
                     }}
-                    // defaultValue={{ ...row, id: row?._id, label: row?.name }}
                     isTable
                     productIds={fields?.map((item: any) => item?.productId)}
                   />
                 )}
               />
-            </>
-          );
-        },
-      },
-      {
-        field: "warehouse",
-        headerName: t("warehouse"),
-        sortable: false,
-        filterable: false,
-        width: 200,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          return (
-            <>
+            </Grid2>
+            <Grid2 size={6}>
+              <InputLabel>{t("warehouse")}</InputLabel>
               <Controller
                 control={control}
-                name={`products.${rowIndex}.warehouse`}
+                name={`products.${productCount?.rowIndex}.warehouse`}
                 render={({ field }) => (
                   <WarehouseAutoComplete
                     name="warehouse"
                     dir={t("dir")}
                     getWarehouse={(data: any) => {
-                      field.onChange({
-                        _id: data?._id,
-                        name: data?.name,
-                      });
-                      setProductCount({
-                        productId: row?.productId,
+                      removeProductCountQuery();
+                      field.onChange(data?._id)
+                     
+                      setValue(
+                        `products.${productCount?.rowIndex}.warehouseName`,
+                        data?.name
+                      );
+                      setProductCount((prevState) => ({
+                        ...prevState,
                         entrepotId: data?._id,
-                        rowIndex,
-                      });
+                      }));
                     }}
                   />
                 )}
               />
-            </>
-          );
-        },
-      },
-      {
-        field: "Unit",
-        headerName: t("unit"),
-        sortable: false,
-        filterable: false,
-        width: 200,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          return (
-            <Controller
-              control={control}
-              name={`products.${rowIndex}.measures`}
-              render={({ field }) => (
-                <CustomSelectMeasure
-                  data={row?.measures || undefined}
-                  getDataSelect={(selectedMeasures) => {
-                    const updatedMeasures = (row?.measures || []).map(
-                      (measure: any) => ({
-                        ...measure,
-                        selected: selectedMeasures.some(
-                          (sel) => sel.measureId === measure.measureId
-                        ),
-                      })
-                    );
-                    setValue(`products.${rowIndex}.measures`, updatedMeasures);
-                    field.onChange(updatedMeasures);
+            </Grid2>
+          </Grid2>
+        </DialogContent>
+        <DialogActions
+          className="dialogActionDelete"
+          sx={{ display: "flex", gap: "1rem" }}
+        >
+          <Button onClick={handleOpenDialogSelectProduct} variant="outlined">
+            {t("cancel")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="right" sx={{ width: 200 }}>
+                {t("product_name")}
+              </TableCell>
+              <TableCell align="right">{t("warehouse")}</TableCell>
+              <TableCell align="right">{t("unit")}</TableCell>
+              <TableCell align="right">{t("amount")}</TableCell>
+              <TableCell align="right">{t("price")}</TableCell>
+              <TableCell align="right">{t("discount_percentage")}</TableCell>
+              <TableCell align="right">{t("discount_amount")}</TableCell>
+              <TableCell align="right">{t("expiration_date")}</TableCell>
+              <TableCell align="right">{t("total")}</TableCell>
+              <TableCell align="right">{t("actions")}</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody sx={{ position: "relative" }}>
+            {isLoading && (
+              <Box
+                position={"absolute"}
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                zIndex={100}
+                bgcolor={"#bababa83"}
+              >
+                <CircularProgress sx={{ mb: 2 }} />
+              </Box>
+            )}
+            {fields?.map((row: any, rowIndex: number) => {
+              const rows = watch(`products.${rowIndex}`);
+              return (
+                <TableRow
+                  key={rows?.id}
+                  sx={{
+                    "&:last-child td, &:last-child th": {
+                      borderBottom: rows?.error ? "1px solid red" : 0,
+                      borderTop: rows?.error ? "1px solid red" : 0,
+                    },
                   }}
-                />
-              )}
-            />
-          );
-        },
-      },
-      {
-        field: "amount",
-        headerName: t("amount"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          // const measures = products?.[rowIndex]?.measures;
-          // const measures = row?.measures;
-          // console.log("row.measures", row.measures);
-          // console.log("products measure", measures);
-          const measures = watch(`products.${rowIndex}.measures`);
-          // console.log("watchMeasures", watchMeasures);
-          return (
-            <Box display={"grid"} rowGap={1}>
-              {measures?.map((measure: any, measureIndex: number) => {
-                if (measure?.selected) {
-                  return (
+                >
+                  <TableCell component="th" scope="row">
                     <Controller
                       control={control}
-                      name={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                      name={`products.${rowIndex}.productId`}
+                      render={({ field }) => (
+                        <ProductsAutoComplete
+                          getProduct={async (product) => {
+                            field.onChange(product?._id);
+                            setValue(
+                              `products.${rowIndex}.productId`,
+                              product?._id
+                            );
+                            setValue(
+                              `products.${rowIndex}.productName`,
+                              product?.name
+                            );
+                            setProductCount({
+                              entrepotId: watch("warehouseId"),
+                              productId: product?._id,
+                              rowIndex: rowIndex,
+                            });
+                          }}
+                          isTable
+                          productIds={fields?.map(
+                            (item: any) => item?.productId
+                          )}
+                          error={
+                            !!(errors?.products as any)?.[rowIndex]?.productId
+                          }
+                        />
+                      )}
+                    />
+                    {(errors?.products as any)?.[rowIndex]?.productId && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].productId.message}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Controller
+                      control={control}
+                      name={`products.${rowIndex}.warehouse`}
+                      render={({ field }) => (
+                        <WarehouseAutoComplete
+                          name="warehouse"
+                          dir={t("dir")}
+                          getWarehouse={(data: any) => {
+                            setValue(
+                              `products.${rowIndex}.warehouse`,
+                              data?._id
+                            );
+                          }}
+                          error={
+                            !!(errors?.products as any)?.[rowIndex]?.warehouse
+                          }
+                        />
+                      )}
+                    />
+                    {(errors?.products as any)?.[rowIndex]?.warehouse && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].warehouse.message}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Controller
+                      control={control}
+                      name={`products.${rowIndex}.measures`}
                       render={({ field }) => {
+                        const measures = watch(`products.${rowIndex}.measures`);
+                        return (
+                          <CustomSelectMeasure
+                            data={measures || undefined}
+                            getDataSelect={(selectedMeasures) => {
+                              const updatedMeasures = (measures || [])?.map(
+                                (measure: any) => ({
+                                  ...measure,
+                                  selected: selectedMeasures?.some(
+                                    (sel) => sel.measureId === measure.measureId
+                                  ),
+                                })
+                              );
+                              field.onChange(updatedMeasures);
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                    {(errors?.products as any)?.[rowIndex]?.measureId && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].measureId.message}
+                      </Typography>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="right" sx={{ display: "grad", gap: 4 }}>
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => (
+                        <TextField
+                          sx={style}
+                          size="small"
+                          type="number"
+                          placeholder="تعداد"
+                          value={item?.amount || 1}
+                          name={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                          onChange={(e) => {
+                            const value =
+                              parseFloat(e.target.value) > 1
+                                ? parseFloat(e?.target.value)
+                                : 1;
+                            setValue(
+                              `products.${rowIndex}.measures.${measureIndex}.amount`,
+                              value
+                            );
+                            const discountPercentage =
+                              item?.discountPercentage || 0;
+                            const sellPrice = item?.sellPrice || 0;
+                            const discountAmount = (
+                              (sellPrice * value * discountPercentage) /
+                              100
+                            ).toFixed(2);
+                            setValue(
+                              `products.${rowIndex}.measures.${measureIndex}.discount`,
+                              Number(discountAmount)
+                            );
+                          }}
+                          error={
+                            !!(errors?.products as any)?.[rowIndex]?.amount
+                          }
+                        />
+                      ))}
+                    {(errors?.products as any)?.[rowIndex]?.amount && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].amount.message}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => (
+                        <TextField
+                          sx={style}
+                          size="small"
+                          type="number"
+                          placeholder="sell price"
+                          value={item?.sellPrice}
+                          name={`products.${rowIndex}.measures.${measureIndex}.sellPrice`}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value) || 0;
+                            setValue(
+                              `products.${rowIndex}.measures.${measureIndex}.sellPrice`,
+                              value
+                            );
+                          }}
+                          error={
+                            !!(errors?.products as any)?.[rowIndex]?.sellPrice
+                          }
+                        />
+                      ))}
+                    {(errors?.products as any)?.[rowIndex]?.sellPrice && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].sellPrice.message}
+                      </Typography>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="right">
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => {
                         return (
                           <TextField
-                            {...field}
                             sx={style}
                             size="small"
                             type="number"
-                            placeholder="تعداد"
-                            name="amount"
+                            placeholder="Discount percentage"
+                            value={item?.discountPercentage}
+                            name={`products.${rowIndex}.measures.${measureIndex}.discountPercentage`}
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
-                              field.onChange(value);
-                              const discountPercentage =
-                                measures[measureIndex]?.discountPercentage || 0;
-                              const sellPrice =
-                                measures[measureIndex]?.sellPrice || 0;
+                              setValue(
+                                `products.${rowIndex}.measures.${measureIndex}.discountPercentage`,
+                                value
+                              );
+                              const sellPrice = item?.sellPrice || 0;
+                              const amount = item?.amount || 1;
                               const discountAmount = (
-                                (sellPrice * value * discountPercentage) /
+                                (sellPrice * amount * value) /
                                 100
                               ).toFixed(2);
                               setValue(
@@ -374,131 +590,27 @@ export default function DataTable() {
                             }}
                           />
                         );
-                      }}
-                    />
-                  );
-                } else return <></>;
-              })}
-            </Box>
-          );
-        },
-      },
-      {
-        field: "Price",
-        headerName: t("price"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          const measures = watch(`products.${rowIndex}.measures`);
-          return (
-            <Box display={"grid"} rowGap={1}>
-              {measures?.map((measure: any, measureIndex: number) => {
-                if (measure?.selected) {
-                  return (
-                    <Controller
-                      control={control}
-                      name={`products.${rowIndex}.measures.${measureIndex}.sellPrice`}
-                      render={({ field }) => (
+                      })}
+                  </TableCell>
+                  <TableCell align="right">
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => (
                         <TextField
-                          {...field}
-                          sx={style}
-                          size="small"
-                          type="number"
-                          placeholder="sellPrice"
-                          name="sellPrice"
-                        />
-                      )}
-                    />
-                  );
-                } else return <></>;
-              })}
-            </Box>
-          );
-        },
-      },
-      {
-        field: "discountPercentage",
-        headerName: t("discount_percentage"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          const measures = watch(`products.${rowIndex}.measures`);
-          return (
-            <Box display={"grid"} rowGap={1}>
-              {measures?.map((measure: any, measureIndex: number) => {
-                if (measure?.selected) {
-                  return (
-                    <Controller
-                      control={control}
-                      name={`products.${rowIndex}.measures.${measureIndex}.discountPercentage`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
                           sx={style}
                           size="small"
                           type="number"
                           placeholder="discount"
-                          name="discountPercentage"
+                          value={item?.discount}
+                          name={`products.${rowIndex}.measures.${measureIndex}.discount`}
                           onChange={(e) => {
                             const value = parseFloat(e.target.value) || 0;
-                            field.onChange(value);
-                            const sellPrice =
-                              measures[measureIndex]?.sellPrice || 0;
-                            const amount = measures[measureIndex]?.amount || 1;
-                            const discountAmount = (
-                              (sellPrice * amount * value) /
-                              100
-                            ).toFixed(2);
                             setValue(
                               `products.${rowIndex}.measures.${measureIndex}.discount`,
-                              Number(discountAmount)
+                              value
                             );
-                          }}
-                        />
-                      )}
-                    />
-                  );
-                } else return <></>;
-              })}
-            </Box>
-          );
-        },
-      },
-      {
-        field: "discount",
-        headerName: t("discount_amount"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          const measures = watch(`products.${rowIndex}.measures`);
-          return (
-            <Box display={"grid"} rowGap={1}>
-              {measures?.map((measure: any, measureIndex: number) => {
-                if (measure?.selected) {
-                  return (
-                    <Controller
-                      control={control}
-                      name={`products.${rowIndex}.measures.${measureIndex}.discount`}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          sx={style}
-                          size="small"
-                          type="number"
-                          placeholder="discount"
-                          name="discount"
-                          onChange={(e) => {
-                            const value = parseFloat(e.target.value) || 0;
-                            field.onChange(value);
-                            const sellPrice =
-                              measures[measureIndex]?.sellPrice || 0;
-                            const amount = measures[measureIndex]?.amount || 1;
+                            const sellPrice = item?.sellPrice || 0;
+                            const amount = item?.amount || 1;
                             const discountPercentage =
                               sellPrice * amount > 0
                                 ? (
@@ -512,201 +624,117 @@ export default function DataTable() {
                             );
                           }}
                         />
-                      )}
+                      ))}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Controller
+                      control={control}
+                      name={`products.${rowIndex}.expireInDate`}
+                      render={({ field }) => {
+                        const expirationDate = watch(
+                          `products.${rowIndex}.expireInDate`
+                        );
+
+                        if (
+                          !getValues()?.products?.[rowIndex]
+                            ?.expireInDateSelected &&
+                          expirationDate?.length > 0
+                        ) {
+                          setValue(
+                            `products.${rowIndex}.expireInDateSelected`,
+                            new Date(expirationDate?.[0])?.toLocaleDateString(
+                              "en-GB"
+                            )
+                          );
+                        }
+
+                        return (
+                          <Select
+                            {...field}
+                            fullWidth
+                            sx={{ minWidth: "10rem" }}
+                            value={new Date(
+                              expirationDate?.[0]
+                            ).toLocaleDateString("en-GB")}
+                            size="small"
+                            onChange={(event: SelectChangeEvent) => {
+                              setValue(
+                                `products.${rowIndex}.expireInDateSelected`,
+                                event?.target?.value
+                              );
+                            }}
+                            name={`products.${rowIndex}.expireInDateSelected`}
+                            error={
+                              !!(errors?.products as any)?.[rowIndex]
+                                ?.expireInDateSelected
+                            }
+                          >
+                            {(expirationDate || [])?.map(
+                              (item: string, index: number) => (
+                                <MenuItem
+                                  key={"expireInDate_" + index}
+                                  value={new Date(item)?.toLocaleDateString(
+                                    "en-GB"
+                                  )}
+                                >
+                                  <Moment format="YYYY/MM/DD">{item}</Moment>
+                                </MenuItem>
+                              )
+                            )}
+                          </Select>
+                        );
+                      }}
                     />
-                  );
-                } else return <></>;
-              })}
-            </Box>
-          );
-        },
-      },
-      {
-        field: "total",
-        headerName: t("total"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          const measures = watch(`products.${rowIndex}.measures`);
-          return (
-            <Box display={"grid"} rowGap={1}>
-              {measures
-                ?.filter((item: any) => item?.selected)
-                ?.map((measure: any, index: number) => {
-                  const discount = measure?.discount || 0;
-                  const amount = measure?.amount || 1;
-                  const sellPrice = measure?.sellPrice || 0;
-                  const total =
-                    sellPrice * amount - (sellPrice * discount) / 100;
-                  return (
-                    <Typography key={measure?.measureId}>
-                      {Number.isInteger(total) ? total : total.toFixed(2)}
-                    </Typography>
-                  );
-                })}
-            </Box>
-          );
-        },
-      },
-      {
-        field: "expirationDate",
-        headerName: t("expiration_date"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row?._fieldIndex;
-          const measures = watch(`products.${rowIndex}.measures`);
-          return (
-            <Controller
-              control={control}
-              name={`products.${rowIndex}.expireInDate`}
-              render={({ field }) => {
-                const value =
-                  field.value ||
-                  (measures && measures.length > 0
-                    ? new Date(measures[0]?.expireInDate)?.toLocaleDateString("en-GB")
-                    : "");
-                return (
-                  <Select {...field} value={value}>
-                    {measures?.map((item: any, index: number) => (
-                      <MenuItem
-                        key={"expireInDate_" + index}
-                        value={new Date(item?.expireInDate)?.toLocaleDateString("en-GB")}
-                      >
-                        <Moment format="MM/DD/YYYY">
-                          {item?.expireInDate}
-                        </Moment>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                );
-              }}
-            />
-          );
-          // return (
-          //   <Box display={"grid "} width={"100%"}>
-          //     <Controller
-          //       control={control}
-          //       name={`products.${rowIndex}.expireInDate`}
-          //       render={({ field }) => {
-          //         // If the current value is not in the list, default to the first one
-          //         const measures = watch(`products.${rowIndex}.measures`);
-          // const value =
-          //   field.value ||
-          //   (measures && measures.length > 0
-          //     ? measures[0]?.expireInDate
-          //     : "");
-          //             console.log("value" , value)
-          //         return (
-          //           <Select
-          //             {...field}
-          //             size="small"
-          //             value={value}
-          //             fullWidth
-          //             onChange={(event:SelectChangeEvent ) => {
-          //               console.log("event" , event.target.value)
-          //               field?.onChange(value);
-          //             }}
-          //             id="demo-simple-select"
-          //           >
-          // {measures?.map((item: any, index: number) => (
-          //   <MenuItem
-          //     key={"expireInDate_" + index}
-          //     value={item?.expireInDate}
-          //   >
-          //     <Moment format="MM/DD/YYYY">
-          //       {item?.expireInDate}
-          //     </Moment>
-          //   </MenuItem>
-          // ))}
-          //           </Select>
-          //         );
-          //       }}
-          //     />
+                    {(errors?.products as any)?.[rowIndex]
+                      ?.expireInDateSelected && (
+                      <Typography color="error" variant="body1">
+                        {
+                          (errors.products as any)[rowIndex]
+                            .expireInDateSelected.message
+                        }
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => {
+                        const discount = item?.discount || 0;
+                        const amount = item?.amount || 1;
+                        const sellPrice = item?.sellPrice || 0;
+                        const total =
+                          sellPrice * amount - (sellPrice * discount) / 100;
+                        return (
+                          <Typography key={item?.measureId}>
+                            {Number.isInteger(total) ? total : total.toFixed(2)}
+                          </Typography>
+                        );
+                      })}
+                  </TableCell>
 
-          //     {/* <Moment format="MM/DD/YYYY">{row?.expirationDate}</Moment> */}
-          //   </Box>
-          // );
-        },
-      },
-      {
-        field: "action",
-        headerName: t("actions"),
-        sortable: false,
-        filterable: false,
-        width: 120,
-        renderCell: ({ row }) => {
-          const rowIndex = row._fieldIndex;
-          return (
-            <IconButton
-              size="small"
-              onClick={handleDeleteFunction}
-              id={rowIndex}
-              disabled={paymentOff?._id ? true : false}
-            >
-              <Trash
-                size={20}
-                color={
-                  paymentOff?._id
-                    ? theme.palette.grey?.[600]
-                    : theme.palette.primary.contrastText
-                }
-              />
-            </IconButton>
-          );
-        },
-      },
-    ],
-    [t]
-  );
-
-  const handleChangePaymentStatus = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const values = (event.target as HTMLInputElement).value;
-    if (values === "cash" || values === "loan") {
-      setStatusPayment(values);
-    }
-  };
-
-  return (
-    <Box sx={{ width: "100%", my: 3 }}>
-      {fields?.length > 0 && (
-        <DataGrid
-          rows={fields?.map((item: any, index) => ({
-            ...item,
-            id: item.productId?._id || index,
-            _fieldIndex: index,
-          }))}
-          columns={columns}
-          getRowClassName={(params) => (params.row.error ? "error-row" : "")}
-          sx={{
-            direction: t("dir"),
-            py: 4,
-            border: 0,
-            "& .error-row": {
-              border: "2px solid #fe12128f", // Red border for error row
-              backgroundColor: "#ffebee33", // Light red background
-            },
-            "& .MuiDataGrid-main": {
-              paddingBottom: "3rem",
-            },
-            "& .MuiDataGrid-cell": {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }}
-          hideFooter
-          getRowHeight={() => "auto"}
-          disableRowSelectionOnClick
-          loading={isLoading}
-        />
-      )}
-
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      onClick={handleDeleteFunction}
+                      id={`${rowIndex}`}
+                      disabled={paymentOff?._id ? true : false}
+                    >
+                      <Trash
+                        size={20}
+                        color={
+                          paymentOff?._id
+                            ? theme.palette.grey?.[600]
+                            : theme.palette.primary.contrastText
+                        }
+                      />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <Box
         sx={{
           backgroundColor: theme.palette.grey[100],
@@ -721,8 +749,7 @@ export default function DataTable() {
           startIcon={<Add style={{ margin: "0 1rem" }} />}
           variant={"outlined"}
           size={"small"}
-          onClick={handleAddNewRow}
-          disabled={paymentOff?._id ? true : false}
+          onClick={handleAddNewProduct}
         >
           {t("insert_new_row")}
         </Button>
@@ -748,7 +775,7 @@ export default function DataTable() {
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
               defaultValue="female"
-              name="radio-buttons-group"
+              name="paymentMethod"
               onChange={handleChangePaymentStatus}
               value={statusPayment}
             >
@@ -861,7 +888,9 @@ export default function DataTable() {
               {" "}
               <Typography>{t("remaining")}</Typography>
             </Box>
-            <Typography>{calculateSellBill?.remain}</Typography>
+            <Typography>
+              {paymentOff?.payAmount ? calculateSellBill?.remain : 0}
+            </Typography>
           </Box>
         </Grid2>
       </Grid2>

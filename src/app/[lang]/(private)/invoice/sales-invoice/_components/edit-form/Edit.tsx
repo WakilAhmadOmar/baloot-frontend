@@ -12,157 +12,161 @@ import {
   Grid2,
   IconButton,
   InputLabel,
-  Slide,
   TextField,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
 import { CloseSquare, Edit } from "iconsax-react";
-import { forwardRef, useCallback, useContext, useMemo, useState } from "react";
-import { InvoiceContext } from "../../../_components/invoiceContext";
-import DataTable from "../Table";
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import useSchemaCrateForm, { CreateFormSchema } from "../create-form.schema";
-import { useApolloClient } from "@apollo/client";
-import { ADD_SELLS_BILL } from "@/graphql/mutation/ADD_SELLS_BILL";
 import { AppContext } from "@/provider/appContext";
-import { PrintInvoice } from "../print-invoice";
 import { EditForm } from "./edit-form";
-
-const Transition = forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
+import { useTranslations } from "next-intl";
+import { useGetSellsBillByIdQuery } from "@/hooks/api/invoice/queries/get-sells-bill-by-id-query";
+import { useUpdateSellsBillMutation } from "@/hooks/api/invoice/mutations/use-update-sells-bill";
+import useSchemaEditForm, { EditFormSchema } from "./edit-form.schema";
 
 interface IProps {
-  t: any;
   onCreated?: (billInfo: any) => void;
-  id:string
+  id: string;
 }
 
-const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
-  const [billDetails , setBillDetails] = useState<any>(null)
+const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
+  const t = useTranslations("invoice");
+  const [openDialog, setOpenDialog] = useState(false);
+  const { setHandleError } = useContext(AppContext);
+  const theme = useTheme();
+  const { data: billData, isLoading } = useGetSellsBillByIdQuery(
+    {
+      billId: id,
+    },
+    openDialog
+  );
+  const { mutate: updateSellsBillMutation, isLoading: isUpdating } =
+    useUpdateSellsBillMutation();
 
-  const defaultValues = useMemo(()=>{
+  const defaultValues = useMemo(() => {
     return {
-      customerId: billDetails?.customerId?._id,
-          warehouseId:"",
-          currencyId:billDetails?.currencyId?._id
-    }
-  },[billDetails])
+      customerId: billData?.customerId?._id,
+      warehouseId: billData?.entrepotId?._id,
+      currencyId: billData?.currencyId?._id,
+      totalPriceAfterDiscount: billData?.totalPriceAfterDiscount,
+      totalPrice: billData?.totalPrice,
+      contact_number: billData?.customerId?.contactNumber,
+      products: billData?.products?.map((item: any) => {
+        const selectedMeasures = item?.productMeasures?.map((measure: any) => ({
+          measureId: measure?.measureId?._id,
+          amount: measure?.amountOfProduct,
+          sellPrice: measure?.pricePerMeasure,
+          discount: measure?.discount,
+          selected: true,
+          measureName: measure?.measureId?.name,
+          discountPercentage: measure?.discountPercentage,
+        }));
 
-  const methods = useForm<CreateFormSchema>({
-    resolver: yupResolver(useSchemaCrateForm(t)),
+        return {
+          productId: item?.productId?._id,
+          productName: item?.productId?.name,
+          warehouse: item?.entrepotId?._id,
+          warehouseName: item?.entrepotId?.name,
+          measures: selectedMeasures,
+          name: item?.productId?.name,
+          id: item?.productId?._id,
+          expireInDate: [item?.expireInDate],
+          expireInDateSelected: new Date(
+            item?.expireInDate
+          )?.toLocaleDateString("en-GB"),
+        };
+      }),
+    };
+  }, [billData]);
+
+  const methods = useForm<EditFormSchema>({
+    resolver: yupResolver(useSchemaEditForm(t)),
     defaultValues,
   });
 
   const {
-    register,
-    control,
     handleSubmit,
+    reset,
+    register,
+    setValue,
     formState: { errors },
-    setError,
   } = methods;
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  //   setError,
-  // } = useForm<CreateFormSchema>({
-  //   resolver: yupResolver(schemaCreateForm),
-  // });
-  const { customer, paymentOff, rows, setRows, sellBillPrice } =
-    useContext(InvoiceContext);
-  const { setHandleError } = useContext(AppContext);
+  useEffect(() => {
+    if (billData) {
+      reset(defaultValues);
+    }
+  }, [billData, reset, defaultValues]);
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
-  const client = useApolloClient();
-  const theme = useTheme();
-
-
- 
-
- 
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
   };
-  // const handleGetCustomer = (data: any) => {
-  //   setCustomer(data);
-  // };
-  // const handleGetWarehouse = (data: any) => {
-  //   setWarehouse(data);
-  // };
-  // const handleSelectCurrency = (data: any) => {
-  //   setCurrency(data);
-  // };
-  const onSubmitFunction = async (data: CreateFormSchema) => {
-    setLoadingPage(true);
-    try {
-      const variables = {
-        sellBillObject: {
-          billDate: new Date(),
-          currencyId: data?.currencyId,
-          customerId: data?.customerId,
-          entrepotId: data?.warehouseId,
-          isPaid: paymentOff?._id ? true : false,
-          products: rows?.map((item: any) => {
-            const allProduct = item?.measures
-              ?.filter((measure: any) => measure?.selected)
-              ?.map((data: any) => ({
-                count: data?.amount,
-                discountPercentage: data?.discount || 0,
-                entrepotId: item?.warehouse?._id,
-                measureId: data?.measureId?._id,
-                pricePerMeasure: data?.sellPrice,
-                productId: item?._id,
-              }));
-            return {
-              ...allProduct?.[0],
-            };
-          }),
-          status: "Accepted",
-          totalPriceAfterDiscount: sellBillPrice?.totalPrice,
-          transactionId: paymentOff?._id,
+  const onSubmitFunction = async (data: EditFormSchema) => {
+    const variables = {
+      sellBillObject: {
+        billDate: new Date(billData?.billDate),
+        currencyId: data?.currencyId,
+        customerId: data?.customerId,
+        entrepotId: data?.warehouseId,
+        products: data?.products?.map((item: any) => {
+          const [day, month, year] = item?.expireInDateSelected
+            .split("/")
+            .map(Number);
+          const expireInDate = new Date(`${year}-${month}-${day + 1}`);
+          const productMeasures = item?.measures
+            ?.filter((measure: any) => measure?.selected)
+            ?.map((dataItem: any) => {
+              return {
+                measureId: dataItem?.measureId,
+                amountOfProduct: dataItem?.amount,
+                pricePerMeasure: dataItem?.sellPrice,
+                discountPercentage: dataItem?.discount || 0,
+              };
+            });
+          return {
+            productId: item?.productId,
+            productMeasures,
+            entrepotId: item?.warehouse?._id || data?.warehouseId,
+            expireInDate: expireInDate?.toISOString()?.split("T")[0],
+          };
+        }),
+        totalPrice: data?.totalPrice,
+        totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
+        transactionId: billData?.transactionId?._id,
+      },
+    };
+    updateSellsBillMutation(
+      {
+        sellBillId: id,
+        sellBillObject: variables.sellBillObject,
+      },
+      {
+        onSuccess: () => {
+          setHandleError({
+            message: "Action successfully recorded.",
+            type: "success",
+            open: true,
+          });
         },
-      };
-      
-      const {
-        data: { addSellsBill },
-      } = await client.mutate({
-        mutation: ADD_SELLS_BILL,
-        variables,
-      });
-      if (addSellsBill?._id && onCreated) {
-        onCreated(addSellsBill);
+        onError: (error: any) => {
+          setHandleError({
+            type: "error",
+            message: error?.message,
+            open: true,
+          });
+        },
       }
-      setLoadingPage(false);
-      setHandleError({
-        message: "Action successfully recorded.",
-        type: "success",
-        open: true,
-      });
-    } catch (error: any) {
-      setLoadingPage(false);
-      setHandleError({
-        type: "error",
-        message: error?.message,
-        open: true,
-      });
-    }
+    );
   };
 
-  const handleGetDefaultValue =  (values:any) => {
-    setBillDetails(values)
-  }
-  
   return (
     <FormProvider {...methods}>
       <IconButton onClick={handleOpenDialogBox}>
@@ -172,8 +176,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
         fullScreen
         open={openDialog}
         onClose={handleOpenDialogBox}
-        TransitionComponent={Transition}
-        dir={t.home?.dir}
+        dir={t("dir")}
       >
         <AppBar
           sx={{
@@ -186,7 +189,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
         >
           <Toolbar>
             <Typography component="div" variant="button" sx={{ flex: 1 }}>
-              {t?.invoice?.sales_invoice}
+              {t("edit_sales_invoice")}
             </Typography>
 
             <IconButton
@@ -200,10 +203,40 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
           </Toolbar>
         </AppBar>
         <DialogContent>
-            <EditForm t={t} id={id} getDefaultValue={handleGetDefaultValue} />
+         {defaultValues?.customerId && isLoading === false && <Grid2 container columnSpacing={3} rowSpacing={3}>
+            <Grid2 size={3} gap={1} display={"grid"}>
+              <InputLabel>{t("customer_name")}</InputLabel>
+              <CustomerAutoComplete
+                getCustomer={(customer) => {
+                  setValue("contact_number", customer?.contactNumber);
+                }}
+                dir={t("dir")}
+              />
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Contact_Number")}</InputLabel>
+              <TextField
+                fullWidth
+                size="small"
+                disabled
+                // value={customer?.contactNumber ?? ""}
+                {...register("contact_number")}
+                name={"contact_number"}
+              />
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("warehouse")} </InputLabel>
+              <WarehouseAutoComplete dir={t("dir")} />
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Currency")}</InputLabel>
+              <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
+            </Grid2>
+          </Grid2>}
+          <EditForm isLoadingData={isLoading} />
           {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
             <Grid2 size={3} gap={1} display={"grid"}>
-              <InputLabel>{t?.invoice?.customer_name}</InputLabel>
+              <InputLabel>{t("customer_name")}</InputLabel>
               <CustomerAutoComplete
 
               // register={register}
@@ -211,7 +244,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
               />
             </Grid2>
             <Grid2 size={2} gap={1} display={"grid"}>
-              <InputLabel>{t?.invoice?.Contact_Number}</InputLabel>
+              <InputLabel>{t("Contact_Number")}</InputLabel>
               <TextField
                 fullWidth
                 size="small"
@@ -227,7 +260,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
               />
             </Grid2>
             <Grid2 size={2} gap={1} display={"grid"}>
-              <InputLabel>{t?.invoice?.Currency}</InputLabel>
+              <InputLabel>{t("Currency")}</InputLabel>
               <CurrenciesAutoComplete
               // register={register}
               // onSelected={handleSelectCurrency}
@@ -239,26 +272,26 @@ const EditSalesInvoice: React.FC<IProps> = ({ t, onCreated , id }) => {
         <DialogActions>
           <Box display={"flex"} justifyContent="space-between" width={"100%"}>
             <Box display="flex" columnGap={"1rem"}>
-              <Button variant="outlined">{t?.invoice?.reset}</Button>
+              <Button variant="outlined">{t("reset")}</Button>
               <Button variant="outlined" onClick={handleOpenDialogBox}>
-                {t?.invoice?.cancel}
+                {t("cancel")}
               </Button>
             </Box>
             <Box display="flex" columnGap={"1rem"}>
               <Button
                 variant="contained"
                 onClick={handleSubmit(onSubmitFunction)}
-                loading={loadingPage}
+                loading={isUpdating}
               >
-                {t?.invoice?.save}
+                {t("save")}
               </Button>
-              {/* <Button variant="outlined" disabled>
-                {t?.invoice?.print_invoice}
-              </Button> */}
-              <PrintInvoice  />
+              <Button variant="outlined" disabled>
+                {t("print_invoice")}
+              </Button>
+              {/* <PrintInvoice  /> */}
               {/* <PrintTable /> */}
               <Button variant="outlined" disabled>
-                {t?.invoice?.print_warehouse_receipt}
+                {t("print_warehouse_receipt")}
               </Button>
             </Box>
           </Box>

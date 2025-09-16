@@ -9,10 +9,11 @@ export const useGetSellsBillList = (variables:any) => {
         const { data: { getSellsBillList} } = await client.query({
           query: GET_SELLS_BILL_LIST,
           variables,
+          fetchPolicy:"network-only"
         });
         return getSellsBillList;
       },
-      queryKey: [GET_SELLS_BILL_LIST_QUERY_KEY],
+      queryKey: [GET_SELLS_BILL_LIST_QUERY_KEY , variables.page],
       refetchOnWindowFocus: false,
     });
   };

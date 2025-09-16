@@ -23,16 +23,16 @@ const MenuProps = {
   },
 };
 
-function getStyles(name: string, personName: readonly string[], theme: Theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
+// function getStyles(name: string, personName: readonly string[], theme: Theme) {
+//   return {
+//     fontWeight:
+//       personName.indexOf(name) === -1
+//         ? theme.typography.fontWeightRegular
+//         : theme.typography.fontWeightMedium,
+//   };
+// }
 
-type dataSelect = "دانه" | "بسته";
+// type dataSelect = "دانه" | "بسته";
 interface IPropsSelect {
   data?: any[];
   register?: any;
@@ -41,7 +41,7 @@ interface IPropsSelect {
   idNumber?: number;
 }
 
-const CustomSelectMeasure: React.FC<IPropsSelect> = ({
+const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
   data,
   register,
   name,
@@ -57,8 +57,8 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   useEffect(() => {
   // When data changes, set the first measure as selected
   if (data && data.length > 0 && personName?.length === 0) {
-    setPersonName([data[0].measureName]);
-    if (getDataSelect) getDataSelect([data[0]], idNumber);
+    setPersonName(data?.filter((item:any) => item?.selected)?.map((item:any)=> item?.measureName));
+    if (getDataSelect) getDataSelect(data?.filter((item:any) => item?.selected), idNumber);
   }
 }, [data , personName]);
 
@@ -143,4 +143,4 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   );
 };
 
-export default CustomSelectMeasure;
+export default EditCustomSelectMeasure;

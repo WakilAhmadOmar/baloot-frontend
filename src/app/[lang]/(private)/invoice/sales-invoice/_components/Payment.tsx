@@ -97,7 +97,6 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
     }
   }, [currencyId]);
 
-  console.log("errors" , errors)
 
   return (
     <Box mt={2}>

@@ -8,18 +8,20 @@ interface IPropsFormFactore {
   getWarehouse?: (warehouse: any) => void;
   name?:string
   dir?:string
+  error?:boolean
 }
 const WarehouseAutoComplete: React.FC<IPropsFormFactore> = ({
   getWarehouse,
 name,
-dir="ltr"
+dir="ltr",
+error= false
 }) => {
 
   const { control , formState:{errors} , watch , setValue} = useFormContext()
 
   
 
-  const {data:getEntrepotList } = useGetWarehouseList({page:1})
+  const {data:getEntrepotList , isLoading } = useGetWarehouseList({page:1})
 
 
   const handleChangeCustomerSearch = (
@@ -40,6 +42,7 @@ const value = watch(name || "warehouseId")
     if (getEntrepotList?.entrepot?.length && !value) {
       const defaultWarehouse = getEntrepotList?.entrepot[0];
       setValue(name || "warehouseId", defaultWarehouse._id);
+      setValue("warehouseName", defaultWarehouse.name);
       // if (getWarehouse) {
       //   getWarehouse(defaultWarehouse);
       // }
@@ -49,7 +52,8 @@ const value = watch(name || "warehouseId")
 
   return (
 
-     <Controller
+    <>
+    {!isLoading && <Controller
           name={name || "warehouseId"}
           control={control}
           render={({ field: { onChange, value } }) => (
@@ -57,13 +61,16 @@ const value = watch(name || "warehouseId")
               fullWidth
               size={"small"}
               value={value}
-              error={!!errors?.warehouseId}
+              defaultValue={value}
+              defaultOpen={false}
+              error={ error || !!errors?.warehouseId}
               // helperText={errors?.currencyId?.message}
               required
               onChange={(event)=> {
                 onChange(event);
                 handleChangeCustomerSearch(event)
               }}
+
             >
               {getEntrepotList?.entrepot?.map((item:any) => {
                 return (
@@ -74,7 +81,8 @@ const value = watch(name || "warehouseId")
               })}
             </Select>
           )}
-        />
+        />}
+    </>
    
         // <Autocomplete
         //   disablePortal={false}

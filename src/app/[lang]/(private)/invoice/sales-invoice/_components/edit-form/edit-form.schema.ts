@@ -20,7 +20,7 @@ export interface ProductSchema {
   expireInDateSelected:string
 }
 
-export interface CreateFormSchema {
+export interface EditFormSchema {
   customerId: string;
   warehouseId: string;
   currencyId: string;
@@ -28,11 +28,9 @@ export interface CreateFormSchema {
   totalPrice: number;
   totalPriceAfterDiscount: number;
   contact_number?: string | null | undefined;
-  paymentMethod: string;
-  receiver: string ;
 }
 
-const useSchemaCrateForm = (t: any) =>
+const useSchemaEditForm = (t: any) =>
   Yup.object().shape({
     customerId: Yup.string().required(t("customer_name_is_required")),
     warehouseId: Yup.string().required(t("warehouse_is_required")),
@@ -40,8 +38,6 @@ const useSchemaCrateForm = (t: any) =>
     totalPrice: Yup.number().required(),
     totalPriceAfterDiscount: Yup.number().required(),
     contact_number: Yup.string().nullable().notRequired(),
-    paymentMethod: Yup.string().required(),
-    receiver: Yup.string().required(),
     products: Yup.array()
       .of(
         Yup.object().shape({
@@ -70,4 +66,4 @@ const useSchemaCrateForm = (t: any) =>
       .required(),
   });
 
-export default useSchemaCrateForm;
+export default useSchemaEditForm;

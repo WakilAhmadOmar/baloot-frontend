@@ -23,7 +23,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
     watch,
   } = useFormContext();
 
-  const { data: getCustomerList } = useGetCustomerListQuery({ page: 1 });
+  const { data: getCustomerList , isLoading } = useGetCustomerListQuery({ page: 1 });
 
   const value = watch(name || "customerId");
 
@@ -39,7 +39,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
   }, [getCustomerList, setValue, getCustomer, name, value]);
   return (
     <>
-      <Controller
+      {!isLoading && <Controller
         name={name || "customerId"}
         control={control}
         render={({ field: { onChange, value } }) => (
@@ -69,7 +69,7 @@ const CustomerAutoComplete: React.FC<IProps> = ({
             })}
           </Select>
         )}
-      />
+      />}
     </>
   );
 };

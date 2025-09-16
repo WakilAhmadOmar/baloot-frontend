@@ -14,7 +14,7 @@ interface IPropsProduct {
   isTable?: boolean;
   index?: number;
   defaultValue?: any;
-
+error?:boolean
   name?:string
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
@@ -24,6 +24,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   index,
   defaultValue,
   name,
+  error= false
   
 }) => {
   
@@ -81,7 +82,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
         query: GET_PRODUCTS,
         variables,
       });
-      console.log("getProducts", getProducts);
+
       const mapData = getProducts?.product.map((item: any) => {
         return { id: item?._id, label: item?.name, ...item };
       });
@@ -130,15 +131,18 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   }, [defaultValue]);
   return (
 
-            // <Controller 
-            //   name={name || "productId"}
-            //   control={control}
-            //   render={({ field: { onChange, value } }) => (
+            <Controller 
+              name={name || "productId"}
+              control={control}
+              render={({ field: { onChange, value } }) => (
 
                 <Autocomplete
                   disablePortal={false}
-                  // {...register("product", { required: isRequired })}
-                  onChange={handleChangeCustomerSearch}
+            
+                  onChange={(event:any , value)=>{
+                    handleChangeCustomerSearch(event , value)
+                    onChange(event)
+                  }}
                   fullWidth
                   size="small"
                   id="auto-complete-product"
@@ -153,12 +157,13 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      error={error}
                       // placeholder={placeholder}
                     />
                   )}
                 />
-            //   )}
-            // />
+              )}
+            />
   );
 };
 

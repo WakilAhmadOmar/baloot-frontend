@@ -12,7 +12,7 @@
     "logout": "خروج از حساب"
   },
   "invoice": {
-    "dir":"ltr",
+    "dir": "ltr",
     "New_Purchase_Invoice": "New Purchase Invoice",
     "Company_Name": "Company Name",
     "Contact_Number": "Contact Number",
@@ -49,12 +49,14 @@
     "print_warehouse_receipt": "Print Warehouse Receipt",
     "reset": "Reset",
     "sales_invoice": "Sales Invoice",
+    "edit_sales_invoice": "Edit Sales Invoice",
+    "details_sales_invoice": "Details Sales Invoice",
     "add_new_sales_invoice": "Add New Sales Invoice",
     "customer_name": "Customer Name",
     "amount": "Quantity",
     "consumption": "Consumption",
     "customer_name_is_required": "Customer name is Require",
-    "warehouse_is_required": "Warehouse is Require",
+    "warehouse_is_required": "Warehouse is requirer",
     "currency_is_required": "Currency is Require",
     "discount_percentage": "Discount Percentage",
     "discount_amount": "Discount Amount",
@@ -62,28 +64,36 @@
     "delete_description": "Once this invoice is deleted, you will no longer have access to it.",
     "quantity": "Quantity",
     "units": "Units",
-    "safe":"Safe",
-    "at_least_one_product_is_require":"At least one product is require",
-    "total_products":"Total Products",
-    "total_invoice_amount_after_discount":"Total invoice amount after discount",
-    "sell_invoices":"Sell invoices",
-    "sell_invoice":"Sell invoice",
-    "yes":"Yes",
+    "safe": "Safe",
+    "at_least_one_product_is_require": "At least one product is require",
+    "total_products": "Total Products",
+    "total_invoice_amount_after_discount": "Total invoice amount after discount",
+    "sell_invoices": "Sell invoices",
+    "sell_invoice": "Sell invoice",
+    "yes": "Yes",
     "calculated_currency": "Calculated Currency",
-    "amount_calculated":"Amount Calculated",
-    "invoice_number":"Invoice Number",
-    "created_at":"Created At",
-    "this_bill_successfully_saved":"This Bill Successfully saved",
-    "invoice_date":"Invoice Date",
-    "invoice_currency":"Invoice Currency",
-    "seller_signature":"Seller's Signature",
-    "customer_signature":"Customer's Signature",
-    "the_payment_term_is_up_to_3_months":"The payment term is up to 3 months",
-    "previous_balance":"Previous Balance",
-    "email":"Email",
-    "warehouse_delivery_note":"Warehouse delivery note",
-    "print_warehouse_note":"Print Warehouse Note",
-    "details":"Details"
+    "amount_calculated": "Amount Calculated",
+    "invoice_number": "Invoice Number",
+    "created_at": "Created At",
+    "this_bill_successfully_saved": "This Bill Successfully saved",
+    "invoice_date": "Invoice Date",
+    "invoice_currency": "Invoice Currency",
+    "seller_signature": "Seller's Signature",
+    "customer_signature": "Customer's Signature",
+    "the_payment_term_is_up_to_3_months": "The payment term is up to 3 months",
+    "previous_balance": "Previous Balance",
+    "email": "Email",
+    "warehouse_delivery_note": "Warehouse delivery note",
+    "print_warehouse_note": "Print Warehouse Note",
+    "details": "Details",
+    "product_is_required": "Product is required.",
+    "product_units_is_required": "Product units is required.",
+    "product_count_is_required": "Product Count is required",
+    "product_price_is_required": "Product Price is required",
+    "expire_in_date_is_required": "expire-in-date is required",
+    "add_new_product": "Add New Product",
+    "not_available": "Not available",
+    "in_warehouse": "in warehouse"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -230,13 +240,14 @@
     "employee-salary": "Employee salary",
     "invoice": "Invoice",
     "sales-invoice": "Sales Invoice",
-    "initial_inventory_registration":"Initial inventory registration"
+    "initial_inventory_registration": "Initial inventory registration",
+    "settings": "Company Profile"
   },
   "pages": {
     "dir": "ltr",
-    "journal":{
-          "journal_book":"Journal Book"
-        },
+    "journal": {
+      "journal_book": "Journal Book"
+    },
     "currency": {
       "message_title_delete": "Are you sure you want to delete this currency",
       "message_description_delete": "Once this currency is deleted, you will no longer have access to it.",
@@ -258,9 +269,9 @@
       "no_currency_registered": "No Currency Registered",
       "define_currency": "Define Currency",
       "current_rate_in_base_currency": "Current Rate in Base Currency ",
-       "currency_updated_successfully":"currency updated successfully",
-      "currency_saved_successfully":"Currency saved successfully",
-      "currency_rate_successfully_updated":"Currency rate successfully updated."
+      "currency_updated_successfully": "currency updated successfully",
+      "currency_saved_successfully": "Currency saved successfully",
+      "currency_rate_successfully_updated": "Currency rate successfully updated."
     },
     "login": {
       "welcome_to_alpha_accounting_software": "Welcome to alpha Accounting Software",
@@ -311,7 +322,7 @@
       "please_add_at_least_one_credit": "Please add at least one credit",
       "description_to_much": "The max length of description is 255 characters.",
       "currency_is_required": "Currency is required",
-      "bank_is_required":" Bank is required"
+      "bank_is_required": " Bank is required"
     },
     "cashbox": {
       "safes": "Safes",
@@ -506,10 +517,21 @@
       "warehouse_deleted_successfully": "Warehouse deleted successfully",
       "warehouse_name_is_required": "Warehouse name is require",
       "customer_name_is_required": "Customer name is require",
-      "address_is_too_long":"Address must not exceed 255 characters.",
-      "expiration_date":"Expiration Date",
+      "address_is_too_long": "Address must not exceed 255 characters.",
+      "expiration_date": "Expiration Date",
       "initial_inventory_saved_successfully": "Initial inventory saved successfully"
-      
+    },
+    "settings": {
+      "company_profile": "Company Profile",
+      "company_name": "Company Name",
+      "company_name_english": "Company Name in English",
+      "main_office_address": "Main office address",
+      "company_details": "Company details",
+      "description": "Description",
+      "bank_account_numbers": "Bank Account Numbers",
+      "contact_information": "Contact Information",
+      "add_new_bank_account": "Add New Bank Account",
+      "add_new_contact": "Add New Contact"
     }
   },
   "transactions": {

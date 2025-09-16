@@ -48,6 +48,8 @@
     "print_warehouse_receipt": "چاپ حواله گدام",
     "reset": "ریست",
     "sales_invoice": "فاکتور فروش",
+    "edit_sales_invoice": " اصلاح فاکتور فروش",
+    "details_sales_invoice": " جزئیات فاکتور فروش",
     "add_new_sales_invoice": "صدور فاکتور فروش جدید",
     "customer_name": "نام مشتری",
     "amount": "تعداد",
@@ -83,7 +85,15 @@
     "email":"ایمیل",
     "warehouse_delivery_note":"حواله گدام",
     "print_warehouse_note":"چاپ حواله گدام",
-    "details":"توضیحات"
+    "details":"توضیحات",
+     "product_name_is_required":"نام جنس حتمی است",
+    "product_units_is_required":"واحد جنس حتمی است",
+    "product_count_is_required":"تعداد جنس حتمی است",
+    "product_price_is_required":"قیمت جنس حتمی است",
+    "expire_in_date_is_required":"تاریخ انقضاء حتمی است",
+    "add_new_product":" افزودن جنس جدید",
+    "not_available":"موجود نمی باشد",
+    "in_warehouse":"در گدام"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -228,7 +238,8 @@
     "employee-salary":"ثبت معاش کارمندان ",
     "invoice":"فاکتور خرید و فروش",
     "sales-invoice":"فاکتور فروش",
-    "initial_inventory_registration":"ثبت اول دوره اجناس "
+    "initial_inventory_registration":"ثبت اول دوره اجناس ",
+    "settings":"پروفایل کمپنی"
   },
   "pages": {
         "dir": "rtl",
@@ -521,6 +532,20 @@
       "expiration_date":"تاریخ انقضاء",
       "initial_inventory_saved_successfully": "اول دوره اجناس ذخیره شد"
       
+    },
+    "settings":{
+      "company_profile": "پروفایل کمپنی",
+      "company_name":"نام شرکت",
+      "company_name_english":"نام شرکت به انگلیسی",
+      "main_office_address":"آدرس دفتر مرکزی",
+      "company_details":"جزئیات شرکت",
+      "description":"توضیحات",
+      "bank_account_numbers":"شماره حساب های بانکی",
+      "contact_information":"پل های ارتباطی",
+      "add_new_bank_account":"افزودن حساب بانکی جدید",
+      "add_new_contact":"افزودن پل ارتباطی جدید",
+      "bank":"انتخاب بانک"
+
     }
   },
   "transactions": {
