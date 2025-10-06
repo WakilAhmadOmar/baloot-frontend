@@ -159,7 +159,7 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       >
         <List>
           <LinkLayout
-            href={"/" + lang + "/invoice/purchase_invoice"}
+            href={"/" + lang + "/invoice/purchase-invoice"}
             lang={lang}
             open={true}
             text={t("purchase_invoice")}

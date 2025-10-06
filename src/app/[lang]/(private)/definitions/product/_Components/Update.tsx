@@ -15,12 +15,10 @@ import {
 import { CloseSquare, Edit } from "iconsax-react";
 import { ChangeEvent, useContext, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useApolloClient } from "@apollo/client";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 
 import ProductCategoriesComponent from "@/components/util/ProductCategory";
 import ProductMeansureComponent from "@/components/util/ProductMeansure";
-import { useAddProductMutation } from "@/hooks/api/definitions/product/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateProductMutation } from "@/hooks/api/definitions/product/mutations/use-update-mutation";
 import { useTranslations } from "next-intl";
@@ -41,7 +39,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       expirationDate: product?.expirationDate?.slice(0, 10),
       barcode: product?.barcode,
       currencyId: product?.currencyId?._id,
-      product_measure:product?.measures?.map((meas:any)=> meas?.measureId?.name)
+      product_measure:product?.price?.map((meas:any)=> meas?.measureId?.name)
     };
   }, [product]);
   const method = useForm<any>({
@@ -56,7 +54,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const defaultMeasure = useMemo(() => {
-    return product?.measures?.map((me: any) => ({
+    return product?.price?.map((me: any) => ({
       buyPrice: me?.buyPrice,
       measure: me?.measureId?._id,
       name: me?.measureId?.name,

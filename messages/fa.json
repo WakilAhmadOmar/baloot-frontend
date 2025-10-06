@@ -48,9 +48,11 @@
     "print_warehouse_receipt": "چاپ حواله گدام",
     "reset": "ریست",
     "sales_invoice": "فاکتور فروش",
+    "purchase_invoice": "فاکتور خرید",
     "edit_sales_invoice": " اصلاح فاکتور فروش",
     "details_sales_invoice": " جزئیات فاکتور فروش",
     "add_new_sales_invoice": "صدور فاکتور فروش جدید",
+    "add_new_purchase_invoice": "صدور فاکتور خرید جدید",
     "customer_name": "نام مشتری",
     "amount": "تعداد",
     "consumption": " مصارفات",
@@ -69,6 +71,7 @@
     "total_products":"مجموعه اجناس",
     "total_invoice_amount_after_discount":"جمله کل فاکتور بعد از تخفیف",
     "sell_invoices":"فاکتور های فروش",
+    "purchase_invoices":"فاکتور های خرید",
     "sell_invoice":"فاکتور فروش",
     "yes":"بله",
     "calculated_currency": "ارز محاسبه شده",
@@ -93,7 +96,8 @@
     "expire_in_date_is_required":"تاریخ انقضاء حتمی است",
     "add_new_product":" افزودن جنس جدید",
     "not_available":"موجود نمی باشد",
-    "in_warehouse":"در گدام"
+    "in_warehouse":"در گدام",
+    "cost_price":"قیمت تمام شد"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -238,6 +242,7 @@
     "employee-salary":"ثبت معاش کارمندان ",
     "invoice":"فاکتور خرید و فروش",
     "sales-invoice":"فاکتور فروش",
+    "purchase-invoice":"فاکتور خرید",
     "initial_inventory_registration":"ثبت اول دوره اجناس ",
     "settings":"پروفایل کمپنی"
   },

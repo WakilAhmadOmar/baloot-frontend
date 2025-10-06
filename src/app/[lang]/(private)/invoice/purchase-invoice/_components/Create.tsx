@@ -33,6 +33,8 @@ import { PrintWarehouseReceipt } from "./print-warehouse-receipt";
 import EditableProductTable from "./Table";
 import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-receive-customer-mutation";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
+import { useAddBuyBillMutation } from "@/hooks/api/invoice/mutations/use-add-buy-bill";
+import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -43,7 +45,7 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const CreateSalesInvoice = () => {
+const CreatePurchaseInvoice = () => {
   const t = useTranslations("invoice");
 
   const methods = useForm<CreateFormSchema>({
@@ -54,17 +56,32 @@ const CreateSalesInvoice = () => {
       currencyId: "",
       totalPrice: 0,
       contact_number: "",
-      totalPriceAfterDiscount: 0,
+      totalPriceAfterExpense: 0,
       paymentMethod: "cash",
-      receiver: "",
+      payerId: "",
       products: [
-        // {
-        //   productId: "",
-        //   productName: "",
-        //   measures: [],
-        //   warehouse: null,
-        //   expireInDate: [],
-        // },
+        {
+          productId: "",
+
+          measures: [
+      //       {
+      //   measureId: "",
+      //   measureName: "",
+      //   amount: 0,
+      //   buyPrice: 0,
+      //   expense: 0,        // <-- Always a number
+      //   totalExpense: 0,   // <-- Always a number
+      //   total: 0,          // <-- Always a number
+      //   selected: false,
+      // },
+          ],
+          warehouse: null,
+          expireInDate: new Date(),
+           expense: 0,           // <-- Always a number
+    totalExpense: 0,      // <-- Always a number
+
+
+        },
       ],
     },
   });
@@ -74,96 +91,102 @@ const CreateSalesInvoice = () => {
     handleSubmit,
     reset,
     setValue,
+    formState: { errors },
   } = methods;
 
-  const { paymentOff ,setPaymentOff} = useContext(InvoiceContext);
+  const { paymentOff, setPaymentOff } = useContext(InvoiceContext);
   const { setHandleError } = useContext(AppContext);
 
   const [openDialog, setOpenDialog] = useState(false);
   const theme = useTheme();
 
-  const { mutate: addSellsBillMutation, isLoading } = useAddSellsBillMutation();
-  const { mutate: addReceiveCustomer , isLoading: isLoadingReceive } = useAddReceiveCustomerMutation({
-    onSuccess: (data) => {
- 
-    },
-  });
+  const { mutate: addBuyBillMutation, isLoading } = useAddBuyBillMutation();
+  const { mutate: addPayToCustomer, isLoading: isLoadingReceive } =
+    useAddPayToCustomerMutation({
+      onSuccess: (data) => {},
+    });
 
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
-    setPaymentOff(null)
+    setPaymentOff(null);
     resetInvoiceFunction();
   };
 
+  function formatToYMD(value:Date) {
+  
+   const d = new Date(value);
+  if (isNaN(d.getTime())) return null;
+  d.setHours(0, 0, 0, 0); // strip time
+  return d;
+  
+  }
   const onSubmitFunction = async (data: CreateFormSchema) => {
     const variablesPayment = {
-      receiveObject: {
-        amount: parseFloat(`${data?.totalPriceAfterDiscount}`),
-        payerId: data?.customerId,
-        receiver: data?.receiver,
+      payOffObject: {
+        amount: parseFloat(`${data?.totalPriceAfterExpense}`),
+        payerId: data?.payerId,
+        receiver: data?.customerId,
         currencyId: data?.currencyId,
-        invoiceType: "ReceiveBill",
-        receiverType: "Safe",
+        invoiceType: "PayOffBill",
+        payerType: "Safe",
+        receiverType: "Customer",
       },
     };
 
-    let paymentMethod 
-    if (!paymentOff?._id){
-
+    let paymentMethod;
+    if (!paymentOff?._id) {
       paymentMethod = await new Promise((resolve, reject) => {
-       addReceiveCustomer(variablesPayment, {
-         onSuccess: (result) => {
-           resolve(result);
-         },
-         onError: (error: any) => {
-           setHandleError({
-             message: error.message,
-             status: "error",
-             open: true,
-           });
-           reject(error);
-         },
-       });
-     });
+        addPayToCustomer(variablesPayment, {
+          onSuccess: (result) => {
+            resolve(result);
+          },
+          onError: (error: any) => {
+            setHandleError({
+              message: error.message,
+              status: "error",
+              open: true,
+            });
+            reject(error);
+          },
+        });
+      });
     }
 
     const variables = {
-      sellBillObject: {
+      buyBillObject: {
         billDate: new Date(),
         currencyId: data?.currencyId,
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-          const [day, month, year] = item?.expireInDateSelected
-            .split("/")
-            .map(Number);
-          const expireInDate = new Date(`${year}-${month}-${day + 1}`);
+
           const productMeasures = item?.measures
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
               return {
                 measureId: dataItem?.measureId,
                 amountOfProduct: dataItem?.amount,
-                pricePerMeasure: dataItem?.sellPrice,
-                discountPercentage: dataItem?.discount || 0,
+                pricePerMeasure: dataItem?.buyPrice,
+                consumptionPrice: dataItem?.expense || 0,
               };
             });
           return {
             productId: item?.productId,
             productMeasures,
-            entrepotId: item?.warehouse?._id || data?.warehouseId,
-            expireInDate: expireInDate?.toISOString()?.split("T")[0],
+            // entrepotId: item?.warehouse?._id || data?.warehouseId,
+            expireInDate: item?.expireInDate,
+            // expireInDate:"2031-11-30",
           };
         }),
-        totalPrice: data?.totalPrice,
-        totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
-        transactionId: paymentOff?._id  || (paymentMethod as any)?._id,
-        receiveAmount: paymentOff?.amount || data?.totalPriceAfterDiscount,
-        
+        // totalPrice: data?.totalPrice,
+        totalPriceOfBillAfterConsumption: data?.totalPriceAfterExpense,
+        transactionId: paymentOff?._id || (paymentMethod as any)?._id,
+        status: "Accepted",
+        // receiveAmount: paymentOff?.amount || data?.totalPriceAfterExpense,
       },
     };
-
-    addSellsBillMutation(variables, {
+    console.log("variable", variables);
+    addBuyBillMutation(variables, {
       onSuccess: () => {
         setHandleError({
           message: t("this_bill_successfully_saved"),
@@ -183,15 +206,17 @@ const CreateSalesInvoice = () => {
 
   const resetInvoiceFunction = useCallback(() => {
     //reset the context
-setPaymentOff(null)
+    setPaymentOff(null);
 
     reset();
   }, []);
+
+  console.log("errors", errors);
   return (
     <FormProvider {...methods}>
       <Box>
         <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
-          {t("add_new_sales_invoice")}
+          {t("add_new_purchase_invoice")}
         </Button>
         <Dialog
           fullScreen
@@ -211,7 +236,7 @@ setPaymentOff(null)
           >
             <Toolbar>
               <Typography component="div" variant="button" sx={{ flex: 1 }}>
-                {t("sales_invoice")}
+                {t("purchase_invoice")}
               </Typography>
 
               <IconButton
@@ -254,11 +279,11 @@ setPaymentOff(null)
                 <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
-               <InputLabel required>
-                {" "}
-                {t("safe")} ( {t("receiver")} ){" "}
-              </InputLabel>
-              <CashBoxAutoComplete name={"receiver"} />
+                <InputLabel required>
+                  {" "}
+                  {t("safe")} ( {t("payer")} ){" "}
+                </InputLabel>
+                <CashBoxAutoComplete name={"payerId"} />
               </Grid2>
             </Grid2>
             <EditableProductTable />
@@ -299,4 +324,4 @@ setPaymentOff(null)
   );
 };
 
-export default CreateSalesInvoice;
+export default CreatePurchaseInvoice;

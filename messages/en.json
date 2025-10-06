@@ -49,9 +49,11 @@
     "print_warehouse_receipt": "Print Warehouse Receipt",
     "reset": "Reset",
     "sales_invoice": "Sales Invoice",
+    "purchase_invoice": "Purchase Invoice",
     "edit_sales_invoice": "Edit Sales Invoice",
     "details_sales_invoice": "Details Sales Invoice",
     "add_new_sales_invoice": "Add New Sales Invoice",
+    "add_new_purchase_invoice": "Add New purchase Invoice",
     "customer_name": "Customer Name",
     "amount": "Quantity",
     "consumption": "Consumption",
@@ -69,6 +71,7 @@
     "total_products": "Total Products",
     "total_invoice_amount_after_discount": "Total invoice amount after discount",
     "sell_invoices": "Sell invoices",
+    "purchase_invoices": "purchase Invoices",
     "sell_invoice": "Sell invoice",
     "yes": "Yes",
     "calculated_currency": "Calculated Currency",
@@ -93,7 +96,8 @@
     "expire_in_date_is_required": "expire-in-date is required",
     "add_new_product": "Add New Product",
     "not_available": "Not available",
-    "in_warehouse": "in warehouse"
+    "in_warehouse": "in warehouse",
+    "cost_price": "Cost Price"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -240,6 +244,7 @@
     "employee-salary": "Employee salary",
     "invoice": "Invoice",
     "sales-invoice": "Sales Invoice",
+    "purchase-invoice": "purchase Invoice",
     "initial_inventory_registration": "Initial inventory registration",
     "settings": "Company Profile"
   },

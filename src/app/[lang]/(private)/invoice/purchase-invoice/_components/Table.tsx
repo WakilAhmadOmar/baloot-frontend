@@ -12,45 +12,40 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form";
+import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
 import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
+import { uniqueId } from "lodash";
 import {
   Box,
+  Button,
   FormControl,
   FormControlLabel,
   Grid2,
   IconButton,
-  MenuItem,
   Radio,
   RadioGroup,
-  Select,
-  SelectChangeEvent,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import { useTranslations } from "next-intl";
-import {  Trash } from "iconsax-react";
+import { Add, Trash } from "iconsax-react";
 import PaymentReceiver from "./Payment";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { numberToWords } from "@/utils/numberToWords";
-import Moment from "react-moment";
-import { AddNewRow } from "./add-new-row";
 
 export default function BasicTable() {
   const t = useTranslations("invoice");
   const theme = useTheme();
   const { paymentOff } = useContext(InvoiceContext);
-
   const [calculateSellBill, setCalculateSellBill] = useState<{
     total: number;
-    discount?: number;
-    totalAfterDiscount: number;
+    expense: number;
     receipt: number;
     remain: number;
   }>({
     total: 0,
-    discount: 0,
-    totalAfterDiscount: 0,
+    expense: 0,
     receipt: 0,
     remain: 0,
   });
@@ -62,10 +57,12 @@ export default function BasicTable() {
     formState: { errors },
     getValues,
   } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "products",
   });
+ 
+
 
 
   const style = {
@@ -101,7 +98,15 @@ export default function BasicTable() {
       },
     },
   };
-
+  const handleAddNewProduct = () => {
+    append({
+      id: uniqueId(),
+      productId: "",
+      productName: "",
+      measures: [],
+      warehouse: "",
+    });
+  };
   const handleChangePaymentStatus = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -114,7 +119,7 @@ export default function BasicTable() {
   const products: any = useWatch({ name: "products" });
   useEffect(() => {
     const initialValue = 0;
-    let discount = 0;
+    let expense = 0;
     let price = 0;
     const sumWithInitial = products?.reduce(
       (accumulator: any, product: any) => {
@@ -122,11 +127,10 @@ export default function BasicTable() {
         const sumMeasures = product?.measures?.reduce(
           (accum: number, measure: any) => {
             if (measure?.selected) {
-              price = price + measure.sellPrice * (measure?.amount || 1);
-              discount =
-                discount +
-                ((measure?.sellPrice * measure?.discount) / 100 || 0);
-              return accum + (measure?.totalPrice || measure?.sellPrice);
+              price = price + measure.buyPrice * (measure?.amount || 1);
+              expense =
+                expense +( measure?.expense * measure?.amount);
+              return accum + (measure?.total || measure?.buyPrice);
             } else return accum;
           },
           measures
@@ -140,11 +144,10 @@ export default function BasicTable() {
       receipt: 0,
       remain: price,
       total: price,
-      totalAfterDiscount: price - discount,
-      discount,
+      expense:  expense,
     });
     setValue("totalPrice", price);
-    setValue("totalPriceAfterDiscount", price - discount);
+    setValue("totalPriceAfterExpense", price - expense);
   }, [JSON.stringify(products)]);
 
   const handleDeleteFunction = (event: MouseEvent<HTMLButtonElement>) => {
@@ -152,49 +155,82 @@ export default function BasicTable() {
     remove(id);
   };
 
-
-  const getSelectedProduct = (product: any) => {
-    append(product);
-  };
+  
 
   return (
     <Box sx={{ width: "100%", my: 3 }}>
-      {fields?.length > 0 && <TableContainer component={Paper}>
+      <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="right" sx={{ width: 200 }}>
                 {t("product_name")}
               </TableCell>
-              <TableCell align="right">{t("warehouse")}</TableCell>
               <TableCell align="right">{t("unit")}</TableCell>
               <TableCell align="right">{t("amount")}</TableCell>
               <TableCell align="right">{t("price")}</TableCell>
-              <TableCell align="right">{t("discount_percentage")}</TableCell>
-              <TableCell align="right">{t("discount_amount")}</TableCell>
-              <TableCell align="right">{t("expiration_date")}</TableCell>
+              <TableCell align="right">{t("expense")}</TableCell>
+              <TableCell align="right">{t("cost_price")}</TableCell>
               <TableCell align="right">{t("total")}</TableCell>
+              <TableCell align="right">{t("expiration_date")}</TableCell>
               <TableCell align="right">{t("actions")}</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody sx={{ position: "relative" }}>
             {fields?.map((row: any, rowIndex: number) => {
+              const rows = watch(`products.${rowIndex}`);
               return (
                 <TableRow
-                  key={row?.id}
+                  key={rows?.id}
                   sx={{
                     "&:last-child td, &:last-child th": {
-                      borderBottom: row?.error ? "1px solid red" : 0,
-                      borderTop: row?.error ? "1px solid red" : 0,
+                      borderBottom: rows?.error ? "1px solid red" : 0,
+                      borderTop: rows?.error ? "1px solid red" : 0,
                     },
                   }}
                 >
-                  <TableCell component="th" scope="row" align="right">
-                    <Typography>{row?.productName}</Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography width={"100%"} minWidth={80}>{row?.warehouseName}</Typography>
+                  <TableCell component="th" scope="row">
+                    <Controller
+                      control={control}
+                      name={`products.${rowIndex}.productId`}
+                      render={({ field }) => (
+                        <ProductsAutoComplete
+                          getProduct={async (product) => {
+                            field.onChange(product?._id);
+                            setValue(
+                              `products.${rowIndex}.productId`,
+                              product?._id
+                            );
+                            const measures = product?.price?.map(
+                              (item: any, index: number) => ({
+                                measureId: item?.measureId?._id,
+                                amount: 1,
+                                buyPrice: item?.buyPrice,
+                                expense: 0,
+                                selected: index === 0,
+                                measureName: item?.measureId?.name,
+                                total: item?.buyPrice,
+                                totalExpense:0
+                              })
+                            );
+                            setValue(`products.${rowIndex}.measures`, measures);
+                          }}
+                          isTable
+                          productIds={fields?.map(
+                            (item: any) => item?.productId
+                          )}
+                          error={
+                            !!(errors?.products as any)?.[rowIndex]?.productId
+                          }
+                        />
+                      )}
+                    />
+                    {(errors?.products as any)?.[rowIndex]?.productId && (
+                      <Typography color="error" variant="body1">
+                        {(errors.products as any)[rowIndex].productId.message}
+                      </Typography>
+                    )}
                   </TableCell>
                   <TableCell align="right">
                     <Controller
@@ -247,17 +283,7 @@ export default function BasicTable() {
                               `products.${rowIndex}.measures.${measureIndex}.amount`,
                               value
                             );
-                            const discountPercentage =
-                              item?.discountPercentage || 0;
-                            const sellPrice = item?.sellPrice || 0;
-                            const discountAmount = (
-                              (sellPrice * value * discountPercentage) /
-                              100
-                            ).toFixed(2);
-                            setValue(
-                              `products.${rowIndex}.measures.${measureIndex}.discount`,
-                              Number(discountAmount)
-                            );
+                            
                           }}
                           error={
                             !!(errors?.products as any)?.[rowIndex]?.amount
@@ -279,12 +305,12 @@ export default function BasicTable() {
                           size="small"
                           type="number"
                           placeholder="sell price"
-                          value={item?.sellPrice}
-                          name={`products.${rowIndex}.measures.${measureIndex}.sellPrice`}
+                          value={item?.buyPrice}
+                          name={`products.${rowIndex}.measures.${measureIndex}.buyPrice`}
                           onChange={(e) => {
                             const value = parseFloat(e.target.value) || 0;
                             setValue(
-                              `products.${rowIndex}.measures.${measureIndex}.sellPrice`,
+                              `products.${rowIndex}.measures.${measureIndex}.buyPrice`,
                               value
                             );
                           }}
@@ -309,24 +335,19 @@ export default function BasicTable() {
                             sx={style}
                             size="small"
                             type="number"
-                            placeholder="Discount percentage"
-                            value={item?.discountPercentage}
-                            name={`products.${rowIndex}.measures.${measureIndex}.discountPercentage`}
+                            placeholder={t("expense")}
+                            value={item?.expense}
+                            name={`products.${rowIndex}.measures.${measureIndex}.expense`}
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
                               setValue(
-                                `products.${rowIndex}.measures.${measureIndex}.discountPercentage`,
+                                `products.${rowIndex}.measures.${measureIndex}.expense`,
                                 value
                               );
-                              const sellPrice = item?.sellPrice || 0;
-                              const amount = item?.amount || 1;
-                              const discountAmount = (
-                                (sellPrice * amount * value) /
-                                100
-                              ).toFixed(2);
+                            
                               setValue(
-                                `products.${rowIndex}.measures.${measureIndex}.discount`,
-                                Number(discountAmount)
+                                `products.${rowIndex}.measures.${measureIndex}.totalExpense`,
+                                Number(value * item?.amount)
                               );
                             }}
                           />
@@ -341,31 +362,36 @@ export default function BasicTable() {
                           sx={style}
                           size="small"
                           type="number"
-                          placeholder="discount"
-                          value={item?.discount}
-                          name={`products.${rowIndex}.measures.${measureIndex}.discount`}
+                          placeholder={t("cost_price")}
+                          value={item?.totalExpense}
+                          name={`products.${rowIndex}.measures.${measureIndex}.totalExpanse`}
                           onChange={(e) => {
                             const value = parseFloat(e.target.value) || 0;
                             setValue(
-                              `products.${rowIndex}.measures.${measureIndex}.discount`,
+                              `products.${rowIndex}.measures.${measureIndex}.totalExpense`,
                               value
                             );
-                            const sellPrice = item?.sellPrice || 0;
-                            const amount = item?.amount || 1;
-                            const discountPercentage =
-                              sellPrice * amount > 0
-                                ? (
-                                    (value / (sellPrice * amount)) *
-                                    100
-                                  ).toFixed(2)
-                                : 0;
+                            const expense = ((item?.expense || 0) / item?.amount ).toFixed(2);
+                            
                             setValue(
-                              `products.${rowIndex}.measures.${measureIndex}.discountPercentage`,
-                              Number(discountPercentage)
+                              `products.${rowIndex}.measures.${measureIndex}.expense`,
+                              Number(expense)
                             );
                           }}
                         />
                       ))}
+                  </TableCell>
+                  <TableCell align="right">
+                    {watch(`products.${rowIndex}.measures`)
+                      ?.filter((f: any) => f.selected)
+                      ?.map((item: any, measureIndex: number) => {
+                        const total = (item?.buyPrice + item?.expense  ) * item?.amount;
+                        return (
+                          <Typography key={item?.measureId}>
+                            {Number.isInteger(total) ? total : total.toFixed(2)}
+                          </Typography>
+                        );
+                      })}
                   </TableCell>
                   <TableCell align="right">
                     <Controller
@@ -390,39 +416,14 @@ export default function BasicTable() {
                         }
 
                         return (
-                          <Select
+                          <TextField
                             {...field}
-                            fullWidth
-                            sx={{ minWidth: "10rem" }}
-                            value={new Date(
-                              expirationDate?.[0]
-                            ).toLocaleDateString("en-GB")}
+                            sx={style}
                             size="small"
-                            onChange={(event: SelectChangeEvent) => {
-                              setValue(
-                                `products.${rowIndex}.expireInDateSelected`,
-                                event?.target?.value
-                              );
-                            }}
-                            name={`products.${rowIndex}.expireInDateSelected`}
-                            error={
-                              !!(errors?.products as any)?.[rowIndex]
-                                ?.expireInDateSelected
-                            }
-                          >
-                            {(expirationDate || [])?.map(
-                              (item: string, index: number) => (
-                                <MenuItem
-                                  key={"expireInDate_" + index}
-                                  value={new Date(item)?.toLocaleDateString(
-                                    "en-GB"
-                                  )}
-                                >
-                                  <Moment format="YYYY/MM/DD">{item}</Moment>
-                                </MenuItem>
-                              )
-                            )}
-                          </Select>
+                            type="date"
+
+                          />
+
                         );
                       }}
                     />
@@ -435,22 +436,6 @@ export default function BasicTable() {
                         }
                       </Typography>
                     )}
-                  </TableCell>
-                  <TableCell align="right">
-                    {watch(`products.${rowIndex}.measures`)
-                      ?.filter((f: any) => f.selected)
-                      ?.map((item: any, measureIndex: number) => {
-                        const discount = item?.discount || 0;
-                        const amount = item?.amount || 1;
-                        const sellPrice = item?.sellPrice || 0;
-                        const total =
-                          sellPrice * amount - (sellPrice * discount) / 100;
-                        return (
-                          <Typography key={item?.measureId}>
-                            {Number.isInteger(total) ? total : total.toFixed(2)}
-                          </Typography>
-                        );
-                      })}
                   </TableCell>
 
                   <TableCell align="right">
@@ -475,7 +460,7 @@ export default function BasicTable() {
             })}
           </TableBody>
         </Table>
-      </TableContainer>}
+      </TableContainer>
       <Box
         sx={{
           backgroundColor: theme.palette.grey[100],
@@ -486,7 +471,14 @@ export default function BasicTable() {
         }}
         mt={1}
       >
-        <AddNewRow getSelectedProduct={getSelectedProduct} />
+        <Button
+          startIcon={<Add style={{ margin: "0 1rem" }} />}
+          variant={"outlined"}
+          size={"small"}
+          onClick={handleAddNewProduct}
+        >
+          {t("insert_new_row")}
+        </Button>
         <Typography variant="overline">{t("total_products")}</Typography>
         <Typography
           variant="overline"
@@ -551,6 +543,7 @@ export default function BasicTable() {
               {calculateSellBill.total}
             </Typography>
           </Box>
+         
           <Box
             sx={{ borderBottom: `1px solid ${theme.palette?.grey[100]}` }}
             display="grid"
@@ -563,10 +556,12 @@ export default function BasicTable() {
               paddingInlineStart={2}
             >
               {" "}
-              <Typography>{t("discount_amount")}</Typography>
+              <Typography>
+                {t("expense")}
+              </Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {calculateSellBill.discount}
+              {calculateSellBill?.expense}
             </Typography>
           </Box>
           <Box
@@ -586,7 +581,7 @@ export default function BasicTable() {
               </Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {calculateSellBill?.totalAfterDiscount}
+              {calculateSellBill?.total + calculateSellBill?.expense}
             </Typography>
           </Box>
           <Box

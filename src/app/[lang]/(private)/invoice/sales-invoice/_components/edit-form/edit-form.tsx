@@ -18,21 +18,11 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
-import WarehouseAutoComplete from "@/components/Auto/WarehouseAutoComplete";
-import { uniqueId } from "lodash";
 import {
   Box,
-  Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Grid2,
   IconButton,
-  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -41,15 +31,15 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { Add, InfoCircle, Trash } from "iconsax-react";
+import { Trash } from "iconsax-react";
 import { InvoiceContext } from "../../../_components/invoiceContext";
 import { numberToWords } from "@/utils/numberToWords";
-import { useGetProductCountInEntrepotQuery } from "@/hooks/api/invoice/queries/use-get-product-count-in-entrepot";
 import Moment from "react-moment";
 import EditCustomSelectMeasure from "./select-measure";
 import SkeletonComponent from "../../../_components/Skeleton";
 import { EditRow } from "./edit-row";
 import { SaveRow } from "./save-row";
+import { AddNewRow } from "../add-new-row";
 
 export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
   const t = useTranslations("invoice");
@@ -70,7 +60,6 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
     remain: 0,
   });
   const {
-    register,
     control,
     watch,
     setValue,
@@ -81,84 +70,8 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
     control,
     name: "products",
   });
-  const [productCount, setProductCount] = useState<{
-    productId: string;
-    entrepotId: string;
-    rowIndex: number | undefined;
-  }>({
-    productId: "",
-    entrepotId: "",
-    rowIndex: undefined,
-  });
+
   const [editProductId, setEditProductId] = useState<string | null>(null);
-    const [modalSelectProduct, setModalSelectProduct] = useState(false);
-  const [notFoundProduct, setNotFoundProduct] = useState({
-      productName: "",
-      warehouseName: "",
-    });
-  const {
-    data: selectedProduct,
-    isLoading: isLoadingProductCount,
-    remove: removeProductCountQuery,
-  } = useGetProductCountInEntrepotQuery(
-    productCount,
-    Boolean(productCount.productId && productCount.entrepotId)
-  );
-
-  useEffect(() => {
-    if (
-      selectedProduct?.productId?._id &&
-      typeof productCount.rowIndex === "number" &&
-      !isLoadingProductCount
-    ) {
-      const entrepotId = watch("warehouseId");
-
-      const error = selectedProduct?.productInfo?.[0]?.info?.some(
-        (item: any) => item?.amountOfProduct > 0
-      );
-      if (error) {
-        const products = watch(`products.${productCount?.rowIndex}`);
-        const measures = selectedProduct?.productInfo?.[0]?.info.map(
-          (item: any, index: number) => ({
-            measureId: item?.measureId?._id,
-            amount: 1,
-            sellPrice: item?.sellPrice,
-            discount: item?.discount,
-            selected: index === 0,
-            measureName: item?.measureId?.name,
-            discountPercentage: 0,
-          })
-        );
-        const newProduct = {
-          ...products,
-          expireInDate: selectedProduct?.productInfo?.map(
-            (item: any) => item?.expireInDate
-          ),
-          measures,
-        };
-
-        setValue(`products.${productCount?.rowIndex}`, newProduct);
-        setProductCount({
-          productId: "",
-          entrepotId: entrepotId,
-          rowIndex: undefined,
-        });
-        setModalSelectProduct(false);
-        setEditProductId(selectedProduct?.productId?._id)
-      } else {
-        setModalSelectProduct(true);
-        setNotFoundProduct({
-          productName: selectedProduct?.productId?.name,
-          warehouseName: watch("warehouseName"),
-        });
-      }
-    }
-  }, [
-    selectedProduct,
-    productCount?.entrepotId,
-    productCount?.productId,
-    isLoadingProductCount,
-  ]);
 
   const style = {
     width: "100%",
@@ -193,15 +106,7 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
       },
     },
   };
-  const handleAddNewProduct = () => {
-    append({
-      id: uniqueId(),
-      productId: "new-product",
-      productName: "",
-      measures: [],
-      warehouse: "",
-    });
-  };
+
 
   const products: any = useWatch({ name: "products" });
   useEffect(() => {
@@ -244,113 +149,15 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
   };
 
   const handleGetProductId = (id: string, warehouse: string) => {
-    setProductCount({
-      productId: id,
-      entrepotId: warehouse,
-      rowIndex: fields.findIndex((field: any) => field?.productId === id),
-    });
     setEditProductId(id);
   };
 
-    const handleOpenDialogSelectProduct = () => {
-    setModalSelectProduct(!modalSelectProduct);
+  const getSelectedProduct = (product: any) => {
+    append(product);
   };
+
   return (
     <Box sx={{ width: "100%", my: 3 }}>
-      <Dialog
-              open={modalSelectProduct}
-              keepMounted
-              onClose={handleOpenDialogSelectProduct}
-              aria-describedby="alert-dialog-slide-description"
-              dir={t("dir")}
-              fullWidth
-            >
-              <DialogTitle
-                className="dialogTitleDelete"
-                display={"flex"}
-                gap={1}
-                alignItems={"center"}
-                justifyContent={"space-between"}
-              >
-                <Typography variant="h5">
-                  {notFoundProduct?.productName} {t("in_warehouse")}(
-                  {notFoundProduct.warehouseName}){t("not_available")}
-                </Typography>
-                <InfoCircle size="32" color={theme.palette.warning.main} />
-              </DialogTitle>
-              <DialogContent className="dialogContentDelete">
-                <DialogContentText id="alert-dialog-slide-description">
-                  <Typography variant="body1" mb={3}>{t("add_new_product")}</Typography>
-                </DialogContentText>
-                <Grid2 container spacing={3}>
-                  <Grid2 size={6}>
-                    <InputLabel>{t("product_name")}</InputLabel>
-                    <Controller
-                      control={control}
-                      name={`products.${productCount?.rowIndex}.productId`}
-                      render={({ field }) => (
-                        <ProductsAutoComplete
-                          getProduct={async (product) => {
-                            removeProductCountQuery();
-                            field.onChange(product?._id);
-                            setValue(
-                              `products.${productCount?.rowIndex}.productId`,
-                              product?._id
-                            );
-                            setValue(
-                              `products.${productCount?.rowIndex}.productName`,
-                              product?.name
-                            );
-                            setProductCount((prevState) => ({
-                              ...prevState,
-                              productId: product?._id,
-                            }));
-                          }}
-                          isTable
-                          productIds={fields?.map((item: any) => item?.productId)}
-                        />
-                      )}
-                    />
-                  </Grid2>
-                  <Grid2 size={6}>
-                    <InputLabel>{t("warehouse")}</InputLabel>
-                    <Controller
-                      control={control}
-                      name={`products.${productCount?.rowIndex}.warehouse`}
-                      render={({ field }) => (
-                        <WarehouseAutoComplete
-                          name="warehouse"
-                          dir={t("dir")}
-                          getWarehouse={(data: any) => {
-                            removeProductCountQuery();
-                            setValue(
-                              `products.${productCount?.rowIndex}.warehouse`,
-                              data?._id
-                            );
-                            setValue(
-                              `products.${productCount?.rowIndex}.warehouseName`,
-                              data?.name
-                            );
-                            setProductCount((prevState) => ({
-                              ...prevState,
-                              entrepotId: data?._id,
-                            }));
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid2>
-                </Grid2>
-              </DialogContent>
-              <DialogActions
-                className="dialogActionDelete"
-                sx={{ display: "flex", gap: "1rem" }}
-              >
-                <Button onClick={handleOpenDialogSelectProduct} variant="outlined">
-                  {t("cancel")}
-                </Button>
-              </DialogActions>
-            </Dialog>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -396,94 +203,16 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                         // border: rows?.error ? "2px solid #fe1212" : undefined,
                       }}
                     >
-                      <TableCell component="th" scope="row">
-                        <Controller
-                          control={control}
-                          name={`products.${rowIndex}.productId`}
-                          render={({ field }) => (
-                            <ProductsAutoComplete
-                              // defaultValue={{
-                              //   ...row,
-                              //   id: rows?.productId,
-                              //   label: rows?.productName,
-                              // }}
-                              getProduct={async (product) => {
-                                field.onChange(product?._id);
-                                setValue(
-                                  `products.${rowIndex}.productId`,
-                                  product?._id
-                                );
-                                setValue(
-                                  `products.${rowIndex}.productName`,
-                                  product?.name
-                                );
-                                setProductCount({
-                                  entrepotId: watch("warehouseId"),
-                                  productId: product?._id,
-                                  rowIndex: rowIndex,
-                                });
-                                setEditProductId(product?._id)
-                              }}
-                              isTable
-                              productIds={fields?.map(
-                                (item: any) => item?.productId
-                              )}
-                              error={
-                                !!(errors?.products as any)?.[rowIndex]
-                                  ?.productId
-                              }
-                            />
-                          )}
-                        />
-                        {(errors?.products as any)?.[rowIndex]?.productId && (
-                          <Typography color="error" variant="body1">
-                            {
-                              (errors.products as any)[rowIndex].productId
-                                .message
-                            }
-                          </Typography>
-                        )}
+                      <TableCell component="th" scope="row" align="right">
+                        <Typography>
+                          {rows?.productName}
+                        </Typography>
                       </TableCell>
                       <TableCell align="right">
-                        <Controller
-                          control={control}
-                          name={`products.${rowIndex}.warehouse`}
-                          render={({ field }) => (
-                            <WarehouseAutoComplete
-                              name={`products.${rowIndex}.warehouse`}
-                              dir={t("dir")}
-                              getWarehouse={(data: any) => {
-                                setValue(
-                                  `products.${rowIndex}.warehouse`,
-                                  data?._id
-                                );
-                                setValue(
-                                  `products.${rowIndex}.warehouseName`,
-                                  data?.name
-                                );
-                                field.onChange(data?._id);
-                                setProductCount((prevState)=>({
-                                  ...prevState,
-                                  entrepotId: data?._id,
-                                  rowIndex:rowIndex
-                                 
-                                }));
-                              }}
-                              error={
-                                !!(errors?.products as any)?.[rowIndex]
-                                  ?.warehouse
-                              }
-                            />
-                          )}
-                        />
-                        {(errors?.products as any)?.[rowIndex]?.warehouse && (
-                          <Typography color="error" variant="body1">
-                            {
-                              (errors.products as any)[rowIndex].warehouse
-                                .message
-                            }
-                          </Typography>
-                        )}
+                        <Typography width={100}>
+
+                        {rows?.warehouseName}
+                        </Typography>
                       </TableCell>
                       <TableCell align="right">
                         <Controller
@@ -504,15 +233,8 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                                         (sel) =>
                                           sel.measureId === measure.measureId
                                       ),
-
-                                      // ...measure,
-                                      // selected: selectedMeasures.some(
-                                      //   (sel) => sel.measureId === measure.measureId
-                                      // ),
                                     })
                                   );
-                                  // update(rowIndex , updatedMeasures)
-                                  // setValue(`products.${rowIndex}.measures`, updatedMeasures);
                                   field.onChange(updatedMeasures);
                                 }}
                               />
@@ -545,7 +267,6 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                                   parseFloat(e.target.value) > 1
                                     ? parseFloat(e?.target.value)
                                     : 1;
-                                // field.onChange(value);
                                 setValue(
                                   `products.${rowIndex}.measures.${measureIndex}.amount`,
                                   value
@@ -590,19 +311,6 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                                   `products.${rowIndex}.measures.${measureIndex}.sellPrice`,
                                   value
                                 );
-                                // field.onChange(value);
-                                // const discountPercentage =
-                                //   measures[measureIndex]?.discountPercentage || 0;
-                                // const sellPrice =
-                                //   measures[measureIndex]?.sellPrice || 0;
-                                // const discountAmount = (
-                                //   (sellPrice * value * discountPercentage) /
-                                //   100
-                                // ).toFixed(2);
-                                // setValue(
-                                //   `products.${rowIndex}.measures.${measureIndex}.discount`,
-                                //   Number(discountAmount)
-                                // );
                               }}
                               error={
                                 !!(errors?.products as any)?.[rowIndex]
@@ -779,6 +487,8 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                       </TableCell>
 
                       <TableCell align="right">
+                        <Box display={"flex"} gap={"0.5rem"}>
+
                         <SaveRow
                           getProductId={(id: string) => setEditProductId(id)}
                         />
@@ -797,6 +507,7 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                             }
                           />
                         </IconButton>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   );
@@ -903,7 +614,6 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                           getProductId={handleGetProductId}
                           productId={rows?.productId}
                           warehouse={rows?.warehouse}
-                          isLoading={isLoadingProductCount}
                         />
                         <IconButton
                           size="medium"
@@ -939,15 +649,7 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
         }}
         mt={1}
       >
-        <Button
-          startIcon={<Add style={{ margin: "0 1rem" }} />}
-          variant={"outlined"}
-          size={"small"}
-          onClick={handleAddNewProduct}
-          // disabled={paymentOff?._id ? true : false}
-        >
-          {t("insert_new_row")}
-        </Button>
+        <AddNewRow getSelectedProduct={getSelectedProduct} />
         <Typography variant="overline">{t("total_products")}</Typography>
         <Typography
           variant="overline"
