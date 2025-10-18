@@ -246,7 +246,12 @@
     "sales-invoice": "Sales Invoice",
     "purchase-invoice": "purchase Invoice",
     "initial_inventory_registration": "Initial inventory registration",
-    "settings": "Company Profile"
+    "settings": "Company Profile",
+    "financial-reports":"financial-reports",
+    "financial_statement":"Financial Statement",
+    "expense":"Expense",
+    "profit-loss":"Profit and Loss Statement",
+    "total-balance":"Total Balance in Base Currency"
   },
   "pages": {
     "dir": "ltr",
@@ -609,6 +614,23 @@
     "this_external_income_will_be_deleted": "Once this external income is deleted, you will no longer have access to it.",
     "are_you_sure_to_delete_this_salary": "Are you sure to delete this salary?",
     "this_salary_will_be_deleted": "Once this salary is deleted, you will no longer have access to it."
+  },
+   "financial_reports":{
+    "employees_reports": "Employees Reports",
+    "customers_reports": "Customers Reports",
+    "financial_statement":"Financial Statement",
+    "description":"Description",
+    "debit":"Debit",
+    "credit":"Credit",
+    "currency":"Currency",
+    "calculated_currency":"Calculated Currency",
+    "date":"Date",
+    "expense_reports":"Expense Reports",
+    "no_statements_have_been_recorded":"No statements have been recorded",
+    "debit_balance":"Debit Balance",
+    "credit_balance":"Credit Balance",
+    "total_remaining":"Total Remaining"
+
   },
   "numberToWord": {
     "zero": "Zero",

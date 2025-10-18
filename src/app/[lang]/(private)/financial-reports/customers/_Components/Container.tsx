@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import CustomSearch from "@/components/search/CustomSearch";
+import { useGetCustomerListQuery } from "@/hooks/api/definitions/customer/queries/use-get-customer-list-query";
 import {
   Box,
   IconButton,
@@ -16,20 +17,28 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useState } from "react";
+import SkeletonComponent from "../../_components/Skeleton";
+import { useTranslations } from "next-intl";
+import { EmptyComponent } from "../../_components/empty";
 
-interface IPropsCollapseContainer {
-    t:any
-}
-const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
+type CustomerFunctionReportsIProps = {
+  lang: "en" | "fa";
+};
+
+const CustomerFinancialReports: React.FC<CustomerFunctionReportsIProps> = ({
+  lang,
+}) => {
+  const t = useTranslations("financial_reports");
   const theme = useTheme();
-  const [loadingPage, setLoadingPage] = useState(false);
-  // const router = useRouter();
+  const [page, setPage] = useState(1);
+  const { data: customerList, isLoading } = useGetCustomerListQuery({ page });
+
   const routeToDetailsPage = () => {
     // router?.push("/financial-reports/customers/details");
   };
   return (
     <Box>
-      <Typography variant="h3">صورت حساب مشتریان</Typography>
+      <Typography variant="h3"> {t("customers_reports")}</Typography>
       <Box
         display={"flex"}
         columnGap={"1rem"}
@@ -41,73 +50,79 @@ const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
         <Box display={"flex"} justifyItems={"center"}>
           {/* <DateRangePickerComponent /> */}
         </Box>
-        <Box pt={1}>
-          <CustomSearch  />
-        </Box>
+        <Box pt={1}>{/* <CustomSearch  /> */}</Box>
       </Box>
-      <Box
-        onClick={routeToDetailsPage}
-        sx={{
-          bgcolor: theme.palette.background.default,
-          display: "flex",
-          justifyContent: "space-between",
-          borderRadius: "8px",
-          alignItems: "center",
-          cursor: "pointer",
-        }}
-        pl={2}
-        pr={2}
-        pt={2.5}
-        pb={2.5}
-        m={0.5}
-      >
-        <Typography variant="h5">وکیل احمد عمری</Typography>
-        
-        <Box display={"flex"} alignItems={"center"} gap={"1rem"} alignContent={"center"} >
-        <Typography variant="body1" justifySelf={"center"} my={"auto"}  display={"flex"}>10000 افغانی</Typography>
-        <MinusCirlce color={theme.palette.error.main} size={20}/>
-        </Box>
-      </Box>
-      <Link href={"#"}>
-      <Box
-        onClick={routeToDetailsPage}
-        sx={{
-        bgcolor: theme.palette.background.default,
-          display: "flex",
-          justifyContent: "space-between",
-          borderRadius: "8px",
-          alignItems: "center",
-          cursor: "pointer",
-        }}
-        pl={2}
-        pr={2}
-        pt={2.5}
-        pb={2.5}
-        m={0.5}
-      >
-        <Typography variant="h5">وکیل احمد عمری</Typography>
-        <Box display={"flex"} alignItems={"center"} gap={"1rem"} alignContent={"center"} >
-        <Typography variant="body1" justifySelf={"center"} my={"auto"}  display={"flex"}>10000 افغانی</Typography>
-        <AddCircle color={theme.palette.primary.main} size={20}/>
-        </Box>
-      </Box>
-      </Link>
-      
+      {isLoading && <SkeletonComponent />}
+      {!isLoading && customerList?.count === 0 && (
+        <EmptyComponent text={t("no_statements_have_been_recorded")} />
+      )}
+      {customerList?.customer?.map((item: any) => (
+        <Link
+          href={
+            "/" +
+            lang +
+            "/financial-reports/customers/" +
+            item?._id +
+            "?name=" +
+            item?.fullName
+          }
+          key={item?._id}
+        >
+          <Box
+            // onClick={routeToDetailsPage}
+            sx={{
+              bgcolor: theme.palette.background.default,
+              display: "flex",
+              justifyContent: "space-between",
+              borderRadius: "8px",
+              alignItems: "center",
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: theme.palette.grey[100],
+              },
+            }}
+            pl={2}
+            pr={2}
+            pt={2.5}
+            pb={2.5}
+            m={0.5}
+          >
+            <Typography variant="h5">{item?.fullName}</Typography>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              gap={"1rem"}
+              alignContent={"center"}
+            >
+              <Typography
+                variant="body1"
+                justifySelf={"center"}
+                my={"auto"}
+                display={"flex"}
+              >
+                {item?.contactNumber}
+              </Typography>
+              {/* <AddCircle color={theme.palette.primary.main} size={20}/> */}
+            </Box>
+          </Box>
+        </Link>
+      ))}
 
-      <Stack
-        spacing={2}
-        sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
-      >
-        {/* <Pagination count={10} shape="rounded" /> */}
-        <Pagination
-          count={10}
-          variant="outlined"
-          shape="rounded"
-          color={"primary"}
-        />
-      </Stack>
+      {customerList?.count > 9 && (
+        <Stack
+          spacing={2}
+          sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
+        >
+          {/* <Pagination count={10} shape="rounded" /> */}
+          <Pagination
+            count={Math.ceil(customerList?.count / 10)}
+            variant="outlined"
+            shape="rounded"
+            color={"primary"}
+          />
+        </Stack>
+      )}
     </Box>
   );
 };
 export default CustomerFinancialReports;
-

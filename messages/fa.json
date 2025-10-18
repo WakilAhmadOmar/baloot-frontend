@@ -244,7 +244,15 @@
     "sales-invoice":"فاکتور فروش",
     "purchase-invoice":"فاکتور خرید",
     "initial_inventory_registration":"ثبت اول دوره اجناس ",
-    "settings":"پروفایل کمپنی"
+    "settings":"پروفایل کمپنی",
+    "financial-reports":"گزارشات مالی",
+    "financial_statement":"صورت حساب ",
+    "expense":"مصارفات",
+    "profit-loss":" صورت حساب مفاد ضرر",
+    "total-balance":"بیلانس کل با ارز معیاری",
+    "debit_balance":"موجودی دیبت",
+    "credit_balance":"موجودی کردیت",
+    "total_remaining":"الباقی"
   },
   "pages": {
         "dir": "rtl",
@@ -625,6 +633,19 @@
     "this_salary_will_be_deleted":"این معاش حذف شود دوباره به آن دسترسی نخواهید داشت."
 
 
+  },
+  "financial_reports":{
+    "employees_reports": "صورت حساب کارمندان",
+    "customers_reports": "صورت حساب مشتریان",
+    "financial_statement":"صورت حساب ",
+    "description":"توضیحات",
+    "debit":"دبیت",
+    "credit":"کردیت",
+    "currency":"ارز",
+    "calculated_currency":"ارز محاسبه شده",
+    "date":"تاریخ",
+    "expense_reports":"صورت‌حساب مصارفات",
+    "no_statements_have_been_recorded":"هیچ صورت حسابی ثبت نشده است"
   },
   "numberToWord": {
     "zero": " صفر",

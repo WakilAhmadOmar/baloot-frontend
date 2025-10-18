@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import CustomSearch from "@/components/search/CustomSearch";
+import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-list-query";
 import {
   Box,
   IconButton,
@@ -12,27 +13,33 @@ import {
   useTheme,
 } from "@mui/material";
 import { AddCircle, ExportSquare, MinusCirlce, Printer } from "iconsax-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useState } from "react";
+import SkeletonComponent from "../../_components/Skeleton";
+import { EmptyComponent } from "../../_components/empty";
+import { useGetEmployeeTransactionBalanceByEmployeeIdQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-transaction-balance-by-employee-id";
 
 interface IPropsCollapseContainer {
-    t:any
+  lang: "en" | "fa";
 }
-const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
+const CustomerFinancialReports: React.FC<IPropsCollapseContainer> = ({
+  lang,
+}) => {
   const theme = useTheme();
-  const [loadingPage, setLoadingPage] = useState(false);
-//   const router = useRouter();
-  const routeToDetailsPage = () => {
-    // router?.push({
-    //   pathname: "/financialReports/customerAccounts/details",
-    //   query: { ID: "accountId" },
-    // });
+  const t = useTranslations("financial_reports");
+  const [page, setPage] = useState(1);
+  const { data: employeeList, isLoading } = useGetEmployeeListQuery({ page });
+
+
+  const handleChangePagination = (event: any, page: number) => {
+    setPage(page);
   };
   return (
     <Box>
-      <Typography variant="h3">صورت حساب کارمندان</Typography>
+      <Typography variant="h3">{t("employees_reports")}</Typography>
       <Box
         display={"flex"}
         columnGap={"1rem"}
@@ -44,73 +51,79 @@ const CustomerFinancialReports:React.FC<IPropsCollapseContainer> = ({t}) => {
         <Box display={"flex"} justifyItems={"center"}>
           {/* <DateRangePickerComponent /> */}
         </Box>
-        <Box pt={1}>
-          <CustomSearch  />
-        </Box>
+        <Box pt={1}>{/* <CustomSearch  /> */}</Box>
       </Box>
-      <Box
-        // onClick={routeToDetailsPage}
-        sx={{
-          bgcolor: theme.palette.background.default,
-          display: "flex",
-          justifyContent: "space-between",
-          borderRadius: "8px",
-          alignItems: "center",
-          cursor: "pointer",
-        }}
-        pl={2}
-        pr={2}
-        pt={2.5}
-        pb={2.5}
-        m={0.5}
-      >
-        <Typography variant="h5">وکیل احمد عمری</Typography>
-        
-        <Box display={"flex"} alignItems={"center"} gap={"1rem"} alignContent={"center"} >
-        <Typography variant="body1" justifySelf={"center"} my={"auto"}  display={"flex"}>10000 افغانی</Typography>
-        <MinusCirlce color={theme.palette.error.main} size={20}/>
-        </Box>
-      </Box>
-      <Link href={"#"}>
-      <Box
-        // onClick={routeToDetailsPage}
-        sx={{
-        bgcolor: theme.palette.background.default,
-          display: "flex",
-          justifyContent: "space-between",
-          borderRadius: "8px",
-          alignItems: "center",
-          cursor: "pointer",
-        }}
-        pl={2}
-        pr={2}
-        pt={2.5}
-        pb={2.5}
-        m={0.5}
-      >
-        <Typography variant="h5">وکیل احمد عمری</Typography>
-        <Box display={"flex"} alignItems={"center"} gap={"1rem"} alignContent={"center"} >
-        <Typography variant="body1" justifySelf={"center"} my={"auto"}  display={"flex"}>10000 افغانی</Typography>
-        <AddCircle color={theme.palette.primary.main} size={20}/>
-        </Box>
-      </Box>
-      </Link>
-      
+      {isLoading && <SkeletonComponent />}
+      {!isLoading && employeeList?.count === 0 && (
+        <EmptyComponent text={t("no_statements_have_been_recorded")} />
+      )}
+      {employeeList?.employee?.map((item: any) => (
+        <Link
+          href={
+            "/" +
+            lang +
+            "/financial-reports/employees/" +
+            item?._id +
+            "?name=" +
+            item?.name
+          }
+          id={item?._id}
+        >
+          <Box
+            sx={{
+              bgcolor: theme.palette.background.default,
+              display: "flex",
+              justifyContent: "space-between",
+              borderRadius: "8px",
+              alignItems: "center",
+              cursor: "pointer",
+              "&:hover": {
+                backgroundColor: theme.palette.grey[100],
+              },
+            }}
+            pl={2}
+            pr={2}
+            pt={2.5}
+            pb={2.5}
+            m={0.5}
+          >
+            <Typography variant="h5"> {item?.name}</Typography>
+            <Box
+              display={"flex"}
+              alignItems={"center"}
+              gap={"1rem"}
+              alignContent={"center"}
+            >
+              <Typography
+                variant="body1"
+                justifySelf={"center"}
+                my={"auto"}
+                display={"flex"}
+              >
+                {item?.phoneNumber}{" "}
+              </Typography>
+              {/* <AddCircle color={theme.palette.primary.main} size={20}/> */}
+            </Box>
+          </Box>
+        </Link>
+      ))}
 
-      <Stack
-        spacing={2}
-        sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
-      >
-        {/* <Pagination count={10} shape="rounded" /> */}
-        <Pagination
-          count={10}
-          variant="outlined"
-          shape="rounded"
-          color={"primary"}
-        />
-      </Stack>
+      {employeeList?.count > 9 && (
+        <Stack
+          spacing={2}
+          sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
+        >
+          {/* <Pagination count={10} shape="rounded" /> */}
+          <Pagination
+            count={Math.ceil(employeeList?.count / 10)}
+            variant="outlined"
+            shape="rounded"
+            color={"primary"}
+            onChange={handleChangePagination}
+          />
+        </Stack>
+      )}
     </Box>
   );
 };
 export default CustomerFinancialReports;
-

@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import { useGetConsumptionListQuery } from "@/hooks/api/transactions/queries/use-get-consumption-list";
 // import DateRangePickerComponent from "@/components/muiComponent/dateRangePickerComponent";
 // import CustomSearch from "@/components/muiComponent/search";
 import {
@@ -15,12 +16,33 @@ import {
   useTheme,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import Moment from "react-moment";
+import SkeletonComponent from "../../_components/Skeleton";
+import { EmptyComponent } from "../../_components/empty";
+import { useGetConsumptionReportQuery } from "@/hooks/api/definitions/consumption/queries/use-get-consumption-report";
 
-const ExpensesAccountsPage = ({t}:{t:any}) => {
+const ExpensesAccountsPage = () => {
   const theme = useTheme();
+  const t = useTranslations("financial_reports");
+  const [page, setPage] = useState(1);
+  const {
+    data: consumptionList,
+    isLoading,
+    refetch,
+  } = useGetConsumptionListQuery({
+    page,
+  });
+  const { data: consumptionReport, isLoading: isLoadingConsumption } =
+    useGetConsumptionReportQuery();
+  const handleChangePage = (event: any, page: number) => {
+    setPage(page);
+    refetch();
+  };
   return (
     <Box>
-      <Typography variant="h3">صورت حساب مصارفات</Typography>
+      <Typography variant="h3">{t("expense_reports")}</Typography>
       <Box
         display={"flex"}
         columnGap={"1rem"}
@@ -37,148 +59,120 @@ const ExpensesAccountsPage = ({t}:{t:any}) => {
         </Box>
       </Box>
       <Box>
-        <TableContainer component={Paper}>
-          <Table
-            sx={{
-              minWidth: 650,
-              fontWeight: 400,
-              fontSize: "1.4rem",
-              boxShadow: "none",
-            }}
-            aria-label="simple table"
-          >
-            <TableHead sx={{ bgcolor: theme.palette.background.default }}>
-              <TableRow>
-                <TableCell align="right" width={"20%"}>
-                  توضیحات
-                </TableCell>
-                <TableCell align="right">دبیت</TableCell>
-                <TableCell align="right">کردیت</TableCell>
-                <TableCell align="right">الباقی</TableCell>
-                <TableCell align="right">ارز</TableCell>
-                <TableCell align="right">تاریخ</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rows.map((row) => ( */}
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-              <TableRow
-                // key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="right">فاکتور فروش</TableCell>
-                <TableCell align="right">4000</TableCell>
-                <TableCell align="right">0</TableCell>
-                <TableCell align="right">1000</TableCell>
-                <TableCell align="right">افغانی </TableCell>
-                <TableCell align="right">1402/12/20</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {isLoading && <SkeletonComponent />}
+        {!isLoading && consumptionList?.count === 0 && (
+          <EmptyComponent text={t("no_statements_have_been_recorded")} />
+        )}
+        {consumptionList?.count > 0 && (
+          <TableContainer component={Paper}>
+            <Table
+              sx={{
+                minWidth: 650,
+                fontWeight: 400,
+                fontSize: "1.4rem",
+                boxShadow: "none",
+              }}
+              aria-label="simple table"
+            >
+              <TableHead sx={{ bgcolor: theme.palette.background.default }}>
+                <TableRow>
+                  <TableCell align="right" width={"20%"}>
+                    نام پرداخت کننده
+                  </TableCell>
+                  <TableCell align="right">توضیحات</TableCell>
+                  <TableCell align="right">مبلغ</TableCell>
+                  <TableCell align="right">ارز</TableCell>
+                  <TableCell align="right">نوع مصرف</TableCell>
+                  <TableCell align="right">تاریخ</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/* {rows.map((row) => ( */}
+
+                {consumptionList?.consumption?.map((item: any) => (
+                  <TableRow
+                    // key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell align="right">{item?.payer?.name}</TableCell>
+                    <TableCell align="right">{item?.description}</TableCell>
+                    <TableCell align="right">{item?.amount}</TableCell>
+                    <TableCell align="right">
+                      {item?.currencyId?.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      {item?.consumptionTypeId?.name}{" "}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Moment format="YYYY/MM/DD">{item?.createdAt}</Moment>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
-      <Box>دیبت و کردیت</Box>
-      <Box display="flex" justifyContent={"end"} mt={2}>
-        <Stack spacing={2} p={1}>
-          <Pagination
-            count={Math.ceil(100 / 10)}
-            size={"medium"}
-            shape="rounded"
-            variant="outlined"
-            color="primary"
-            // onChange={handleChangePage}
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>
+      {consumptionList?.count > 9 && (
+        <Box display="flex" justifyContent={"end"} mt={2}>
+          <Stack spacing={2} p={1}>
+            <Pagination
+              count={Math.ceil(consumptionList?.count / 10)}
+              size={"medium"}
+              shape="rounded"
+              variant="outlined"
+              color="primary"
+              onChange={handleChangePage}
+              sx={{
+                fontSize: "2rem !important",
+              }}
+            />
+          </Stack>
+        </Box>
+      )}
+      <Box>
+        {consumptionReport?.map((item: any) => (
+          <Box
+            display={"grid"}
+            gridTemplateColumns={"12rem auto"}
+            alignItems={"center"}
+            mt={2}
+            key={item?.currencyId?._id}
+          >
+            <Typography variant="subtitle2" >
+              {item?.currencyId?.name}
+            </Typography>
+            <Box
+              display={"grid"}
+              gridTemplateColumns={"32.5% 32.5% 32.5%"}
+              justifyContent={"space-between"}
+            >
+              <Box
+                display={"grid"}
+                gridTemplateColumns={"50% 50%"}
+                alignItems={"center"}
+                sx={{
+                  border: `1px solid ${theme.palette.grey[200]}`,
+                  overflow: "hidden",
+                }}
+                borderRadius={"8px"}
+              >
+                <Typography p={1.5} variant="subtitle2">
+                  مقدار مصرف
+                </Typography>
+                <Box
+                  bgcolor={theme.palette.background.default}
+                  height={"100%"}
+                  p={1.5}
+                >
+                  <Typography variant="subtitle2">
+                    {item?.totalAmount || 0}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        ))}
       </Box>
     </Box>
   );
