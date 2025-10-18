@@ -12,24 +12,13 @@ import {
   useFormContext,
   useWatch,
 } from "react-hook-form";
-import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
-import WarehouseAutoComplete from "@/components/Auto/WarehouseAutoComplete";
 import CustomSelectMeasure from "../../_components/customeSeleteMeasure";
-import { uniqueId } from "lodash";
 import {
   Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
   FormControlLabel,
   Grid2,
   IconButton,
-  InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
@@ -40,18 +29,18 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { Add, InfoCircle, Trash } from "iconsax-react";
+import {  Trash } from "iconsax-react";
 import PaymentReceiver from "./Payment";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { numberToWords } from "@/utils/numberToWords";
-import { useGetProductCountInEntrepotQuery } from "@/hooks/api/invoice/queries/use-get-product-count-in-entrepot";
 import Moment from "react-moment";
+import { AddNewRow } from "./add-new-row";
 
 export default function BasicTable() {
   const t = useTranslations("invoice");
   const theme = useTheme();
   const { paymentOff } = useContext(InvoiceContext);
-  const [modalSelectProduct, setModalSelectProduct] = useState(false);
+
   const [calculateSellBill, setCalculateSellBill] = useState<{
     total: number;
     discount?: number;
@@ -73,85 +62,11 @@ export default function BasicTable() {
     formState: { errors },
     getValues,
   } = useFormContext();
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "products",
   });
-  const [productCount, setProductCount] = useState<{
-    productId: string;
-    entrepotId: string;
-    rowIndex: number | undefined;
-  }>({
-    productId: "",
-    entrepotId: "",
-    rowIndex: 0,
-  });
-  const [notFoundProduct, setNotFoundProduct] = useState({
-    productName: "",
-    warehouseName: "",
-  });
-  const {
-    data: selectedProduct,
-    isLoading,
-    remove: removeProductCountQuery,
-  } = useGetProductCountInEntrepotQuery(
-    productCount,
-    Boolean(productCount.productId && productCount.entrepotId)
-  );
 
-  useEffect(() => {
-    if (
-      selectedProduct?.productId?._id &&
-      typeof productCount.rowIndex === "number" &&
-      !isLoading
-    ) {
-      const entrepotId = watch("warehouseId");
-
-      const error = selectedProduct?.productInfo?.[0]?.info?.some(
-        (item: any) => item?.amountOfProduct > 0
-      );
-      if (error) {
-        const products = watch(`products.${productCount?.rowIndex}`);
-        const measures = selectedProduct?.productInfo?.[0]?.info.map(
-          (item: any, index: number) => ({
-            measureId: item?.measureId?._id,
-            amount: 1,
-            sellPrice: item?.sellPrice,
-            discount: item?.discount,
-            selected: index === 0,
-            measureName: item?.measureId?.name,
-            discountPercentage: 0,
-          })
-        );
-        const newProduct = {
-          ...products,
-          expireInDate: selectedProduct?.productInfo?.map(
-            (item: any) => item?.expireInDate
-          ),
-          measures,
-        };
-
-        setValue(`products.${productCount?.rowIndex}`, newProduct);
-        setProductCount({
-          productId: "",
-          entrepotId: entrepotId,
-          rowIndex: undefined,
-        });
-        setModalSelectProduct(false);
-      } else {
-        setModalSelectProduct(true);
-        setNotFoundProduct({
-          productName: selectedProduct?.productId?.name,
-          warehouseName: watch("warehouseName"),
-        });
-      }
-    }
-  }, [
-    selectedProduct,
-    productCount?.entrepotId,
-    productCount?.productId,
-    isLoading,
-  ]);
 
   const style = {
     width: "100%",
@@ -186,15 +101,7 @@ export default function BasicTable() {
       },
     },
   };
-  const handleAddNewProduct = () => {
-    append({
-      id: uniqueId(),
-      productId: "",
-      productName: "",
-      measures: [],
-      warehouse: "",
-    });
-  };
+
   const handleChangePaymentStatus = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -245,105 +152,14 @@ export default function BasicTable() {
     remove(id);
   };
 
-  const handleOpenDialogSelectProduct = () => {
-    setModalSelectProduct(!modalSelectProduct);
+
+  const getSelectedProduct = (product: any) => {
+    append(product);
   };
 
   return (
     <Box sx={{ width: "100%", my: 3 }}>
-      <Dialog
-        open={modalSelectProduct}
-        keepMounted
-        onClose={handleOpenDialogSelectProduct}
-        aria-describedby="alert-dialog-slide-description"
-        dir={t("dir")}
-        fullWidth
-      >
-        <DialogTitle
-          className="dialogTitleDelete"
-          display={"flex"}
-          gap={1}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
-          <Typography variant="h5">
-            {notFoundProduct?.productName} {t("in_warehouse")}(
-            {notFoundProduct.warehouseName}){t("not_available")}
-          </Typography>
-          <InfoCircle size="32" color={theme.palette.warning.main} />
-        </DialogTitle>
-        <DialogContent className="dialogContentDelete">
-          <DialogContentText id="alert-dialog-slide-description">
-            <Typography variant="body1" mb={3}>{t("add_new_product")}</Typography>
-          </DialogContentText>
-          <Grid2 container spacing={3}>
-            <Grid2 size={6}>
-              <InputLabel>{t("product_name")}</InputLabel>
-              <Controller
-                control={control}
-                name={`products.${productCount?.rowIndex}.productId`}
-                render={({ field }) => (
-                  <ProductsAutoComplete
-                    getProduct={async (product) => {
-                      removeProductCountQuery();
-                      field.onChange(product?._id);
-                      setValue(
-                        `products.${productCount?.rowIndex}.productId`,
-                        product?._id
-                      );
-                      setValue(
-                        `products.${productCount?.rowIndex}.productName`,
-                        product?.name
-                      );
-                      setProductCount((prevState) => ({
-                        ...prevState,
-                        productId: product?._id,
-                      }));
-                    }}
-                    isTable
-                    productIds={fields?.map((item: any) => item?.productId)}
-                  />
-                )}
-              />
-            </Grid2>
-            <Grid2 size={6}>
-              <InputLabel>{t("warehouse")}</InputLabel>
-              <Controller
-                control={control}
-                name={`products.${productCount?.rowIndex}.warehouse`}
-                render={({ field }) => (
-                  <WarehouseAutoComplete
-                    name="warehouse"
-                    dir={t("dir")}
-                    getWarehouse={(data: any) => {
-                      removeProductCountQuery();
-                      field.onChange(data?._id)
-                     
-                      setValue(
-                        `products.${productCount?.rowIndex}.warehouseName`,
-                        data?.name
-                      );
-                      setProductCount((prevState) => ({
-                        ...prevState,
-                        entrepotId: data?._id,
-                      }));
-                    }}
-                  />
-                )}
-              />
-            </Grid2>
-          </Grid2>
-        </DialogContent>
-        <DialogActions
-          className="dialogActionDelete"
-          sx={{ display: "flex", gap: "1rem" }}
-        >
-          <Button onClick={handleOpenDialogSelectProduct} variant="outlined">
-            {t("cancel")}
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <TableContainer component={Paper}>
+      {fields?.length > 0 && <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -363,97 +179,22 @@ export default function BasicTable() {
           </TableHead>
 
           <TableBody sx={{ position: "relative" }}>
-            {isLoading && (
-              <Box
-                position={"absolute"}
-                top={0}
-                left={0}
-                right={0}
-                bottom={0}
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                zIndex={100}
-                bgcolor={"#bababa83"}
-              >
-                <CircularProgress sx={{ mb: 2 }} />
-              </Box>
-            )}
             {fields?.map((row: any, rowIndex: number) => {
-              const rows = watch(`products.${rowIndex}`);
               return (
                 <TableRow
-                  key={rows?.id}
+                  key={row?.id}
                   sx={{
                     "&:last-child td, &:last-child th": {
-                      borderBottom: rows?.error ? "1px solid red" : 0,
-                      borderTop: rows?.error ? "1px solid red" : 0,
+                      borderBottom: row?.error ? "1px solid red" : 0,
+                      borderTop: row?.error ? "1px solid red" : 0,
                     },
                   }}
                 >
-                  <TableCell component="th" scope="row">
-                    <Controller
-                      control={control}
-                      name={`products.${rowIndex}.productId`}
-                      render={({ field }) => (
-                        <ProductsAutoComplete
-                          getProduct={async (product) => {
-                            field.onChange(product?._id);
-                            setValue(
-                              `products.${rowIndex}.productId`,
-                              product?._id
-                            );
-                            setValue(
-                              `products.${rowIndex}.productName`,
-                              product?.name
-                            );
-                            setProductCount({
-                              entrepotId: watch("warehouseId"),
-                              productId: product?._id,
-                              rowIndex: rowIndex,
-                            });
-                          }}
-                          isTable
-                          productIds={fields?.map(
-                            (item: any) => item?.productId
-                          )}
-                          error={
-                            !!(errors?.products as any)?.[rowIndex]?.productId
-                          }
-                        />
-                      )}
-                    />
-                    {(errors?.products as any)?.[rowIndex]?.productId && (
-                      <Typography color="error" variant="body1">
-                        {(errors.products as any)[rowIndex].productId.message}
-                      </Typography>
-                    )}
+                  <TableCell component="th" scope="row" align="right">
+                    <Typography>{row?.productName}</Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Controller
-                      control={control}
-                      name={`products.${rowIndex}.warehouse`}
-                      render={({ field }) => (
-                        <WarehouseAutoComplete
-                          name="warehouse"
-                          dir={t("dir")}
-                          getWarehouse={(data: any) => {
-                            setValue(
-                              `products.${rowIndex}.warehouse`,
-                              data?._id
-                            );
-                          }}
-                          error={
-                            !!(errors?.products as any)?.[rowIndex]?.warehouse
-                          }
-                        />
-                      )}
-                    />
-                    {(errors?.products as any)?.[rowIndex]?.warehouse && (
-                      <Typography color="error" variant="body1">
-                        {(errors.products as any)[rowIndex].warehouse.message}
-                      </Typography>
-                    )}
+                    <Typography width={"100%"} minWidth={80}>{row?.warehouseName}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Controller
@@ -734,7 +475,7 @@ export default function BasicTable() {
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer>}
       <Box
         sx={{
           backgroundColor: theme.palette.grey[100],
@@ -745,14 +486,7 @@ export default function BasicTable() {
         }}
         mt={1}
       >
-        <Button
-          startIcon={<Add style={{ margin: "0 1rem" }} />}
-          variant={"outlined"}
-          size={"small"}
-          onClick={handleAddNewProduct}
-        >
-          {t("insert_new_row")}
-        </Button>
+        <AddNewRow getSelectedProduct={getSelectedProduct} />
         <Typography variant="overline">{t("total_products")}</Typography>
         <Typography
           variant="overline"

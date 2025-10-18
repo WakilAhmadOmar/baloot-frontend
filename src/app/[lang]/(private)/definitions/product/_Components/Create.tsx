@@ -53,6 +53,7 @@ const CreateProduct = () => {
     const variables = {
       productObject: {
         name: data?.name,
+        measures: selectedUnitProduct?.map((item) => ({ measureId: item?.measure })),
         price: selectedUnitProduct?.map((item, index: number) => {
           return {
             measureId: item?.measure,

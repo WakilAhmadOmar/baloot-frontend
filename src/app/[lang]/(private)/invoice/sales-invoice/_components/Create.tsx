@@ -58,13 +58,13 @@ const CreateSalesInvoice = () => {
       paymentMethod: "cash",
       receiver: "",
       products: [
-        {
-          productId: "",
-          productName: "",
-          measures: [],
-          warehouse: null,
-          expireInDate: [],
-        },
+        // {
+        //   productId: "",
+        //   productName: "",
+        //   measures: [],
+        //   warehouse: null,
+        //   expireInDate: [],
+        // },
       ],
     },
   });

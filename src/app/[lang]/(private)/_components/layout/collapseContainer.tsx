@@ -159,7 +159,7 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       >
         <List>
           <LinkLayout
-            href={"/" + lang + "/invoice/purchase_invoice"}
+            href={"/" + lang + "/invoice/purchase-invoice"}
             lang={lang}
             open={true}
             text={t("purchase_invoice")}
@@ -253,9 +253,9 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
           <LinkLayout href={"/" + lang +"/financial-reports/debit-credit"} lang={lang} open={true}  text={t("debits_and_credits_across_all_accounts")}  />
           <LinkLayout href={"/"+ lang +"/financial-reports/expense"} lang={lang} open={true}  text={t("expense_statement")}  />
          <LinkLayout href={"/"+ lang +"/financial-reports/external-income"} lang={lang} open={true}  text={t("external_revenue_statement")}  />
-           {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("profit_and_loss_statement")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("total_balance_in_base_currency")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("general_ledger")}  />
+           <LinkLayout href={"/" +lang +"/financial-reports/profit-loss"} lang={lang} open={true} text={t("profit_and_loss_statement")}  />
+         <LinkLayout href={ "/"+lang +"/financial-reports/total-balance"} lang={lang} open={true}  text={t("total_balance_in_base_currency")}  />
+          {/* <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("general_ledger")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("detailed_balance")}  /> */}
         </List>
       </Collapse>
