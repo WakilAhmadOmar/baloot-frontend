@@ -61,8 +61,7 @@ const DetailsOfAccountCustomerPage = ({
   const { data: customerBalance, isLoading: loadingBalance } =
     useGetCustomerTransactionBalanceByCustomerIdQuery({ customerId: id });
 
-
-  const handleChangePage = (event: any, page: number) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
     refetch();
   };
@@ -86,7 +85,7 @@ const DetailsOfAccountCustomerPage = ({
         justifyContent={"space-between"}
         alignItems={"center"}
       >
-        <Box
+        {/* <Box
           display={"flex"}
           alignItems={"center"}
           columnGap={"10px"}
@@ -102,7 +101,7 @@ const DetailsOfAccountCustomerPage = ({
             <MenuItem>دالر</MenuItem>
             <MenuItem>افغانی</MenuItem>
           </Select>
-        </Box>
+        </Box> */}
         <Box
           display={"flex"}
           columnGap={"1rem"}
@@ -151,7 +150,6 @@ const DetailsOfAccountCustomerPage = ({
                   </TableCell>
                   <TableCell align="right">{t("debit")}</TableCell>
                   <TableCell align="right">{t("credit")}</TableCell>
-                  {/* <TableCell align="right">الباقی</TableCell> */}
                   <TableCell align="right">{t("currency")}</TableCell>
                   <TableCell align="right">
                     {t("calculated_currency")}
@@ -174,7 +172,6 @@ const DetailsOfAccountCustomerPage = ({
                     <TableCell align="right">
                       {item?.receiverType ? item?.amount : 0}
                     </TableCell>
-                    {/* <TableCell align="right">1000</TableCell> */}
                     <TableCell align="right">
                       {item?.currencyId?.name}{" "}
                     </TableCell>
@@ -209,17 +206,15 @@ const DetailsOfAccountCustomerPage = ({
         )}
       </Box>
 
-      {customerBalance?.map((item:any) => (
+      {customerBalance?.map((item: any) => (
         <Box
           display={"grid"}
-          gridTemplateColumns={"12rem auto"}
+          gridTemplateColumns={"15rem auto"}
           alignItems={"center"}
           mt={2}
           key={item?.currencyId?._id}
         >
-          <Typography variant="subtitle2">
-            {item?.currencyId?.name}
-          </Typography>
+          <Typography variant="subtitle2">{item?.currencyId?.name}</Typography>
           <Box
             display={"grid"}
             gridTemplateColumns={"32.5% 32.5% 32.5%"}
@@ -236,7 +231,7 @@ const DetailsOfAccountCustomerPage = ({
               borderRadius={"8px"}
             >
               <Typography p={1.5} variant="subtitle2">
-      {t("debit_balance")}
+                {t("debit_balance")}
               </Typography>
               <Box
                 bgcolor={theme.palette.background.default}

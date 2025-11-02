@@ -12,7 +12,7 @@ import {
 export const AppContext = createContext<any>({});
 
 const AppContextProvider = ({ children }: PropsWithChildren) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [translate, setTranslate] = useState();
   const [baseCurrency, setBaseCurrency] = useState();
   const [handleError, setHandleError] = useState<{

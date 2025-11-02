@@ -5,6 +5,8 @@ import { i18n } from "./i18n-config";
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 import { ACCESS_TOKEN_KEY } from "./libs/constants";
+import { getToken } from "next-auth/jwt";
+import { appConfig } from "./config/config";
 
 function getLocale(request: NextRequest): string | undefined {
   // Negotiator expects plain object so we need to transform headers
@@ -27,7 +29,12 @@ const publicRoutes = ["/login"]
 
 export default async function middleware(request: NextRequest) {
  
-  const token = request.cookies.get(ACCESS_TOKEN_KEY)?.value; // Get token from cookies
+  const session:any = await getToken({
+    req: request,
+    secret: appConfig.NextAuthSecret,
+  })
+  // const token = request.cookies.get(ACCESS_TOKEN_KEY)?.value; // Get token from cookies
+  const token = session?.data?.signIn?.accessToken; // Get token from cookies
   const { pathname } = request.nextUrl;
   const locale = getLocale(request);
 

@@ -69,7 +69,7 @@ const themeLight = createTheme({
     // tonalOffset: 0.2,
     background:{
       default:"#F5F5F5",
-      paper:"#FFF"
+      paper:"#fff"
     }
   },
 
@@ -174,6 +174,13 @@ const themeLight = createTheme({
         
       },
     },
+    MuiPaper:{
+      styleOverrides:{
+        root:{
+          backgroundColor:"#FAFAFA"
+        }
+      }
+    }
 
   },
 });
@@ -332,6 +339,13 @@ const themeDark = createTheme({
         },
       },
     },
+     MuiPaper:{
+      styleOverrides:{
+        root:{
+          backgroundColor:"#090909ff"
+        }
+      }
+    }
   },
 });
 

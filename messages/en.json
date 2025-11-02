@@ -157,7 +157,8 @@
     "Total_Product_Purchase_Report": "Total Product Purchase Report",
     "Profit_on_a_Single_Item_Sale": "Profit on a Single Item Sale",
     "Inter_Warehouse_Transfer_Report": "Inter Warehouse Transfer Report",
-    "discount_amount": "Discount Amount"
+    "discount_amount": "Discount Amount",
+    "fixed_assets":"Fixed Assets"
   },
   "product": {
     "dir": "ltr",
@@ -190,6 +191,7 @@
     "count": "Quantity",
     "in_one": "In One",
     "product_list": "Product List",
+    "fixed_assets_list": "Fixed assets list",
     "nothing_found": "Nothing Found",
     "product_quantity": "Product Quantity",
     "currency": "Currency",
@@ -206,7 +208,11 @@
     "currency_is_required": "Currency is required",
     "measure_is_required": " Measure is required",
     "amount_is_required": "Amount is required",
-    "category_name_is_required": "Category name is required"
+    "category_name_is_required": "Category name is required",
+    "add_fixed_asset": "Add Fixed Asset",
+    "price": "Price",
+    "measure": "Measure",
+    "amount": "Amount"
   },
 
   "position_link": {
@@ -247,11 +253,14 @@
     "purchase-invoice": "purchase Invoice",
     "initial_inventory_registration": "Initial inventory registration",
     "settings": "Company Profile",
-    "financial-reports":"financial-reports",
-    "financial_statement":"Financial Statement",
-    "expense":"Expense",
-    "profit-loss":"Profit and Loss Statement",
-    "total-balance":"Total Balance in Base Currency"
+    "financial-reports": "financial-reports",
+    "financial_statement": "Financial Statement",
+    "expense": "Expense",
+    "profit-loss": "Profit and Loss Statement",
+    "total-balance": "Total Balance in Base Currency",
+    "products-reports": "Products Reports",
+    "with-date": "Products Reports with Date",
+    "fixed-products":"Fixed Assets"
   },
   "pages": {
     "dir": "ltr",
@@ -615,22 +624,36 @@
     "are_you_sure_to_delete_this_salary": "Are you sure to delete this salary?",
     "this_salary_will_be_deleted": "Once this salary is deleted, you will no longer have access to it."
   },
-   "financial_reports":{
+  "financial_reports": {
+    "dir": "ltr",
     "employees_reports": "Employees Reports",
     "customers_reports": "Customers Reports",
-    "financial_statement":"Financial Statement",
-    "description":"Description",
-    "debit":"Debit",
-    "credit":"Credit",
-    "currency":"Currency",
-    "calculated_currency":"Calculated Currency",
-    "date":"Date",
-    "expense_reports":"Expense Reports",
-    "no_statements_have_been_recorded":"No statements have been recorded",
-    "debit_balance":"Debit Balance",
-    "credit_balance":"Credit Balance",
-    "total_remaining":"Total Remaining"
-
+    "financial_statement": "Financial Statement",
+    "description": "Description",
+    "debit": "Debit",
+    "credit": "Credit",
+    "currency": "Currency",
+    "calculated_currency": "Calculated Currency",
+    "date": "Date",
+    "expense_reports": "Expense Reports",
+    "no_statements_have_been_recorded": "No statements have been recorded",
+    "debit_balance": "Debit Balance",
+    "credit_balance": "Credit Balance",
+    "total_remaining": "Total Remaining",
+    "payer_name": "Payer Name",
+    "consumption_type": "Consumption Type",
+    "amount": "Amount",
+    "consumption_amount": "Consumption Amount",
+    "profit_and_loss_statement": "Profit and Loss Statement",
+    "purchases": "Purchases",
+    "sales": "Sales",
+    "inventory": "Inventory",
+    "gross_profit": "Gross Profit",
+    "expenses": "Expenses",
+    "annual_sales_summary": "Annual Sales Summary",
+    "compared_to_last_year": "Compared to Last Year",
+    "net_profit": "Net Profit",
+    "loss": "Loss"
   },
   "numberToWord": {
     "zero": "Zero",

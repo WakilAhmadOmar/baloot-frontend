@@ -3,4 +3,5 @@ export interface Environment {
   mediaUrl: string
   NextAuthSecret: string
   NextAuthUrl: string
+  enableSecureCookie:boolean
 }

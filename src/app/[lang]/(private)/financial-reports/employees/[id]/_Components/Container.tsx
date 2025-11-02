@@ -27,6 +27,7 @@ import Moment from "react-moment";
 import SkeletonComponent from "../../../_components/Skeleton";
 import { EmptyComponent } from "../../../_components/empty";
 import { useGetEmployeeTransactionBalanceByEmployeeIdQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-transaction-balance-by-employee-id";
+import { useState } from "react";
 
 interface IPropsDetailsOfAccountEmployeePage {
   id: string;
@@ -39,14 +40,19 @@ const DetailsOfAccountEmployeePage = ({
   const t = useTranslations("financial_reports");
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
+  const [page, setPage] = useState(1);
 
-  const { data: employeeReport, isLoading } =
-    useGetEmployeeReportsByEmployeeIdListQuery({ page: 1, employeeId: id });
+  const { data: employeeReport, isLoading , refetch } =
+    useGetEmployeeReportsByEmployeeIdListQuery({ page: page, employeeId: id });
       const { data: employeeBalance, isLoading: loadingBalance } =
       useGetEmployeeTransactionBalanceByEmployeeIdQuery({ employeeId: id });
-  const handleBackFunction = () => {
-    // router.push({ pathname: "/financialReports/employeeAccounts" });
-  };
+
+      const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+        setPage(page);
+        refetch();
+      };
+
+
   return (
     <Box>
       <Box
@@ -54,7 +60,6 @@ const DetailsOfAccountEmployeePage = ({
         columnGap={2}
         alignItems={"center"}
         sx={{ cursor: "pointer" }}
-        onClick={handleBackFunction}
       >
         <ArrowRight2 size={20} />
         <Typography variant="h3">
@@ -73,7 +78,7 @@ const DetailsOfAccountEmployeePage = ({
           columnGap={"10px"}
           minWidth={"20rem"}
         >
-          <InputLabel>ارز</InputLabel>
+          {/* <InputLabel>ارز</InputLabel>
           <Select
             size="small"
             value={1}
@@ -82,7 +87,7 @@ const DetailsOfAccountEmployeePage = ({
             <MenuItem value={1}>همه</MenuItem>
             <MenuItem>دالر</MenuItem>
             <MenuItem>افغانی</MenuItem>
-          </Select>
+          </Select> */}
         </Box>
         <Box
           display={"flex"}
@@ -133,7 +138,6 @@ const DetailsOfAccountEmployeePage = ({
                   </TableCell>
                   <TableCell align="right">{t("debit")}</TableCell>
                   <TableCell align="right">{t("credit")}</TableCell>
-                  {/* <TableCell align="right">الباقی</TableCell> */}
                   <TableCell align="right">{t("currency")}</TableCell>
                   <TableCell align="right">
                     {t("calculated_currency")}
@@ -182,7 +186,7 @@ const DetailsOfAccountEmployeePage = ({
               shape="rounded"
               variant="outlined"
               color="primary"
-              // onChange={handleChangePage}
+              onChange={handleChangePage}
               sx={{
                 fontSize: "2rem !important",
               }}

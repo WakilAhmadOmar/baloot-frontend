@@ -22,7 +22,7 @@ const BoxItemCategory: React.FC<IPropsUnitProduct> = ({ item }) => {
         display: "grid",
         alignItems: "center",
         rowGap: 0,
-        backgroundColor: theme.palette.grey[50],
+        backgroundColor: theme.palette.background.default,
       }}
     >
       <Typography textAlign={"center"} variant="body1">

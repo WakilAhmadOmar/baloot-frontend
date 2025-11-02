@@ -1,7 +1,7 @@
 import { Box, InputLabel, MenuItem, Select } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useApolloClient } from "@apollo/client";
-import { getProductCategoriesFunction } from "./getProductCategoriesFunction";
+import { useMemo, useState } from "react";
+
+import { useGetProductCategoryList } from "@/hooks/api/definitions/product-category/queries/use-get-list";
 
 interface IPropsProductCategory {
   register: any;
@@ -11,38 +11,19 @@ const ProductCategoriesComponent: React.FC<IPropsProductCategory> = ({
   register,
   defaultValue,
 }) => {
-  const cleint = useApolloClient();
+
   const [productCategories, setProductCategories] = useState<any[]>([]);
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
 
-  const getDefaultDataProduct = async () => {
-    const categoryData: any = await getProductCategoriesFunction(cleint);;
-    if (categoryData?.type === "success") {
-      setProductCategories(categoryData?.getCategories);
-    }
-    if (categoryData?.type === "error") {
-      setHandleError((prevState) => ({
-        ...prevState,
-        open: true,
-        status: "error",
-        message: categoryData?.error,
-      }));
-    }
-  };
+  const { data: getCategories, isLoading } = useGetProductCategoryList();
 
-  useEffect(() => {
-    if (productCategories?.length === 0) {
-      getDefaultDataProduct();
+  useMemo(() => {
+    if (getCategories) {
+      setProductCategories(getCategories);
     }
-  }, []);
+  }, [getCategories]);
+
+
+
 
   return (
     <Box>

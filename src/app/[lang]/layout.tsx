@@ -33,7 +33,7 @@ params
           <AppContextProvider>
           
             <ThemeProviderComponent>
-              <Paper sx={{minHeight:"100vh"}}>{children}</Paper>
+              <Paper sx={{minHeight:"100vh" }}>{children}</Paper>
             </ThemeProviderComponent>
           </AppContextProvider>
           </NextIntlClientProvider>
