@@ -156,7 +156,8 @@
     "Total_Product_Sales_Report": "گزارش مجموعه فروشات اجناس",
     "Total_Product_Purchase_Report": "گزارش مجموعه خریدات اجناس",
     "Profit_on_a_Single_Item_Sale": "سود فروش یک جنس",
-    "Inter_Warehouse_Transfer_Report": "گزارش اجناس انتقال شد بین گدام ها"
+    "Inter_Warehouse_Transfer_Report": "گزارش اجناس انتقال شد بین گدام ها",
+    "fixed_assets":"دارایی های ثابت"
   },
   "product": {
     "dir":"rtl",
@@ -189,6 +190,7 @@
     "count": "تعداد",
     "in_one": "در یک",
     "product_list": "لیست اجناس",
+    "fixed_assets_list": "لیست دارایی های ثابت",
     "nothing_found": "چیزی یافت نشد",
     "product_quantity": "موجودی محصولات",
     "currency": "ارز",
@@ -205,7 +207,10 @@
     "currency_is_required":" انتخاب ارز حتمی است",
     "measure_is_required":" انتخاب واحد حتمی است",
     "amount_is_required":"مقدار حتمی است",
-    "category_name_is_required":"نام دسته بندی حتمی است"
+    "category_name_is_required":"نام دسته بندی حتمی است",
+    "add_fixed_asset": "افزودن دارایی ثابت",
+    "price":"قیمت",
+    "measure":"واحد"
 
   },
   "position_link": {
@@ -252,7 +257,10 @@
     "total-balance":"بیلانس کل با ارز معیاری",
     "debit_balance":"موجودی دیبت",
     "credit_balance":"موجودی کردیت",
-    "total_remaining":"الباقی"
+    "total_remaining":"الباقی",
+    "products-reports": "گزارشات اجناس",
+    "with-date": "گزارش اجناس موجود با تاریخ",
+    "fixed-products":"دارایی های ثابت"
   },
   "pages": {
         "dir": "rtl",
@@ -635,6 +643,7 @@
 
   },
   "financial_reports":{
+    "dir":"rtl",
     "employees_reports": "صورت حساب کارمندان",
     "customers_reports": "صورت حساب مشتریان",
     "financial_statement":"صورت حساب ",
@@ -645,7 +654,25 @@
     "calculated_currency":"ارز محاسبه شده",
     "date":"تاریخ",
     "expense_reports":"صورت‌حساب مصارفات",
-    "no_statements_have_been_recorded":"هیچ صورت حسابی ثبت نشده است"
+    "no_statements_have_been_recorded":"هیچ صورت حسابی ثبت نشده است",
+    "payer_name":"نام پرداخت کننده",
+    "consumption_type":"نوع مصرف",
+    "amount":"مقدار",
+    "consumption_amount":"مقدار مصرف",
+    "profit_and_loss_statement":"صورت حساب مفاد و ضرر",
+    "purchases":"خریدات",
+    "sales":"فروشات",
+    "inventory":"موجودی اجناس",
+    "gross_profit":"مفاد غیر خالص",
+    "expenses":"مصارف",
+    "annual_sales_summary":"گزارش فروش سال",
+    "compared_to_last_year":"نسبت به سال گذشته",
+    "net_profit":" مفاد خالص",
+    "loss":"ضرر",
+     "debit_balance": "موجودی بدهی",
+    "credit_balance": "موجودی بستانکاری",
+    "total_remaining": "مجموع باقی مانده",
+    "annual":"سالانه"
   },
   "numberToWord": {
     "zero": " صفر",

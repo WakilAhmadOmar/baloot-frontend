@@ -31,11 +31,12 @@ const CustomerFinancialReports: React.FC<IPropsCollapseContainer> = ({
   const theme = useTheme();
   const t = useTranslations("financial_reports");
   const [page, setPage] = useState(1);
-  const { data: employeeList, isLoading } = useGetEmployeeListQuery({ page });
+  const { data: employeeList, isLoading , refetch } = useGetEmployeeListQuery({ page });
 
 
-  const handleChangePagination = (event: any, page: number) => {
+  const handleChangePagination = (event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
+    refetch();
   };
   return (
     <Box>
@@ -113,7 +114,6 @@ const CustomerFinancialReports: React.FC<IPropsCollapseContainer> = ({
           spacing={2}
           sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
         >
-          {/* <Pagination count={10} shape="rounded" /> */}
           <Pagination
             count={Math.ceil(employeeList?.count / 10)}
             variant="outlined"

@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import CreateProduct from "./Create";
 import ProductList from "./List";
 import { Box, Typography } from "@mui/material";
+import CreateFixedProduct from "./create-fixed-product";
 
 const ProductPage = () => {
   const t = useTranslations("product")
@@ -20,6 +21,7 @@ const ProductPage = () => {
         mb={2}
         sx={{
           display: "flex",
+          gap: 2,
           // ...(productsState?.count === 0 && loadingPage === false
           //   ? { justifyContent: "center" }
           //   : { justifyContent: "space-between" }),
@@ -28,6 +30,7 @@ const ProductPage = () => {
         <CreateProduct
           
         />
+        <CreateFixedProduct />
         {/* {productsState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t}/>

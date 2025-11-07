@@ -11,6 +11,7 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { getAuthUser } from "@/utils/getAuthUser";
+import { getSession } from "next-auth/react";
 
 
 const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api/v1/graphql"
@@ -24,9 +25,10 @@ const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:50
     uri: graphqlEndPoint,
   });
   const authLink = setContext(async (_, { headers }) => {
+    const {token }:any = await getSession();
     // get the authentication token from local storage if it exists
     // return the headers to the context so httpLink can read them
-    const access = await getAuthUser(ACCESS_TOKEN_KEY);
+    const access = token?.data?.signIn?.accessToken;
     // const xApiKey = await process.env.REACT_APP_X_API_KEY;
     return {
       headers: {

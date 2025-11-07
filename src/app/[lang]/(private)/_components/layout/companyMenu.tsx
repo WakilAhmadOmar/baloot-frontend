@@ -10,6 +10,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -37,7 +38,8 @@ const pathname = usePathname()
   const open = Boolean(anchorEl);
 
   const handleLogout = async () => {
-    await deleteSession(ACCESS_TOKEN_KEY)
+    await signOut()
+    // await deleteSession(ACCESS_TOKEN_KEY)
     router.push("/login")
   }
   return (
@@ -117,11 +119,11 @@ const pathname = usePathname()
               </Link>
             </Box> */}
             <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
-              <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}>
+              {/* <Link href={"/settings"} locale={`${pathname?.split("/")?.[0]}`}> */}
                 <MenuItem onClick={handleLogout}>
                   <Typography variant="subtitle2">{t("logout")}</Typography>
                 </MenuItem>
-              </Link>
+              {/* </Link> */}
             </Box>
           </Box>
           {/* <Box

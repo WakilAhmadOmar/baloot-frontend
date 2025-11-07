@@ -55,6 +55,12 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
             text={t("products_definition")}
           />
           <LinkLayout
+            href={"/" + lang + "/definitions/fixed-products"}
+            lang={lang}
+            open={true}
+            text={t("fixed_assets")}
+          />
+          <LinkLayout
             href={"/" + lang + "/definitions/product-category"}
             lang={lang}
             open={true}
@@ -249,10 +255,10 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
         <List>
           <LinkLayout href={"/" + lang +"/financial-reports/customers"} lang={lang} open={true}  text={t("customer_invoice")}  />
            <LinkLayout href={"/" + lang +"/financial-reports/employees"} lang={lang} open={true}  text={t("employee_invoice")}  />
-          <LinkLayout href={ "/" + lang +"/financial-reports/partner"} lang={lang} open={true}  text={t("partner_invoice")}  />
-          <LinkLayout href={"/" + lang +"/financial-reports/debit-credit"} lang={lang} open={true}  text={t("debits_and_credits_across_all_accounts")}  />
+          {/* <LinkLayout href={ "/" + lang +"/financial-reports/partner"} lang={lang} open={true}  text={t("partner_invoice")}  />
+          <LinkLayout href={"/" + lang +"/financial-reports/debit-credit"} lang={lang} open={true}  text={t("debits_and_credits_across_all_accounts")}  /> */}
           <LinkLayout href={"/"+ lang +"/financial-reports/expense"} lang={lang} open={true}  text={t("expense_statement")}  />
-         <LinkLayout href={"/"+ lang +"/financial-reports/external-income"} lang={lang} open={true}  text={t("external_revenue_statement")}  />
+         {/* <LinkLayout href={"/"+ lang +"/financial-reports/external-income"} lang={lang} open={true}  text={t("external_revenue_statement")}  /> */}
            <LinkLayout href={"/" +lang +"/financial-reports/profit-loss"} lang={lang} open={true} text={t("profit_and_loss_statement")}  />
          <LinkLayout href={ "/"+lang +"/financial-reports/total-balance"} lang={lang} open={true}  text={t("total_balance_in_base_currency")}  />
           {/* <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("general_ledger")}  />
@@ -272,8 +278,8 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
         unmountOnExit
       >
         <List>
-          {/* <LinkLayout href={ lang +"/definitions/definitionUnit"} lang={lang} open={true} t={t} text={t("Inventory_Report_with_Date")}  />
-          <LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t("Report_of_Expired_Items")}  />
+           <LinkLayout href={ "/"+ lang +"/products-reports/with-date"} lang={lang} open={true} text={t("Inventory_Report_with_Date")}  />
+          {/*<LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t("Report_of_Expired_Items")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Top_Selling_Products_Report")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Pre_Sale_Inventory_Report")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Pre_Ordered_Inventory_Report")}  />

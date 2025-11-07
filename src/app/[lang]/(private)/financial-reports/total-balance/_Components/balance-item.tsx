@@ -1,16 +1,17 @@
 import { BalanceIcon } from "@/icons";
-import { Box,Typography } from "@mui/material";
+import { Box,CircularProgress,Typography } from "@mui/material";
 
 interface IPropsBalance {
   color1: string;
   color2: string;
   text: string;
   amount: string;
+  isLoading?: boolean;
 }
-export const Balance: React.FC<IPropsBalance> = ({ color1, color2, text, amount }) => {
+export const Balance: React.FC<IPropsBalance> = ({ color1, color2, text, amount, isLoading }) => {
   return (
     <Box
-      width={"27rem"}
+      width={"28rem"}
       p={2.5}
       sx={{
         borderRadius: "1.6rem",
@@ -41,12 +42,15 @@ export const Balance: React.FC<IPropsBalance> = ({ color1, color2, text, amount 
           {text}
         </Typography>
       </Box>
+      {isLoading? <Box display={"grid"} justifyContent={"center"} my={3}><CircularProgress size={20}/> </Box>:<>
       <Typography variant="h3" textAlign={"center"} pt={3.5} pb={3.5}>
         ${amount}
       </Typography>
-      <Box justifyContent={"center"} display={"grid"}>
+     
+      </> }
+       <Box justifyContent={"center"} display={"grid"}>
         <BalanceIcon color={color2} />
-      </Box>
+      </Box>      
     </Box>
   );
 };

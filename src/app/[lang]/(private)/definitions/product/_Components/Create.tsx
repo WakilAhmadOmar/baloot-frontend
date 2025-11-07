@@ -63,7 +63,7 @@ const CreateProduct = () => {
             //   index === 0 ? "Large" : index === 1 ? "Medium" : "Small",
           };
         }),
-        ...(selectedUnitProduct?.length > 1
+        ...(selectedUnitProduct?.length > 0
           ? {
               measuresExchange: selectedUnitProduct
                 ?.map((item, index: number) => {

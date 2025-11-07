@@ -31,10 +31,11 @@ const CustomerFinancialReports: React.FC<CustomerFunctionReportsIProps> = ({
   const t = useTranslations("financial_reports");
   const theme = useTheme();
   const [page, setPage] = useState(1);
-  const { data: customerList, isLoading } = useGetCustomerListQuery({ page });
+  const { data: customerList, isLoading , refetch } = useGetCustomerListQuery({ page });
 
-  const routeToDetailsPage = () => {
-    // router?.push("/financial-reports/customers/details");
+const handleChangePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    refetch();
   };
   return (
     <Box>
@@ -69,7 +70,6 @@ const CustomerFinancialReports: React.FC<CustomerFunctionReportsIProps> = ({
           key={item?._id}
         >
           <Box
-            // onClick={routeToDetailsPage}
             sx={{
               bgcolor: theme.palette.background.default,
               display: "flex",
@@ -113,12 +113,12 @@ const CustomerFinancialReports: React.FC<CustomerFunctionReportsIProps> = ({
           spacing={2}
           sx={{ justifyContent: "end", display: "grid", marginTop: "2rem" }}
         >
-          {/* <Pagination count={10} shape="rounded" /> */}
           <Pagination
             count={Math.ceil(customerList?.count / 10)}
             variant="outlined"
             shape="rounded"
             color={"primary"}
+            onChange={handleChangePagination}
           />
         </Stack>
       )}

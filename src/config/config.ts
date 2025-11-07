@@ -13,6 +13,11 @@ class AppConfig {
   get mediaUrl(): string {
     return this.env.mediaUrl
   }
+
+  get enableSecureCookie(): boolean {
+    return this.env.enableSecureCookie
+  }
+
 }
 
 export const appConfig = new AppConfig(env)

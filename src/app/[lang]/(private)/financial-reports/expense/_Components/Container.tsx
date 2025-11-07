@@ -77,13 +77,13 @@ const ExpensesAccountsPage = () => {
               <TableHead sx={{ bgcolor: theme.palette.background.default }}>
                 <TableRow>
                   <TableCell align="right" width={"20%"}>
-                    نام پرداخت کننده
+                    {t("payer_name")}
                   </TableCell>
-                  <TableCell align="right">توضیحات</TableCell>
-                  <TableCell align="right">مبلغ</TableCell>
-                  <TableCell align="right">ارز</TableCell>
-                  <TableCell align="right">نوع مصرف</TableCell>
-                  <TableCell align="right">تاریخ</TableCell>
+                  <TableCell align="right">{t("description")}</TableCell>
+                  <TableCell align="right">{t("amount")}</TableCell>
+                  <TableCell align="right">{t("currency")}</TableCell>
+                  <TableCell align="right">{t("consumption_type")}</TableCell>
+                  <TableCell align="right">{t("date")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -158,7 +158,7 @@ const ExpensesAccountsPage = () => {
                 borderRadius={"8px"}
               >
                 <Typography p={1.5} variant="subtitle2">
-                  مقدار مصرف
+                 {t("consumption_amount")}
                 </Typography>
                 <Box
                   bgcolor={theme.palette.background.default}

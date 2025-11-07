@@ -24,7 +24,6 @@ const GET_WARE_FROM_ENTREPOT = gql`
         }
         productInfo {
           amountOfProduct
-          expireInDate
         }
       }
       count

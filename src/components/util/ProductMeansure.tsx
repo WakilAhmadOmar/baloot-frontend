@@ -10,12 +10,13 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useApolloClient } from "@apollo/client";
 
 import { getProductMeansureFunction } from "./getProductMeansureFunction";
 import { useTranslations } from "next-intl";
 import { Controller, useFormContext } from "react-hook-form";
+import { useGetMeasuresQuery } from "@/hooks/api/definitions/units/queries/use-get-meansures-query";
 
 interface IPropsProductMeansure {
   getDataSelect?: (value: any[], index?: number) => void;
@@ -47,7 +48,6 @@ const ProductMeansureComponent: React.FC<IPropsProductMeansure> = ({
   index,
   showLabel,
 }) => {
-  const cleint = useApolloClient();
   const {
     control,
     formState: { errors },
@@ -57,35 +57,17 @@ const ProductMeansureComponent: React.FC<IPropsProductMeansure> = ({
   const theme = useTheme();
   const [productMeansure, setProductMeansure] = useState<any[]>([]);
   const [personName, setPersonName] = React.useState<string[]>([]);
-  const [handleError, setHandleError] = useState<{
-    status: "success" | "info" | "warning" | "error";
-    open: boolean;
-    message: string;
-  }>({
-    status: "success",
-    open: false,
-    message: "",
-  });
 
-  const getDefaultDataProduct = async () => {
-    const getMeansuresData: any = await getProductMeansureFunction(cleint);
-    if (getMeansuresData?.type === "success") {
-      setProductMeansure(getMeansuresData?.getMeasures);
+  const { data: getMeasures, isLoading } = useGetMeasuresQuery();
+
+  useMemo(() => {
+    if (getMeasures) {
+      setProductMeansure(getMeasures);
     }
-    if (getMeansuresData?.type === "error") {
-      setHandleError((prevState) => ({
-        ...prevState,
-        open: true,
-        status: "error",
-        message: getMeansuresData?.error,
-      }));
-    }
-  };
+  }, [getMeasures]);
+
 
   useEffect(() => {
-    if (productMeansure?.length === 0) {
-      getDefaultDataProduct();
-    }
     if (defaultValue?.length > 0) {
       setPersonName(defaultValue?.map((item) => item.name));
     }

@@ -253,7 +253,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
     const variables = {
       entrepotId: id,
       wareObject: data?.wareObject?.map((item: any) => {
-        const measures = item?.measures?.map((measure: any) => ({
+        const measures = item?.measures?.filter((ware:any)=> ware?.amountOfProduct > 0)?.map((measure: any) => ({
           measureId: measure?.measureId,
           amountOfProduct: measure?.amountOfProduct,
         }));

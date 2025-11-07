@@ -106,7 +106,11 @@ const CustomTooltip = ({ payload, label, type }: any) => {
 
   return null;
 };
-const ProfitLossChart = () => {
+type ProfitLossChartProps = {
+  dir:string
+};
+const ProfitLossChart = ({dir}: ProfitLossChartProps
+) => {
   const [Chart, setChart] = useState<any>(null);
 
   useEffect(() => {
@@ -149,7 +153,7 @@ const ProfitLossChart = () => {
                   <CustomTooltip type="uv" payload={data} label={"uv"} />
                 }
               />
-              <YAxis orientation="right"  />
+              <YAxis orientation={dir === "ltr" ? "left" : "right"} />
 
               <CartesianGrid strokeDasharray="3 3" />
               <Area
@@ -172,7 +176,7 @@ const ProfitLossChart = () => {
         );
       });
     });
-  }, []);
+  }, [dir]);
   if (!Chart) return null;
   return <Chart />;
 };

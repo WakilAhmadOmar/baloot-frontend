@@ -1,17 +1,15 @@
 "use client"
 import ProfitLossChart from "./profit-loss-chart";
 import ProfitLossChartPip from "./profit-loss-pip-chart";
-import dynamic from "next/dynamic";
-
-// const ProfitLossChart = dynamic(() => import("./profit-loss-pip-chart"), { ssr: false });
 import { ArrowUpIcon, VectorIcon } from "@/icons";
-import {Suspense} from "react"
+import {Suspense, useMemo} from "react"
 // import CustomSearch from "@/components/muiComponent/search";
 import {
   Box,
   Button,
   ButtonGroup,
   Card,
+  CircularProgress,
   Grid,
   InputAdornment,
   MenuItem,
@@ -32,17 +30,29 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 // import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { useTheme } from "@mui/material/styles";
+import { useTranslations } from "next-intl";
+import { useGetFinancialReportsForSellProductsQuery } from "@/hooks/api/transactions/queries/use-get-financial-reports-for-sell-products";
+import { useGetFinancialReportsForBuyProductsQuery } from "@/hooks/api/transactions/queries/use-get-financial-reports-for-buy-product";
+import { useGetFinancialReportsForExistingProductsQuery } from "@/hooks/api/transactions/queries/use-get-financial-reports-for-existing-products";
 
 const ProfitLossStatementPage = () => {
   const theme = useTheme();
-  const classes = {
-    icon: {
-      left: 0,
-    },
-  };
+  const t = useTranslations("financial_reports");
+
+  const { data:sellReports , isLoading:sellReportsLoading } = useGetFinancialReportsForSellProductsQuery()
+  const { data:buyReports , isLoading:buyReportsLoading } = useGetFinancialReportsForBuyProductsQuery()
+  const { data:existingReports , isLoading:existingReportsLoading } = useGetFinancialReportsForExistingProductsQuery()
+  // const classes = {
+  //   icon: {
+  //     left: 0,
+  //   },
+  // };
+  const totalExpenses = useMemo(()=>{
+    return sellReports && buyReports && existingReports ? ( existingReports.totalAmount + sellReports.totalAmount - buyReports.totalAmount) : 0
+  },[sellReports,buyReports,existingReports]);
   return (
     <Box p={2}>
-      <Typography variant="h4">صورت حساب مفاد و ضرر</Typography>
+      <Typography variant="h4">{t("profit_and_loss_statement")}</Typography>
       <Box display={"flex"} justifyContent={"space-between"} mt={2}>
         <Box display="flex" columnGap={"1rem"} alignItems={"center"} pb={1}>
           {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -94,12 +104,13 @@ const ProfitLossStatementPage = () => {
               color={theme.palette.grey[500]}
               fontSize={"1.4rem"}
             >
-              خریدات
+              {t("purchases")}
             </Typography>
             <VectorIcon fill={"#00A28A"} />
           </Box>
           <Typography variant="h3" textAlign={"center"} p={2}>
-            $526,300
+           {buyReports?.totalAmount.toFixed(2)}  {buyReports?.currencyId.symbol }
+          {buyReportsLoading && <CircularProgress size={20} />}
           </Typography>
         </Box>
         <Box bgcolor={theme.palette.background.default} borderRadius={"16px"} p={2}>
@@ -109,12 +120,13 @@ const ProfitLossStatementPage = () => {
               color={theme.palette.grey[500]}
               fontSize={"1.4rem"}
             >
-              فروشات
+              {t("sales")}
             </Typography>
             <VectorIcon fill={"#EB5757"} />
           </Box>
           <Typography variant="h3" textAlign={"center"} p={2}>
-            $856,100
+               {sellReports?.totalAmount.toFixed(2)} {sellReports?.currencyId.symbol }
+          {sellReportsLoading && <CircularProgress size={20} />}
           </Typography>
         </Box>
         <Box bgcolor={theme.palette.background.default} borderRadius={"16px"} p={2}>
@@ -124,12 +136,13 @@ const ProfitLossStatementPage = () => {
               color={theme.palette.grey[500]}
               fontSize={"1.4rem"}
             >
-              موجودی اجناس
+              {t("inventory")}
             </Typography>
             <VectorIcon fill={"#EB5757"} />
           </Box>
           <Typography variant="h3" textAlign={"center"} p={2}>
-            63,900
+             {existingReports?.totalAmount.toFixed(2)} {existingReports?.currencyId.symbol } 
+          {existingReportsLoading && <CircularProgress size={20} />}
           </Typography>
         </Box>
         <Box bgcolor={theme.palette.background.default} borderRadius={"16px"} p={2}>
@@ -139,12 +152,12 @@ const ProfitLossStatementPage = () => {
               color={theme.palette.grey[500]}
               fontSize={"1.4rem"}
             >
-              مفاد غیر خالص
+              {t("gross_profit")}
             </Typography>
             <VectorIcon fill={"#EB5757"} />
           </Box>
           <Typography variant="h3" textAlign={"center"} p={2}>
-            $745,400
+            {totalExpenses.toFixed(2)} {existingReports?.currencyId.symbol}
           </Typography>
         </Box>
         <Box bgcolor={theme.palette.background.default} borderRadius={"16px"} p={2}>
@@ -154,7 +167,7 @@ const ProfitLossStatementPage = () => {
               color={theme.palette.grey[500]}
               fontSize={"1.4rem"}
             >
-              مصارف
+              {t("expenses")}
             </Typography>
             <VectorIcon fill={"#EB5757"} />
           </Box>
@@ -183,7 +196,7 @@ const ProfitLossStatementPage = () => {
           >
             <Box display="flex" justifyContent={"space-between"} pb={2}>
               <Box display={"flex"} alignItems={"center"}>
-                <Typography>گزارش فروش سال</Typography>
+                <Typography>{t("annual_sales_summary")}</Typography>
                 <Select
                   value={1401}
                 //   size={"small"}
@@ -227,7 +240,7 @@ const ProfitLossStatementPage = () => {
                   />
                 </Box>
                 <Typography variant="overline" paddingRight={"1rem"}>
-                  نسبت به سال گذشته
+                  {t("compared_to_last_year")}
                 </Typography>
               </Box>
               <Box
@@ -294,7 +307,7 @@ const ProfitLossStatementPage = () => {
               display={"grid"}
               sx={{ direction: "ltr"}}
             >
-              <ProfitLossChart />
+              <ProfitLossChart dir={t("dir")} />
             </Box>
           </Box>
         </Box>
@@ -339,7 +352,7 @@ const ProfitLossStatementPage = () => {
               </Typography>
             </Box>
             <Typography variant="h5" textAlign={"center"}>
-              مفاد خالص
+              {t("net_profit")}
             </Typography>
             <Typography variant="h3" textAlign={"center"}>
               $526,924
@@ -385,7 +398,7 @@ const ProfitLossStatementPage = () => {
               </Typography>
             </Box>
             <Typography variant="h5" textAlign={"center"}>
-              ضرر
+              {t("loss")}
             </Typography>
             <Typography variant="h3" textAlign={"center"}>
               $0
