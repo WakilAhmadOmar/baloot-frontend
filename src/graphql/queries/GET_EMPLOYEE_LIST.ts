@@ -30,7 +30,7 @@ const GET_EMPLOYEE_LIST = gql`
         startDate
         dateOfBirth
         email
-        phoneNumber
+        contactNumber
         address
       }
       count

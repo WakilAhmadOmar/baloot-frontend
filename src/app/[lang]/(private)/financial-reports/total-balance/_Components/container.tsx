@@ -2,11 +2,12 @@
 import { BalanceIcon } from "@/icons";
 import { Box, Button, Typography } from "@mui/material";
 import { Balance } from "./balance-item";
-import { useGetCashAtBankReportQuery } from "@/hooks/api/transactions/queries/use-get-cash-at-bank-report";
-import { useGetCashAtCashboxReportQuery } from "@/hooks/api/transactions/queries/use-get-cash-at_cashbox-report";
+import { useGetCashAtBankReportQuery } from "@/hooks/api/financial-reports/queries/use-get-cash-at-bank-report";
+import { useGetCashAtCashboxReportQuery } from "@/hooks/api/financial-reports/queries/use-get-cash-at_cashbox-report";
 import { useGetFinancialReportsForExistingProductsQuery } from "@/hooks/api/transactions/queries/use-get-financial-reports-for-existing-products";
-import { useGetTotalReceivablesAndLiabilitiesReportQuery } from "@/hooks/api/transactions/queries/use-get-total-receivables_and_liabilities_report";
-import { useGetTotalFixedAssetsQuery } from "@/hooks/api/transactions/queries/ues-get-total-fixed-assets-report";
+import { useGetTotalReceivablesAndLiabilitiesReportQuery } from "@/hooks/api/financial-reports/queries/use-get-total-receivables_and_liabilities_report";
+import { useGetTotalFixedAssetsQuery } from "@/hooks/api/financial-reports/queries/ues-get-total-fixed-assets-report";
+import { useGetTotalInitialCapitalReportQuery } from "@/hooks/api/financial-reports/queries/use-get-total-initial-capital-report";
 
 
 
@@ -16,6 +17,7 @@ export const TotalBalanceContainer = () => {
   const {data: productReport , isLoading: isLoadingProductReport} = useGetFinancialReportsForExistingProductsQuery()
   const {data: totalReceivableReport , isLoading: isLoadingTotalReceivableReport} = useGetTotalReceivablesAndLiabilitiesReportQuery()
   const {data: totalFixedAssets , isLoading: isLoadingFixedAssets} = useGetTotalFixedAssetsQuery()
+  const {data: totalInitialCapitalReport , isLoading: isLoadingTotalInitialCapitalReport} = useGetTotalInitialCapitalReportQuery()
   return (
     <Box>
       <Typography variant="h3">بیلانس کل با ارز معیاری</Typography>
@@ -65,6 +67,7 @@ export const TotalBalanceContainer = () => {
           color2="#0031DF66"
           text={"مجموعه دارای های ثابت"}
           amount={totalFixedAssets?.totalAmount.toFixed(2) + totalFixedAssets?.currencyId?.symbol}
+          isLoading={isLoadingFixedAssets}
         />
         <Balance
           color1="#6CFB3966"
@@ -110,7 +113,8 @@ export const TotalBalanceContainer = () => {
           color1="#399EFB66"
           color2="#0059DF66"
           text={"سرمایه اولیه"}
-          amount="75636.39"
+          amount={totalInitialCapitalReport?.totalAmount.toFixed(2) + totalInitialCapitalReport?.currencyId?.symbol}
+          isLoading={isLoadingTotalInitialCapitalReport}
         />
         <Balance
           color1="#39FBE466"
