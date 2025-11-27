@@ -260,7 +260,8 @@
     "total_remaining":"الباقی",
     "products-reports": "گزارشات اجناس",
     "with-date": "گزارش اجناس موجود با تاریخ",
-    "fixed-products":"دارایی های ثابت"
+    "fixed-products":"دارایی های ثابت",
+    "details-balance":"بیلانس تفصیل"
   },
   "pages": {
         "dir": "rtl",
@@ -672,7 +673,13 @@
      "debit_balance": "موجودی بدهی",
     "credit_balance": "موجودی بستانکاری",
     "total_remaining": "مجموع باقی مانده",
-    "annual":"سالانه"
+    "annual":"سالانه",
+    "name":"نام کامل",
+    "contact_number":"شماره تماس",
+    "address":"آدرس",
+    "sub_ledger_balance_report":"لیست بیلانس های تفصیل",
+    "customers":"مشتریان",
+    "employees":"کارمندان"
   },
   "numberToWord": {
     "zero": " صفر",

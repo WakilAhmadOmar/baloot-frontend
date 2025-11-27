@@ -158,7 +158,7 @@
     "Profit_on_a_Single_Item_Sale": "Profit on a Single Item Sale",
     "Inter_Warehouse_Transfer_Report": "Inter Warehouse Transfer Report",
     "discount_amount": "Discount Amount",
-    "fixed_assets":"Fixed Assets"
+    "fixed_assets": "Fixed Assets"
   },
   "product": {
     "dir": "ltr",
@@ -260,7 +260,8 @@
     "total-balance": "Total Balance in Base Currency",
     "products-reports": "Products Reports",
     "with-date": "Products Reports with Date",
-    "fixed-products":"Fixed Assets"
+    "fixed-products": "Fixed Assets",
+    "details-balance": "Details Balance"
   },
   "pages": {
     "dir": "ltr",
@@ -653,7 +654,13 @@
     "annual_sales_summary": "Annual Sales Summary",
     "compared_to_last_year": "Compared to Last Year",
     "net_profit": "Net Profit",
-    "loss": "Loss"
+    "loss": "Loss",
+    "name": "Name",
+    "contact_number": "Contact Number",
+    "address": "Address",
+    "sub_ledger_balance_report": "Sub-ledger balance report",
+    "customers":"Customers",
+    "employees":"Employees"
   },
   "numberToWord": {
     "zero": "Zero",

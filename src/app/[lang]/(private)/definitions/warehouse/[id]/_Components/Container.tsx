@@ -47,7 +47,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
   });
   const { mutate: addWareToEntrepot, isLoading: addLoading } =
     useAddWareToEntrepotMutation();
-
+console.log("getWareFromEntrepot",getWareFromEntrepot)
   const defaultValues: FormType = useMemo(
     () => ({
       wareObject:
@@ -65,11 +65,13 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
     [getWareFromEntrepot?.ware]
   );
 
+  console.log("defaultValues" , defaultValues)
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    watch
   } = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
     defaultValues,
@@ -290,6 +292,8 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
   ) => {
     setPage(page);
   };
+const wareObject = watch("wareObject") || []
+console.log("wareObjectdddddddddddd" , wareObject)
   return (
     <Box>
       <Box>
@@ -320,9 +324,9 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
         </Box>
         <Paper sx={{ width: "100%" }}>
           <DataGrid
-            rows={fields.map((item: any, index) => ({
+            rows={wareObject?.map((item: any, index) => ({
               ...item,
-              id: item.productId?._id || index,
+              id: item?.productId?._id || index,
               _fieldIndex: index, // add this!
             }))}
             columns={columns}

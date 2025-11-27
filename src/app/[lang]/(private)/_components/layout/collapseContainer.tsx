@@ -261,8 +261,8 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
          {/* <LinkLayout href={"/"+ lang +"/financial-reports/external-income"} lang={lang} open={true}  text={t("external_revenue_statement")}  /> */}
            <LinkLayout href={"/" +lang +"/financial-reports/profit-loss"} lang={lang} open={true} text={t("profit_and_loss_statement")}  />
          <LinkLayout href={ "/"+lang +"/financial-reports/total-balance"} lang={lang} open={true}  text={t("total_balance_in_base_currency")}  />
-          {/* <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("general_ledger")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("detailed_balance")}  /> */}
+          {/* <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("general_ledger")}  />*/}
+          <LinkLayout href={ "/" + lang +"/financial-reports/details-balance"} lang={lang} open={true} text={t("detailed_balance")}  /> 
         </List>
       </Collapse>
       <ListItemComponent

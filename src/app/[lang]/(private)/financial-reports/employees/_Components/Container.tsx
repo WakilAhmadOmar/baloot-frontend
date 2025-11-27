@@ -101,7 +101,7 @@ const CustomerFinancialReports: React.FC<IPropsCollapseContainer> = ({
                 my={"auto"}
                 display={"flex"}
               >
-                {item?.phoneNumber}{" "}
+                {item?.contactNumber}{" "}
               </Typography>
               {/* <AddCircle color={theme.palette.primary.main} size={20}/> */}
             </Box>
