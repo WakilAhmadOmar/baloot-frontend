@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Card,
   useTheme,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -58,13 +59,13 @@ const ExpensesAccountsPage = () => {
           {/* <CustomSearch getTextSearchFunction={() => {}} /> */}
         </Box>
       </Box>
-      <Box>
+      <Card  sx={{backgroundColor: theme.palette.background.paper}}>
         {isLoading && <SkeletonComponent />}
         {!isLoading && consumptionList?.count === 0 && (
           <EmptyComponent text={t("no_statements_have_been_recorded")} />
         )}
         {consumptionList?.count > 0 && (
-          <TableContainer component={Paper}>
+          <TableContainer component={"div"}>
             <Table
               sx={{
                 minWidth: 650,
@@ -112,7 +113,7 @@ const ExpensesAccountsPage = () => {
             </Table>
           </TableContainer>
         )}
-      </Box>
+      </Card>
       {consumptionList?.count > 9 && (
         <Box display="flex" justifyContent={"end"} mt={2}>
           <Stack spacing={2} p={1}>

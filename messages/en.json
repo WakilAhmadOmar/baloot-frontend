@@ -261,7 +261,10 @@
     "products-reports": "Products Reports",
     "with-date": "Products Reports with Date",
     "fixed-products": "Fixed Assets",
-    "details-balance": "Details Balance"
+    "details-balance": "Details Balance",
+    "expired-products": "Expired Products",
+    "total-sales": "Total Sales Products",
+    "total-buy": "Total Buy Products"
   },
   "pages": {
     "dir": "ltr",
@@ -661,6 +664,26 @@
     "sub_ledger_balance_report": "Sub-ledger balance report",
     "customers":"Customers",
     "employees":"Employees"
+  },
+  "products_reports":{
+    "dir":"ltr",
+    "product_name":"Product Name",
+    "measure":"Measure",
+    "entrepot_name":"Entrepot Name",
+    "amount":"Amount",
+    "days_remaining":"Days Remaining",
+    "expire_date":"Expire At",
+    "measure_name":"Measure Name",
+    "list_of_valid_products_with_date":"List of Valid Products with Date",
+    "days_expired":"Days Expired",
+    "report_of_expired_products":"Report of Expired products",
+    "total_sales_report":"Total Sales Report",
+    "sales_with":"Sales with ",
+    "total_sales_count":"Total Sales Count",
+    "not_any_report_has_been_recorded_yet":"Not any report has been recorded yet",
+    "debit_amount": " Debit Amount",
+    "credit_amount": " Credit Amount",
+    "remaining_amount": " Remaining Amount"
   },
   "numberToWord": {
     "zero": "Zero",

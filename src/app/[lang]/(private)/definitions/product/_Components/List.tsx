@@ -124,7 +124,7 @@ const ProductList = () => {
                         <Typography variant="caption" minWidth={"30rem"}>
                           {measure?.buyPrice} {item?.currencyId?.symbol}
                         </Typography>
-                        <Typography variant="caption" >
+                        <Typography variant="caption">
                           {t("sale_price")} {measure?.measureId?.name}{" "}
                         </Typography>
                         <Typography variant="caption" minWidth={"30rem"}>
@@ -151,19 +151,26 @@ const ProductList = () => {
       })}
 
       {productList?.count > 9 && (
-        <Stack spacing={2} p={2}>
-          <Pagination
-            count={Math.ceil(productList?.count / 10)}
-            size={"medium"}
-            onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>
+        <Box
+          display="flex"
+          justifyContent={t("dir") === "rtl" ? "start" : "end"}
+          mt={2}
+          dir="ltr"
+        >
+          <Stack spacing={2} p={2}>
+            <Pagination
+              count={Math.ceil(productList?.count / 10)}
+              size={"medium"}
+              onChange={handleChangePage}
+              variant="outlined"
+              color="primary"
+              shape="rounded"
+              sx={{
+                fontSize: "2rem !important",
+              }}
+            />
+          </Stack>
+        </Box>
       )}
       {productList?.count === 0 && !!isLoading && (
         <Box className={"empty_page_content"}>

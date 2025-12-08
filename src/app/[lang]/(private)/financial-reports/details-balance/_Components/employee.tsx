@@ -1,5 +1,5 @@
 import { useGetCalculateAllEmployeesLedgerBalanceQuery } from "@/hooks/api/financial-reports/queries/use-calculate-all-employees-ledger-balance";
-import { Box, Pagination, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Card, Pagination, Stack, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { buildColumns, ReportRow } from "./columns";
 import { useTranslations } from "next-intl";
@@ -24,7 +24,7 @@ export function EmployeeContainer() {
   };
   return (
     <Box>
-      <Box maxWidth={"100%"}>
+      <Card sx={{backgroundColor: theme.palette.background.paper}}>
         <DataGrid
           rows={employees?.ledgerBalance?.map((item: ReportRow) => ({
             ...item,
@@ -37,9 +37,9 @@ export function EmployeeContainer() {
           loading={isLoading}
           sx={{
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: theme.palette.grey[300],
+              // backgroundColor: theme.palette.grey[300],
               borderBottom: `1px solid ${theme.palette.divider}`,
-              height: 56,
+              // height: 56,
             },
             "& .MuiDataGrid-columnHeaderTitle": {
               fontWeight: 700,
@@ -50,7 +50,7 @@ export function EmployeeContainer() {
             },
           }}
         />
-      </Box>
+      </Card>
 
       <Box display="flex" justifyContent={"end"} mt={2}>
         <Stack spacing={2} p={1}>
@@ -90,9 +90,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              موجودی دیبت
+              {t("debit_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>
@@ -107,9 +107,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              موجودی کریدت
+              {t("credit_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>
@@ -124,9 +124,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              الباقی
+              {t("remaining_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>
@@ -155,9 +155,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              موجودی دیبت
+              {t("debit_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>
@@ -172,9 +172,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              موجودی کریدت
+              {t("credit_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>
@@ -189,9 +189,9 @@ export function EmployeeContainer() {
             borderRadius={"8px"}
           >
             <Typography p={1.5} variant="subtitle2">
-              الباقی
+              {t("remaining_amount")}
             </Typography>
-            <Box bgcolor={"#FFF"} height={"100%"} p={1.5}>
+            <Box bgcolor={theme.palette.background.default} height={"100%"} p={1.5}>
               <Typography variant="subtitle2">8050</Typography>
             </Box>
           </Box>

@@ -63,7 +63,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
         boxShadow: "none",
         borderRadius: "16px",
         width: "30rem",
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.background.paper,
       }}
     >
 

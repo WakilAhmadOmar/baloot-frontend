@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import { Box, Card, useTheme } from '@mui/material';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -38,8 +39,11 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function DataTable() {
+  const theme = useTheme();
   return (
-    <Paper sx={{ height: 400, width: '100%', direction:"rtl" }}>
+    <Box sx={{ height: 400, width: '100%', direction:"rtl" }}>
+      <Card sx={{ backgroundColor: theme.palette.background.paper }}>
+
       <DataGrid
         rows={rows}
         columns={columns}
@@ -77,6 +81,7 @@ export default function DataTable() {
         disableColumnFilter
         disableColumnSelector
       />
-    </Paper>
+      </Card>
+    </Box>
   );
 }

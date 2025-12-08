@@ -12,6 +12,7 @@ import {
   Grid2,
   IconButton,
   InputLabel,
+  Paper,
   Slide,
   TextField,
   Toolbar,
@@ -214,7 +215,7 @@ const CreatePurchaseInvoice = () => {
   console.log("errors", errors);
   return (
     <FormProvider {...methods}>
-      <Box>
+      <Paper >
         <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
           {t("add_new_purchase_invoice")}
         </Button>
@@ -319,7 +320,7 @@ const CreatePurchaseInvoice = () => {
             </Box>
           </DialogActions>
         </Dialog>
-      </Box>
+      </Paper>
     </FormProvider>
   );
 };

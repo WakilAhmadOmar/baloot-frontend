@@ -261,7 +261,10 @@
     "products-reports": "گزارشات اجناس",
     "with-date": "گزارش اجناس موجود با تاریخ",
     "fixed-products":"دارایی های ثابت",
-    "details-balance":"بیلانس تفصیل"
+    "details-balance":"بیلانس تفصیل",
+    "expired-products":"گزارش اجناس تاریح گذشته ",
+    "total-sales":"گزارش مجموعه فروشات اجناس",
+    "total-buy":"گزارش مجموعه خریدات اجناس"
   },
   "pages": {
         "dir": "rtl",
@@ -290,7 +293,7 @@
       "define_currency": "تعریف ارز",
       "current_rate_in_base_currency": " قیمت روز به ارز معیاری",
       "currency_updated_successfully":"ارز موافقانه اصلاح شد",
-      "currency_saved_successfully":"ارز موافقانه خیره شد",
+      "currency_saved_successfully":"ارز موافقانه ذخیره شد",
       "currency_rate_successfully_updated":"نرخ روز ارز موافقانه اصلاح شد"
     },
     "login": {
@@ -680,6 +683,25 @@
     "sub_ledger_balance_report":"لیست بیلانس های تفصیل",
     "customers":"مشتریان",
     "employees":"کارمندان"
+  },
+    "products_reports":{
+      "dir":"rtl",
+    "product_name":"نام محصول",
+    "measure_name":"واحد",
+    "entrepot_name":"نام گدام",
+    "amount":"تعداد",
+    "days_remaining":"روز های باقی",
+    "expire_date":"تاریخ انقضاء",
+    "list_of_valid_products_with_date":"لیست اجناس موجود با تاریخ",
+    "days_expired":"روز های انقضاء",
+    "report_of_expired_products":"گزارش اجناس تاریح گذشته ",
+    "total_sales_report":"گزارش مجموعه فروشات اجناس",
+    "sales_with":"فروشات با ",
+    "total_sales_count":"تعداد فروشات",
+    "not_any_report_has_been_recorded_yet":"هیچ گزارشی ثبت نشده است",
+    "debit_amount": " موجودی دیبت",
+    "credit_amount": " موجودی کردیت",
+    "remaining_amount": " موجودی الباقی"
   },
   "numberToWord": {
     "zero": " صفر",

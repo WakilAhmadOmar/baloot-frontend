@@ -31,9 +31,8 @@ params
         <ApolloManager>
           <NextIntlClientProvider  locale={locale} messages={messages}  >
           <AppContextProvider>
-          
             <ThemeProviderComponent>
-              <Paper sx={{minHeight:"100vh" }}>{children}</Paper>
+              <Paper sx={{minHeight:"100vh"}}>{children}</Paper>
             </ThemeProviderComponent>
           </AppContextProvider>
           </NextIntlClientProvider>

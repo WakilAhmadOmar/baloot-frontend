@@ -32,8 +32,9 @@ const LoginForm = () => {
         setHandleError({
           open: true,
           status: "success",
-          message:t("welcome_to_alpha_accounting_software") ,
+          message:t("login.welcome_to_alpha_accounting_software") ,
         });
+        console.log("res" , res);
         router.push("/");
       }
     } catch (error: any) {

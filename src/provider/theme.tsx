@@ -5,7 +5,7 @@ const themeLight = createTheme({
   palette: {
     mode:"light",
     grey: {
-     
+     "50":"#F2F2F2",
       "100": "#FAFAFA",
       "200": "#D9D9D9",
       "300": "#E8E8E8",
@@ -68,7 +68,8 @@ const themeLight = createTheme({
     // E.g., shift from Red 500 to Red 300 or Red 700.
     // tonalOffset: 0.2,
     background:{
-      default:"#F5F5F5",
+      // default:"#F5F5F5",
+      default:"#FFF",
       paper:"#fff"
     }
   },
@@ -177,10 +178,18 @@ const themeLight = createTheme({
     MuiPaper:{
       styleOverrides:{
         root:{
-          backgroundColor:"#FAFAFA"
+          backgroundColor:"#f5f5f5"
+        }
+      }
+    },
+    MuiCard:{
+      styleOverrides:{
+        root:{
+          boxShadow:"none"
         }
       }
     }
+
 
   },
 });
@@ -237,7 +246,7 @@ const themeDark = createTheme({
  
     background:{
       default:"#121212",
-      paper:"#121212"
+      paper:"#000"
     }
   },
 
@@ -342,7 +351,8 @@ const themeDark = createTheme({
      MuiPaper:{
       styleOverrides:{
         root:{
-          backgroundColor:"#090909ff"
+          backgroundColor:"#121212"
+          // backgroundColor:"#090909ff"
         }
       }
     }
