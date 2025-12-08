@@ -70,6 +70,11 @@ if(isLoading){
           open={true}
           drawerwidth={drawerWidth}
           anchor={t("home.dir") === "rtl" ? "right" : "left"}
+          PaperProps={{
+            sx:{
+              bgcolor:theme.palette.background.default
+            }
+          }}
         >
           <DrawerHeader>
             <LogoIcon width={"150px"} />

@@ -279,11 +279,11 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
       >
         <List>
            <LinkLayout href={ "/"+ lang +"/products-reports/with-date"} lang={lang} open={true} text={t("Inventory_Report_with_Date")}  />
-          {/*<LinkLayout href={ lang +"/definitions/products"} lang={lang} open={true} t={t} text={t("Report_of_Expired_Items")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Top_Selling_Products_Report")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Pre_Sale_Inventory_Report")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Pre_Ordered_Inventory_Report")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Total_Product_Sales_Report")}  />
+           <LinkLayout href={ "/"+ lang +"/products-reports/expired-products"} lang={lang} open={true}  text={t("Report_of_Expired_Items")}  />
+          <LinkLayout href={"/"+lang +"/products-reports/total-sales"} lang={lang} open={true}  text={t("Total_Product_Sales_Report")}  />
+          <LinkLayout href={ "/"+ lang +"/products-reports/total-buy"} lang={lang} open={true}  text={t("Total_Product_Purchase_Report")}  />
+          {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Top_Selling_Products_Report")}  />
+          <LinkLayout href={"/"+ lang +"/products-reports/products_category"} lang={lang} open={true} t={t} text={t("Pre_Sale_Inventory_Report")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Total_Product_Purchase_Report")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Profit_on_a_Single_Item_Sale")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("Inter_Warehouse_Transfer_Report")}  /> */}

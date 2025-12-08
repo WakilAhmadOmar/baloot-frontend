@@ -11,13 +11,14 @@ import {
   useTheme,
   Card,
 } from "@mui/material";
-import { ExportSquare, Printer } from "iconsax-react";
+import {  ExportSquare, Printer } from "iconsax-react";
 import { useTranslations } from "next-intl";
 import { DataGrid } from "@mui/x-data-grid";
 import { buildColumns, Product } from "./columns";
 import { useState } from "react";
+import { useGetAllEntrepotsExpiredProductsQuery } from "@/hooks/api/products-reports/queries/use-get-all-entrepots-expired-products";
 
-export const ProductsWithDate = () => {
+export const ProductReportsExpiredProductsContainer = () => {
   const theme = useTheme();
   const t = useTranslations("products_reports");
   const tableStyle = {
@@ -32,7 +33,7 @@ export const ProductsWithDate = () => {
     },
   };
   const [page, setPage] = useState(1);
-  const { data, isLoading, refetch } = useGetAllEntrepotsValidProductsQuery({
+  const { data, isLoading, refetch } = useGetAllEntrepotsExpiredProductsQuery({
     page: page,
   });
   const handleChangePage = (
@@ -46,7 +47,7 @@ export const ProductsWithDate = () => {
     <Box>
       <Box pb={3}>
         <Typography variant="h3" pb={3}>
-          {t("list_of_valid_products_with_date")}
+          {t("report_of_expired_products")}
         </Typography>
         <Box
           display={"flex"}
@@ -100,7 +101,8 @@ export const ProductsWithDate = () => {
           </Box>
         </Box>
       </Box>
-      <Card sx={{backgroundColor: theme.palette.background.paper}}>
+      <Box>
+        <Card sx={{backgroundColor: theme.palette.background.paper}}>
         <DataGrid
           rows={data?.product?.map((item: Product) => ({
             ...item,
@@ -114,6 +116,7 @@ export const ProductsWithDate = () => {
           sx={tableStyle}
         />
       </Card>
+      </Box>
       <Box
         display="flex"
         justifyContent={t("dir") === "rtl" ? "start" : "end"}

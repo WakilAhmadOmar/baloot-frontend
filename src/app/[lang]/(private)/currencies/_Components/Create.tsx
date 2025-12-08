@@ -1,30 +1,43 @@
 import { useAddUserCurrencyMutation } from "@/hooks/api/currencies/mutations/user-add-user-currency";
 import { AppContext } from "@/provider/appContext";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, InputLabel, TextField, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  InputLabel,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { ArrowSwapVertical, CloseSquare } from "iconsax-react";
 import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function CreateCurrency() {
-    const t = useTranslations("pages")
-    const {setHandleError} = useContext(AppContext)
-    const theme = useTheme()
-     const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setValue,
-      } = useForm();
-      const [openDialog, setOpenDialog] = useState(false);
+  const t = useTranslations("pages");
+  const { setHandleError } = useContext(AppContext);
+  const theme = useTheme();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
+  const [openDialog, setOpenDialog] = useState(false);
 
-      const {mutate , isLoading } = useAddUserCurrencyMutation()
+  const { mutate, isLoading } = useAddUserCurrencyMutation();
 
-      const handleOpenDialogFunction = () => {
+  const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
 
-   const onSubmitFunction = async (data: any) => {
+  const onSubmitFunction = async (data: any) => {
     const variables = {
       ...(data?.currencyId ? { currencyId: data?.currencyId } : {}),
       currencyObject: {
@@ -36,25 +49,23 @@ export function CreateCurrency() {
         isBase: false,
       },
     };
-    mutate(variables , {
-        onSuccess: () => {
-            setHandleError({
-        open: true,
-        message: t("currency.currency_saved_successfully"),
-        status: "error",
-      });
-        },
-        onError: (error:any) =>{
-      setHandleError({
-        open: true,
-        message: error?.message,
-        status: "error",
-      });
-        }
-    })
-   
+    mutate(variables, {
+      onSuccess: () => {
+        setHandleError({
+          open: true,
+          message: t("currency.currency_saved_successfully"),
+          status: "success",
+        });
+      },
+      onError: (error: any) => {
+        setHandleError({
+          open: true,
+          message: error?.message,
+          status: "error",
+        });
+      },
+    });
   };
-
 
   return (
     <Box>
@@ -79,7 +90,9 @@ export function CreateCurrency() {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t("currency.add_new_currency")}</Typography>
+          <Typography variant="button">
+            {t("currency.add_new_currency")}
+          </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare />
           </IconButton>
@@ -102,7 +115,7 @@ export function CreateCurrency() {
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>
-                    {t('currency.currency_name_is_required')}
+                    {t("currency.currency_name_is_required")}
                   </Typography>
                 )}
               </Grid>
@@ -126,7 +139,9 @@ export function CreateCurrency() {
                 )}
               </Grid>
               <Grid item xs={12} mt={5}>
-                <Typography variant="button">{t("currency.set_daily_price")}</Typography>
+                <Typography variant="button">
+                  {t("currency.set_daily_price")}
+                </Typography>
               </Grid>
               <Grid item xs={12}>
                 <Box
@@ -172,9 +187,9 @@ export function CreateCurrency() {
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t("currency.to")} 
-                      {/* {baseCurrency?.name}  */}
-                      ({t("currency.base_currency")})
+                      {t("currency.to")}
+                      {/* {baseCurrency?.name}  */}(
+                      {t("currency.base_currency")})
                     </InputLabel>
                     <TextField
                       fullWidth

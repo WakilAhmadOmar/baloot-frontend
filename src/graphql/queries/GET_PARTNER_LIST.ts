@@ -15,7 +15,6 @@ const GET_PARTNER_LIST = gql`
             symbol
           }
         }
-        phoneNumber
         createdAt
       }
       count

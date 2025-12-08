@@ -2,7 +2,6 @@ import { client } from "@/config/http-client";
 import {  GET_USER_CURRENCIES_QUERY_KEY } from "@/constants/queries-key";
 import { ClientError } from "@/types";
 import { useMutation, UseMutationOptions, useQueryClient } from "react-query";
-import { UPDATE_USER_CURRENCY } from "@/graphql/mutation/UPDATE_USER_CURRENCY";
 import { ADD_USER_CURRENCY } from "@/graphql/mutation/ADD_USER_CURRENCY";
 
 

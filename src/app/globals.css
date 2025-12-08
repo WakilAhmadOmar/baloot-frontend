@@ -65,10 +65,12 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
 }
 
-/* .empty_page_content{
-  display: grid;
-  justify-content: "center";
-} */
+.empty_page_content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 130px);
+}
 
 /* @media print {
   .MuiDataGrid-row {

@@ -13,6 +13,17 @@ const DefinitionUnit = () => {
   const t = useTranslations("pages");
   const { data: getMeasures, isLoading } = useGetMeasuresQuery();
 
+  if (getMeasures?.length === 0 && !isLoading){
+    return (
+      <Box className={"empty_page_content"}>
+          <EmptyPage
+            discription={t("unit.no_units_description")}
+            title={t("unit.no_unit_registered")}
+            icon={<EmptyProductPageIcon />}
+          />
+        </Box>
+    )
+  }
   return (
     <Box>
       <Typography variant="h3" mb={2}>
@@ -24,7 +35,7 @@ const DefinitionUnit = () => {
           {getMeasures?.map((item: any) => {
             return (
               <Box key={item?._id} display={"grid"}>
-                <UnitItem item={item} canDelete={true} />
+                <UnitItem item={item} canDelete={false} />
               </Box>
             );
           })}
@@ -32,15 +43,7 @@ const DefinitionUnit = () => {
           {isLoading && <SkeletonComponentBox />}
         </Box>
       </Box>
-      {getMeasures?.length === 0 && !isLoading && (
-        <Box className={"empty_page_content"}>
-          <EmptyPage
-            discription={t("unit.no_units_description")}
-            title={t("unit.no_unit_registered")}
-            icon={<EmptyProductPageIcon />}
-          />
-        </Box>
-      )}
+
     </Box>
   );
 };

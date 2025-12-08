@@ -22,7 +22,6 @@ const GET_SAFE_LIST = gql`
         address
         createdAt
         name
-        phoneNumber
       }
     }
   }

@@ -330,23 +330,7 @@ const CreateProduct = () => {
                 )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <ProductCategoriesComponent register={register} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t("expirationDate")}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  type="date"
-                  size="small"
-                  // defaultValue={item?.expirationDate?.slice(0, 10)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  {...register("expirationDate", { required: false })}
-                  name="expirationDate"
-                />
+                <ProductCategoriesComponent  />
               </Grid>
 
               <Grid item xs={12} md={6}>

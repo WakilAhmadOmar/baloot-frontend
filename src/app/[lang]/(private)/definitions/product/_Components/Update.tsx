@@ -36,10 +36,13 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
     return {
       name: product?.name,
       buyPrice: product?.buyPrice,
-      expirationDate: product?.expirationDate?.slice(0, 10),
+      category: product?.category?._id,
+      // expirationDate: product?.expirationDate?.slice(0, 10),
       barcode: product?.barcode,
       currencyId: product?.currencyId?._id,
-      product_measure:product?.price?.map((meas:any)=> meas?.measureId?.name)
+      product_measure: product?.price?.map(
+        (meas: any) => meas?.measureId?.name
+      ),
     };
   }, [product]);
   const method = useForm<any>({
@@ -59,7 +62,6 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       measure: me?.measureId?._id,
       name: me?.measureId?.name,
       sellPrice: me?.sellPrice,
-
     }));
   }, [product]);
 
@@ -117,7 +119,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
           }
         : {}),
       category: data?.category,
-      ...(data?.expirationDate ? { expirationDate: data?.expirationDate } : {}),
+      // ...(data?.expirationDate ? { expirationDate: data?.expirationDate } : {}),
       ...(data?.barcode ? { barcode: data?.barcode } : {}),
       // isNewProduct: data?.isNewProduct === "newProduct",
       currencyId: data?.currencyId,
@@ -187,8 +189,8 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -269,8 +271,13 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                           required: true,
                         })}
                         defaultValue={
-                          product?.measuresExchange?.[index - 1]
-                            ?.baseMeasureAmount
+                          product?.measuresExchange?.[index ]?.baseMeasureAmount > 0
+                            ? product?.measuresExchange?.[index  -1 ]
+                                ?.baseMeasureAmount/
+                              product?.measuresExchange?.[index ]
+                                ?.baseMeasureAmount
+                            : product?.measuresExchange?.[index - 1]
+                                ?.baseMeasureAmount
                         }
                         name={"measure" + index}
                         onChange={handleChangePriceMeasureFunction}
@@ -333,23 +340,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                 <UserCurrenciesComponent name={"currencyId"} />
               </Grid>
               <Grid item xs={12} md={6}>
-                <ProductCategoriesComponent register={register} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
-                  {t("expirationDate")}
-                </InputLabel>
-                <TextField
-                  fullWidth
-                  type="date"
-                  size="small"
-                  defaultValue={product?.expirationDate?.slice(0, 10)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  {...register("expirationDate", { required: false })}
-                  name="expirationDate"
-                />
+                <ProductCategoriesComponent  />
               </Grid>
 
               <Grid item xs={12} md={6}>

@@ -3,32 +3,35 @@ import { gql } from "@apollo/client";
 const GET_PRODUCTS = gql`
   query ($page: Int, $searchTerm: String = "") {
     getProducts(page: $page, searchTerm: $searchTerm) {
-     count
-    product {
-      _id
-      barcode
-      category {
+      count
+      product {
         _id
-        name
-      }
-      createdAt
-      currencyId {
-        _id
-        name
-        symbol
-      }
-      name
-      price {
-        buyPrice
-        measureId {
+        barcode
+        category {
           _id
           name
-
         }
-        sellPrice
-      }
+        createdAt
+        currencyId {
+          _id
+          name
+          symbol
+        }
+        name
+        measuresExchange {
+          powerMeasureAmount
 
-    }
+          baseMeasureAmount
+        }
+        price {
+          buyPrice
+          measureId {
+            _id
+            name
+          }
+          sellPrice
+        }
+      }
     }
   }
 `;

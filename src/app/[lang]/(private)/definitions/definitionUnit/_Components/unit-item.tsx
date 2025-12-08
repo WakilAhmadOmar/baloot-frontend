@@ -77,7 +77,7 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
         display: "grid",
         alignItems: "center",
         rowGap: 0,
-        backgroundColor:theme.palette.background.default
+        backgroundColor:theme.palette.background.paper
       }}
     >
       <Typography textAlign={"center"} variant="body1">
