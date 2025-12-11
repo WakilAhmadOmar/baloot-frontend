@@ -8,13 +8,12 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetSafeListQuery({page  }:{page:number }) {
+export function useGetSafeListQuery() {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getSafeList   }} = await client.query({
         query:GET_SAFE_LIST,
-        variables:{page },
         fetchPolicy:"network-only"
       })
      return getSafeList
@@ -26,7 +25,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [GET_SAFE_LIST_QUERY_KEY , page ],
+      queryKey: [GET_SAFE_LIST_QUERY_KEY  ],
     })
   }
 

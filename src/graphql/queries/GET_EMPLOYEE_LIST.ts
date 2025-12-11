@@ -1,41 +1,40 @@
 import { gql } from "@apollo/client";
 
 const GET_EMPLOYEE_LIST = gql`
-  query ($page: Int, $searchTerm: String) {
-    getEmployeeList(page: $page, searchTerm: $searchTerm) {
-      employee {
+query GetEmployeeList {
+  getEmployeeList {
+    _id
+    name
+    fathersName
+    idNumber
+    jobTitle
+    salary {
+      amount
+      currencyId {
         _id
         name
-        fathersName
-        idNumber
-        jobTitle
-        firstPeriodCredit {
-          amount
-          creditType
-          currencyId {
-            _id
-            name
-            symbol
-          }
-        }
-        salary {
-          amount
-          currencyId {
-            _id
-            name
-            symbol
-          }
-        }
-          createdAt
-        startDate
-        dateOfBirth
-        email
-        contactNumber
-        address
+        symbol
       }
-      count
     }
+    startDate
+    dateOfBirth
+    email
+    contactNumber
+    address
+    firstPeriodCredit {
+      creditType
+      amount
+      currencyId {
+        symbol
+        name
+        _id
+      }
+    }
+    description
+    createdAt
+    updatedAt
   }
+}
 `;
 
 export { GET_EMPLOYEE_LIST };

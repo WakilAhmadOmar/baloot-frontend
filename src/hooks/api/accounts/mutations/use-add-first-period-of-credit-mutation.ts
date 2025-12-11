@@ -16,10 +16,11 @@ export const useAddFirstPeriodOfCreditMutation = (options: UseMutationOptions<{}
       }
     
     const onSuccess = ()=> {
-      queryClient.refetchQueries({ queryKey: [GET_BANK_LIST_QUERY_KEY] });
-      queryClient.refetchQueries({ queryKey: [GET_SAFE_LIST_QUERY_KEY] });
-      queryClient.refetchQueries({ queryKey: [GET_CUSTOMER_LIST_QUERY_KEY] });
-      queryClient.refetchQueries({ queryKey: [GET_EMPLOYEE_LIST_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [GET_BANK_LIST_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [GET_SAFE_LIST_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [GET_CUSTOMER_LIST_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [GET_EMPLOYEE_LIST_QUERY_KEY] });
+
     }
     return useMutation({
       mutationFn,

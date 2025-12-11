@@ -19,16 +19,18 @@ import {
   MouseEvent,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSchemaCrateForm } from "./Create-form-schema";
+import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
+import { CreditType } from "@/types/accounts/account.type";
 
 interface IPropsAddCashBox {
   item: any;
@@ -36,19 +38,30 @@ interface IPropsAddCashBox {
 
 export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
   const t = useTranslations("pages")
-  const methods = useForm({
+
+  const defaultValues: CreateFormType = useMemo(() => ({
+    description: item?.description,
+    accountId: item?._id,
+    firstPeriodCredit: item?.firstPeriodCredit?.length > 0 ? item?.firstPeriodCredit?.map((item: any) => ({
+      amount: item?.amount,
+      creditType: item?.creditType,
+      currencyId: item?.currencyId?._id,
+    })) : [{
+      amount: 0,
+      creditType: CreditType?.Debit,
+      currencyId: "",
+    }],
+  }), [item , item?.firstPeriodCredit?.length]);
+
+  const methods: UseFormReturn<CreateFormType> = useForm({
     resolver:yupResolver(useSchemaCrateForm(t)),
-    defaultValues:{
-      description: item?.description,
-      accountId: item?._id,
-      currencyId: item?.currencyId?._id ,
-    }
+    defaultValues
   });
-  const { register, handleSubmit, reset , formState:{errors}} = methods;
+  const { register, handleSubmit, reset , formState:{errors} , watch, setValue  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [employeeDetails, setEmployeeDetails] = useState<any>();
+  const watchFirstPeriodCredit = watch("firstPeriodCredit") || [];
   const { mutate: addFirstPeriodMutation, isLoading } =
     useAddFirstPeriodOfCreditMutation();
 
@@ -57,77 +70,37 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
   };
 
   const handleAddNewCredit = () => {
-    setEmployeeDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: [
-        ...(prevState?.firstPeriodCredit?.length > 0
-          ? prevState?.firstPeriodCredit
-          : []),
-        {
-          amount: 0,
-          creditType: "Debit",
-          currencyId: {
-            _id: "",
-            name: "",
-            symbol: "",
-          },
-        },
-      ],
-    }));
+    const currentCredits = watchFirstPeriodCredit || [];
+    const newCredit = {
+      amount: 0,
+      creditType: CreditType?.Debit,
+      currencyId: "",
+    };
+    const newCredits = [...currentCredits, newCredit];
+    setValue("firstPeriodCredit", newCredits);
   };
 
-  useEffect(() => {
-    if (item) {
-      setEmployeeDetails(item);
-    }
-  }, [item]);
 
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
-    setEmployeeDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
-        (item: any, index: number) => index !== deleteIndex
-      ),
-    }));
+    const newCredits = watchFirstPeriodCredit?.filter(
+      (item: any, index: number) => index !== deleteIndex
+    );
+    setValue("firstPeriodCredit", newCredits);
   };
 
-  const handleChangeCredit = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    index: number
-  ) => {
-    const name = event?.target?.name;
-    const value = event?.target?.value;
-    setEmployeeDetails((prevState: any) => {
-      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
-        (item: any, inItem: number) => {
-          if (index == inItem) {
-            return {
-              ...item,
-              ...(name?.includes("amount") ? { amount: value } : {}),
-              ...(name?.includes("creditType") ? { creditType: value } : {}),
-            };
-          } else return item;
-        }
-      );
-      return {
-        ...prevState,
-        firstPeriodCredit,
-      };
-    });
-  };
-  const onSubmitFunction = async (data: any) => {
+  const onSubmitFunction = async (data: CreateFormType) => {
     const variables = {
-      creditObject: employeeDetails?.firstPeriodCredit?.map(
+      creditObject: watchFirstPeriodCredit?.map(
         (item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
+          currencyId: item?.currencyId,
         })
-      ),
+      )?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Employee",
-      accountId: item?._id,
+      accountId: data?.accountId,
     };
 
     addFirstPeriodMutation(variables, {
@@ -138,7 +111,11 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
           open: true,
         });
         handleOpenDialogFunction();
-        reset();
+        reset({
+          accountId: data?.accountId,
+          description: data?.description,
+          firstPeriodCredit: watchFirstPeriodCredit,
+        });
       },
       onError: (error: any) => {
         setHandleError({
@@ -150,14 +127,6 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
     });
   };
 
-  const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = employeeDetails?.firstPeriodCredit;
-    allCredit[index].currencyId = currency;
-    setEmployeeDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: allCredit,
-    }));
-  };
   return (
     <FormProvider {...methods}>
       <Dialog
@@ -189,7 +158,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            {employeeDetails?.firstPeriodCredit?.length > 0 && (
+            {watchFirstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -203,7 +172,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
                 </Grid>
               </Grid>
             )}
-            {employeeDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+            {watchFirstPeriodCredit?.map((item: any, index: any) => {
               return (
                 <Grid
                   container
@@ -213,29 +182,18 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
                 >
                   <Grid item xs={7}>
                     <SelectWithInput
-                      register={register}
-                      inputName={"amount" + index}
-                      selectName={"creditType" + index}
+                      inputName={`firstPeriodCredit.${index}.amount`}
+                      selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
                       inputDefaultValue={item?.amount}
-                      data={[
-                        { name: "Credit", value: "Credit" },
-                        { name: "Debit", value: "Debit" }
-                      ]}
-                      onChange={(
-                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                      ) => handleChangeCredit(event, index)}
+                      data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                      name="currencyId"
+                      name={`firstPeriodCredit.${index}.currencyId`}
                       dir={t("dir")}
-                      defaultValue={item?.currencyId?._id} 
-                      required={false}
-                      onSelected={(currency) =>
-                        handleSelectCurrency(currency, index)
-                      }
+
                     />
                   </Grid>
                   {index > 0 && (
@@ -262,7 +220,7 @@ export const UpdateEmployeeAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
               display={"grid"}
               justifyContent={"end"}
               sx={{
-                mt: employeeDetails?.firstPeriodCredit?.length > 0 ? 0 : "1rem",
+                mt: watchFirstPeriodCredit?.length > 0 ? 0 : "1rem",
               }}
             >
               <Button

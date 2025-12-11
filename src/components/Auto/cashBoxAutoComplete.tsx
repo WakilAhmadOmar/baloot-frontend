@@ -20,14 +20,14 @@ const CashBoxAutoComplete: React.FC<IPropsProduct> = ({
     watch,
   } = useFormContext();
 
-  const { data: safeList } = useGetSafeListQuery({ page: 1 });
+  const { data: safeList } = useGetSafeListQuery();
 
   
 
   const value = watch(name || "cashboxId");
   useEffect(() => {
-    if (safeList?.safe?.length && !value) {
-      const defaultCustomer = safeList.safe[0];
+    if (safeList?.length && !value) {
+      const defaultCustomer = safeList[0];
       setValue(name || "cashboxId", defaultCustomer._id);
       // if (getCashbox) {
       //   getCashbox(defaultCustomer);
@@ -48,14 +48,14 @@ const CashBoxAutoComplete: React.FC<IPropsProduct> = ({
           onChange={(event) => {
             onChange(event);
             if (getCashbox) {
-              const selectedCustomer = safeList?.safe?.find(
+              const selectedCustomer = safeList?.find(
                 (item: any) => item?._id === event.target.value
               );
               getCashbox(selectedCustomer);
             }
           }}
         >
-          {safeList?.safe?.map((item: any) => {
+          {safeList?.map((item: any) => {
             return (
               <MenuItem key={item?._id} value={item?._id} dir={dir}>
                 {item?.name}

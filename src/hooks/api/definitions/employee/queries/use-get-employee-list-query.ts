@@ -7,13 +7,12 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetEmployeeListQuery({page  }:{page:number }) {
+export function useGetEmployeeListQuery() {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getEmployeeList   }} = await client.query({
         query:GET_EMPLOYEE_LIST,
-        variables:{page },
         fetchPolicy:"network-only"
       })
      return getEmployeeList
@@ -25,7 +24,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [GET_EMPLOYEE_LIST_QUERY_KEY , page ],
+      queryKey: [GET_EMPLOYEE_LIST_QUERY_KEY ],
     })
   }
 

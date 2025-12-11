@@ -10,6 +10,7 @@ import {
   DialogActions,
   Button,
   Slide,
+  alpha,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { ArrowDown2, Trash, Edit, ArrowUp2, InfoCircle } from "iconsax-react";
@@ -191,7 +192,7 @@ const CollapseComponent: React.FC<IProps> = ({
           pl={2}
           sx={{
             overflow: "hidden",
-            backgroundColor: theme.palette.grey[100],
+            backgroundColor: alpha(theme.palette.background.default, 0.5),
             borderBottomLeftRadius: "8px",
             borderBottomRightRadius: "8px",
             // height: handleCollapseState ? height || "200px" : "0px",

@@ -1,29 +1,29 @@
 import { gql } from "@apollo/client";
 
 const GET_SAFE_LIST = gql`
-  query GetSafeList($page: Int, $searchTerm: String) {
-  getSafeList(page: $page, searchTerm: $searchTerm) {
-    count
-    safe {
+  query GetSafeList {
+  getSafeList {
+    _id
+    name
+    address
+    cashier {
       _id
       name
-      description
-      firstPeriodCredit {
-      amount
-      creditType
+      fathersName
+    }
+    cashierPhoneNumber
+    firstPeriodCredit {
+      createdAt
       currencyId {
         _id
         name
         symbol
       }
-     }
-      cashier {
-        _id
-        address
-        createdAt
-        name
-      }
+      amount
+      creditType
     }
+    description
+    createdAt
   }
 }
 `;
