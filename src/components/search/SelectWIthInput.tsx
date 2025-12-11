@@ -1,5 +1,6 @@
-import { Box, MenuItem, Select, TextField } from "@mui/material";
+import { Box, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { ChangeEvent } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
 type SelectItem = {
   name: string;
@@ -7,46 +8,59 @@ type SelectItem = {
 };
 
 interface IPropsSelectWithInput {
-  register?: any;
   defaultValue?: string;
   data?: SelectItem[];
   selectName?: string;
   inputName?: string;
-  inputDefaultValue?:number
-  onChange?:(event:ChangeEvent<HTMLInputElement | HTMLSelectElement>)=>void
+  inputDefaultValue?: number;
+  onChange?: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
 const SelectWithInput: React.FC<IPropsSelectWithInput> = ({
-  register,
   defaultValue,
   data,
   selectName,
   inputName,
   inputDefaultValue,
-onChange
+  onChange,
 }) => {
+  const {
+    control,
+    formState: { errors },
+    watch,
+    setValue,
+    register,
+  } = useFormContext();
   return (
     <Box display={"flex"}>
-      <Select
-        size={"small"}
-        {...register(selectName || "isNewProduct", { require: true })}
+      <Controller
         name={selectName || "isNewProduct"}
-        defaultValue={defaultValue || data?.[0]?.value}
-        sx={{ borderStartEndRadius: 0, borderEndEndRadius: 0 }}
-        onChange={onChange}
-      >
-        {data?.map((item) => {
-          return (
-            <MenuItem value={item?.value} key={item?.name}>
-              {item?.name}
-            </MenuItem>
-          );
-        })}
-      </Select>
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            size={"small"}
+            {...register(selectName || "isNewProduct")}
+            name={selectName || "isNewProduct"}
+            defaultValue={value || defaultValue || data?.[0]?.value}
+            sx={{ borderStartEndRadius: 0, borderEndEndRadius: 0 }}
+            value={value}
+            onChange={onChange}
+          >
+            {data?.map((item) => {
+              return (
+                <MenuItem value={item?.value} key={item?.name}>
+                  {item?.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        )}
+      />
       <TextField
         fullWidth={true}
         size={"small"}
         type="number"
+        error={!!errors?.[inputName || "amount"]}
         defaultValue={inputDefaultValue}
         sx={{
           "& .MuiInputBase-root": {
@@ -54,10 +68,14 @@ onChange
             borderEndStartRadius: 0,
           },
         }}
-        {...register(inputName || "amount", { require: true })}
+        {...register(inputName || "amount", { required: true })}
         name={inputName || "amount"}
-        onChange={onChange}
       />
+      {errors?.[inputName || "amount"] && (
+        <Typography variant="caption" color="error">
+          {(errors?.[inputName || "amount"] as any)?.message}
+        </Typography>
+      )}
     </Box>
   );
 };

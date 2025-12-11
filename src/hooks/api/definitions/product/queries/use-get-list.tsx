@@ -6,7 +6,7 @@ import { ApolloError } from "@apollo/client";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 
-export const useGetProductList = ({ page }: { page: number }) => {
+export const useGetProductList = ({ page, limit = 10 }: { page: number, limit?: number }) => {
   const { setHandleError } = useContext(AppContext);
   return useQuery({
     queryFn: async () => {
@@ -14,7 +14,7 @@ export const useGetProductList = ({ page }: { page: number }) => {
         data: { getProducts },
       } = await client.query({
         query: GET_PRODUCTS,
-        variables: { page },
+        variables: { page, limit },
         fetchPolicy: "network-only",
       });
       return getProducts;
@@ -26,6 +26,6 @@ export const useGetProductList = ({ page }: { page: number }) => {
         message: error.message,
       });
     },
-    queryKey: [GET_PRODUCTS_QUERY_KEY, page],
+    queryKey: [GET_PRODUCTS_QUERY_KEY, page , limit],
   });
 };

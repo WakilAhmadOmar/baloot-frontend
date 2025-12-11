@@ -17,8 +17,7 @@ import { useTranslations } from "next-intl";
 
 const CashboxPage = () => {
   const t = useTranslations("pages")
-  const [page, setPage] = useState(1);
-  const { data: safeList, isLoading } = useGetSafeListQuery({ page });
+  const { data: safeList, isLoading } = useGetSafeListQuery();
   const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
     useAddFirstPeriodOfCreditMutation();
   const { setHandleError } = useContext(AppContext);
@@ -34,7 +33,7 @@ const CashboxPage = () => {
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message ?? "",
-          type: "success",
+          status: "success",
           open: true,
         });
       },
@@ -42,17 +41,12 @@ const CashboxPage = () => {
         setHandleError({
           open: true,
           message: error?.message,
-          type: "error",
+          status: "error",
         });
       },
     });
   };
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
-  };
+
   return (
     <Box>
       <Typography variant="h3">
@@ -105,7 +99,7 @@ const CashboxPage = () => {
         </Box>
       )}
       <Box mt={2}>
-        {safeList?.safe?.map((item: any) => {
+        {safeList?.map((item: any) => {
           return (
             <CollapseComponent
               key={item?._id}
@@ -165,23 +159,7 @@ const CashboxPage = () => {
           );
         })}
       </Box>
-      {safeList?.count > 9 && (
-        <Box display={"flex"} justifyContent={"flex-end"} mt={2}>
-          <Stack spacing={2} p={1}>
-            <Pagination
-              count={safeList?.count / 10}
-              size={"medium"}
-              onChange={handleChangePage}
-              variant="outlined"
-              color="primary"
-              shape="rounded"
-              sx={{
-                fontSize: "2rem !important",
-              }}
-            />
-          </Stack>
-        </Box>
-      )}
+ 
       {isLoading &&
         Array(8)
           .fill(null)

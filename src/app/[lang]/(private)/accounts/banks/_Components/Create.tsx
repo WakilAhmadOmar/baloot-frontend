@@ -14,8 +14,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
-import { ChangeEvent, MouseEvent, useContext, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { MouseEvent, useContext, useState } from "react";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
@@ -24,7 +24,8 @@ import BankAutoComplete from "@/components/Auto/bankAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSchemaCrateForm } from "./Create-form-schema";
+import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
+import { CreditType } from "@/types/accounts/account.type";
 
 const AddBanksAccounts = () => {
   const t = useTranslations("pages");
@@ -36,24 +37,15 @@ const AddBanksAccounts = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = methods;
+    watch,
+    setValue,
+  }: UseFormReturn<CreateFormType> = methods;
   const theme = useTheme();
+
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [bankDetails, setBankDetails] = useState<any>({
-    _id: "1",
-    firstPeriodCredit: [
-      {
-        amount: 0,
-        creditType: "Debit",
-        currencyId: {
-          _id: "",
-          name: "",
-          symbol: "",
-        },
-      },
-    ],
-  });
+  const watchFirstPeriodCredit = watch("firstPeriodCredit") || [];
+
   const { mutate: addFirstPeriodMutation, isLoading } =
     useAddFirstPeriodOfCreditMutation();
 
@@ -62,75 +54,42 @@ const AddBanksAccounts = () => {
   };
 
   const handleAddNewCredit = () => {
-    setBankDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: [
-        ...(prevState?.firstPeriodCredit?.length > 0
-          ? prevState?.firstPeriodCredit
-          : []),
-        {
-          amount: 0,
-          creditType: "Debit",
-          currencyId: {
-            _id: "",
-            name: "",
-            symbol: "",
-          },
-        },
-      ],
-    }));
-  };
-  const handleDeleteCredit = (event: MouseEvent) => {
-    const deleteIndex = parseInt(event?.currentTarget?.id);
-    setBankDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
-        (item: any, index: number) => index !== deleteIndex
-      ),
-    }));
+    const currentCredits = watch("firstPeriodCredit") || [];
+    const newCredit = {
+      amount: 0,
+      creditType: CreditType.Debit,
+      currencyId: "",
+    };
+    const newCredits = [...currentCredits, newCredit];
+    setValue("firstPeriodCredit", newCredits);
   };
 
-  const handleChangeCredit = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    index: number
-  ) => {
-    const name = event?.target?.name;
-    const value = event?.target?.value;
-    setBankDetails((prevState: any) => {
-      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
-        (item: any, inItem: number) => {
-          if (index == inItem) {
-            return {
-              ...item,
-              ...(name?.includes("amount") ? { amount: value } : {}),
-              ...(name?.includes("creditType") ? { creditType: value } : {}),
-            };
-          } else return item;
-        }
-      );
-      return {
-        ...prevState,
-        firstPeriodCredit,
-      };
-    });
+  const handleDeleteCredit = (event: MouseEvent) => {
+    const currentCredits = watch("firstPeriodCredit") || [];  
+    const deleteIndex = parseInt(event?.currentTarget?.id);
+    const newCredits = currentCredits?.filter(
+      (item: any, index: number) => index !== deleteIndex
+    );
+    setValue("firstPeriodCredit", newCredits);
   };
-  const onSubmitFunction = async (data: any) => {
-    if (bankDetails?.firstPeriodCredit?.[0]?.currencyId?._id  === "") {
+
+  const onSubmitFunction = async (data: CreateFormType) => {
+
+    if (data?.firstPeriodCredit?.[0]?.currencyId  === "") {
      return setHandleError({
         open: true,
         message: t("bank.please_add_at_least_one_credit"),
         status: "error",
       });
-      
     }
     const variables = {
-      creditObject: bankDetails?.firstPeriodCredit?.map(
+      creditObject: data?.firstPeriodCredit?.map(
         (item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
+          currencyId: item?.currencyId,
         })
-      ),
+      )?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Bank",
       accountId: data?.bankId,
@@ -157,15 +116,13 @@ const AddBanksAccounts = () => {
   };
 
   const handleGetBank = (data: any) => {
-    setBankDetails(data);
-  };
-  const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = bankDetails?.firstPeriodCredit;
-    allCredit[index].currencyId = currency;
-    setBankDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: allCredit,
-    }));
+    setValue("bankId", data?._id);
+    setValue("firstPeriodCredit", data?.firstPeriodCredit?.map((item: any) => ({
+      amount: item?.amount,
+      creditType: item?.creditType,
+      currencyId: item?.currencyId?._id,
+    })));
+
   };
 
   return (
@@ -217,7 +174,7 @@ const AddBanksAccounts = () => {
                 )}
               </Grid>
             </Grid>
-            {bankDetails?.firstPeriodCredit?.length > 0 && (
+            {watchFirstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -231,7 +188,7 @@ const AddBanksAccounts = () => {
                 </Grid>
               </Grid>
             )}
-            {bankDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+            {watchFirstPeriodCredit?.map((item: any, index: any) => {
               return (
                 <Grid
                   container
@@ -241,30 +198,28 @@ const AddBanksAccounts = () => {
                 >
                   <Grid item xs={7}>
                     <SelectWithInput
-                      register={register}
-                      inputName={"amount" + index}
-                      selectName={"creditType" + index}
+                      inputName={`firstPeriodCredit.${index}.amount`}
+                      selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
                       inputDefaultValue={item?.amount}
-                      data={[{ name: "Debit", value: "Debit" }]}
-                      onChange={(
-                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                      ) => handleChangeCredit(event, index)}
+                      data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
+                      // onChange={(
+                      //   event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+                      // ) => handleChangeCredit(event, index)}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                      name="currencyId"
+                      name={`firstPeriodCredit.${index}.currencyId`}
                       dir={t("dir")}
-                      required={false}
-                      defaultValue={item?.currencyId?._id}
-                      onSelected={(currency) =>
-                        handleSelectCurrency(currency, index)
-                      }
+                      // defaultValue={item?.currencyId?._id}
+                      // onSelected={(currency) =>
+                      //   handleSelectCurrency(currency, index)
+                      // }
                     />
-                    {errors?.currencyId && (
+                    {errors?.firstPeriodCredit?.[index]?.currencyId && (
                       <Typography variant="caption" color="error">
-                        {t("bank.currency_is_required")}
+                        {errors?.firstPeriodCredit?.[index]?.currencyId?.message}
                       </Typography>
                     )}
                   </Grid>

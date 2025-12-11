@@ -18,7 +18,7 @@ const BanksAccountsPage = () => {
   const t = useTranslations("pages")
   const [page, setPage] = useState(1);
   const { setHandleError } = useContext(AppContext);
-  const { data: bankList, isLoading } = useGetBankListQuery({ page });
+  const { data: bankList, isLoading } = useGetBankListQuery();
 
   const {mutate:addFirstPeriodMutation , isLoading:deleteLoading } = useAddFirstPeriodOfCreditMutation()
 
@@ -66,13 +66,13 @@ const BanksAccountsPage = () => {
         <Box display={"flex"} width={"100%"}>
           <AddBanksAccounts />
         </Box>
-        {bankList?.count > 0 && (
+        
           <Box>
             {/* <CustomSearch t={t} 
             getTextSearchFunction={handleSearchItem}
              /> */}
           </Box>
-        )}
+        
       </Box>
       {/* {
         !isLoading &&
@@ -90,7 +90,7 @@ const BanksAccountsPage = () => {
             </Typography>
           </Box>
         )} */}
-      {bankList?.count === 0 && isLoading === false && (
+      {bankList?.length === 0 && isLoading === false && (
         <Box
           className={"empty_page_content"}
           width={"100%"}
@@ -107,9 +107,9 @@ const BanksAccountsPage = () => {
           />
         </Box>
       )}
-     
+
       <Box mt={2}>
-        {bankList?.bank?.map((item: any) => {
+        {bankList?.map((item: any) => {
           return (
             <CollapseComponent
               editTable={true}
@@ -169,23 +169,6 @@ const BanksAccountsPage = () => {
         })}
       </Box>
       
-      {bankList?.count > 9 && (
-        <Box display={"flex"} justifyContent={"flex-end"} mt={2}>
-          <Stack spacing={2} p={1}>
-            <Pagination
-              count={bankList?.count / 10}
-              size={"medium"}
-              onChange={handleChangePage}
-              variant="outlined"
-              color="primary"
-              shape="rounded"
-              sx={{
-                fontSize: "2rem !important",
-              }}
-            />
-          </Stack>
-        </Box>
-      )}
        {
         isLoading &&
         Array(8)

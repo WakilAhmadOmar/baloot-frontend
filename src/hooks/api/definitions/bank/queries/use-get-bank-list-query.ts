@@ -7,13 +7,12 @@ import { useContext } from "react";
 import { useQuery } from "react-query"
 
 
-export function useGetBankListQuery({page  }:{page:number }) {
+export function useGetBankListQuery() {
 const {setHandleError} = useContext(AppContext)
     return useQuery({
       queryFn: async () => {
         const {data: { getBankList   }} = await client.query({
         query:GET_BANK_LIST,
-        variables:{page },
         fetchPolicy:"network-only"
       })
      return getBankList
@@ -25,7 +24,7 @@ const {setHandleError} = useContext(AppContext)
         message:error.message
       })
     },
-      queryKey: [GET_BANK_LIST_QUERY_KEY , page ],
+      queryKey: [GET_BANK_LIST_QUERY_KEY  ],
     })
   }
 

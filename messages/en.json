@@ -345,7 +345,9 @@
       "please_add_at_least_one_credit": "Please add at least one credit",
       "description_to_much": "The max length of description is 255 characters.",
       "currency_is_required": "Currency is required",
-      "bank_is_required": " Bank is required"
+      "bank_is_required": " Bank is required",
+      "amount_is_required": "Amount is required",
+      "credit_type_is_required": "Credit type is required"
     },
     "cashbox": {
       "safes": "Safes",
@@ -370,7 +372,11 @@
       "safe_saved_successfully": "Safe saved successfully",
       "safe_updated_successfully": "Safe updated successfully",
       "safe_deleted_successfully": "Safe deleted successfully",
-      "safe_name_is_require": "Safe name is require"
+      "safe_name_is_require": "Safe name is require",
+      "cashbox_is_required": "Cashbox is required",
+      "amount_is_required": "Amount is required",
+      "credit_type_is_required": "Credit type is required",
+      "currency_is_required": "Currency is required"
     },
     "Expenses": {
       "Expenses": "Expenses",
@@ -417,7 +423,11 @@
       "record_previous_customer_accounts": "record Previous Customer Accounts",
       "update_record_previous_customer_account": "Update Record Previous Customer Account",
       "customer_saved_successfully": "Customer saved successfully",
-      "address_is_too_long": "Address must not exceed 255 characters."
+      "address_is_too_long": "Address must not exceed 255 characters.",
+      "customer_name_is_required": "Customer name is required",
+      "amount_is_required": "Amount is required",
+      "credit_type_is_required": "Credit type is required",
+      "currency_is_required": "Currency is required"
     },
     "unit": {
       "define_units": "Define Units",

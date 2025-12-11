@@ -6,7 +6,7 @@ import { ApolloError } from "@apollo/client";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 
-export const useGetWarehouseList = ({ page }: { page: number }) => {
+export const useGetWarehouseList = () => {
   const { setHandleError } = useContext(AppContext);
   return useQuery({
     queryFn: async () => {
@@ -14,7 +14,6 @@ export const useGetWarehouseList = ({ page }: { page: number }) => {
         data: { getEntrepotList },
       } = await client.query({
         query: GET_ENTREPOT_LIST,
-        variables: { page },
         fetchPolicy: "network-only",
       });
       return getEntrepotList;
@@ -26,6 +25,6 @@ export const useGetWarehouseList = ({ page }: { page: number }) => {
         message: error.message,
       });
     },
-    queryKey: [GET_ENTREPOT_LIST_QUERY_KEY, page],
+    queryKey: [GET_ENTREPOT_LIST_QUERY_KEY],
   });
 };

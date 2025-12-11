@@ -28,9 +28,9 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
     if (bankList?.bank?.length && !value) {
       const defaultCustomer = bankList?.bank?.[0];
       setValue(name || "bankId", defaultCustomer._id);
-      // if (getBank) {
-      //   getBank(defaultCustomer);
-      // }
+      if (getBank) {
+        getBank(defaultCustomer);
+      }
     }
   }, [bankList, setValue, getBank, name, value]);
 
@@ -42,7 +42,7 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
         <Select
           fullWidth
           size={"small"}
-          value={value}
+          value={value || ""}
           error={!!errors?.[name || "bankId"]}
           required
           onChange={(event) => {

@@ -21,7 +21,7 @@ error= false
 
   
 
-  const {data:getEntrepotList , isLoading } = useGetWarehouseList({page:1})
+  const {data:getEntrepotList , isLoading } = useGetWarehouseList()
 
 
   const handleChangeCustomerSearch = (
@@ -29,7 +29,7 @@ error= false
   ) => {
     const id = event.target?.value
     
-    const objectItem = getEntrepotList?.entrepot?.filter((item:any) => item?._id ===id )?.[0]
+    const objectItem = getEntrepotList?.filter((item:any) => item?._id ===id )?.[0]
 
     if (objectItem?._id && getWarehouse) {
       getWarehouse(objectItem);
@@ -39,8 +39,8 @@ error= false
 const value = watch(name || "warehouseId")
 
  useEffect(() => {
-    if (getEntrepotList?.entrepot?.length && !value) {
-      const defaultWarehouse = getEntrepotList?.entrepot[0];
+    if (getEntrepotList?.length && !value) {
+      const defaultWarehouse = getEntrepotList?.[0];
       setValue(name || "warehouseId", defaultWarehouse._id);
       setValue("warehouseName", defaultWarehouse.name);
       // if (getWarehouse) {
@@ -64,7 +64,6 @@ const value = watch(name || "warehouseId")
               defaultValue={value}
               defaultOpen={false}
               error={ error || !!errors?.warehouseId}
-              // helperText={errors?.currencyId?.message}
               required
               onChange={(event)=> {
                 onChange(event);
@@ -72,7 +71,7 @@ const value = watch(name || "warehouseId")
               }}
 
             >
-              {getEntrepotList?.entrepot?.map((item:any) => {
+              {getEntrepotList?.map((item:any) => {
                 return (
                   <MenuItem key={item?._id} value={item?._id} dir={dir}>
                     {item?.name}

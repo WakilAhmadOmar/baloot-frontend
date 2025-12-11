@@ -345,7 +345,9 @@
       "please_add_at_least_one_credit":"لطفا حداقل یک حساب اضافه کنید",
       "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
       "currency_is_required":"انتخاب ارز حتمی است.",
-      "bank_is_required":"انتخاب بانک حتمی است."
+      "bank_is_required":"انتخاب بانک حتمی است.",
+      "amount_is_required":"مقدار حتمی است.",
+      "credit_type_is_required":"نوع کردیت حتمی است."
     },
     "cashbox": {
       "safes":"صندوق ها",
@@ -378,7 +380,9 @@
       "currency_is_required":"انتخاب ارز حتمی است.",
       "please_add_at_least_one_credit":"لطفا حداقل یک حساب اضافه کنید ",
       "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
-      "cashbox_is_required":"انتخاب صندوق حتمی است."
+      "cashbox_is_required":"انتخاب صندوق حتمی است.",
+      "amount_is_required":"مقدار حتمی است.",
+      "credit_type_is_required":"نوع کردیت حتمی است."
     },
     "Expenses": {
       "Expenses": "مصارفات",
@@ -428,7 +432,10 @@
       "customer_name_is_required":"نام مشتری حتمی است.",
       "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
       "currency_is_required":"انتخاب ارز حتمی است.",
-      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد."
+      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد.",
+      "amount_is_required":"مقدار حتمی است.",
+      "credit_type_is_required":"نوع کردیت حتمی است."
+      
     },
     "unit": {
       "define_units": "تعریف واحدات",
@@ -482,7 +489,9 @@
       "id_number_is_require":"نمبر تذکره حتمی است",
       "description_to_much":"توضیحات نباید بیش از ۲۵۵ حرف باشد.",
       "currency_is_required":"انتخاب ارز حتمی است.",
-      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد."
+      "address_is_too_long":"آدرس نباید بیش از ۲۵۵ حرف باشد.",
+      "amount_is_required":"مقدار حتمی است.",
+      "credit_type_is_required":"نوع کردیت حتمی است."
 
     },
     "income": {

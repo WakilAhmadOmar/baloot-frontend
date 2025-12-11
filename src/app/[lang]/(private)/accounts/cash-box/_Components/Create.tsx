@@ -13,8 +13,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
-import { ChangeEvent, MouseEvent, useContext, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import {  MouseEvent, useContext, useState } from "react";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
@@ -22,34 +22,26 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSchemaCrateForm } from "./Create-form-schema";
+import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
+import { CreditType } from "@/types/accounts/account.type";
 
-const AddBanksAccounts = () => {
-  const t = useTranslations("pages")
-  const methods = useForm({
-    resolver:yupResolver(useSchemaCrateForm(t)),
+const AddCashBoxAccounts = () => {
+  const t = useTranslations("pages");
+  const methods = useForm<CreateFormType>({
+    resolver: yupResolver(useSchemaCrateForm(t)),
   });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = methods;
+    watch,
+    setValue,
+    reset,
+  }: UseFormReturn<CreateFormType> = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [cashboxDetails, setCashboxDetails] = useState<any>({
-    firstPeriodCredit: [
-      {
-        amount: 0,
-        creditType: "Debit",
-        currencyId: {
-          _id: "",
-          name: "",
-          symbol: "",
-        },
-      },
-    ],
-  });
+  const watchFirstPeriodCredit = watch("firstPeriodCredit") || [];
   const { mutate: addFirstPeriodMutation, isLoading } =
     useAddFirstPeriodOfCreditMutation();
 
@@ -58,67 +50,33 @@ const AddBanksAccounts = () => {
   };
 
   const handleAddNewCredit = () => {
-    setCashboxDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: [
-        ...(prevState?.firstPeriodCredit?.length > 0
-          ? prevState?.firstPeriodCredit
-          : []),
-        {
-          amount: 0,
-          creditType: "Debit",
-          currencyId: {
-            _id: "",
-            name: "",
-            symbol: "",
-          },
-        },
-      ],
-    }));
+    const currentCredits = watchFirstPeriodCredit || [];
+    const newCredit = {
+      amount: 0,
+      creditType: CreditType.Debit,
+      currencyId: "",
+    };
+    const newCredits = [...currentCredits, newCredit];
+    setValue("firstPeriodCredit", newCredits);
   };
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
-    setCashboxDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
-        (item: any, index: number) => index !== deleteIndex
-      ),
-    }));
+    const newCredits = watchFirstPeriodCredit?.filter(
+      (item: any, index: number) => index !== deleteIndex
+    );
+    setValue("firstPeriodCredit", newCredits);
   };
 
-  const handleChangeCredit = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    index: number
-  ) => {
-    const name = event?.target?.name;
-    const value = event?.target?.value;
-    setCashboxDetails((prevState: any) => {
-      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
-        (item: any, inItem: number) => {
-          if (index == inItem) {
-            return {
-              ...item,
-              ...(name?.includes("amount") ? { amount: value } : {}),
-              ...(name?.includes("creditType") ? { creditType: value } : {}),
-            };
-          } else return item;
-        }
-      );
-      return {
-        ...prevState,
-        firstPeriodCredit,
-      };
-    });
-  };
-  const onSubmitFunction = async (data: any) => {
+
+  const onSubmitFunction = async (data: CreateFormType) => {
     const variables = {
-      creditObject: cashboxDetails?.firstPeriodCredit?.map(
-        (item: any, index: number) => ({
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
-        })
-      ),
+          currencyId: item?.currencyId,
+        }))
+        ?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Safe",
       accountId: data?.accountId,
@@ -131,7 +89,11 @@ const AddBanksAccounts = () => {
           open: true,
         });
         handleOpenDialogFunction();
-        setCashboxDetails(null);
+        reset({
+          accountId: data?.accountId,
+          description: data?.description,
+          firstPeriodCredit: watchFirstPeriodCredit,
+        });
       },
       onError: (error: any) => {
         setHandleError({
@@ -144,32 +106,16 @@ const AddBanksAccounts = () => {
   };
 
   const handleGetBank = (data: any) => {
-    setCashboxDetails({
-      ...data,
-      firstPeriodCredit:
-        data?.firstPeriodCredit?.length > 0
-          ? data?.firstPeriodCredit
-          : [
-              {
-                amount: 0,
-                creditType: "Debit",
-                currencyId: {
-                  _id: "",
-                  name: "",
-                  symbol: "",
-                },
-              },
-            ],
-    });
-  };
-  const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = cashboxDetails?.firstPeriodCredit;
-    allCredit[index].currencyId = currency;
-    setCashboxDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: allCredit,
+    setValue("accountId", data?._id);
+    const firstPeriodCredit = data?.firstPeriodCredit?.map((item: any) => ({
+      amount: item?.amount,
+      creditType: item?.creditType,
+      currencyId: item?.currencyId?._id,
     }));
+    console.log(firstPeriodCredit);
+    setValue("firstPeriodCredit", firstPeriodCredit);
   };
+
   return (
     <FormProvider {...methods}>
       <Dialog
@@ -221,7 +167,7 @@ const AddBanksAccounts = () => {
                 )}
               </Grid>
             </Grid>
-            {cashboxDetails?.firstPeriodCredit?.length > 0 && (
+            {watchFirstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -235,7 +181,7 @@ const AddBanksAccounts = () => {
                 </Grid>
               </Grid>
             )}
-            {cashboxDetails?.firstPeriodCredit?.map((item: any, index: any) => {
+            {watchFirstPeriodCredit?.map((item: any, index: any) => {
               return (
                 <Grid
                   container
@@ -245,26 +191,17 @@ const AddBanksAccounts = () => {
                 >
                   <Grid item xs={7}>
                     <SelectWithInput
-                      register={register}
-                      inputName={"amount" + index}
-                      selectName={"creditType" + index}
+                      inputName={`firstPeriodCredit.${index}.amount`}
+                      selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
-                      inputDefaultValue={item?.amount}
-                      data={[{ name: "Debit", value: "Debit" }]}
-                      onChange={(
-                        event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-                      ) => handleChangeCredit(event, index)}
+                      data={[{ name: CreditType?.Credit, value: CreditType?.Credit }]}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
                       dir={t("dir")}
-                      name="currencyId"
+                      name={`firstPeriodCredit.${index}.currencyId`}
                       required={false}
-                      defaultValue={item?.currencyId?._id}
-                      onSelected={(currency) =>
-                        handleSelectCurrency(currency, index)
-                      }
                     />
                   </Grid>
                   {index > 0 && (
@@ -291,7 +228,7 @@ const AddBanksAccounts = () => {
               display={"grid"}
               justifyContent={"end"}
               sx={{
-                mt: cashboxDetails?.firstPeriodCredit?.length > 0 ? 0 : "1rem",
+                mt: watchFirstPeriodCredit?.length > 0 ? 0 : "1rem",
               }}
             >
               <Button
@@ -306,8 +243,9 @@ const AddBanksAccounts = () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} 
-                error={!!errors?.description}
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
                 >
                   {t("bank.description")}
                 </InputLabel>
@@ -359,4 +297,4 @@ const AddBanksAccounts = () => {
   );
 };
 
-export default AddBanksAccounts;
+export default AddCashBoxAccounts;

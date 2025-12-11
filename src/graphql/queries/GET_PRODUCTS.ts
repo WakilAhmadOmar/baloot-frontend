@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 const GET_PRODUCTS = gql`
-  query ($page: Int, $searchTerm: String = "") {
-    getProducts(page: $page, searchTerm: $searchTerm) {
+  query ($page: Int, $searchTerm: String = "" $limit: Int = 10) {
+    getProducts(page: $page, searchTerm: $searchTerm, limit: $limit) {
       count
       product {
         _id

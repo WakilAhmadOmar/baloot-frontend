@@ -13,8 +13,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
-import { ChangeEvent, MouseEvent, useContext, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { MouseEvent, useContext, useState } from "react";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
 import SelectWithInput from "@/components/search/SelectWIthInput";
@@ -22,20 +22,22 @@ import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import { useTranslations } from "next-intl";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSchemaCrateForm } from "./Create-form-schema";
+import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
+import { CreditType } from "@/types/accounts/account.type";
 
 
 
 const AddBanksAccounts= () => {
   const t = useTranslations("pages")
-  const methods = useForm({
+  const methods: UseFormReturn<CreateFormType> = useForm({
     resolver:yupResolver(useSchemaCrateForm(t)),
+
   });
-  const { register, handleSubmit , formState:{errors} } = methods;
+  const { register, handleSubmit , formState:{errors} , watch , setValue , reset } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
-  const [customerDetails, setCustomerDetails] = useState<any>();
+  const watchFirstPeriodCredit = watch("firstPeriodCredit") || [];
   const { mutate: addFirstPeriodMutation, isLoading } =
     useAddFirstPeriodOfCreditMutation();
 
@@ -44,67 +46,34 @@ const AddBanksAccounts= () => {
   };
 
   const handleAddNewCredit = () => {
-    setCustomerDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: [
-        ...(prevState?.firstPeriodCredit?.length > 0
-          ? prevState?.firstPeriodCredit
-          : []),
-        {
-          amount: 0,
-          creditType: "Debit",
-          currencyId: {
-            _id: "",
-            name: "",
-            symbol: "",
-          },
-        },
-      ],
-    }));
+    const currentCredits = watchFirstPeriodCredit || [];
+    const newCredit = {
+      amount: 0,
+      creditType: CreditType?.Debit,
+      currencyId: "",
+    };
+    const newCredits = [...currentCredits, newCredit];
+    setValue("firstPeriodCredit", newCredits);
   };
+  
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
-    setCustomerDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: prevState?.firstPeriodCredit?.filter(
-        (item: any, index: number) => index !== deleteIndex
-      ),
-    }));
+    const newCredits = watchFirstPeriodCredit?.filter(
+      (item: any, index: number) => index !== deleteIndex
+    );
+    setValue("firstPeriodCredit", newCredits);
+
   };
 
-  const handleChangeCredit = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    index: number
-  ) => {
-    const name = event?.target?.name;
-    const value = event?.target?.value;
-    setCustomerDetails((prevState: any) => {
-      const firstPeriodCredit = prevState?.firstPeriodCredit?.map(
-        (item: any, inItem: number) => {
-          if (index == inItem) {
-            return {
-              ...item,
-              ...(name?.includes("amount") ? { amount: value } : {}),
-              ...(name?.includes("creditType") ? { creditType: value } : {}),
-            };
-          } else return item;
-        }
-      );
-      return {
-        ...prevState,
-        firstPeriodCredit,
-      };
-    });
-  };
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      creditObject: customerDetails?.firstPeriodCredit?.map(
+      creditObject: watchFirstPeriodCredit?.map(
         (item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
-          currencyId: item?.currencyId?._id,
+          currencyId: item?.currencyId,
         })
-      ),
+      )?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Customer",
       accountId: data?.accountId,
@@ -118,7 +87,11 @@ const AddBanksAccounts= () => {
           open: true,
         });
         handleOpenDialogFunction();
-        setCustomerDetails(null);
+        reset({
+          accountId: data?.accountId,
+          description: data?.description,
+          firstPeriodCredit: watchFirstPeriodCredit,
+        });
       },
       onError: (error: any) => {
         setHandleError({
@@ -131,19 +104,14 @@ const AddBanksAccounts= () => {
   };
 
   const handleGetBank = (data: any) => {
-    setCustomerDetails(data);
+    setValue("accountId", data?._id);
+    setValue("firstPeriodCredit", data?.firstPeriodCredit?.map((item: any) => ({
+      amount: item?.amount,
+      creditType: item?.creditType,
+      currencyId: item?.currencyId?._id,
+    })));
   };
-  const handleSelectCurrency = (currency: any, index: number) => {
-    const allCredit = customerDetails?.firstPeriodCredit;
-    allCredit[index] = {
-      ...allCredit[index],
-      currencyId: currency,
-    };
-    setCustomerDetails((prevState: any) => ({
-      ...prevState,
-      firstPeriodCredit: allCredit,
-    }));
-  };
+
   return (
     <FormProvider {...methods}>
       <Dialog
@@ -194,7 +162,7 @@ const AddBanksAccounts= () => {
                 )}
               </Grid>
             </Grid>
-            {customerDetails?.firstPeriodCredit?.length > 0 && (
+            {watchFirstPeriodCredit?.length > 0 && (
               <Grid container spacing={2} sx={{ mt: "1rem", mb: "1rem" }}>
                 <Grid item xs={7}>
                   <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -208,7 +176,7 @@ const AddBanksAccounts= () => {
                 </Grid>
               </Grid>
             )}
-            {customerDetails?.firstPeriodCredit?.map(
+            {watchFirstPeriodCredit?.map(
               (item: any, index: any) => {
                 return (
                   <Grid
@@ -219,30 +187,18 @@ const AddBanksAccounts= () => {
                   >
                     <Grid item xs={7}>
                       <SelectWithInput
-                        register={register}
-                        inputName={"amount" + index}
-                        selectName={"creditType" + index}
+                        inputName={`firstPeriodCredit.${index}.amount`}
+                        selectName={`firstPeriodCredit.${index}.creditType`}
                         defaultValue={item?.creditType}
                         inputDefaultValue={item?.amount}
-                        data={[
-                          { name: "Credit", value: "Credit" },
-                          { name: "Debit", value: "Debit" },
-                        ]}
-                        onChange={(
-                          event: ChangeEvent<
-                            HTMLInputElement | HTMLSelectElement
-                          >
-                        ) => handleChangeCredit(event, index)}
+                        data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
                       />
                     </Grid>
                     <Grid item xs={4}>
                       <UserCurrenciesComponent
                         dir={t("dir")}
-                        defaultValue={item?.currencyId?._id}
+                        name={`firstPeriodCredit.${index}.currencyId`}
                         required={false}
-                        onSelected={(currency) =>
-                          handleSelectCurrency(currency, index)
-                        }
                       />
                     </Grid>
                     {index > 0 && (
@@ -286,7 +242,7 @@ const AddBanksAccounts= () => {
                   multiline
                   rows={4}
                   size="small"
-                  {...register("description", { required: false })}
+                  {...register("description")}
                   name="description"
                   error={!!errors?.description}
                 />

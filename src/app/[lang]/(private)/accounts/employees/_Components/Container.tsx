@@ -1,18 +1,12 @@
 "use client";
 import AddCashboxAccounts from "./Create";
 import CollapseComponent from "@/components/collapse/Collapse";
-import CustomSearch from "@/components/search/CustomSearch";
 import { AppContext } from "@/provider/appContext";
-import { useApolloClient } from "@apollo/client";
-import { Box, Pagination, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { useContext,  useState } from "react";
 import SkeletonComponent from "./Skeleton";
-import CircularProgressComponent from "@/components/loader/CircularProgressComponent";
-import { EmptyProductPageIcon, NotFoundIcon } from "@/icons";
-import { GET_CUSTOMER_LIST } from "@/graphql/queries/GET_CUSTOMER_LIST";
-import { DELETE_CUSTOMER } from "@/graphql/mutation/DELETE_CUSTOMER";
-import { GET_EMPLOYEE_LIST } from "@/graphql/queries/GET_EMPLOYEE_LIST";
-import { useGetCustomerListQuery } from "@/hooks/api/definitions/customer/queries/use-get-customer-list-query";
+
+import { EmptyProductPageIcon } from "@/icons";
 import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-list-query";
 import { useAddFirstPeriodOfCreditMutation } from "@/hooks/api/accounts/mutations/use-add-first-period-of-credit-mutation";
 import EmptyPage from "@/components/util/emptyPage";
@@ -23,8 +17,8 @@ import { useTranslations } from "next-intl";
 const EmployeePage = () => {
   const t = useTranslations("pages")
   const { setHandleError } = useContext(AppContext);
-  const [page, setPage] = useState(1);
-  const { data: employeeList, isLoading } = useGetEmployeeListQuery({ page });
+
+  const { data: employeeList, isLoading } = useGetEmployeeListQuery();
 
   const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
     useAddFirstPeriodOfCreditMutation();
@@ -54,9 +48,6 @@ const EmployeePage = () => {
     });
   };
 
-  const handleChangePage = (event: React.ChangeEvent<unknown>,value:number) => {
-    setPage(value)
-  }
   return (
     <Box>
 
@@ -91,7 +82,7 @@ const EmployeePage = () => {
           </Box>
         )} */}
 
-      {employeeList?.count === 0 && !isLoading && (
+      {employeeList?.length === 0 && !isLoading && (
         <Box
           className={"empty_page_content"}
           width={"100%"}
@@ -110,7 +101,7 @@ const EmployeePage = () => {
       )}
 
       <Box mt={2}>
-        {employeeList?.employee?.map((item: any) => {
+        {employeeList?.map((item: any) => {
           return (
             <CollapseComponent
               key={item?._id}
@@ -176,23 +167,6 @@ const EmployeePage = () => {
           );
         })}
       </Box>
-      {employeeList?.count > 9 && (
-        <Box display={"flex"} justifyContent={"flex-end"} mt={2}>
-          <Stack spacing={2} p={1}>
-            <Pagination
-              count={employeeList?.count / 10}
-              size={"medium"}
-              onChange={handleChangePage}
-              variant="outlined"
-              color="primary"
-              shape="rounded"
-              sx={{
-                fontSize: "2rem !important",
-              }}
-            />
-          </Stack>
-        </Box>
-      )}
       {isLoading &&
         Array(8)
           .fill(null)

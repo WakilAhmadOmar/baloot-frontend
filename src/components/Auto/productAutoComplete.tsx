@@ -1,12 +1,10 @@
 "use client";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useApolloClient } from "@apollo/client";
-import { GET_PRODUCTS } from "../../graphql/queries/GET_PRODUCTS";
-import { forwardRef, useContext, useEffect, useState } from "react";
-import { AppContext } from "@/provider/appContext";
+import { useEffect, useState } from "react";
 import { useTheme } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
+import { useGetProductList } from "@/hooks/api/definitions/product/queries/use-get-list";
 
 interface IPropsProduct {
   getProduct?: (product: any, index?: number) => void;
@@ -16,6 +14,7 @@ interface IPropsProduct {
   defaultValue?: any;
 error?:boolean
   name?:string
+  limit?: number
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   getProduct,
@@ -24,21 +23,14 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   index,
   defaultValue,
   name,
-  error= false
+  error= false,
+  limit = 10
   
 }) => {
   
   const { control } = useFormContext()
-  const client = useApolloClient();
   const theme = useTheme();
-  const { setHandleError } = useContext(AppContext);
-  const [autoCompleteState, setAutoCompleteState] = useState<{
-    data: any[];
-    page: number;
-  }>({
-    data: [],
-    page: 1,
-  });
+  
   const [selectedValue, setSelectedValue] = useState<any>(null);
 
   const inputStyle = {
@@ -70,43 +62,10 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     },
   };
 
-  const getCustomerFunction = async (textSearch?: string) => {
-    try {
-      const variables = {
-        page: textSearch ? 1 : autoCompleteState?.page,
-        ...(textSearch ? { searchTerm: textSearch } : {}),
-      };
-      const {
-        data: { getProducts },
-      } = await client.query({
-        query: GET_PRODUCTS,
-        variables,
-      });
+  const {data:getProductList , isLoading} = useGetProductList({page:1 , limit:limit})
 
-      const mapData = getProducts?.product.map((item: any) => {
-        return { id: item?._id, label: item?.name, ...item };
-      });
-      const allCustomer = [...mapData, ...autoCompleteState?.data];
-      const duplicate = allCustomer?.filter(
-        (value, index, self) =>
-          index === self.findIndex((t) => t._id === value._id)
-      );
-      if (selectedValue === undefined) {
-        setSelectedValue(duplicate?.[0]);
-      }
-      setAutoCompleteState((prevState) => ({
-        ...prevState,
-        page: prevState.page + 1,
-        data: duplicate,
-      }));
-    } catch (error: any) {
-      setHandleError({
-        open: true,
-        status: "error",
-        message: error.message,
-      });
-    }
-  };
+
+
   const handleChangeCustomerSearch = (
     event: React.ChangeEvent<any>,
     item: any
@@ -115,15 +74,10 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     setSelectedValue(item);
     if (getProduct && item?._id) {
       getProduct(item, index);
-    } else {
-      getCustomerFunction(value);
     }
   };
 
-  useEffect(() => {
-    getCustomerFunction();
 
-  }, []);
   useEffect(() => {
     if (defaultValue && !selectedValue) {
       setSelectedValue(defaultValue);
@@ -137,6 +91,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
               render={({ field: { onChange, value } }) => (
 
                 <Autocomplete
+                  loading={isLoading}
                   disablePortal={false}
             
                   onChange={(event:any , value)=>{
@@ -146,7 +101,11 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
                   fullWidth
                   size="small"
                   id="auto-complete-product"
-                  options={autoCompleteState?.data}
+                  options={getProductList?.product?.map((item:any) => ({
+                    _id: item?._id,
+                    name: item?.name,
+                    ...item
+                  }))}
                   value={ selectedValue}
                   getOptionLabel={(option: any) => option?.name ? option?.name : ""
                   } // Specify which property to display
@@ -158,6 +117,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
                     <TextField
                       {...params}
                       error={error}
+                      // sx={inputStyle}
                       // placeholder={placeholder}
                     />
                   )}

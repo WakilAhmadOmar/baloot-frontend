@@ -158,8 +158,8 @@ export default function BasicTable() {
   
 
   return (
-    <Box sx={{ width: "100%", my: 3 }}>
-      <TableContainer component={Paper}>
+    <Box sx={{ width: "100%", my: 3 , }}>
+      <TableContainer component={"div"} sx={{ backgroundColor: theme.palette.background.default }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -196,6 +196,7 @@ export default function BasicTable() {
                       name={`products.${rowIndex}.productId`}
                       render={({ field }) => (
                         <ProductsAutoComplete
+                        limit={1000}
                           getProduct={async (product) => {
                             field.onChange(product?._id);
                             setValue(
