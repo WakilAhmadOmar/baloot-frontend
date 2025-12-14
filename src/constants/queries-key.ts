@@ -47,3 +47,7 @@ export const GET_PRODUCT_COUNT_IN_ENTREPOT_QUERY_KEY = "getProductCountInEntrepo
 export const GET_PRODUCT_FROM_ENTREPOT_BY_PRODUCT_ID_QUERY_KEY = "getProductFromEntrepotByProductId" 
 export const GET_ALL_SOLD_PRODUCTS_QUERY_KEY = "getAllSoldProducts" 
 export const GET_ALL_BUY_PRODUCTS_QUERY_KEY = "getAllBuyProducts" 
+export const GET_PRE_BUY_BILL_LIST_QUERY_KEY = "getPreBuyBillList" 
+export const GET_PRE_SELLS_BILL_LIST_QUERY_KEY = "getPreSellsBillList" 
+export const GET_PRE_BUY_BILL_BY_ID_QUERY_KEY = "getPreBuyBillById"
+export const GET_PRE_SELL_BILL_BY_ID_QUERY_KEY = "getPreSellsBillById"

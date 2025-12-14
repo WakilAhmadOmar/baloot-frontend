@@ -17,7 +17,7 @@ const BankContainer= () => {
   const t = useTranslations("pages")
   const { setHandleError } = useContext(AppContext);
   const [page, setPage] = useState(1);
-  const { data: bankList, isLoading } = useGetBankListQuery({ page });
+  const { data: bankList, isLoading } = useGetBankListQuery();
   const { mutate, isLoading: deleteIsLoading } = useDeleteBankMutation();
 
   const handleChangePage = (
@@ -79,7 +79,7 @@ const BankContainer= () => {
             </Typography>
           </Box>
         )} */}
-      {bankList?.bank?.map((item: any) => {
+      {bankList?.map((item: any) => {
         return (
           <CollapseComponent
             key={item?._id}
@@ -93,6 +93,7 @@ const BankContainer= () => {
             UpdateComponent={<UpdateBank item={item} />}
             editTable
             isLoading={deleteIsLoading}
+            isUsed={item?.isUsed}
           >
             <Grid container spacing={2}>
               <Grid
@@ -132,24 +133,9 @@ const BankContainer= () => {
           </CollapseComponent>
         );
       })}
-      {bankList?.count > 9 && (
-        <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
-          <Pagination
-            count={Math.ceil(bankList?.count / 10)}
-            size={"medium"}
-            onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>
-      )}
       {isLoading && <SkeletonComponent />}
 
-      {bankList?.count === 0 && !isLoading && (
+      {bankList?.length === 0 && !isLoading && (
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}

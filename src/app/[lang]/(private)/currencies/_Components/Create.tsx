@@ -56,6 +56,7 @@ export function CreateCurrency() {
           message: t("currency.currency_saved_successfully"),
           status: "success",
         });
+        handleOpenDialogFunction();
       },
       onError: (error: any) => {
         setHandleError({
@@ -222,6 +223,7 @@ export function CreateCurrency() {
             color="primary"
             variant="contained"
             onClick={handleSubmit(onSubmitFunction)}
+            loading={isLoading}
           >
             {t("currency.save")}
           </Button>

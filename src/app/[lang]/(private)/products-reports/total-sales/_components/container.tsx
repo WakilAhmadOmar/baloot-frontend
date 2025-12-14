@@ -56,7 +56,7 @@ const TotalSalesContainer = () => {
         </Box>
       )}
       <Box rowGap={"1rem"} columnGap={"1rem"} display={"grid"} pt={2}>
-        {soldProducts?.soldProducts.map((product: any) => (
+        {soldProducts?.soldProducts?.map((product: any) => (
           <ProductItem key={product._id} product={product} />
         ))}
       </Box>

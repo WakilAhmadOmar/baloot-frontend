@@ -7,6 +7,7 @@ const GET_MEASURES = gql`
       name
       description
       createdAt
+      isUsed
     }
   }
 `;

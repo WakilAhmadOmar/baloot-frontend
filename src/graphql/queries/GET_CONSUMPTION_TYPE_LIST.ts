@@ -6,6 +6,7 @@ const GET_CONSUMPTION_TYPE_LIST = gql`
       _id
       name
       createdAt
+      isUsed
     }
   }
 `;

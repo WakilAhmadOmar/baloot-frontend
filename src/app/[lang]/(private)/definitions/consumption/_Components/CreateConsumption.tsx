@@ -80,7 +80,7 @@ const CreateConsumption = () => {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography>{t("ExpensesNew_Expense")} </Typography>
+          <Typography>{t("Expenses.New_Expense")} </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare size={20} color="gray" />
           </IconButton>

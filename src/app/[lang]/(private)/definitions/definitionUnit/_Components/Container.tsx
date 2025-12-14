@@ -35,7 +35,7 @@ const DefinitionUnit = () => {
           {getMeasures?.map((item: any) => {
             return (
               <Box key={item?._id} display={"grid"}>
-                <UnitItem item={item} canDelete={false} />
+                <UnitItem item={item} canDelete={item?.isUsed} />
               </Box>
             );
           })}

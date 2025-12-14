@@ -6,34 +6,22 @@ import {
   Typography,
 
 } from "@mui/material";
-import {  useEffect, useState } from "react";
+import {  useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useGetUserCurrenciesQuery } from "@/hooks/api/currencies/queries/use-get-user-currencies";
 import { CreateCurrency } from "./Create";
+import { CurrencySkeleton } from "./Skeleton";
 
 
 const DefinitionsCurrency = () => {
   const t = useTranslations("pages")
  
-  const [loadingPage, setLoadingPage] = useState(true);
-  const [baseCurrency, setBaseCurrency] = useState<any>(null);
 
   const {data:currencies , isLoading} = useGetUserCurrenciesQuery()
-  const getBaseCurrencyFunction = async () => {
-    setLoadingPage(true);
 
-    const base = currencies?.filter(
-      (item: any) => item.isBase
-    );
-
-    setBaseCurrency(base?.[0]);
-    setLoadingPage(false);
-  };
-  useEffect(() => {
-    if (currencies){
-      getBaseCurrencyFunction();
-    }
-  }, [currencies]);
+  const baseCurrency = useMemo(() => {
+    return currencies?.filter((item:any) => item?.isBase)?.[0]
+  }, [currencies])
 
   if (currencies?.length === 0 && !isLoading){
     return (
@@ -64,6 +52,7 @@ const DefinitionsCurrency = () => {
             </Typography>
           </Box>
           <Box display={"flex"} flexWrap={"wrap"} columnGap={2} rowGap={2}>
+            {isLoading && new Array(5).fill(null)?.map((_item , index:number) => <CurrencySkeleton key={"skeleton" + index} /> )}
             {currencies?.map((item:any) => {
               return (
                 <Box key={item?._id} height={"100%"}>

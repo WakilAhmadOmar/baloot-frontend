@@ -17,7 +17,7 @@ import { useTranslations } from "next-intl";
 
 const CashboxPage = () => {
   const t = useTranslations("pages")
-  const { data: safeList, isLoading } = useGetSafeListQuery();
+  const { data: getSafeList, isLoading } = useGetSafeListQuery();
   const { mutate: addFirstPeriodMutation, isLoading: deleteLoading } =
     useAddFirstPeriodOfCreditMutation();
   const { setHandleError } = useContext(AppContext);
@@ -26,7 +26,6 @@ const CashboxPage = () => {
     const variables = {
       creditObject: [],
       accountType: "Safe",
-      accountId: id,
     };
 
     addFirstPeriodMutation(variables, {
@@ -81,7 +80,7 @@ const CashboxPage = () => {
           </Box>
         )} */}
 
-      {safeList?.count === 0 && isLoading === false && (
+      {getSafeList?.length === 0 && isLoading === false && (
         <Box
           className={"empty_page_content"}
           width={"100%"}
@@ -99,7 +98,7 @@ const CashboxPage = () => {
         </Box>
       )}
       <Box mt={2}>
-        {safeList?.map((item: any) => {
+        {getSafeList?.map((item: any) => {
           return (
             <CollapseComponent
               key={item?._id}

@@ -7,24 +7,18 @@ query GetAllBuyProducts($page: Int, $limit: Int) {
     buyProducts {
       _id
       name
-      baseMeasurePrice
-      baseMeasure {
-        _id
-        name
-      }
-      totalAmount
-      totalPrice {
-        amount
+      productReportInfo {
+        totalAmount
+        totalPrice
+        baseMeasure {
+          _id
+          name
+        }
         currency {
           _id
           name
           symbol
         }
-      }
-      currency {
-        symbol
-        name
-        _id
       }
     }
   }

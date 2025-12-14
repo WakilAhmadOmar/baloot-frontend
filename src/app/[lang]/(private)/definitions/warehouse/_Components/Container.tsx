@@ -24,7 +24,7 @@ const WarehousePage = () => {
   const {setHandleError} = useContext(AppContext)
   const lang = pathname.split("/")[1];
 
-  const { data: warehouseList, isLoading } = useGetWarehouseList({ page: 1 });
+  const { data: warehouseList, isLoading } = useGetWarehouseList();
   const {mutate , isLoading:deleteIsLoading} = useDeleteWarehouseMutation()
 
   const handleDeleteFunction = (id:string) =>{
@@ -81,7 +81,7 @@ const WarehousePage = () => {
             </Typography>
           </Box>
         )} */}
-      {warehouseList?.entrepot?.map((item: any) => {
+      {warehouseList?.map((item: any) => {
         return (
           <CollapseComponent
             key={item?._id}
@@ -94,6 +94,7 @@ const WarehousePage = () => {
             messageDescription={t("warehouse.delete_description")}
             UpdateComponent={<UpdateWarehouse  item={item} />}
             isLoading={deleteIsLoading}
+            isUsed={item?.isUses}
           >
             <Grid container spacing={2}>
               <Grid
@@ -162,7 +163,7 @@ const WarehousePage = () => {
           </CollapseComponent>
         );
       })}
-      {warehouseList?.count === 0 && !isLoading && (
+      {warehouseList?.length === 0 && !isLoading && (
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}

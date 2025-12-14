@@ -18,7 +18,7 @@ import { useTranslations } from "next-intl";
 
 const PartnersPage = () => {
   const t = useTranslations("pages")
-  const { data: partnerList, isLoading } = useGetPartnerList({ page: 1 });
+  const { data: partnerList, isLoading } = useGetPartnerList();
   const {setHandleError} = useContext(AppContext)
   const {mutate , isLoading:deleteIsLoading} = useDeletePartnerMutation()
 
@@ -76,7 +76,7 @@ const PartnersPage = () => {
             </Typography>
           </Box>
         )} */}
-      {partnerList?.partner?.map((item: any) => {
+      {partnerList?.map((item: any) => {
         return (
           <CollapseComponent
             key={item?._id}
@@ -91,6 +91,7 @@ const PartnersPage = () => {
             UpdateComponent={<UpdatePartner item={item} />}
             editTable
             isLoading={deleteIsLoading}
+            isUsed={item?.isUsed}
           >
             <Grid container spacing={2}>
               <Grid
@@ -128,7 +129,7 @@ const PartnersPage = () => {
         );
       })}
 
-      {partnerList?.count === 0 && !isLoading && (
+      {partnerList?.length === 0 && !isLoading && (
         <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}

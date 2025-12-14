@@ -131,7 +131,15 @@ import { useTranslations } from "next-intl";
               {item?.name}
             </Typography>
             <Box display="flex" justifyContent={"center"} columnGap="1rem">
-              <IconButton onClick={handleDeleteFunction}>
+              <IconButton onClick={handleDeleteFunction} 
+                sx={{
+                  cursor: item?.isUsed ? "not-allowed" : "pointer",
+                  "& svg": {
+                    opacity:item?.isUsed ? 0.5 : 1,
+                  },
+                }}
+                disabled={item?.isUsed}
+              >
                 <Trash color={theme.palette.grey["A700"]} size={25} />
               </IconButton>
               <UpdateConsumption  item={item} />

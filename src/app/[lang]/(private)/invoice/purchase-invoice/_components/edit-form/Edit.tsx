@@ -188,7 +188,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
         >
           <Toolbar>
             <Typography component="div" variant="button" sx={{ flex: 1 }}>
-              {t("edit_sales_invoice")}
+              {t("edit_purchase_invoice")}
             </Typography>
 
             <IconButton

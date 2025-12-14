@@ -89,8 +89,9 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
 
  
   const onSubmitFunction = async (data: CreateFormType) => {
+    
     const variables = {
-      creditObject: data?.firstPeriodCredit?.map(
+      creditObject: watchFirstPeriodCredit?.map(
         (item: any) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,

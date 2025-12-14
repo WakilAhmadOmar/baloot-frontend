@@ -6,6 +6,7 @@ const GET_CATEGORIES = gql`
       _id
       name
       description
+      isUsed
     }
   }
 `;

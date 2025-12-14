@@ -31,6 +31,7 @@ interface IProps {
   editTable?:boolean,
   UpdateComponent?:React.ReactNode,
   isLoading?:boolean
+  isUsed?:boolean
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -53,7 +54,8 @@ const CollapseComponent: React.FC<IProps> = ({
   messageTitle,
   editTable= true,
   UpdateComponent,
-  isLoading= false
+  isLoading= false,
+  isUsed=false
 }) => {
   const t = useTranslations()
   const theme = useTheme();
@@ -172,7 +174,15 @@ const CollapseComponent: React.FC<IProps> = ({
           <Typography variant="body2">
             <Moment format="YYYY/MM/DD">{createdAt}</Moment>
           </Typography>
-          {getIdToAddAction && <IconButton onClick={handleDeleteFunction}>
+          {getIdToAddAction && <IconButton onClick={handleDeleteFunction} 
+            sx={{
+              cursor: isUsed ? "not-allowed" : "pointer",
+              "& svg": {
+                opacity:isUsed ? 0.5 : 1,
+              },
+            }}
+            disabled={isUsed}
+          >
             <Trash size={20} color={theme.palette.primary.contrastText} />
           </IconButton>}
           {

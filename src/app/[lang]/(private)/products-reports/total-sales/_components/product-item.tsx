@@ -23,7 +23,7 @@ export function ProductItem({product}:{product:any}) {
         mt={1}
       >
        {
-        product?.totalPrice?.map((price:any) => (
+        product?.productReportInfo?.map((price:any) => (
           <Box
           bgcolor={theme.palette.grey[50]}
           p={1}
@@ -33,10 +33,10 @@ export function ProductItem({product}:{product:any}) {
           key={price._id}
         >
           <Typography  fontWeight={600} fontSize={"1.3rem"} >
-              {t("sales_with")} {price?.amount} {price?.currency?.symbol} 
+              {t("sales_with")} {price?.totalPrice} {price?.currency?.symbol} 
           </Typography>
           <Typography  fontWeight={400} fontSize={"1.2rem"}>
-            {t("total_sales_count")}: {price?.amount}
+            {t("total_sales_count")}: {price?.totalAmount}
           </Typography>
         </Box>
         ))

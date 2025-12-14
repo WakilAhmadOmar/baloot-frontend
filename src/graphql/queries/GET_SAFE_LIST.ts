@@ -6,6 +6,7 @@ const GET_SAFE_LIST = gql`
     _id
     name
     address
+    isUsed
     cashier {
       _id
       name

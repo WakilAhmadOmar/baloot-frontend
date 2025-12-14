@@ -11,6 +11,7 @@ const GET_USER_CURRENCIES = gql`
       baseRate
       createdAt
       rate
+      isUsed
     }
   }
 `;

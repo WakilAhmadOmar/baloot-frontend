@@ -1,3 +1,4 @@
+import { GET_USER_CURRENCIES_QUERY_KEY } from "@/constants/queries-key";
 import { useDeleteUserCurrencyMutation } from "@/hooks/api/currencies/mutations/use-delete-user-currency";
 import { AppContext } from "@/provider/appContext";
 import {
@@ -14,6 +15,7 @@ import {
 import { InfoCircle, Trash } from "iconsax-react";
 import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
+import { useQueryClient } from "react-query";
 
 type IPropsCUrrency = {
   isBase: boolean;
@@ -24,6 +26,7 @@ export function DeleteCurrency({ isBase, id }: IPropsCUrrency) {
   const { setHandleError } = useContext(AppContext);
   const theme = useTheme();
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const queryClient = useQueryClient()
 
   const handleOpenDialogDeleteFunction = () => {
     setOpenDialogDelete(!openDialogDelete);
@@ -31,6 +34,7 @@ export function DeleteCurrency({ isBase, id }: IPropsCUrrency) {
 
   const { mutate: deleteMutation, isLoading } = useDeleteUserCurrencyMutation({
     onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({queryKey:[GET_USER_CURRENCIES_QUERY_KEY]})
       setHandleError({
         status: "success",
         open: true,
@@ -61,6 +65,12 @@ export function DeleteCurrency({ isBase, id }: IPropsCUrrency) {
         onClick={handleOpenDialogDeleteFunction}
         disabled={isBase}
         color="primary"
+        sx={{
+          cursor: isBase ? "not-allowed" : "pointer",
+          "& svg": {
+            opacity:isBase ? 0.5 : 1,
+          },
+        }}
       >
         <Trash
           size={20}
