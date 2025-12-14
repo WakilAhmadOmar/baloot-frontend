@@ -4,6 +4,7 @@ const GET_BANK_LIST = gql`
   query  {
     getBankList {
         _id
+        isUsed
         firstPeriodCredit {
           amount
           creditType

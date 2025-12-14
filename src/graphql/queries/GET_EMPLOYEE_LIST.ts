@@ -8,6 +8,7 @@ query GetEmployeeList {
     fathersName
     idNumber
     jobTitle
+    isUsed
     salary {
       amount
       currencyId {

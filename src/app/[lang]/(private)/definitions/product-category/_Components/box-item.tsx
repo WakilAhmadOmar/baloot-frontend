@@ -3,6 +3,7 @@ import { Box, Card, Typography, useTheme } from "@mui/material";
 import Moment from "react-moment";
 import { UpdateCategory } from "./Update";
 import { useTranslations } from "next-intl";
+import { DeleteCategory } from "./Delete";
 // import { DeleteCategory } from "./Delete";
 interface IPropsUnitProduct {
   item: any;
@@ -38,7 +39,7 @@ const BoxItemCategory: React.FC<IPropsUnitProduct> = ({ item }) => {
         {item?.name}
       </Typography>
       <Box display="flex" justifyContent={"center"} columnGap={1}>
-        {/* <DeleteCategory t={t} id={item?._id} /> */}
+        <DeleteCategory  id={item?._id} isUsed={item?.isUsed} />
 
         <UpdateCategory item={item} />
       </Box>

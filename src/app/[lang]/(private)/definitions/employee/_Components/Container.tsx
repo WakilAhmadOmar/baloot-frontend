@@ -20,7 +20,7 @@ const EmployeePage = () => {
  
   const [page , setPage] = useState(1)
 
-  const {data:employeeList , isLoading} = useGetEmployeeListQuery({page})
+  const {data:employeeList , isLoading} = useGetEmployeeListQuery()
   const {mutate , isLoading:deleteIsLoading} = useDeleteEmployeeMutation()
 
   const handleDeleteFunction = (employeeId:string) => {
@@ -85,7 +85,7 @@ const EmployeePage = () => {
             </Typography>
           </Box>
         )} */}
-           {employeeList?.employee?.map((item:any) => {
+           {employeeList?.map((item:any) => {
           return (
             <CollapseComponent
               key={item?._id}
@@ -98,6 +98,7 @@ const EmployeePage = () => {
               messageDescription={t("employee.delete_description")}
               messageTitle={t("employee.delete_title")}
               isLoading={deleteIsLoading}
+              isUsed={item?.isUsed}
             >
               <Grid container spacing={2}>
                 <Grid item xs={9} display="grid">
@@ -134,21 +135,8 @@ const EmployeePage = () => {
             </CollapseComponent>
           );
         })}
-        {employeeList?.count > 9 && <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
-          <Pagination
-            count={Math.ceil(employeeList?.count / 10)}
-            size={"medium"}
-            onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
-          />
-        </Stack>}
         {isLoading && <SkeletonComponent />}
-        {employeeList?.count === 0  && !isLoading && <Box className={"empty_page_content"}>
+        {employeeList?.length === 0  && !isLoading && <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             title={t("employee.no_product_yet_title")}

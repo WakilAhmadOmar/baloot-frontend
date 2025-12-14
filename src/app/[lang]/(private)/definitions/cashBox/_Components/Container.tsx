@@ -13,15 +13,13 @@ import { AppContext } from "@/provider/appContext";
 import SkeletonComponent from "../../_Components/Skeleton";
 import { useTranslations } from "next-intl";
 
-
 const CashBoxContainer = () => {
-
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const [page, setPage] = useState(1);
-  const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
 
-  const { data: safeList, isLoading } = useGetSafeListQuery({ page });
-  const {mutate , isLoading:deleteIsLoading} = useDeleteSafeMutation()
+  const { data: safeList, isLoading } = useGetSafeListQuery();
+  const { mutate, isLoading: deleteIsLoading } = useDeleteSafeMutation();
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
@@ -30,24 +28,27 @@ const CashBoxContainer = () => {
     setPage(page);
   };
 
-  const handleDeleteFunction = (safeId:string)=> {
-    mutate({safeId}, {
-      onSuccess: () => {
-        setHandleError({
-          open: true,
-          message: t("cashbox.safe_deleted_successfully"),
-          status: "success",
-        });
-      },
-      onError: (error: any) => {
-        setHandleError({
-          open: true,
-          message: error.message,
-          status: "error",
-        });
-      },
-    });
-  }
+  const handleDeleteFunction = (safeId: string) => {
+    mutate(
+      { safeId },
+      {
+        onSuccess: () => {
+          setHandleError({
+            open: true,
+            message: t("cashbox.safe_deleted_successfully"),
+            status: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error.message,
+            status: "error",
+          });
+        },
+      }
+    );
+  };
 
   return (
     <Box>
@@ -61,8 +62,7 @@ const CashBoxContainer = () => {
           display: "flex",
         }}
       >
-        <CreateCashBox
-        />
+        <CreateCashBox />
         {/* {productsState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
@@ -86,7 +86,7 @@ const CashBoxContainer = () => {
             </Typography>
           </Box>
         )} */}
-      {safeList?.safe?.map((item: any) => {
+      {safeList?.map((item: any) => {
         return (
           <CollapseComponent
             key={item?._id}
@@ -94,17 +94,16 @@ const CashBoxContainer = () => {
             createdAt={item?.createdAt}
             id={item?._id}
             getIdToAddAction={handleDeleteFunction}
-            UpdateComponent={<UpdateCashBox  item={item} />}
+            UpdateComponent={<UpdateCashBox item={item} />}
             editTable
             height="150px"
             messageDescription={t("cashbox.delete_description")}
             messageTitle={t("cashbox.delete_title")}
             isLoading={deleteIsLoading}
+            isUsed={item?.isUsed}
           >
             <Box display={"grid"} gridTemplateColumns={"20rem auto"} mb={1}>
-              <Typography variant="caption">
-                {t("cashbox.Cashier")}{" "}
-              </Typography>
+              <Typography variant="caption">{t("cashbox.Cashier")} </Typography>
               <Typography variant="caption">{item?.cashier?.name}</Typography>
             </Box>
             <Box display={"grid"} gridTemplateColumns={"20rem auto"}>
@@ -129,31 +128,18 @@ const CashBoxContainer = () => {
           </CollapseComponent>
         );
       })}
-      {safeList?.count > 9 && (
-        <Stack spacing={2} p={2} display={"grid"} justifyContent={"end"}>
-          <Pagination
-            count={Math.ceil(safeList?.count / 10)}
-            size={"medium"}
-            onChange={handleChangePage}
-            variant="outlined"
-            color="primary"
-            shape="rounded"
-            sx={{
-              fontSize: "2rem !important",
-            }}
+      {safeList?.length === 0 && !isLoading && (
+        <Box className={"empty_page_content"}>
+          <EmptyPage
+            icon={<EmptyProductPageIcon />}
+            title={t("cashbox.no_product_yet_title")}
+            discription={t("cashbox.no_product_yet_discription")}
+            // buttonText={t.pages?.cashbox?.Create_new_Cashbox}
+            // onClick={handleOpenDialogFunction}
           />
-        </Stack>
+        </Box>
       )}
-       {safeList?.count === 0 && !isLoading &&<Box className={"empty_page_content"}>
-                <EmptyPage
-                  icon={<EmptyProductPageIcon />}
-                  title={t("cashbox.no_product_yet_title")}
-                  discription={t("cashbox.no_product_yet_discription")}
-                  // buttonText={t.pages?.cashbox?.Create_new_Cashbox}
-                  // onClick={handleOpenDialogFunction}
-                />
-              </Box>}
-              {isLoading && <SkeletonComponent />}
+      {isLoading && <SkeletonComponent />}
     </Box>
   );
 };

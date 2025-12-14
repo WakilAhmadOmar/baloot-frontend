@@ -23,11 +23,11 @@ import {
 import { CloseSquare, Eye } from "iconsax-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useGetSellsBillByIdQuery } from "@/hooks/api/invoice/queries/get-sells-bill-by-id-query";
 
 import SkeletonComponent from "../../../_components/Skeleton";
 import Moment from "react-moment";
 import { numberToWords } from "@/utils/numberToWords";
+import { useGetBuyBillByIdQuery } from "@/hooks/api/invoice/queries/get-buy-bill-by-id";
 
 interface IProps {
   id: string;
@@ -37,7 +37,7 @@ const DetailsSalesInvoice: React.FC<IProps> = ({ id }) => {
   const t = useTranslations("invoice");
   const [openDialog, setOpenDialog] = useState(false);
   const theme = useTheme();
-  const { data: billData, isLoading } = useGetSellsBillByIdQuery(
+  const { data: billData, isLoading } = useGetBuyBillByIdQuery(
     {
       billId: id,
     },
@@ -70,7 +70,7 @@ const DetailsSalesInvoice: React.FC<IProps> = ({ id }) => {
         >
           <Toolbar>
             <Typography component="div" variant="button" sx={{ flex: 1 }}>
-              {t("details_sales_invoice")}
+              {t("details_purchase_invoice")}
             </Typography>
 
             <IconButton

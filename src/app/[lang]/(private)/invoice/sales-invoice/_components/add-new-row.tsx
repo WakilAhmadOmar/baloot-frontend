@@ -139,6 +139,7 @@ export function AddNewRow({ getSelectedProduct }: AddNewRowProps) {
             <Grid2 size={6}>
               <InputLabel>{t("product_name")}</InputLabel>
               <ProductsAutoComplete
+              limit={100}
                 getProduct={(product) => {
                   setSelectedProduct(product);
                 }}

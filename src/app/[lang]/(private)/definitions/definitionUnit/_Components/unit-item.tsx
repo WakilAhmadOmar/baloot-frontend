@@ -1,5 +1,14 @@
-
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  IconButton,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Edit, InfoCircle, Trash } from "iconsax-react";
 import Moment from "react-moment";
 import { UpdateUnit } from "./Update";
@@ -13,21 +22,22 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
   item,
   canDelete = true,
 }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const theme = useTheme();
- const [openDialogDelete, setOpenDialogDelete] = useState(false);
- const handleOpenDialogDeleteFunction = () =>{
-  setOpenDialogDelete(!openDialogDelete)
- }
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const handleOpenDialogDeleteFunction = () => {
+    setOpenDialogDelete(!openDialogDelete);
+  };
 
- const deleteFunction = () =>{
-  //i can't found delete query for deleting measure
-  //TODO implement delete mutation
- }
-  
+  const deleteFunction = () => {
+    //i can't found delete query for deleting measure
+    //TODO implement delete mutation
+    
+  };
+
   return (
     <>
-    <Dialog
+      <Dialog
         open={openDialogDelete}
         onClose={handleOpenDialogDeleteFunction}
         aria-labelledby="alert-dialog-title"
@@ -41,16 +51,15 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
             justifyContent={"start"}
             alignItems={"center"}
             columnGap={1}
-            mt={1.5}
           >
-            <InfoCircle color={theme.palette.warning.main} />
+            <InfoCircle color={theme.palette.warning.main} size={25} />
             <Typography variant="h5">
-             {t("unit.are_you_sure_to_delete_this_unit")}
+              {t("unit.are_you_sure_to_delete_this_unit")}
             </Typography>
           </Box>
           <Box pt={1} sx={{ paddingInlineStart: "3rem" }}>
             <Typography variant="body1">
-             {t("unit.you_will_not_have_access_again")} 
+              {t("unit.you_will_not_have_access_again")}
             </Typography>
           </Box>
         </DialogContent>
@@ -61,47 +70,54 @@ export const UnitItem: React.FC<IPropsUnitProduct> = ({
             {t("unit.cancel")}
           </Button>
           <Button color="primary" variant="contained" onClick={deleteFunction}>
-           {t("unit.yes")}
+            {t("unit.yes")}
           </Button>
         </DialogActions>
       </Dialog>
-      
-    <Card
-      key={item?._id}
-      sx={{
-        width: "16rem",
-        // minWidth: "15rem",
-        p: 2,
-        boxShadow: "none",
-        borderRadius: "0.8rem",
-        display: "grid",
-        alignItems: "center",
-        rowGap: 0,
-        backgroundColor:theme.palette.background.paper
-      }}
-    >
-      <Typography textAlign={"center"} variant="body1">
-        <Moment format="YYYY/MM/DD">{item?.createdAt}</Moment>
-      </Typography>
-      <Typography
-        textAlign={"center"}
-        variant="h5"
-        pt={2}
-        pb={2}
-        lineHeight={1.5}
+
+      <Card
+        key={item?._id}
+        sx={{
+          width: "16rem",
+          // minWidth: "15rem",
+          p: 2,
+          boxShadow: "none",
+          borderRadius: "0.8rem",
+          display: "grid",
+          alignItems: "center",
+          rowGap: 0,
+          backgroundColor: theme.palette.background.paper,
+        }}
       >
-        {item?.name}
-      </Typography>
-      <Box display="flex" justifyContent={"center"} columnGap={1}>
-        {canDelete && (
-          <IconButton  >
+        <Typography textAlign={"center"} variant="body1">
+          <Moment format="YYYY/MM/DD">{item?.createdAt}</Moment>
+        </Typography>
+        <Typography
+          textAlign={"center"}
+          variant="h5"
+          pt={2}
+          pb={2}
+          lineHeight={1.5}
+        >
+          {item?.name}
+        </Typography>
+        <Box display="flex" justifyContent={"center"} columnGap={1}>
+          <IconButton
+            sx={{
+              cursor: canDelete ? "not-allowed" : "pointer",
+              "& svg": {
+                opacity: canDelete ? 0.5 : 1,
+              },
+            }}
+            disabled={canDelete ? true : false}
+            onClick={handleOpenDialogDeleteFunction}
+          >
             <Trash color={theme.palette.grey["A700"]} size={25} />
           </IconButton>
-        )}
-       
-       <UpdateUnit item={item} />
-      </Box>
-    </Card>
+
+          <UpdateUnit item={item} />
+        </Box>
+      </Card>
     </>
   );
 };

@@ -124,7 +124,7 @@ const CurrencyComponent: React.FC<IPropsCurrency> = ({
       </Box>
       <Box display={"flex"} justifyContent={"center"} columnGap={0.5} pb={1}>
         <UpdateCurrency item={item} />
-        <DeleteCurrency isBase={item?.isBase} id={item?._id} />
+        <DeleteCurrency isBase={item?.isBase || item?.isUsed} id={item?._id} />
       </Box>
     </Card>
   );

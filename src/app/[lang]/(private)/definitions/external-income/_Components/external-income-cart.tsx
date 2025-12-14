@@ -8,17 +8,19 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    IconButton,
     Slide,
     Typography,
     useTheme,
   } from "@mui/material";
   import { TransitionProps } from "@mui/material/transitions";
   import { InfoCircle, Trash } from "iconsax-react";
-  import React, { useState } from "react";
+  import React, { useContext, useState } from "react";
   import Moment from "react-moment";
 import UpdateExternalIncomeType from "./Update";
 import { useDeleteExternalIncomeTypeMutation } from "@/hooks/api/definitions/external-income/mutations/use-delete-mutation";
 import { useTranslations } from "next-intl";
+import { AppContext } from "@/provider/appContext";
   
   interface IProps {
     item?: any;
@@ -37,14 +39,31 @@ import { useTranslations } from "next-intl";
   }) => {
     const t = useTranslations("pages")
     const theme = useTheme();
+    const {setHandleError} = useContext(AppContext)
     const [handleDeleteState, setHandleDeleteState] = useState(false);
-    const {mutate} = useDeleteExternalIncomeTypeMutation()
+    const {mutate , isLoading} = useDeleteExternalIncomeTypeMutation()
   
     const handleDeleteFunction = () => {
       setHandleDeleteState(!handleDeleteState);
     };
     const handleDeleteThisItem = () => {
-      
+      mutate({externalIncomeTypeId:item?._id},{
+        onSuccess: () => {
+          setHandleError({
+            open: true,
+            message: t("income.external_income_type_deleted_successfully"),
+            status: "success",
+          });
+          handleDeleteFunction()
+        },
+        onError: (error:any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            status: "error",
+          });
+        }
+      })
     };
     
     return (
@@ -106,9 +125,17 @@ import { useTranslations } from "next-intl";
               {item?.name}
             </Typography>
             <Box display="flex" justifyContent={"center"} columnGap="1rem">
-              {/* <IconButton onClick={handleDeleteFunction}>
+              <IconButton onClick={handleDeleteFunction}
+              sx={{
+                cursor: item?.isUsed ? "not-allowed" : "pointer",
+                "& svg": {
+                  opacity:item?.isUsed ? 0.5 : 1,
+                },
+              }}
+              disabled={item?.isUsed}
+              >
                 <Trash color={theme.palette.grey["A700"]} size={25} />
-              </IconButton> */}
+              </IconButton>
               <UpdateExternalIncomeType  item={item} />
             </Box>
           </Box>

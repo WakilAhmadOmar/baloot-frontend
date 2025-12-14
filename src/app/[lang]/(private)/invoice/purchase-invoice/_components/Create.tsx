@@ -36,6 +36,7 @@ import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutation
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddBuyBillMutation } from "@/hooks/api/invoice/mutations/use-add-buy-bill";
 import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
+import { InvoiceStatus } from "@/types/invoice/invice.type";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -182,7 +183,7 @@ const CreatePurchaseInvoice = () => {
         // totalPrice: data?.totalPrice,
         totalPriceOfBillAfterConsumption: data?.totalPriceAfterExpense,
         transactionId: paymentOff?._id || (paymentMethod as any)?._id,
-        status: "Accepted",
+        status: InvoiceStatus.Accepted,
         // receiveAmount: paymentOff?.amount || data?.totalPriceAfterExpense,
       },
     };

@@ -6,7 +6,7 @@ import { ApolloError } from "@apollo/client";
 import { useContext } from "react";
 import { useQuery } from "react-query";
 
-export const useGetPartnerList = ({ page }: { page: number }) => {
+export const useGetPartnerList = () => {
   const { setHandleError } = useContext(AppContext);
   return useQuery({
     queryFn: async () => {
@@ -14,7 +14,6 @@ export const useGetPartnerList = ({ page }: { page: number }) => {
         data: { getPartnerList },
       } = await client.query({
         query: GET_PARTNER_LIST,
-        variables: { page },
         fetchPolicy: "network-only",
       });
       return getPartnerList;
@@ -26,6 +25,6 @@ export const useGetPartnerList = ({ page }: { page: number }) => {
         message: error.message,
       });
     },
-    queryKey: [GET_PARTNERS_QUERY_KEY, page],
+    queryKey: [GET_PARTNERS_QUERY_KEY],
   });
 };

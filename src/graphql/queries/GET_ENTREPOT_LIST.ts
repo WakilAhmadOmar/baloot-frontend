@@ -6,6 +6,7 @@ query GetEntrepotList {
     _id
     name
     address
+    isUsed
     responsible {
       _id
       name

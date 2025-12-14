@@ -1,0 +1,153 @@
+"use client";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Slide,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
+import { Edit, Eye, InfoCircle, Trash } from "iconsax-react";
+import Link from "next/link";
+import React, { MouseEvent, useEffect } from "react";
+import Moment from "react-moment";
+import EditSalesInvoice from "./edit-form/Edit";
+import { useTranslations } from "next-intl";
+import DetailsSalesInvoice from "./details/container";
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+interface IPropsRow {
+  name: string;
+  billNumber: string;
+  createdAt: string;
+  id: string;
+  onDelete: (event: MouseEvent) => void;
+  isLoading: boolean;
+}
+
+const RowFactor: React.FC<IPropsRow> = ({
+  name,
+  billNumber,
+  createdAt,
+  id,
+  onDelete,
+  isLoading,
+}) => {
+  const theme = useTheme();
+  const t = useTranslations("invoice");
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenDialog = () => {
+    setOpen(!open);
+  };
+  useEffect(() => {
+    if (!isLoading) {
+      setOpen(false);
+    }
+  }, [isLoading]);
+  return (
+    <>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleOpenDialog}
+        aria-describedby="alert-dialog-slide-description"
+        dir={t("dir")}
+      >
+        <DialogTitle
+          className="dialogTitleDelete"
+          display={"flex"}
+          gap={1}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
+          <Typography variant="h5">{t("delete_title")}</Typography>
+          <InfoCircle size="32" color={theme.palette.warning.main} />
+        </DialogTitle>
+        <DialogContent className="dialogContentDelete">
+          <DialogContentText id="alert-dialog-slide-description">
+            <Typography variant="body1">{t("delete_description")}</Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions
+          className="dialogActionDelete"
+          sx={{ display: "flex", gap: "1rem" }}
+        >
+          <Button onClick={handleOpenDialog} variant="outlined">
+            {t("cancel")}
+          </Button>
+          <Button
+            onClick={onDelete}
+            variant="contained"
+            color="primary"
+            id={id}
+            loading={isLoading}
+          >
+            {t("yes")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        bgcolor={theme.palette.background.default}
+        pt={1.7}
+        pb={1.7}
+        pl={2.5}
+        pr={2.5}
+        borderRadius={"8px"}
+        marginTop={"3px"}
+      >
+        <Typography variant="h5">{name}</Typography>
+
+        <Box display={"flex"} columnGap={"5rem"} alignItems={"center"}>
+          <Box display="flex" columnGap={"5px"} alignItems={"center"}>
+            <Typography variant="body2" component={"span"}>
+              {t("invoice_number")}
+              {" - "}
+            </Typography>
+            <Typography variant="h5" component={"span"}>
+              {billNumber}
+            </Typography>
+          </Box>
+          <Typography variant="body2">
+            {t("created_at")} - <Moment format="mm dd YYYY">{createdAt}</Moment>
+          </Typography>
+          <Box display={"flex"} columnGap={1}>
+            <IconButton onClick={handleOpenDialog} id={id}>
+              <Trash color={theme.palette.primary.main} size={22} />
+            </IconButton>
+
+            <EditSalesInvoice id={id} />
+            {/* <IconButton>
+              <Edit color={theme.palette.primary.main}  size={22}/>
+            </IconButton> */}
+
+            <DetailsSalesInvoice id={id} />
+            {/* <IconButton>
+              <Eye color={theme.palette.primary.main} size={22} />{" "}
+            </IconButton> */}
+          </Box>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+export default RowFactor;

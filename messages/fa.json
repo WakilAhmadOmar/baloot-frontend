@@ -50,7 +50,13 @@
     "sales_invoice": "فاکتور فروش",
     "purchase_invoice": "فاکتور خرید",
     "edit_sales_invoice": " اصلاح فاکتور فروش",
+    "edit_purchase_invoice": " اصلاح فاکتور خرید",
+    "edit_pre_purchase_invoice": " اصلاح فاکتور پیش خرید",
+    "edit_pre_sells_invoice": " اصلاح فاکتور پیش فروش",
     "details_sales_invoice": " جزئیات فاکتور فروش",
+    "details_purchase_invoice": " جزئیات فاکتور خرید",
+    "details_pre_purchase_invoice": " جزئیات فاکتور پیش خرید",
+    "details_pre_sells_invoice": " جزئیات فاکتور پیش فروش",
     "add_new_sales_invoice": "صدور فاکتور فروش جدید",
     "add_new_purchase_invoice": "صدور فاکتور خرید جدید",
     "customer_name": "نام مشتری",
@@ -97,7 +103,12 @@
     "add_new_product":" افزودن جنس جدید",
     "not_available":"موجود نمی باشد",
     "in_warehouse":"در گدام",
-    "cost_price":"قیمت تمام شد"
+    "cost_price":"قیمت تمام شد",
+    "pre_purchase_invoice":"فاکتور پیش خرید",
+    "add_new_pre_purchase_invoice":"افزودن فاکتور پیش خرید جدید",
+    "pre_sell_invoices":"فاکتور های پیش فروش",
+     "pre_sells_invoice":"فاکتور پیش فروش",
+     "add_new_pre_sells_invoice":"افزودن فاکتور پیش فروش جدید"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
@@ -126,7 +137,7 @@
     "sales_invoice": "فاکتور فروش",
     "return_from_sale": "برگشت از فروش",
     "pre_purchase_invoice": "فاکتور پیش خرید",
-    "pre_sales_invoice": "فاکتور پیش فروش",
+    "pre_sells_invoice": "فاکتور پیش فروش",
     "rating_factor": "فاکتور نرخ دهی",
     "transactions_received_paid": "دریافت و پرداخت های نقدی",
     "cash_receipt_from_customer": "دریافت نقد از مشتری",
@@ -203,6 +214,7 @@
     "update_product":"اصلاح جنس",
     "this_category_saved_successfully":"این دسته موافقانه ذخیره شد",
     "this_category_updated_successfully":"این دسته موافقانه اصلاح شد",
+    "this_category_deleted_successfully":"این دسته موافقانه پاک شد",
     "product_name_is_required":"نام جنس حتمی است",
     "currency_is_required":" انتخاب ارز حتمی است",
     "measure_is_required":" انتخاب واحد حتمی است",
@@ -264,7 +276,9 @@
     "details-balance":"بیلانس تفصیل",
     "expired-products":"گزارش اجناس تاریح گذشته ",
     "total-sales":"گزارش مجموعه فروشات اجناس",
-    "total-buy":"گزارش مجموعه خریدات اجناس"
+    "total-buy":"گزارش مجموعه خریدات اجناس",
+    "pre-purchase-invoice":"فاکتور پیش خرید",
+    "pre-sells-invoice":"فاکتور های پیش فروش"
   },
   "pages": {
         "dir": "rtl",
@@ -507,6 +521,7 @@
       "delete_description": "این عوایید حذف شود دوباره به آن دسترسی نخواهید داشت.",
       "external_income": "عواید بیرونی",
       "external_income_type_saved_successfully":"نوع عواید بیرونی موافقانه ذخیره شده",
+      "external_income_type_deleted_successfully":"نوع عواید بیرونی موافقانه پاک شده",
       "external_income_type_updated_successfully":"نوع عواید بیرونی موافقانه اصلاح شده",
       "income_name_is_require":"نام نوع عواید حتمی است"
     },

@@ -17,10 +17,10 @@ export const useDeleteUserCurrencyMutation = (options: UseMutationOptions<{messa
         return deleteUserCurrency
       }
     
-    const onSuccess = ()=> {
-      queryClient.invalidateQueries({ queryKey: [GET_USER_CURRENCIES_QUERY_KEY] })
-
-    }
+      const onSuccess = ()=> {
+        queryClient.invalidateQueries({ queryKey: [GET_USER_CURRENCIES_QUERY_KEY] })
+  
+      }
     return useMutation({
       mutationFn,
       onSuccess,

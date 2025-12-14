@@ -177,9 +177,9 @@ const CollapseContainer: React.FC<IPropsCollapseContainer> = ({
             open={true}
             text={t("sales_invoice")}
           />
+          <LinkLayout href={ "/" + lang + "/invoice/pre-purchase-invoice"} lang={lang} open={true} text={t("pre_purchase_invoice")}  />
+          <LinkLayout href={"/"+ lang +"/invoice/pre-sells-invoice"} lang={lang} open={true}  text={t("pre_sells_invoice")}  />
           {/*<LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("return_from_sale")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("pre_purchase_invoice")}  />
-          <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("pre_sales_invoice")}  />
           <LinkLayout href={ lang +"/definitions/products_category"} lang={lang} open={true} t={t} text={t("rating_factor")}  /> */}
         </List>
       </Collapse>
