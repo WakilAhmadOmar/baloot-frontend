@@ -22,12 +22,10 @@ export const QueryClientProvider: FC<any> = ({ children }) => {
     if (response?.status === 401 && data?.code === "unauthorized") {
     //   revoke();
     //   signOut();
-    //   router.push(LOGIN_PAGE);
     router.push("/login")
       return;
     }
 
-    // manageErrors(error, []);
   }, []);
 
   const client = useMemo(
