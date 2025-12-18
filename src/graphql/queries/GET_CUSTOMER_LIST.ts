@@ -9,8 +9,8 @@ const GET_CUSTOMER_LIST = gql`
         address
         contactNumber
         createdAt
-        description
         isUsed
+        description
         firstPeriodCredit {
           amount
           creditType

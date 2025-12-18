@@ -23,7 +23,7 @@ const EmployeeAutoCompleteComponent: React.FC<IProps> = ({
   } = useFormContext();
 
 
-  const { data:getEmployeeList } = useGetEmployeeListQuery({page:1})
+  const { data:getEmployeeList } = useGetEmployeeListQuery()
 
   const value = watch(name || "employeeId")
    useEffect(() => {

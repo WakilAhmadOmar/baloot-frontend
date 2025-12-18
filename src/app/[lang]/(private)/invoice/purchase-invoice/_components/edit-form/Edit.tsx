@@ -18,7 +18,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseSquare, Edit } from "iconsax-react";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AppContext } from "@/provider/appContext";
@@ -50,28 +50,29 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
     useUpdateSellsBillMutation();
 
   const defaultValues = useMemo(() => {
+    if (billData?._id)
     return {
       customerId: billData?.customerId?._id,
       warehouseId: billData?.entrepotId?._id,
       currencyId: billData?.currencyId?._id,
-      totalPriceAfterDiscount: billData?.totalPriceAfterDiscount,
+      totalPriceOfBillAfterConsumption: billData?.totalPriceOfBillAfterConsumption,
       totalPrice: billData?.totalPrice,
       contact_number: billData?.customerId?.contactNumber,
       products: billData?.products?.map((item: any) => {
-        const selectedMeasures = item?.productId?.price?.map((measure: any) => {
+        const selectedMeasures = item?.productId?.measures?.map((measure: any , measureIndex:number) => {
           const findSelectedMeasure = item?.productMeasures?.filter(
             (m: any) => m?.measureId?._id === measure?.measureId?._id
           );
           return {
             measureId: measure?.measureId?._id,
-            amount: findSelectedMeasure?.[0]?.amountOfProduct,
+            amount: findSelectedMeasure?.[0]?.amountOfProduct || 1,
             buyPrice:
-              findSelectedMeasure?.[0]?.pricePerMeasure || measure?.buyPrice,
+              findSelectedMeasure?.[0]?.pricePerMeasure || item?.productId?.price?.[measureIndex]?.buyPrice,
             expense: findSelectedMeasure?.[0]?.consumptionPrice || 0,
-            selected: findSelectedMeasure?.length > 0,
+            selected: findSelectedMeasure?.length > 0 ? true : false  ,
             measureName: measure?.measureId?.name,
-            total: findSelectedMeasure?.length > 0 ? findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.pricePerMeasure : measure?.buyPrice,
-            totalExpense: findSelectedMeasure?.length > 0 ? findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.consumptionPrice : 0,
+            total: findSelectedMeasure?.length > 0 ? findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.pricePerMeasure : 0,
+            totalExpense: findSelectedMeasure?.length > 0 ? (findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.consumptionPrice) : 0,
           };
         });
 
@@ -85,7 +86,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
         };
       }),
     };
-  }, [billData]);
+  }, [billData?._id]);
 
   const methods = useForm<EditFormSchema>({
     resolver: yupResolver(useSchemaEditForm(t)),
@@ -97,13 +98,25 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
     reset,
     register,
     setValue,
-    formState: { errors },
+    formState: { errors  },
+    
   } = methods;
+  
+  console.log("errors" , errors)
   useEffect(() => {
-    if (billData) {
+    if (!isLoading &&  billData && openDialog) {
       reset(defaultValues);
     }
-  }, [billData, reset, defaultValues]);
+  }, [ defaultValues, reset, isLoading , openDialog]);
+
+  const onResetHandler = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault()
+
+      reset(defaultValues)
+    },
+    [defaultValues],
+  )
 
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
@@ -116,10 +129,10 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-          const [day, month, year] = item?.expireInDateSelected
+          const [day, month, year] = item?.expireInDate
             .split("/")
             .map(Number);
-          const expireInDate = new Date(`${year}-${month}-${day + 1}`);
+          // const expireInDate = new Date(`${year}-${month}-${day + 1}`);
           const productMeasures = item?.measures
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
@@ -134,11 +147,12 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
             productId: item?.productId,
             productMeasures,
             entrepotId: item?.warehouse?._id || data?.warehouseId,
-            expireInDate: expireInDate?.toISOString()?.split("T")[0],
+            // expireInDate: expireInDate?.toISOString()?.split("T")[0],
+            expireInDate: item?.expireInDate,
           };
         }),
         totalPrice: data?.totalPrice,
-        totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
+        totalPriceOfBillAfterConsumption: data?.totalPriceOfBillAfterConsumption,
         transactionId: billData?.transactionId?._id,
       },
     };
@@ -168,7 +182,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
 
   return (
     <FormProvider {...methods}>
-      <IconButton onClick={handleOpenDialogBox}>
+      <IconButton onClick={handleOpenDialogBox} onReset={onResetHandler}>
         <Edit color={theme.palette.primary.main} size={22} />
       </IconButton>
       <Dialog
@@ -234,7 +248,8 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
               </Grid2>
             </Grid2>
           )}
-          <EditForm isLoadingData={isLoading} />
+
+           <EditForm isLoadingData={isLoading} />
           {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
             <Grid2 size={3} gap={1} display={"grid"}>
               <InputLabel>{t("customer_name")}</InputLabel>

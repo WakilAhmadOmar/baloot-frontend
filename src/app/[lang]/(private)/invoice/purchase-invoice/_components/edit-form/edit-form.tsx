@@ -1,3 +1,4 @@
+"use client";
 import React, {
   MouseEvent,
   useContext,
@@ -42,6 +43,13 @@ import Moment from "react-moment";
 import EditCustomSelectMeasure from "./select-measure";
 import SkeletonComponent from "../../../_components/Skeleton";
 import CustomSelectMeasure from "../../../_components/customeSeleteMeasure";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { DateField } from "@mui/x-date-pickers/DateField";
 
 export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
   const t = useTranslations("invoice");
@@ -52,36 +60,26 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
   const [calculateSellBill, setCalculateSellBill] = useState<{
     total: number;
     discount?: number;
-    totalAfterDiscount: number;
+    totalPriceOfBillAfterConsumption: number;
     receipt: number;
     remain: number;
   }>({
     total: 0,
     discount: 0,
-    totalAfterDiscount: 0,
+    totalPriceOfBillAfterConsumption: 0,
     receipt: 0,
     remain: 0,
   });
   const {
-    register,
     control,
     watch,
     setValue,
+    register,
     formState: { errors },
-    getValues,
   } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove ,  } = useFieldArray({
     control,
     name: "products",
-  });
-  const [productCount, setProductCount] = useState<{
-    productId: string;
-    entrepotId: string;
-    rowIndex: number | undefined;
-  }>({
-    productId: "",
-    entrepotId: "",
-    rowIndex: undefined,
   });
 
   const style = {
@@ -155,7 +153,7 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
       receipt: 0,
       remain: price,
       total: price,
-      totalAfterDiscount: price - discount,
+      totalPriceOfBillAfterConsumption: price - discount,
       discount,
     });
     setValue("totalPrice", price);
@@ -170,7 +168,6 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
   const handleGetProductId = (id: string, warehouse: string) => {
     setEditProductId(id);
   };
-
   return (
     <Box sx={{ width: "100%", my: 3 }}>
       <TableContainer component={Paper}>
@@ -254,7 +251,9 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
 
                     <TableCell align="right" sx={{ display: "grad", gap: 4 }}>
                       {watch(`products.${rowIndex}.measures`)
-                        ?.filter((f: any) => f.selected)
+                        ?.filter((f: any) => {
+                          return f?.selected
+                        })
                         ?.map((item: any, measureIndex: number) => (
                           <TextField
                             sx={style}
@@ -262,7 +261,9 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                             type="number"
                             placeholder="تعداد"
                             value={item?.amount || 1}
-                            name={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                            key={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                            // name={`products.${rowIndex}.measures.${measureIndex}.amount`}
+                            {...register(`products.${rowIndex}.measures.${measureIndex}.amount`)}
                             onChange={(e) => {
                               const value =
                                 parseFloat(e.target.value) > 1
@@ -294,7 +295,10 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                             type="number"
                             placeholder="sell price"
                             value={item?.buyPrice}
-                            name={`products.${rowIndex}.measures.${measureIndex}.buyPrice`}
+                            // name={`products.${rowIndex}.measures.${measureIndex}.buyPrice`}
+                            key={`products.${rowIndex}.measures.${measureIndex}.buyPrice`}
+                            {...register(`products.${rowIndex}.measures.${measureIndex}.buyPrice`)}
+                            
                             onChange={(e) => {
                               const value = parseFloat(e.target.value) || 0;
                               setValue(
@@ -325,7 +329,9 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                               type="number"
                               placeholder={t("expense")}
                               value={item?.expense}
-                              name={`products.${rowIndex}.measures.${measureIndex}.expense`}
+                              {...register(`products.${rowIndex}.measures.${measureIndex}.expense`)}
+                              // name={`products.${rowIndex}.measures.${measureIndex}.expense`}
+                              key={`products.${rowIndex}.measures.${measureIndex}.expense`}
                               onChange={(e) => {
                                 const value = parseFloat(e.target.value) || 0;
                                 setValue(
@@ -345,40 +351,23 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                     <TableCell align="right">
                       {watch(`products.${rowIndex}.measures`)
                         ?.filter((f: any) => f.selected)
-                        ?.map((item: any, measureIndex: number) => (
-                          <TextField
-                            sx={style}
-                            size="small"
-                            type="number"
-                            placeholder={t("cost_price")}
-                            value={item?.totalExpense}
-                            name={`products.${rowIndex}.measures.${measureIndex}.totalExpanse`}
-                            onChange={(e) => {
-                              const value = parseFloat(e.target.value) || 0;
-                              setValue(
-                                `products.${rowIndex}.measures.${measureIndex}.totalExpense`,
-                                value
-                              );
-                              const expense = (
-                                (item?.expense || 0) / item?.amount
-                              ).toFixed(2);
+                        ?.map((item: any, measureIndex: number) =>{
 
-                              setValue(
-                                `products.${rowIndex}.measures.${measureIndex}.expense`,
-                                Number(expense)
-                              );
-                            }}
-                          />
-                        ))}
+                          return (
+                            <Typography key={`products.${rowIndex}.measures`}>
+                              {(parseInt(item?.buyPrice) || 0) + (parseInt(item?.expense) || 0)}
+                            </Typography>
+                          )
+                        } )}
                     </TableCell>
                     <TableCell align="right">
                       {watch(`products.${rowIndex}.measures`)
                         ?.filter((f: any) => f.selected)
                         ?.map((item: any, measureIndex: number) => {
                           const total =
-                            (item?.buyPrice + item?.expense) * item?.amount;
+                            (parseInt(item?.buyPrice) + parseInt(item?.expense)) * item?.amount;
                           return (
-                            <Typography key={item?.measureId}>
+                            <Typography key={`products.${rowIndex}.measures`}>
                               {Number.isInteger(total)
                                 ? total
                                 : total.toFixed(2)}
@@ -394,32 +383,34 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
                           const expirationDate = watch(
                             `products.${rowIndex}.expireInDate`
                           );
-
-                          if (
-                            !getValues()?.products?.[rowIndex]
-                              ?.expireInDateSelected &&
-                            expirationDate?.length > 0
-                          ) {
-                            setValue(
-                              `products.${rowIndex}.expireInDateSelected`,
-                              new Date(expirationDate?.[0])?.toLocaleDateString(
-                                "en-GB"
-                              )
-                            );
-                          }
-
                           return (
-                            <TextField
-                              {...field}
-                              sx={style}
-                              size="small"
-                              type="date"
-                            />
+                            // <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            //   <DemoContainer components={["DateField"]}>
+                            //     <DateField  size="small" value={dayjs(expirationDate)} sx={style}/>
+                            //   </DemoContainer>
+                            // </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DemoContainer components={["DesktopDatePicker"]}>
+                                <DemoItem>
+                                  <DesktopDatePicker
+                                   defaultValue={dayjs(expirationDate)}
+                                    slotProps={{
+                                      textField: {
+                                        size: "small",
+                                        fullWidth: true,
+                                        ...style,
+                                      },
+                                    }}
+                                    
+                                  />
+                                </DemoItem>
+                              </DemoContainer>
+                            </LocalizationProvider>
                           );
                         }}
                       />
                       {(errors?.products as any)?.[rowIndex]
-                        ?.expireInDateSelected && (
+                        ?.expireInDate && (
                         <Typography color="error" variant="body1">
                           {
                             (errors.products as any)[rowIndex]
@@ -544,7 +535,7 @@ export function EditForm({ isLoadingData }: { isLoadingData: boolean }) {
               </Typography>
             </Box>
             <Typography alignItems={"center"} display="grid">
-              {calculateSellBill?.totalAfterDiscount}
+              {calculateSellBill?.totalPriceOfBillAfterConsumption}
             </Typography>
           </Box>
           {/* <Box

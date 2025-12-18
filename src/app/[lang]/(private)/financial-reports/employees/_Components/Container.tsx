@@ -31,7 +31,7 @@ const CustomerFinancialReports: React.FC<IPropsCollapseContainer> = ({
   const theme = useTheme();
   const t = useTranslations("financial_reports");
   const [page, setPage] = useState(1);
-  const { data: employeeList, isLoading , refetch } = useGetEmployeeListQuery({ page });
+  const { data: employeeList, isLoading , refetch } = useGetEmployeeListQuery();
 
 
   const handleChangePagination = (event: React.ChangeEvent<unknown>, page: number) => {
