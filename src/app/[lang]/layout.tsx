@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import ApolloManager from "@/graphql/client";
 import { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl"
+import { QueryClientProvider } from "@/provider/query-client";
 
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ params
     <html  lang={locale}
       dir={locale === "en" ? "ltr" : "rtl"}>
       <body>
-        <ApolloManager>
+        <QueryClientProvider>
           <NextIntlClientProvider  locale={locale} messages={messages}  >
           <AppContextProvider>
             <ThemeProviderComponent>
@@ -36,7 +37,7 @@ params
             </ThemeProviderComponent>
           </AppContextProvider>
           </NextIntlClientProvider>
-        </ApolloManager>
+        </QueryClientProvider>
       </body>
     </html>
   );

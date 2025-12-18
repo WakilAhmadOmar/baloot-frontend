@@ -14,7 +14,7 @@ import { getAuthUser } from "@/utils/getAuthUser";
 import { getSession } from "next-auth/react";
 
 
-const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000/api/v1/graphql"
+const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL || "https://api.baloot.app/api/v1/graphql"
 
 
   const httpLink = new HttpLink({

@@ -17,7 +17,7 @@ import { appConfig } from "@/config/config";
 
 // const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL
 const graphqlEndPoint = appConfig.apiUrl
-
+console.log("graphqlEndPoint" , graphqlEndPoint)
 
 const ApolloManager: React.FC<any> = (props) => {
 
