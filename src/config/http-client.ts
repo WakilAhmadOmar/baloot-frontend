@@ -12,9 +12,10 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { getAuthUser } from "@/utils/getAuthUser";
 import { getSession } from "next-auth/react";
+import { appConfig } from "./config";
 
 
-const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL || "https://api.baloot.app/api/v1/graphql"
+const graphqlEndPoint = appConfig.apiUrl 
 
 
   const httpLink = new HttpLink({
