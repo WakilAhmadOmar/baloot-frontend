@@ -13,6 +13,7 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { getAuthUser } from "@/utils/getAuthUser";
 import { appConfig } from "@/config/config";
+import { useSession } from "next-auth/react";
 
 
 // const graphqlEndPoint = process.env.NEXT_PUBLIC_BASE_URL
@@ -21,6 +22,7 @@ console.log("graphqlEndPoint" , graphqlEndPoint)
 
 const ApolloManager: React.FC<any> = (props) => {
 
+  const session:any = useSession()
 
   const httpLink = new HttpLink({
     uri: graphqlEndPoint,
@@ -32,12 +34,12 @@ const ApolloManager: React.FC<any> = (props) => {
   const authLink = setContext(async (_, { headers }) => {
     // get the authentication token from local storage if it exists
     // return the headers to the context so httpLink can read them
-    const access = await getAuthUser(ACCESS_TOKEN_KEY);
+console.log("session" , session)
     const xApiKey = await process.env.REACT_APP_X_API_KEY;
     return {
       headers: {
         ...headers,
-        Authorization: `Bearer ${access}`,
+        Authorization: `Bearer ${session?.accessToken}`,
         "x-api-key": xApiKey,
       },
     };

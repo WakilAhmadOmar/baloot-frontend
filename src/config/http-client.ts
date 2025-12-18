@@ -26,10 +26,10 @@ const graphqlEndPoint = appConfig.apiUrl
     uri: graphqlEndPoint,
   });
   const authLink = setContext(async (_, { headers }) => {
-    const {token }:any = await getSession();
+    const {token} :any = await getSession();
     // get the authentication token from local storage if it exists
     // return the headers to the context so httpLink can read them
-    const access = token?.data?.signIn?.accessToken;
+    const access = token?.accessToken;
     // const xApiKey = await process.env.REACT_APP_X_API_KEY;
     return {
       headers: {
