@@ -1,4 +1,5 @@
 "use client";
+import { SessionProvider } from "next-auth/react"; // <-- Add this import
 import SnackbarComponent from "@/components/snackbarComponent";
 import { THEME_KEY } from "@/libs/constants";
 import {
@@ -35,6 +36,7 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
     setHandleError((prev) => ({ ...prev, open: false }));
   }, [handleError?.open]);
   return (
+    <SessionProvider>
     <AppContext.Provider
       value={{
         isDarkMode,
@@ -55,6 +57,8 @@ const AppContextProvider = ({ children }: PropsWithChildren) => {
       />
       {children}
     </AppContext.Provider>
+
+    </SessionProvider>
   );
 };
 

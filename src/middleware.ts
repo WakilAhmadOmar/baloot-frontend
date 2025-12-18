@@ -34,7 +34,7 @@ export default async function middleware(request: NextRequest) {
     secret: appConfig.NextAuthSecret,
   })
   // const token = request.cookies.get(ACCESS_TOKEN_KEY)?.value; // Get token from cookies
-  const token = session?.data?.signIn?.accessToken; // Get token from cookies
+  const token = session?.accessToken; // Get token from cookies
   const { pathname } = request.nextUrl;
   const locale = getLocale(request);
 

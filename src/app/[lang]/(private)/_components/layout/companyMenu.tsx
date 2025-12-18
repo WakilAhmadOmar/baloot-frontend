@@ -1,3 +1,4 @@
+"use client"
 // import useTranslation from "@/components/utilFunction/useTranslation";
 import { ACCESS_TOKEN_KEY } from "@/libs/constants";
 import { deleteSession } from "@/utils/deleteSession";
@@ -10,7 +11,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -19,6 +20,7 @@ import React from "react";
 
 
 const CompanyMenuComponent= () => {
+  const session:any = useSession()
   const router = useRouter();
 const t = useTranslations("home")
 const pathname = usePathname()
@@ -80,6 +82,7 @@ const pathname = usePathname()
             }}
           >
             <Avatar variant="circular" sx={{ width: 70, height: 70 }} />
+            <Typography>{session?.name}</Typography>
           </Box>
           <Box py={2} >
             <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>

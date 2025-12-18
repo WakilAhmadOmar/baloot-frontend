@@ -1,11 +1,10 @@
+import { appConfig } from "@/config/config";
+import { SIGN_IN } from "@/graphql/mutation/SING_IN";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+const isHttps = process.env.NEXTAUTH_URL?.startsWith("https://");
 
-import { appConfig } from "@/config/config"
-import { SIGN_IN } from "@/graphql/mutation/SING_IN"
-import NextAuth, { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-const isHttps = process.env.NEXTAUTH_URL?.startsWith("https://")
-
-  const query = `
+const query = `
    mutation($email:String! , $password:String!){
     signIn(email: $email , password: $password){
       accessToken
@@ -17,7 +16,7 @@ const isHttps = process.env.NEXTAUTH_URL?.startsWith("https://")
       }
     }
   }
-  `
+  `;
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -40,12 +39,21 @@ const authOptions: NextAuthOptions = {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-        })
-        const data = await res.json()
-        if (res.ok) {
-          return data
+        });
+        const data = await res.json();
+        if (res.ok && data?.data?.signIn) {
+          return {
+            id: data.data.signIn.userInfo._id,
+            profile:{
+              id: data.data.signIn.userInfo._id,
+              name: data.data.signIn.userInfo.name,
+              email: credentials?.email,
+            },
+            accessToken: data.data.signIn.accessToken,
+            refreshToken: data.data.signIn.refreshToken,
+          };
         } else {
-          return null
+          return null;
         }
       },
     }),
@@ -54,16 +62,16 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, session, trigger, user }) {
       if (trigger === "update") {
-        return { ...token, ...session.user }
+        return { ...token, ...session.user };
       }
 
-      return { ...token, ...user }
+      return { ...token, ...user };
     },
     async session({ session, token }) {
       return {
         ...session,
         token,
-      }
+      };
     },
   },
   session: {
@@ -85,7 +93,7 @@ const authOptions: NextAuthOptions = {
       },
     },
   },
-}
+};
 
-const handler = NextAuth(authOptions)
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

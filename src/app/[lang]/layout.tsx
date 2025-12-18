@@ -7,6 +7,7 @@ import ApolloManager from "@/graphql/client";
 import { ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl"
 import { QueryClientProvider } from "@/provider/query-client";
+import { SessionProvider } from "next-auth/react"; // <-- Add this import
 
 
 export const metadata: Metadata = {
