@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { Box, Card, useTheme } from '@mui/material';
+import { Box, Card, Pagination, Stack, useTheme } from '@mui/material';
+import { useTranslations } from 'next-intl';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -39,49 +40,60 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function DataTable() {
+  const t = useTranslations()
   const theme = useTheme();
+  const [page, setPage] = React.useState(1);
+  const tableStyle = {
+    "& .MuiDataGrid-columnHeaders": {
+      // backgroundColor: theme.palette.grey[300],
+      borderBottom: `1px solid ${theme.palette.divider}`,
+      // height: 56,
+    },
+    "& .MuiDataGrid-columnHeaderTitle": {
+      fontWeight: 700,
+      fontSize: "1.3rem",
+    },
+  };
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+    // refetch();
+  };
   return (
     <Box sx={{ height: 400, width: '100%', direction:"rtl" }}>
-      <Card sx={{ backgroundColor: theme.palette.background.paper }}>
-
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection={false}
-        autoHeight
-        disableVirtualization
-        getRowHeight={() => "auto"}
-        sx={{
-          direction:"rtl"
-          // backgroundColor: "white",
-          // height: "100%",
-          // "& .MuiDataGrid-columnSeparator": {
-          //   display: "none", // This removes the line between headers
-          // },
-          // "& .MuiDataGrid-container--top [role=row]":{
-          //   background:"rgb(238, 0, 0) !important"
-          // },
-          // "& .MuiDataGrid-cell": {
-          //   borderTop: "1px solid #E1E1E1 !important",
-          //   textAlign: " right",
-          //   padding: "10px !important",
-          //   wordBreak: "break-word",
-          //   boxSizing: "border-box",
-          //   display: "flex",
-          //   justifyContent: "center",
-          //   alignItems: "center",
-          // },
-        }}
-        hideFooter
-        hideFooterSelectedRowCount
-        disableColumnMenu
-        disableAutosize
-        disableColumnFilter
-        disableColumnSelector
-      />
+      <Card sx={{backgroundColor: theme.palette.background.paper}}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          hideFooterPagination
+          rowSelection={false}
+          hideFooter
+          // loading={isLoading}
+          sx={tableStyle}
+        />
       </Card>
+      <Box
+        display="flex"
+        justifyContent={t("dir") === "rtl" ? "start" : "end"}
+        mt={2}
+        dir="ltr"
+      >
+        <Stack spacing={2} p={1}>
+          <Pagination
+            count={Math.ceil(100 / 10)}
+            size={"medium"}
+            shape="rounded"
+            variant="outlined"
+            color="primary"
+            onChange={handleChangePage}
+            sx={{
+              fontSize: "2rem !important",
+            }}
+          />
+        </Stack>
+      </Box>
     </Box>
   );
 }

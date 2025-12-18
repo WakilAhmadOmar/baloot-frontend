@@ -21,7 +21,7 @@ const BankAutoComplete: React.FC<IPropsProduct> = ({
     setValue,
   } = useFormContext();
 
-  const { data: bankList } = useGetBankListQuery({ page: 1 });
+  const { data: bankList } = useGetBankListQuery();
 
   const value = watch(name || "bankId");
   useEffect(() => {

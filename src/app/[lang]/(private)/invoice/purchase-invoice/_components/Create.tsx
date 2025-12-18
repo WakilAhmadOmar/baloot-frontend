@@ -25,7 +25,7 @@ import { forwardRef, useCallback, useContext, useState } from "react";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import useSchemaCrateForm, { CreateFormSchema } from "./create-form.schema";
+import useSchemaCrateForm, { CreateFormSchema } from "./table-container.schema";
 import { AppContext } from "@/provider/appContext";
 import { PrintInvoice } from "./print-invoice";
 import { useTranslations } from "next-intl";
@@ -37,6 +37,7 @@ import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddBuyBillMutation } from "@/hooks/api/invoice/mutations/use-add-buy-bill";
 import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
 import { InvoiceStatus } from "@/types/invoice/invice.type";
+import { ContainerTable } from "./table-container";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -52,40 +53,6 @@ const CreatePurchaseInvoice = () => {
 
   const methods = useForm<CreateFormSchema>({
     resolver: yupResolver(useSchemaCrateForm(t)),
-    defaultValues: {
-      customerId: "",
-      warehouseId: "",
-      currencyId: "",
-      totalPrice: 0,
-      contact_number: "",
-      totalPriceAfterExpense: 0,
-      paymentMethod: "cash",
-      payerId: "",
-      products: [
-        {
-          productId: "",
-
-          measures: [
-      //       {
-      //   measureId: "",
-      //   measureName: "",
-      //   amount: 0,
-      //   buyPrice: 0,
-      //   expense: 0,        // <-- Always a number
-      //   totalExpense: 0,   // <-- Always a number
-      //   total: 0,          // <-- Always a number
-      //   selected: false,
-      // },
-          ],
-          warehouse: null,
-          expireInDate: new Date(),
-           expense: 0,           // <-- Always a number
-    totalExpense: 0,      // <-- Always a number
-
-
-        },
-      ],
-    },
   });
 
   const {
@@ -252,7 +219,7 @@ const CreatePurchaseInvoice = () => {
             </Toolbar>
           </AppBar>
           <DialogContent>
-            <Grid2 container columnSpacing={3} rowSpacing={3}>
+            {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
               <Grid2 size={3} gap={1} display={"grid"}>
                 <InputLabel>{t("customer_name")}</InputLabel>
                 <CustomerAutoComplete
@@ -287,8 +254,9 @@ const CreatePurchaseInvoice = () => {
                 </InputLabel>
                 <CashBoxAutoComplete name={"payerId"} />
               </Grid2>
-            </Grid2>
-            <EditableProductTable />
+            </Grid2> */}
+            {/* <EditableProductTable /> */}
+            <ContainerTable />
           </DialogContent>
           <DialogActions>
             <Box display={"flex"} justifyContent="space-between" width={"100%"}>
@@ -311,12 +279,12 @@ const CreatePurchaseInvoice = () => {
                 {/* <Button variant="outlined" disabled>
                 {t("print_invoice")}
               </Button> */}
-                <PrintInvoice />
+                {/* <PrintInvoice /> */}
                 {/* <PrintTable /> */}
                 {/* <Button variant="outlined">
                   {t("print_warehouse_receipt")}
                 </Button> */}
-                <PrintWarehouseReceipt />
+                {/* <PrintWarehouseReceipt /> */}
               </Box>
             </Box>
           </DialogActions>

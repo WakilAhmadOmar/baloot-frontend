@@ -57,8 +57,10 @@ const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   useEffect(() => {
   // When data changes, set the first measure as selected
   if (data && data.length > 0 && personName?.length === 0) {
-    setPersonName([data[0].measureName]);
-    if (getDataSelect) getDataSelect([data[0]], idNumber);
+    const filterData = data?.filter((item) => item?.selected ) 
+
+    setPersonName( filterData?.length > 0 ? filterData?.map((item)=> item?.measureName) : [data?.[0]?.measureName]);
+    if (getDataSelect) getDataSelect( filterData?.length > 0 ? filterData : [data?.[0]], idNumber);
   }
 }, [data , personName]);
 

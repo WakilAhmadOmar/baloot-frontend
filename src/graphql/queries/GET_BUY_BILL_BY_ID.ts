@@ -1,51 +1,55 @@
 import { gql } from "@apollo/client";
 
-
 const GET_BUY_BILL_BY_ID = gql`
-query GetBuyBillById($billId: ID!) {
-  getBuyBillById(billId: $billId) {
-    _id
-    customerId {
+  query GetBuyBillById($billId: ID!) {
+    getBuyBillById(billId: $billId) {
       _id
-      fullName
-    }
-    billNumber
-    billDate
-    entrepotId {
-      _id
-      name
-    }
-    currencyId {
-      _id
-      name
-    }
-    products {
-      productId {
-        _id
-        name
-        price {
-          buyPrice
-           measureId {
-            _id
-           }
-           sellPrice
-        }
-      }
-      productMeasures {
-        measureId {
+      products {
+        productId {
           _id
           name
+          measures {
+            measureId {
+              _id
+              name
+            }
+          }
+          price {
+            buyPrice
+            sellPrice
+          }
         }
-        amountOfProduct
-        pricePerMeasure
-        consumptionPrice
+        productMeasures {
+          measureId {
+            _id
+            name
+          }
+          amountOfProduct
+          pricePerMeasure
+          consumptionPrice
+        }
+        expireInDate
       }
-      expireInDate
+      customerId {
+        _id
+        fullName
+      }
+      billNumber
+      billDate
+      entrepotId {
+        _id
+        name
+      }
+      currencyId {
+        _id
+        name
+        symbol
+      }
+      totalPriceOfBillAfterConsumption
+      status
+      createdAt
+      isPaid
     }
-    totalPriceOfBillAfterConsumption
-    status
-    createdAt
   }
-}
-`
-export {GET_BUY_BILL_BY_ID}
+`;
+export { GET_BUY_BILL_BY_ID };

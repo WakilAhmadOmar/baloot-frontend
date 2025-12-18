@@ -4,7 +4,7 @@ import * as Yup from "yup";
 export interface MeasureSchema {
   measureId: string;
   amount: number;
-  sellPrice: number;
+  buyPrice: number;
   discount?: number | null;
   discountPercentage?: number | null;
   selected?: boolean | null;
@@ -16,8 +16,8 @@ export interface ProductSchema {
   productName: string;
   measures: MeasureSchema[];
   warehouse?: string | null;
-  expireInDate?: (string | undefined)[];
-  expireInDateSelected:string
+  expireInDate: Date;
+  // expireInDateSelected:string
 }
 
 export interface EditFormSchema {
@@ -26,7 +26,7 @@ export interface EditFormSchema {
   currencyId: string;
   products: ProductSchema[];
   totalPrice: number;
-  totalPriceAfterDiscount: number;
+  totalPriceOfBillAfterConsumption: number;
   contact_number?: string | null | undefined;
 }
 
@@ -36,7 +36,7 @@ const useSchemaEditForm = (t: any) =>
     warehouseId: Yup.string().required(t("warehouse_is_required")),
     currencyId: Yup.string().required(t("currency_is_required")),
     totalPrice: Yup.number().required(),
-    totalPriceAfterDiscount: Yup.number().required(),
+    totalPriceOfBillAfterConsumption: Yup.number().required(),
     contact_number: Yup.string().nullable().notRequired(),
     products: Yup.array()
       .of(
@@ -49,7 +49,7 @@ const useSchemaEditForm = (t: any) =>
                 measureId: Yup.string().required(t("product_units_is_required")),
                 measureName: Yup.string().required(),
                 amount: Yup.number().required(t("product_count_is_required")),
-                sellPrice: Yup.number().required(t("product_price_is_required")),
+                buyPrice: Yup.number().required(t("product_price_is_required")),
                 discount: Yup.number().nullable(),
                 discountPercentage: Yup.number().nullable(),
                 selected: Yup.boolean().nullable(),
@@ -58,8 +58,8 @@ const useSchemaEditForm = (t: any) =>
             .required()
             .default([]),
           warehouse: Yup.string().notRequired().nullable(),
-          expireInDate: Yup.array().of(Yup.string()).optional(),
-          expireInDateSelected:Yup.string().required(t("expire_in_date_is_required"))
+          expireInDate: Yup.date().required(t("expire_in_date_is_required")),
+          // expireInDateSelected:Yup.string().required(t("expire_in_date_is_required"))
         })
       )
       .min(1, t("at_least_one_product_is_require"))
