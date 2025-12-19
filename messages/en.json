@@ -303,7 +303,7 @@
       "to": "To",
       "base_currency_is_required": "Base currency is required",
       "save": "Save",
-      "you_have_no_currency": "You have no currency in our system. Click the button below to add or import your currency.",
+      "you_have_no_currency": "You have no currency in our system. Click the button Add new Currency to add or import your currency.",
       "no_currency_registered": "No Currency Registered",
       "define_currency": "Define Currency",
       "current_rate_in_base_currency": "Current Rate in Base Currency ",
