@@ -6,7 +6,7 @@ const ADD_MEASURE = gql`
       _id
       name
       description
-      userId
+  
       createdAt
     }
   }
