@@ -41,14 +41,11 @@ const authOptions: NextAuthOptions = {
           },
         });
         const data = await res.json();
+        console.log("data", JSON.stringify(data));
         if (res.ok && data?.data?.signIn) {
           return {
             id: data.data.signIn.userInfo._id,
-            profile:{
-              id: data.data.signIn.userInfo._id,
-              name: data.data.signIn.userInfo.name,
-              email: credentials?.email,
-            },
+            profile: data.data.signIn.userInfo,
             accessToken: data.data.signIn.accessToken,
             refreshToken: data.data.signIn.refreshToken,
           };

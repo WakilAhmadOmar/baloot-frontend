@@ -41,7 +41,7 @@ const pathname = usePathname()
 
   const handleLogout = async () => {
     await signOut()
-    // await deleteSession(ACCESS_TOKEN_KEY)
+
     router.push("/login")
   }
   return (
@@ -82,7 +82,7 @@ const pathname = usePathname()
             }}
           >
             <Avatar variant="circular" sx={{ width: 70, height: 70 }} />
-            <Typography>{session?.name}</Typography>
+            <Typography variant="subtitle1">{session?.data?.token?.profile?.name}</Typography>
           </Box>
           <Box py={2} >
             <Box sx={{ borderTop: `2px solid ${theme.palette.grey[100]}` }}>
