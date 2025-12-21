@@ -108,7 +108,8 @@
     "add_new_pre_purchase_invoice": "Add New Pre Purchase Invoice",
     "pre_sell_invoices": "Pre Sell Invoices",
     "pre_sells_invoice":"Pre_sells invoice",
-    "add_new_pre_sells_invoice":"Add new pre-sells invoice"
+    "add_new_pre_sells_invoice":"Add new pre-sells invoice",
+    "expire_date_is_required":"Expire date is required"
 
   },
   "layout": {

@@ -77,6 +77,8 @@ export default function ProductItem({
           productIds={productIds}
           name={`products.${index}.productId`}
           defaultValue={product}
+          error={!!errors.products?.[index]?.productId}
+          helperText={errors.products?.[index]?.productId?.message}
         />
       </Grid2>
       <Grid2 size={1}>
@@ -104,7 +106,7 @@ export default function ProductItem({
           }}
         />
       </Grid2>
-      <Grid2 size={1}>
+      <Grid2 size={1} sx={{ display: "grid", alignContent: "space-around" }}>
         {productPrice
           ?.filter((item: any) => item.selected)
           .map((measure: any, measureIndex: number) => (
@@ -120,18 +122,20 @@ export default function ProductItem({
               <Controller
                 name={`products.${index}.price.${measureIndex}.quantity`}
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <TextField
                     {...field}
                     onChange={(e) => field.onChange(e)}
                     size="small"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
                 )}
               />
             </Box>
           ))}
       </Grid2>
-      <Grid2 size={1}>
+      <Grid2 size={1} sx={{ display: "grid", alignContent: "space-around" }}>
         {productPrice
           ?.filter((item: any) => item.selected)
           .map((measure: any, measureIndex: number) => (
@@ -147,18 +151,20 @@ export default function ProductItem({
               <Controller
                 name={`products.${index}.price.${measureIndex}.buyPrice`}
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <TextField
                     {...field}
                     onChange={(e) => field.onChange(e)}
                     size="small"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
                 )}
               />
             </Box>
           ))}
       </Grid2>
-      <Grid2 size={1}>
+      <Grid2 size={1} sx={{ display: "grid", alignContent: "space-around" }}>
         {productPrice
           ?.filter((item: any) => item.selected)
           .map((measure: any, measureIndex: number) => (
@@ -174,11 +180,13 @@ export default function ProductItem({
               <Controller
                 name={`products.${index}.price.${measureIndex}.expense`}
                 control={control}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <TextField
                     {...field}
                     onChange={(e) => field.onChange(e)}
                     size="small"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
                 )}
               />
@@ -226,12 +234,14 @@ export default function ProductItem({
         <Controller
           name={`products.${index}.expireInDate`}
           control={control}
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <TextField
               {...field}
               type="date"
               onChange={(e) => field.onChange(e)}
               size="small"
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
             />
           )}
         />

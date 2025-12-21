@@ -2,7 +2,7 @@
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
-import { useTheme } from "@mui/material";
+import { CircularProgress, useTheme } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { useGetProductList } from "@/hooks/api/definitions/product/queries/use-get-list";
 
@@ -14,6 +14,7 @@ interface IPropsProduct {
   defaultValue?: any;
   error?: boolean;
   name?: string;
+  helperText?: string;
   limit?: number;
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
@@ -24,6 +25,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   defaultValue,
   name,
   error = false,
+  helperText,
   limit = 10,
 }) => {
   const { control } = useFormContext();
@@ -87,11 +89,10 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
       control={control}
       render={({ field: { onChange, value } }) => (
         <Autocomplete
-          loading={isLoading}
           disablePortal={false}
-          onChange={(event: any, value) => {
+          onChange={(event: any, value: any) => {
             handleChangeCustomerSearch(event, value);
-            onChange(event);
+            onChange(value?._id);
           }}
           fullWidth
           size="small"
@@ -109,10 +110,25 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
             );
             return (filterItems?.length as number) > 0;
           }}
+          loading={isLoading}
           renderInput={(params) => (
             <TextField
               {...params}
               error={error}
+              helperText={helperText}
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {isLoading ? (
+                        <CircularProgress color="inherit" size={15} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                },
+              }}
               // sx={inputStyle}
               // placeholder={placeholder}
             />

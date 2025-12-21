@@ -72,7 +72,7 @@ const CurrenciesAutoComplete: React.FC<IPropsUserCurrencies> = ({
             <Select
               fullWidth
               size={"small"}
-              value={value}
+              value={value || ""}
               disabled={disabled}
               defaultValue={defaultValue}
               error={!!errors?.[name || "currencyId"]}
