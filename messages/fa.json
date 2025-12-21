@@ -109,6 +109,7 @@
     "pre_sell_invoices":"فاکتور های پیش فروش",
      "pre_sells_invoice":"فاکتور پیش فروش",
      "add_new_pre_sells_invoice":"افزودن فاکتور پیش فروش جدید"
+     
   },
   "layout": {
     "dashboard": "صحفه اصلی",
