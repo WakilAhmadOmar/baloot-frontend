@@ -17,7 +17,7 @@ export interface MeasureSchema {
 export interface ProductSchema {
   productId:string,
   price: MeasureSchema[];
-  expireInDate: Date;
+  expireInDate: Date | null;
   total: number;
   expense: number;
   name?:string
@@ -70,7 +70,7 @@ const useSchemaCrateForm = (t: any) =>
             .required()
             .default([]),
          
-          expireInDate: Yup.date().required(),
+          expireInDate: Yup.date().nullable().required(t("expire_date_is_required")),
           expense: Yup.number().required().default(0),
           total: Yup.number().required().default(0),
         })

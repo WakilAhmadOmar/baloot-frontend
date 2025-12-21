@@ -52,7 +52,7 @@ const CreatePurchaseInvoice = () => {
   const t = useTranslations("invoice");
 
   const methods = useForm<CreateFormSchema>({
-    resolver: yupResolver(useSchemaCrateForm(t)),
+    resolver: yupResolver(useSchemaCrateForm(t)) as any,
     defaultValues: {
       products: [],
       paymentMethod: "cash",
@@ -142,9 +142,7 @@ const CreatePurchaseInvoice = () => {
           return {
             productId: item?.productId,
             productMeasures,
-            // entrepotId: item?.warehouse?._id || data?.warehouseId,
             expireInDate: item?.expireInDate?.toISOString().slice(0, 10),
-            // expireInDate:"2031-11-30",
           };
         }),
         // totalPrice: data?.totalPrice,
@@ -154,7 +152,6 @@ const CreatePurchaseInvoice = () => {
         // receiveAmount: paymentOff?.amount || data?.totalPriceAfterExpense,
       },
     };
-    console.log("variable", variables);
     addBuyBillMutation(variables, {
       onSuccess: () => {
         setHandleError({
@@ -180,7 +177,6 @@ const CreatePurchaseInvoice = () => {
     reset();
   }, []);
 
-  console.log("errors", errors);
   return (
     <FormProvider {...methods}>
       <Paper>
@@ -228,6 +224,11 @@ const CreatePurchaseInvoice = () => {
                   }}
                   dir={t("dir")}
                 />
+                {errors?.customerId && (
+                  <Typography variant="caption" sx={{ color: "error.main" }}>
+                    {errors?.customerId?.message}
+                  </Typography>
+                )}
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("Contact_Number")}</InputLabel>
@@ -242,10 +243,20 @@ const CreatePurchaseInvoice = () => {
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("warehouse")} </InputLabel>
                 <WarehouseAutoComplete dir={t("dir")} />
+                {errors?.warehouseId && (
+                  <Typography variant="caption" sx={{ color: "error.main" }}>
+                    {errors?.warehouseId?.message}
+                  </Typography>
+                )}
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("Currency")}</InputLabel>
                 <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
+                {errors?.currencyId && (
+                  <Typography variant="caption" sx={{ color: "error.main" }}>
+                    {errors?.currencyId?.message}
+                  </Typography>
+                )}
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel required>
@@ -253,6 +264,11 @@ const CreatePurchaseInvoice = () => {
                   {t("safe")} ( {t("payer")} ){" "}
                 </InputLabel>
                 <CashBoxAutoComplete name={"payerId"} />
+                {errors?.payerId && (
+                  <Typography variant="caption" sx={{ color: "error.main" }}>
+                    {errors?.payerId?.message}
+                  </Typography>
+                )}
               </Grid2>
             </Grid2>
             {/* <EditableProductTable /> */}

@@ -26,7 +26,7 @@ export function CalculateTotal({
   });
 
   const products: any = useWatch({ name: "products" });
-  console.log("products in total calc", products);
+
   useEffect(() => {
     const initialValue = 0;
     let expense = 0;

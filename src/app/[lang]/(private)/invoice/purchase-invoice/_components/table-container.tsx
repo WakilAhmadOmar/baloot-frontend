@@ -10,48 +10,30 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  FormProvider,
-  useFieldArray,
-  useForm,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslations } from "next-intl";
 import { CreateFormSchema, ProductSchema } from "./table-container.schema";
 import { Add } from "iconsax-react";
 import ProductItem from "./table-item";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import PaymentReceiver from "./Payment";
 import { numberToWords } from "@/utils/numberToWords";
-import { InvoiceContext } from "../../_components/invoiceContext";
 import { CalculateTotal } from "./calculate-total";
 
 export function ContainerTable() {
-  const [productsBill, setProductsBill] = useState<ProductSchema[]>([
-    {
-      productId: "",
-      price: [],
-      expireInDate: new Date(),
-      total: 0,
-      expense: 0,
-    },
-  ]);
   const [totalBill, setTotalBill] = useState(0);
 
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
   const theme = useTheme();
   const t = useTranslations("invoice");
   const { control, setValue } = useFormContext<CreateFormSchema>();
-  const { remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "products",
   });
 
   const handleAddProduct = (product: any, indexProduct: number) => {
-    console.log("product", product);
     const myProduct: ProductSchema = {
       name: product?.name,
       price: product?.price?.map((item: any, index: number) => ({
@@ -63,27 +45,24 @@ export function ContainerTable() {
         total: item?.buyPrice,
         selected: index === 0,
       })),
-      expireInDate: new Date(),
+      expireInDate: null,
       total: product?.price?.length > 0 ? product?.price[0]?.buyPrice : 0,
       expense: 0,
       productId: product?._id,
     };
-    setProductsBill((pre) =>
-      pre?.map((item, index) => (index === indexProduct ? myProduct : item))
-    );
-    setValue(`products.${indexProduct}`, myProduct);
-    setValue(`products.${indexProduct}.productId`, product?._id);
+
+    update(indexProduct, myProduct);
   };
 
   const handleAddNewProduct = () => {
     const newProduct = {
       productId: "",
       price: [],
-      expireInDate: new Date(),
+      expireInDate: null,
       total: 0,
       expense: 0,
     };
-    setProductsBill([...productsBill, newProduct]);
+    append(newProduct);
   };
 
   const handleChangePaymentStatus = (
@@ -99,7 +78,6 @@ export function ContainerTable() {
   const deleteProductBill = (event: React.MouseEvent<HTMLButtonElement>) => {
     const index = event?.currentTarget?.id;
     const indexNumber = Number(index);
-    setProductsBill((pre) => pre?.filter((item, idx) => idx !== indexNumber));
     remove(indexNumber);
   };
   return (
@@ -165,18 +143,17 @@ export function ContainerTable() {
             </Typography>
           </Grid2>
         </Grid2>
-        {productsBill?.map((item, index) => {
-          setValue(`products.${index}.productId`, item?.productId);
+        {fields.map((item, index) => {
           return (
             <ProductItem
               control={control}
-              key={item?.productId}
+              key={item.id}
               index={index}
               remove={remove}
               watch={useFormContext().watch}
               setValue={useFormContext().setValue}
-              product={item}
-              productIds={productsBill?.map((item) => item?.productId)}
+              product={item as unknown as ProductSchema}
+              productIds={fields?.map((item: any) => item?.productId)}
               errors={useFormContext().formState.errors}
               reset={useFormContext().reset}
               handleAddProduct={handleAddProduct}
@@ -211,7 +188,7 @@ export function ContainerTable() {
           minWidth={"15rem"}
           sx={{ paddingInlineStart: "1rem", borderRadius: "5px" }}
         >
-          {productsBill?.length}
+          {fields.length}
         </Typography>
       </Box>
       <Grid2
