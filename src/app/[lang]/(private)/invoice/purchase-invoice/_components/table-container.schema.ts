@@ -15,12 +15,12 @@ export interface MeasureSchema {
 }
 
 export interface ProductSchema {
-  id: string;
-  _id:string,
+  productId:string,
   price: MeasureSchema[];
   expireInDate: Date;
   total: number;
   expense: number;
+  name?:string
 }
 
 export interface CreateFormSchema {
@@ -48,8 +48,8 @@ const useSchemaCrateForm = (t: any) =>
     products: Yup.array()
       .of(
         Yup.object().shape({
-          id: Yup.string().required(t("product_name_is_required")),
-          _id: Yup.string().required(t("product_name_is_required")),
+          productId: Yup.string().required(t("product_name_is_required")),
+          name: Yup.string().optional(),
           price: Yup.array()
             .of(
               Yup.object().shape({

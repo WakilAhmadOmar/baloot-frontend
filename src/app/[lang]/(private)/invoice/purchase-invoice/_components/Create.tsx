@@ -53,6 +53,10 @@ const CreatePurchaseInvoice = () => {
 
   const methods = useForm<CreateFormSchema>({
     resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues: {
+      products: [],
+      paymentMethod: "cash",
+    },
   });
 
   const {
@@ -81,13 +85,11 @@ const CreatePurchaseInvoice = () => {
     resetInvoiceFunction();
   };
 
-  function formatToYMD(value:Date) {
-  
-   const d = new Date(value);
-  if (isNaN(d.getTime())) return null;
-  d.setHours(0, 0, 0, 0); // strip time
-  return d;
-  
+  function formatToYMD(value: Date) {
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return null;
+    d.setHours(0, 0, 0, 0); // strip time
+    return d;
   }
   const onSubmitFunction = async (data: CreateFormSchema) => {
     const variablesPayment = {
@@ -120,7 +122,6 @@ const CreatePurchaseInvoice = () => {
         });
       });
     }
-
     const variables = {
       buyBillObject: {
         billDate: new Date(),
@@ -128,13 +129,12 @@ const CreatePurchaseInvoice = () => {
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-
-          const productMeasures = item?.measures
+          const productMeasures = item?.price
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
               return {
-                measureId: dataItem?.measureId,
-                amountOfProduct: dataItem?.amount,
+                measureId: dataItem?.measureId?._id,
+                amountOfProduct: dataItem?.quantity,
                 pricePerMeasure: dataItem?.buyPrice,
                 consumptionPrice: dataItem?.expense || 0,
               };
@@ -143,14 +143,14 @@ const CreatePurchaseInvoice = () => {
             productId: item?.productId,
             productMeasures,
             // entrepotId: item?.warehouse?._id || data?.warehouseId,
-            expireInDate: item?.expireInDate,
+            expireInDate: item?.expireInDate?.toISOString().slice(0, 10),
             // expireInDate:"2031-11-30",
           };
         }),
         // totalPrice: data?.totalPrice,
         totalPriceOfBillAfterConsumption: data?.totalPriceAfterExpense,
         transactionId: paymentOff?._id || (paymentMethod as any)?._id,
-        status: InvoiceStatus.Accepted,
+        // status: InvoiceStatus.Accepted,
         // receiveAmount: paymentOff?.amount || data?.totalPriceAfterExpense,
       },
     };
@@ -183,7 +183,7 @@ const CreatePurchaseInvoice = () => {
   console.log("errors", errors);
   return (
     <FormProvider {...methods}>
-      <Paper >
+      <Paper>
         <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
           {t("add_new_purchase_invoice")}
         </Button>
@@ -219,7 +219,7 @@ const CreatePurchaseInvoice = () => {
             </Toolbar>
           </AppBar>
           <DialogContent>
-            {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
+            <Grid2 container columnSpacing={3} rowSpacing={3}>
               <Grid2 size={3} gap={1} display={"grid"}>
                 <InputLabel>{t("customer_name")}</InputLabel>
                 <CustomerAutoComplete
@@ -254,7 +254,7 @@ const CreatePurchaseInvoice = () => {
                 </InputLabel>
                 <CashBoxAutoComplete name={"payerId"} />
               </Grid2>
-            </Grid2> */}
+            </Grid2>
             {/* <EditableProductTable /> */}
             <ContainerTable />
           </DialogContent>
@@ -279,12 +279,12 @@ const CreatePurchaseInvoice = () => {
                 {/* <Button variant="outlined" disabled>
                 {t("print_invoice")}
               </Button> */}
-                {/* <PrintInvoice /> */}
+                <PrintInvoice />
                 {/* <PrintTable /> */}
                 {/* <Button variant="outlined">
                   {t("print_warehouse_receipt")}
                 </Button> */}
-                {/* <PrintWarehouseReceipt /> */}
+                <PrintWarehouseReceipt />
               </Box>
             </Box>
           </DialogActions>
