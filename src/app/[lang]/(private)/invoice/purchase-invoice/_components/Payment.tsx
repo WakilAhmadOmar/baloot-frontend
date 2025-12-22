@@ -15,21 +15,14 @@ import {
 import { Add, CloseSquare } from "iconsax-react";
 import React, { useContext, useEffect } from "react";
 
-//   import CashBoxAutoCopalete from "../muiComponent/cashBoxAutoCompalete";
-
-//   import CircularProgressComponent from "../muiComponent/CircularProgressComponent";
-//   import SnackbarComponent from "../muiComponent/snackbarComponent";
-
 import { AppContext } from "@/provider/appContext";
 import CurrenciesAutoComplete from "@/components/Auto/currencyAutoComplete";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import CustomerAutoComplete from "@/components/Auto/customerAutoComplete";
 import { useFormContext } from "react-hook-form";
-import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-receive-customer-mutation";
 import { useTranslations } from "next-intl";
 import { AmountCalculated } from "@/components/util/AmountCalculated";
-import { useGetUserCurrenciesQuery } from "@/hooks/api/currencies/queries/use-get-user-currencies";
 import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
 
 interface IPropsPayment {
@@ -43,23 +36,21 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
   paymentStatus,
 }) => {
   const theme = useTheme();
-  const { setPaymentOff, paymentOff } =
-    useContext(InvoiceContext);
+  const { paymentOff } = useContext(InvoiceContext);
   const t = useTranslations("invoice");
   const { setHandleError } = useContext(AppContext);
-  const { register, handleSubmit, watch, setValue , formState:{errors} } = useFormContext();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
   const [open, setOpen] = React.useState(false);
 
-  // const { mutate: addReceiveCustomer, isLoading } =
-  //   useAddReceiveCustomerMutation({
-  //     onSuccess: (data) => {
-  //       setPaymentOff(data);
-  //     },
-  //   });
-  const { mutate: addPayToCustomer, isLoading } =
-      useAddPayToCustomerMutation({
-        onSuccess: (data) => {},
-      });
+  const { mutate: addPayToCustomer, isLoading } = useAddPayToCustomerMutation({
+    onSuccess: (data) => {},
+  });
 
   const handleClickOpen = () => {
     setOpen(!open);
@@ -67,7 +58,7 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
   const handlePayFunction = async (data: any) => {
     const variables = {
       payOffObject: {
-         amount: parseFloat(`${data?.amount}`),
+        amount: parseFloat(`${data?.amount}`),
         payerId: data?.payerId,
         receiver: data?.customerId,
         currencyId: data?.currencyId,
@@ -103,7 +94,6 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
     }
   }, [currencyId]);
 
-
   return (
     <Box mt={2}>
       <Dialog
@@ -134,22 +124,16 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
           <Grid2 container spacing={3} mt={2}>
             <Grid2 size={6}>
               <InputLabel required>
-                 {t("safe")}  ({t("payer")} )
+                {t("safe")} ({t("payer")} )
               </InputLabel>
-               <CashBoxAutoComplete name={"payerId"} />
-              {/* <TextField
-                fullWidth
-                size="small"
-                disabled
-                value={customer?.fullName}
-              /> */}
+              <CashBoxAutoComplete name={"payerId"} />
             </Grid2>
             <Grid2 size={6}>
               <InputLabel required>
                 {" "}
                 {t("customer_name")} ( {t("receiver")} ){" "}
               </InputLabel>
-                <CustomerAutoComplete
+              <CustomerAutoComplete
                 name={"customerId"}
                 dir={t("dir")}
                 disabled
@@ -190,15 +174,6 @@ const PaymentReceiver: React.FC<IPropsPayment> = ({
             </Grid2>
             <Grid2 size={6}>
               <AmountCalculated />
-              {/* <InputLabel required>{t("amount_calculated")}</InputLabel>
-              <TextField
-                fullWidth
-                size="small"
-                
-                {...register("amountCalculated", { required: false })}
-                name={"amountCalculated"}
-                disabled
-              /> */}
             </Grid2>
           </Grid2>
         </DialogContent>

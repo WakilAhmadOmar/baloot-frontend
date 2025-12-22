@@ -2,7 +2,7 @@
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useEffect, useState } from "react";
-import { useTheme } from "@mui/material";
+import { CircularProgress, useTheme } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { useGetProductList } from "@/hooks/api/definitions/product/queries/use-get-list";
 
@@ -12,9 +12,10 @@ interface IPropsProduct {
   isTable?: boolean;
   index?: number;
   defaultValue?: any;
-error?:boolean
-  name?:string
-  limit?: number
+  error?: boolean;
+  name?: string;
+  helperText?: string;
+  limit?: number;
 }
 const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   getProduct,
@@ -23,14 +24,13 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
   index,
   defaultValue,
   name,
-  error= false,
-  limit = 10
-  
+  error = false,
+  helperText,
+  limit = 10,
 }) => {
-  
-  const { control } = useFormContext()
+  const { control } = useFormContext();
   const theme = useTheme();
-  
+
   const [selectedValue, setSelectedValue] = useState<any>(null);
 
   const inputStyle = {
@@ -62,9 +62,10 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     },
   };
 
-  const {data:getProductList , isLoading} = useGetProductList({page:1 , limit:limit})
-
-
+  const { data: getProductList, isLoading } = useGetProductList({
+    page: 1,
+    limit: limit,
+  });
 
   const handleChangeCustomerSearch = (
     event: React.ChangeEvent<any>,
@@ -77,53 +78,64 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
     }
   };
 
-
   useEffect(() => {
     if (defaultValue && !selectedValue) {
       setSelectedValue(defaultValue);
     }
   }, [defaultValue]);
   return (
-
-            <Controller 
-              name={name || "productId"}
-              control={control}
-              render={({ field: { onChange, value } }) => (
-
-                <Autocomplete
-                  loading={isLoading}
-                  disablePortal={false}
-            
-                  onChange={(event:any , value)=>{
-                    handleChangeCustomerSearch(event , value)
-                    onChange(event)
-                  }}
-                  fullWidth
-                  size="small"
-                  id="auto-complete-product"
-                  options={getProductList?.product?.map((item:any) => ({
-                    _id: item?._id,
-                    name: item?.name,
-                    ...item
-                  }))}
-                  value={ selectedValue}
-                  getOptionLabel={(option: any) => option?.name ? option?.name : ""
-                  } // Specify which property to display
-                  getOptionDisabled={(option: any) => {
-                    const filterItems = productIds?.filter((item) => item === option?._id);
-                    return (filterItems?.length as number) > 0;
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      error={error}
-                      // sx={inputStyle}
-                      // placeholder={placeholder}
-                    />
-                  )}
-                />
-              )}
+    <Controller
+      name={name || "productId"}
+      control={control}
+      render={({ field: { onChange, value } }) => (
+        <Autocomplete
+          disablePortal={false}
+          onChange={(event: any, value: any) => {
+            handleChangeCustomerSearch(event, value);
+            onChange(value?._id);
+          }}
+          fullWidth
+          size="small"
+          id="auto-complete-product"
+          options={getProductList?.product?.map((item: any) => ({
+            _id: item?._id,
+            name: item?.name,
+            ...item,
+          }))}
+          value={selectedValue}
+          getOptionLabel={(option: any) => (option?.name ? option?.name : "")} // Specify which property to display
+          getOptionDisabled={(option: any) => {
+            const filterItems = productIds?.filter(
+              (item) => item === option?._id
+            );
+            return (filterItems?.length as number) > 0;
+          }}
+          loading={isLoading}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              error={error}
+              helperText={helperText}
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {isLoading ? (
+                        <CircularProgress color="inherit" size={15} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                },
+              }}
+              // sx={inputStyle}
+              // placeholder={placeholder}
             />
+          )}
+        />
+      )}
+    />
   );
 };
 

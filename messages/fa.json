@@ -108,7 +108,8 @@
     "add_new_pre_purchase_invoice": "افزودن فاکتور پیش خرید جدید",
     "pre_sell_invoices": "فاکتور های پیش فروش",
     "pre_sells_invoice": "فاکتور پیش فروش",
-    "add_new_pre_sells_invoice": "افزودن فاکتور پیش فروش جدید"
+    "add_new_pre_sells_invoice": "افزودن فاکتور پیش فروش جدید",
+    "expire_date_is_required": "تاریخ انقضا حتمی است"
   },
   "layout": {
     "dashboard": "صحفه اصلی",
