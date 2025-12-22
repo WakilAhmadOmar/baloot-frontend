@@ -201,6 +201,9 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
           <DialogActions
             sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("partner.cancel")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
@@ -208,9 +211,6 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
               loading={isLoading}
             >
               {t("partner.save")}
-            </Button>
-            <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t("partner.cancel")}
             </Button>
           </DialogActions>
         </Dialog>

@@ -107,9 +107,8 @@
     "pre_purchase_invoice": "Pre Purchase Invoice",
     "add_new_pre_purchase_invoice": "Add New Pre Purchase Invoice",
     "pre_sell_invoices": "Pre Sell Invoices",
-    "pre_sells_invoice":"Pre_sells invoice",
-    "add_new_pre_sells_invoice":"Add new pre-sells invoice"
-
+    "pre_sells_invoice": "Pre_sells invoice",
+    "add_new_pre_sells_invoice": "Add new pre-sells invoice"
   },
   "layout": {
     "dashboard": "Dashboard",
@@ -225,7 +224,8 @@
     "add_fixed_asset": "Add Fixed Asset",
     "price": "Price",
     "measure": "Measure",
-    "amount": "Amount"
+    "amount": "Amount",
+    "decline": "Cancel"
   },
 
   "position_link": {
@@ -279,12 +279,18 @@
     "total-sales": "Total Sells Products",
     "total-buy": "Total Buy Products",
     "pre-purchase-invoice": "Pre-purchase Invoice",
-    "pre-sells-invoice":"Pre-sells invoice"
+    "pre-sells-invoice": "Pre-sells invoice"
   },
   "pages": {
     "dir": "ltr",
     "journal": {
-      "journal_book": "Journal Book"
+      "journal_book": "Journal Book",
+      "payer": "Payer",
+      "description": "Description",
+      "currency": "Currency",
+      "amount": "Amount",
+      "receiver": "Receiver",
+      "created_at": "Created At"
     },
     "currency": {
       "message_title_delete": "Are you sure you want to delete this currency",
@@ -330,7 +336,7 @@
       "Current_Balance": "Current Balance",
       "Bank_Contact_Number": "Bank Contact Number",
       "Save": "Save",
-      "Cancel": "Cancel",
+      "cancel": "Cancel",
       "Currency": "Currency",
       "Create_new_Bank": "Create New Bank",
       "Nothing_Found": "Nothing Found",
@@ -352,7 +358,7 @@
       "new_currency": "New Currency",
       "record_previous_balance": "Record Previous Balance",
       "save": "Save",
-      "cancel": "Cancel",
+      "decline": "Cancel",
       "bank_saved_successfully": "Bank saved successfully",
       "bank_updated_successfully": "Bank updated successfully",
       "bank_deleted_successfully": "Bank deleted successfully",
@@ -688,25 +694,25 @@
     "contact_number": "Contact Number",
     "address": "Address",
     "sub_ledger_balance_report": "Sub-ledger balance report",
-    "customers":"Customers",
-    "employees":"Employees"
+    "customers": "Customers",
+    "employees": "Employees"
   },
-  "products_reports":{
-    "dir":"ltr",
-    "product_name":"Product Name",
-    "measure":"Measure",
-    "entrepot_name":"Entrepot Name",
-    "amount":"Amount",
-    "days_remaining":"Days Remaining",
-    "expire_date":"Expire At",
-    "measure_name":"Measure Name",
-    "list_of_valid_products_with_date":"List of Valid Products with Date",
-    "days_expired":"Days Expired",
-    "report_of_expired_products":"Report of Expired products",
-    "total_sales_report":"Total Sells Report",
-    "sales_with":"Sales with ",
-    "total_sales_count":"Total Sells Count",
-    "not_any_report_has_been_recorded_yet":"Not any report has been recorded yet",
+  "products_reports": {
+    "dir": "ltr",
+    "product_name": "Product Name",
+    "measure": "Measure",
+    "entrepot_name": "Entrepot Name",
+    "amount": "Amount",
+    "days_remaining": "Days Remaining",
+    "expire_date": "Expire At",
+    "measure_name": "Measure Name",
+    "list_of_valid_products_with_date": "List of Valid Products with Date",
+    "days_expired": "Days Expired",
+    "report_of_expired_products": "Report of Expired products",
+    "total_sales_report": "Total Sells Report",
+    "sales_with": "Sales with ",
+    "total_sales_count": "Total Sells Count",
+    "not_any_report_has_been_recorded_yet": "Not any report has been recorded yet",
     "debit_amount": " Debit Amount",
     "credit_amount": " Credit Amount",
     "remaining_amount": " Remaining Amount"

@@ -166,6 +166,9 @@ const CreateCashBox = () => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("cashbox.Cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -173,9 +176,6 @@ const CreateCashBox = () => {
             loading={isLoading}
           >
             {t("cashbox.Save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("cashbox.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

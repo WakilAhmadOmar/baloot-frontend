@@ -116,6 +116,9 @@ const CreateExternalIncomeType = () => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("income.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -123,9 +126,6 @@ const CreateExternalIncomeType = () => {
             loading={isLoading}
           >
             {t("income.save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("income.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

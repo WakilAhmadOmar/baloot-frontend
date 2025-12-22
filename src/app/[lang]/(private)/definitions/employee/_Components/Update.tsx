@@ -263,7 +263,10 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.address}
+                  >
                     {t("employee.address")}
                   </InputLabel>
                   <TextField
@@ -285,6 +288,9 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
           <DialogActions
             sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("employee.cancel")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
@@ -292,9 +298,6 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
               loading={isLoading}
             >
               {t("employee.save")}
-            </Button>
-            <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t("employee.cancel")}
             </Button>
           </DialogActions>
         </Dialog>

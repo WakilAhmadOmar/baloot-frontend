@@ -36,28 +36,45 @@ interface IPropsAddCashBox {
   item: any;
 }
 
-export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
-  const t = useTranslations("pages")
-  const defaultValues: CreateFormType = useMemo(() => ({
-    description: item?.description ,
-    accountId: item?._id,
-    firstPeriodCredit: item?.firstPeriodCredit?.length > 0 ? item?.firstPeriodCredit?.map((item: any) => ({
-      amount: item?.amount,
-      creditType: item?.creditType,
-      currencyId: item?.currencyId?._id,
-    })) : [{
-      amount: 0,
-      creditType: CreditType?.Debit,
-      currencyId: "",
-    }],
-  }), [item , item?.firstPeriodCredit?.length]);
+export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({
+  item,
+}) => {
+  const t = useTranslations("pages");
+  const defaultValues: CreateFormType = useMemo(
+    () => ({
+      description: item?.description,
+      accountId: item?._id,
+      firstPeriodCredit:
+        item?.firstPeriodCredit?.length > 0
+          ? item?.firstPeriodCredit?.map((item: any) => ({
+              amount: item?.amount,
+              creditType: item?.creditType,
+              currencyId: item?.currencyId?._id,
+            }))
+          : [
+              {
+                amount: 0,
+                creditType: CreditType?.Debit,
+                currencyId: "",
+              },
+            ],
+    }),
+    [item, item?.firstPeriodCredit?.length]
+  );
 
   const methods: UseFormReturn<CreateFormType> = useForm({
-    resolver:yupResolver(useSchemaCrateForm(t)),
-    defaultValues
+    resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues,
   });
 
-  const { register, handleSubmit, reset , formState:{errors} , watch , setValue } = methods;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    watch,
+    setValue,
+  } = methods;
   const theme = useTheme();
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -89,16 +106,15 @@ export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
     setValue("firstPeriodCredit", newCredits);
   };
 
-
   const onSubmitFunction = async (data: CreateFormType) => {
     const variables = {
-      creditObject: watchFirstPeriodCredit?.map(
-        (item: any, index: number) => ({
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
           currencyId: item?.currencyId,
-        })
-      )?.filter((item: any) => item?.amount > 0),
+        }))
+        ?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Customer",
       accountId: data?.accountId,
@@ -183,7 +199,10 @@ export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
                       selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
                       inputDefaultValue={item?.amount}
-                      data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
+                      data={Object.values(CreditType).map((type) => ({
+                        name: type,
+                        value: type,
+                      }))}
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -231,7 +250,10 @@ export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -256,7 +278,7 @@ export const UpdateCustomerAccounts: React.FC<IPropsAddCashBox> = ({  item }) =>
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"

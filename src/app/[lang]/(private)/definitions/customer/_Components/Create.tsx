@@ -14,27 +14,24 @@ import {
 } from "@mui/material";
 import { CloseSquare } from "iconsax-react";
 import { useContext, useState } from "react";
-import { useForm , FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { useAddCustomerMutation } from "@/hooks/api/definitions/customer/mutations/use-add-mutation";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 const CreateCustomer = () => {
-  const t = useTranslations("pages")
-  const method = useForm()
+  const t = useTranslations("pages");
+  const method = useForm();
   const {
     register,
     handleSubmit,
     formState: { errors },
-
   } = method;
   const theme = useTheme();
-  const {mutate , isLoading } = useAddCustomerMutation()
-
+  const { mutate, isLoading } = useAddCustomerMutation();
 
   const [openDialog, setOpenDialog] = useState(false);
- const {setHandleError} = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -49,24 +46,23 @@ const CreateCustomer = () => {
       },
     };
 
-    mutate(variables , {
-      onSuccess:() => {
+    mutate(variables, {
+      onSuccess: () => {
         setHandleError({
           open: true,
-        message: t("Customers.customer_saved_successfully"),
-        status: "success",
-        })
-        setOpenDialog(false)
+          message: t("Customers.customer_saved_successfully"),
+          status: "success",
+        });
+        setOpenDialog(false);
       },
-      onError: (error:any) => {
+      onError: (error: any) => {
         setHandleError({
-        open: true,
-        message: error.message,
-        status: "error",
-      });
-      }
-    })
-    
+          open: true,
+          message: error.message,
+          status: "error",
+        });
+      },
+    });
   };
 
   return (
@@ -97,10 +93,12 @@ const CreateCustomer = () => {
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
-            <Grid container spacing={2} sx={{mt:"1rem"}}>
+            <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                error={!!errors?.fullName}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.fullName}
+                >
                   {t("Customers.customer_name")}
                 </InputLabel>
                 <TextField
@@ -110,9 +108,11 @@ const CreateCustomer = () => {
                   name="fullName"
                   error={!!errors?.fullName}
                 />
-                {errors?.fullName?.type === "required" && <Typography color="error" p={1}>
-                  {t("Customers.customer_name_is_required")}
-                  </Typography>}
+                {errors?.fullName?.type === "required" && (
+                  <Typography color="error" p={1}>
+                    {t("Customers.customer_name_is_required")}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -127,18 +127,21 @@ const CreateCustomer = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.address}
+                >
                   {t("Customers.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("address", { required: false , maxLength:255})}
+                  {...register("address", { required: false, maxLength: 255 })}
                   name="address"
                   error={!!errors?.address}
                 />
                 {errors?.address?.type === "maxLength" && (
-                  <Typography color="error" >
+                  <Typography color="error">
                     {t("Customers.address_is_too_long")}
                   </Typography>
                 )}
@@ -149,6 +152,9 @@ const CreateCustomer = () => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("Customers.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -157,24 +163,18 @@ const CreateCustomer = () => {
           >
             {t("Customers.save")}
           </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("Customers.cancel")}
-          </Button>
         </DialogActions>
       </Dialog>
 
-        
-    
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-          >
-            {t("Customers.add_new_customer")}
-          </Button>
-        </Box>
-    
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("Customers.add_new_customer")}
+        </Button>
+      </Box>
     </FormProvider>
   );
 };

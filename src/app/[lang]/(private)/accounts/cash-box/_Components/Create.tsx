@@ -13,7 +13,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
-import {  MouseEvent, useContext, useState } from "react";
+import { MouseEvent, useContext, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
@@ -66,7 +66,6 @@ const AddCashBoxAccounts = () => {
     );
     setValue("firstPeriodCredit", newCredits);
   };
-
 
   const onSubmitFunction = async (data: CreateFormType) => {
     const variables = {
@@ -194,7 +193,9 @@ const AddCashBoxAccounts = () => {
                       inputName={`firstPeriodCredit.${index}.amount`}
                       selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
-                      data={[{ name: CreditType?.Credit, value: CreditType?.Credit }]}
+                      data={[
+                        { name: CreditType?.Credit, value: CreditType?.Credit },
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -271,7 +272,7 @@ const AddCashBoxAccounts = () => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"

@@ -90,8 +90,8 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -107,8 +107,10 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                error={!!errors?.name}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("warehouse.warehouses")}
                 </InputLabel>
                 <TextField
@@ -138,7 +140,10 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.address}
+                >
                   {t("warehouse.address")}
                 </InputLabel>
                 <TextField
@@ -148,7 +153,7 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
                   name="address"
                   error={!!errors?.address}
                 />
-                 {errors?.address && (
+                {errors?.address && (
                   <Typography>{t("warehouse.address_is_too_long")}</Typography>
                 )}
               </Grid>
@@ -158,6 +163,9 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("warehouse.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -165,9 +173,6 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
             loading={isLoading}
           >
             {t("warehouse.save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("warehouse.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

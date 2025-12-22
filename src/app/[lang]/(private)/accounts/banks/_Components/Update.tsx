@@ -36,30 +36,43 @@ interface IPropsAddCashBox {
   item: any;
 }
 
-export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
-  item,
-}) => {
-  const t = useTranslations("pages")
+export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({ item }) => {
+  const t = useTranslations("pages");
 
-  const defaultValues: CreateFormType = useMemo(() => ({
-    bankId: item?._id,
-    description: item?.description,
-    firstPeriodCredit: item?.firstPeriodCredit?.length > 0 ? item?.firstPeriodCredit?.map((item: any) => ({
-      amount: item?.amount,
-      creditType: item?.creditType,
-      currencyId: item?.currencyId?._id,
-    })) : [{
-      amount: 0,
-      creditType: CreditType?.Debit,
-      currencyId: "",
-    }],
-  }), [item , item?.firstPeriodCredit?.length]);
+  const defaultValues: CreateFormType = useMemo(
+    () => ({
+      bankId: item?._id,
+      description: item?.description,
+      firstPeriodCredit:
+        item?.firstPeriodCredit?.length > 0
+          ? item?.firstPeriodCredit?.map((item: any) => ({
+              amount: item?.amount,
+              creditType: item?.creditType,
+              currencyId: item?.currencyId?._id,
+            }))
+          : [
+              {
+                amount: 0,
+                creditType: CreditType?.Debit,
+                currencyId: "",
+              },
+            ],
+    }),
+    [item, item?.firstPeriodCredit?.length]
+  );
 
   const methods: UseFormReturn<CreateFormType> = useForm({
-  resolver:yupResolver(useSchemaCrateForm(t)),
-    defaultValues:defaultValues,
+    resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues: defaultValues,
   });
-  const { register, handleSubmit, reset , formState:{errors} , watch , setValue } = methods;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    watch,
+    setValue,
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -91,24 +104,22 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
     setValue("firstPeriodCredit", newCredits);
   };
 
-
   const onSubmitFunction = async (data: any) => {
-     if (watchFirstPeriodCredit?.[0]?.currencyId  === "") {
-     return setHandleError({
+    if (watchFirstPeriodCredit?.[0]?.currencyId === "") {
+      return setHandleError({
         open: true,
         message: t("bank.please_add_at_least_one_credit"),
         status: "error",
       });
-      
     }
     const variables = {
-      creditObject: watchFirstPeriodCredit?.map(
-        (item: any, index: number) => ({
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
           currencyId: item?.currencyId,
-        })
-      )?.filter((item: any) => item?.amount > 0),
+        }))
+        ?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Bank",
       accountId: item?._id,
@@ -137,7 +148,6 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
       },
     });
   };
-
 
   return (
     <FormProvider {...methods}>
@@ -196,8 +206,9 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
                       inputName={`firstPeriodCredit.${index}.amount`}
                       selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
-                      data={[{ name: CreditType?.Debit, value: CreditType?.Debit }]}
-
+                      data={[
+                        { name: CreditType?.Debit, value: CreditType?.Debit },
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -208,7 +219,10 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
                     />
                     {errors?.firstPeriodCredit?.[index]?.currencyId && (
                       <Typography variant="caption" color="error">
-                        {errors?.firstPeriodCredit?.[index]?.currencyId?.message}
+                        {
+                          errors?.firstPeriodCredit?.[index]?.currencyId
+                            ?.message
+                        }
                       </Typography>
                     )}
                   </Grid>
@@ -250,7 +264,10 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors.description}
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -274,7 +291,7 @@ export const UpdateBanksAccounts: React.FC<IPropsAddCashBox> = ({
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"

@@ -137,13 +137,16 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}  error={!!errors?.address}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.address}
+                >
                   {t("Customers.address")}
                 </InputLabel>
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("address", { required: false  , maxLength: 255})}
+                  {...register("address", { required: false, maxLength: 255 })}
                   name="address"
                   error={!!errors?.address}
                 />
@@ -159,6 +162,9 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("Customers.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -166,9 +172,6 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
             loading={isLoading}
           >
             {t("Customers.save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("Customers.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

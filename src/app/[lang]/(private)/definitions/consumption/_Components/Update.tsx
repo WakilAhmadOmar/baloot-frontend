@@ -123,6 +123,9 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ item }) => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("Expenses.Cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -130,9 +133,6 @@ const UpdateConsumption: React.FC<IPropsCreateConsumetion> = ({ item }) => {
             loading={isLoading}
           >
             {t("Expenses.Save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("Expenses.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

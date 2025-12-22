@@ -115,7 +115,7 @@ const CreatePartner = () => {
                     required
                     error={!!errors?.firstName}
                   >
-                    <Typography variant="subtitle2" component={"samp"} >
+                    <Typography variant="subtitle2" component={"samp"}>
                       {t("partner.first_name")}
                     </Typography>
                   </InputLabel>
@@ -192,6 +192,9 @@ const CreatePartner = () => {
           <DialogActions
             sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("partner.cancel")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
@@ -199,9 +202,6 @@ const CreatePartner = () => {
               loading={isLoading}
             >
               {t("partner.save")}
-            </Button>
-            <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t("partner.cancel")}
             </Button>
           </DialogActions>
         </Dialog>
