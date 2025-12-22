@@ -139,7 +139,10 @@ const CreateBank = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("bank.description")}
                   </InputLabel>
                   <TextField
@@ -153,7 +156,7 @@ const CreateBank = () => {
                     error={!!errors?.description}
                   />
                   {errors?.description && (
-                    <Typography color="error" >
+                    <Typography color="error">
                       {t("bank.description_to_much")}
                     </Typography>
                   )}
@@ -170,9 +173,9 @@ const CreateBank = () => {
               onClick={handleSubmit(onSubmitFunction)}
               loading={isLoading}
             >
-              {t("bank.Save")}
+              {t("bank.save")}
             </Button>
-            <Button variant="outlined">{t("bank.Cancel")}</Button>
+            <Button variant="outlined">{t("bank.cancel")}</Button>
           </DialogActions>
         </Dialog>
       </FormProvider>

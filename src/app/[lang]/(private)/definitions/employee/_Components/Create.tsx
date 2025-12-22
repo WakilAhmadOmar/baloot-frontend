@@ -244,13 +244,19 @@ const CreateEmployee = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.address}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.address}
+                  >
                     {t("employee.address")}
                   </InputLabel>
                   <TextField
                     fullWidth
                     size="small"
-                    {...register("address", { required: false , maxLength: 255})}
+                    {...register("address", {
+                      required: false,
+                      maxLength: 255,
+                    })}
                     name="address"
                     error={!!errors?.address}
                   />
@@ -266,6 +272,9 @@ const CreateEmployee = () => {
           <DialogActions
             sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("employee.cancel")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
@@ -273,9 +282,6 @@ const CreateEmployee = () => {
               loading={isLoading}
             >
               {t("employee.save")}
-            </Button>
-            <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t("employee.cancel")}
             </Button>
           </DialogActions>
         </Dialog>

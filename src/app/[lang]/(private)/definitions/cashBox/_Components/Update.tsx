@@ -33,7 +33,6 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
       cashierPhoneNumber: item?.cashier?.phoneNumber,
       employeeId: item?.cashier?._id,
       description: item?.description,
-
     },
   });
   const {
@@ -44,7 +43,7 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
 
-  const { setHandleError } = useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
 
   const { mutate, isLoading } = useUpdateSafeMutation();
 
@@ -151,31 +150,37 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
-                    {t("bank.description")}
-                  </InputLabel>
-                  <TextField
-                    fullWidth
-                    multiline
-                    minRows={3}
-                    type="text"
-                    size="small"
-                    {...register("description", { required: false })}
-                    name="description"
-                    error={!!errors?.description}
-                  />
-                  {errors?.description && (
-                    <Typography color="error" >
-                      {t("bank.description_to_much")}
-                    </Typography>
-                  )}
-                </Grid>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
+                  {t("bank.description")}
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  type="text"
+                  size="small"
+                  {...register("description", { required: false })}
+                  name="description"
+                  error={!!errors?.description}
+                />
+                {errors?.description && (
+                  <Typography color="error">
+                    {t("bank.description_to_much")}
+                  </Typography>
+                )}
+              </Grid>
             </Grid>
           </form>
         </DialogContent>
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("cashbox.Cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -183,9 +188,6 @@ const UpdateCashBox: React.FC<IPropsCreateCashBox> = ({ item }) => {
             loading={isLoading}
           >
             {t("cashbox.Save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("cashbox.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

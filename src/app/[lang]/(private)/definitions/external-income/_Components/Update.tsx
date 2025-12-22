@@ -28,15 +28,15 @@ interface IPropsCreateConsumetion {
 const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
   item,
 }) => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues:{
-      name:item?.name
-    }
+    defaultValues: {
+      name: item?.name,
+    },
   });
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
@@ -51,7 +51,7 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
   const onSubmitFunction = async (data: any) => {
     const variables = {
       name: data?.name,
-      externalIncomeTypeId:item?._id
+      externalIncomeTypeId: item?._id,
     };
 
     mutate(variables, {
@@ -96,14 +96,17 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
         >
           <Typography>{t("income.update_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare size={20} color="gray"/>
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 36, pb: 5 }}>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}  error={!!errors?.name}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.name}
+                >
                   {t("income.income_name")}
                 </InputLabel>
                 <TextField
@@ -125,6 +128,9 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("income.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -132,9 +138,6 @@ const UpdateExternalIncomeType: React.FC<IPropsCreateConsumetion> = ({
             loading={isLoading}
           >
             {t("income.save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("income.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

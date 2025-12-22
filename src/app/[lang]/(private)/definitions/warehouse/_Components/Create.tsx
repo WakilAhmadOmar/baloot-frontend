@@ -151,6 +151,9 @@ const CreateWarehouse = () => {
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("warehouse.cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -158,9 +161,6 @@ const CreateWarehouse = () => {
             loading={isLoading}
           >
             {t("warehouse.save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("warehouse.cancel")}
           </Button>
         </DialogActions>
       </Dialog>

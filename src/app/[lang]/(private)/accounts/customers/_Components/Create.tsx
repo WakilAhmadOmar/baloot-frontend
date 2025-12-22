@@ -25,15 +25,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
 import { CreditType } from "@/types/accounts/account.type";
 
-
-
-const AddBanksAccounts= () => {
-  const t = useTranslations("pages")
+const AddBanksAccounts = () => {
+  const t = useTranslations("pages");
   const methods: UseFormReturn<CreateFormType> = useForm({
-    resolver:yupResolver(useSchemaCrateForm(t)),
-
+    resolver: yupResolver(useSchemaCrateForm(t)),
   });
-  const { register, handleSubmit , formState:{errors} , watch , setValue , reset } = methods;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    reset,
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -55,25 +59,24 @@ const AddBanksAccounts= () => {
     const newCredits = [...currentCredits, newCredit];
     setValue("firstPeriodCredit", newCredits);
   };
-  
+
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
     const newCredits = watchFirstPeriodCredit?.filter(
       (item: any, index: number) => index !== deleteIndex
     );
     setValue("firstPeriodCredit", newCredits);
-
   };
 
   const onSubmitFunction = async (data: any) => {
     const variables = {
-      creditObject: watchFirstPeriodCredit?.map(
-        (item: any, index: number) => ({
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any, index: number) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
           currencyId: item?.currencyId,
-        })
-      )?.filter((item: any) => item?.amount > 0),
+        }))
+        ?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Customer",
       accountId: data?.accountId,
@@ -105,11 +108,14 @@ const AddBanksAccounts= () => {
 
   const handleGetBank = (data: any) => {
     setValue("accountId", data?._id);
-    setValue("firstPeriodCredit", data?.firstPeriodCredit?.map((item: any) => ({
-      amount: item?.amount,
-      creditType: item?.creditType,
-      currencyId: item?.currencyId?._id,
-    })));
+    setValue(
+      "firstPeriodCredit",
+      data?.firstPeriodCredit?.map((item: any) => ({
+        amount: item?.amount,
+        creditType: item?.creditType,
+        currencyId: item?.currencyId?._id,
+      }))
+    );
   };
 
   return (
@@ -176,50 +182,51 @@ const AddBanksAccounts= () => {
                 </Grid>
               </Grid>
             )}
-            {watchFirstPeriodCredit?.map(
-              (item: any, index: any) => {
-                return (
-                  <Grid
-                    container
-                    spacing={2}
-                    key={"credit" + index}
-                    sx={{ mb: "1.5rem" }}
-                  >
-                    <Grid item xs={7}>
-                      <SelectWithInput
-                        inputName={`firstPeriodCredit.${index}.amount`}
-                        selectName={`firstPeriodCredit.${index}.creditType`}
-                        defaultValue={item?.creditType}
-                        inputDefaultValue={item?.amount}
-                        data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <UserCurrenciesComponent
-                        dir={t("dir")}
-                        name={`firstPeriodCredit.${index}.currencyId`}
-                        required={false}
-                      />
-                    </Grid>
-                    {index > 0 && (
-                      <Grid item xs={1}>
-                        <IconButton
-                          color="error"
-                          type="button"
-                          onClick={handleDeleteCredit}
-                          id={`${index}`}
-                        >
-                          <CloseCircle
-                            size={18}
-                            color={theme.palette.error.main}
-                          />
-                        </IconButton>
-                      </Grid>
-                    )}
+            {watchFirstPeriodCredit?.map((item: any, index: any) => {
+              return (
+                <Grid
+                  container
+                  spacing={2}
+                  key={"credit" + index}
+                  sx={{ mb: "1.5rem" }}
+                >
+                  <Grid item xs={7}>
+                    <SelectWithInput
+                      inputName={`firstPeriodCredit.${index}.amount`}
+                      selectName={`firstPeriodCredit.${index}.creditType`}
+                      defaultValue={item?.creditType}
+                      inputDefaultValue={item?.amount}
+                      data={Object.values(CreditType).map((type) => ({
+                        name: type,
+                        value: type,
+                      }))}
+                    />
                   </Grid>
-                );
-              }
-            )}
+                  <Grid item xs={4}>
+                    <UserCurrenciesComponent
+                      dir={t("dir")}
+                      name={`firstPeriodCredit.${index}.currencyId`}
+                      required={false}
+                    />
+                  </Grid>
+                  {index > 0 && (
+                    <Grid item xs={1}>
+                      <IconButton
+                        color="error"
+                        type="button"
+                        onClick={handleDeleteCredit}
+                        id={`${index}`}
+                      >
+                        <CloseCircle
+                          size={18}
+                          color={theme.palette.error.main}
+                        />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </Grid>
+              );
+            })}
             <Grid item xs={12} display={"grid"} justifyContent={"end"}>
               <Button
                 color="primary"
@@ -232,8 +239,9 @@ const AddBanksAccounts= () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                error={!!errors?.description} 
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
                 >
                   {t("bank.description")}
                 </InputLabel>
@@ -259,7 +267,7 @@ const AddBanksAccounts= () => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"

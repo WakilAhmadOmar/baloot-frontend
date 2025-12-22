@@ -108,13 +108,15 @@ const CreateConsumption = () => {
                   </Typography>
                 )}
               </Grid>
-              
             </Grid>
           </form>
         </DialogContent>
         <DialogActions
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
+          <Button variant="outlined" onClick={handleOpenDialogFunction}>
+            {t("Expenses.Cancel")}
+          </Button>
           <Button
             color="primary"
             variant="contained"
@@ -122,9 +124,6 @@ const CreateConsumption = () => {
             loading={isLoading}
           >
             {t("Expenses.Save")}
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("Expenses.Cancel")}
           </Button>
         </DialogActions>
       </Dialog>

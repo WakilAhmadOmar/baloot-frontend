@@ -13,7 +13,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare } from "iconsax-react";
-import {  MouseEvent, useContext, useState } from "react";
+import { MouseEvent, useContext, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
@@ -25,11 +25,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { CreateFormType, useSchemaCrateForm } from "./Create-form-schema";
 import { CreditType } from "@/types/accounts/account.type";
 
-
 const AddEmployeesAccounts = () => {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const methods: UseFormReturn<CreateFormType> = useForm({
-    resolver:yupResolver(useSchemaCrateForm(t)),
+    resolver: yupResolver(useSchemaCrateForm(t)),
   });
   const {
     register,
@@ -44,9 +43,8 @@ const AddEmployeesAccounts = () => {
   const { setHandleError } = useContext(AppContext);
   const watchFirstPeriodCredit = watch("firstPeriodCredit") || [];
 
-
   const { mutate: addFirstPeriodMutation, isLoading } =
-      useAddFirstPeriodOfCreditMutation();
+    useAddFirstPeriodOfCreditMutation();
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
@@ -63,7 +61,6 @@ const AddEmployeesAccounts = () => {
     setValue("firstPeriodCredit", newCredits);
   };
 
-
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
     const newCredits = watchFirstPeriodCredit?.filter(
@@ -73,20 +70,19 @@ const AddEmployeesAccounts = () => {
   };
 
   const onSubmitFunction = async (data: CreateFormType) => {
- 
-      const variables = {
-        creditObject: watchFirstPeriodCredit?.map(
-          (item: any, index: number) => ({
-            amount: parseFloat(item?.amount),
-            creditType: item?.creditType,
-            currencyId: item?.currencyId,
-          })
-        )?.filter((item: any) => item?.amount > 0),
-        description: data?.description,
-        accountType: "Employee",
-        accountId: data?.accountId,
-      };
-        addFirstPeriodMutation(variables, {
+    const variables = {
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any, index: number) => ({
+          amount: parseFloat(item?.amount),
+          creditType: item?.creditType,
+          currencyId: item?.currencyId,
+        }))
+        ?.filter((item: any) => item?.amount > 0),
+      description: data?.description,
+      accountType: "Employee",
+      accountId: data?.accountId,
+    };
+    addFirstPeriodMutation(variables, {
       onSuccess: ({ message }: any) => {
         setHandleError({
           message: message,
@@ -108,16 +104,18 @@ const AddEmployeesAccounts = () => {
         });
       },
     });
-
   };
 
   const handleGetBank = (data: any) => {
     setValue("accountId", data?._id);
-    setValue("firstPeriodCredit", data?.firstPeriodCredit?.map((item: any) => ({
-      amount: item?.amount,
-      creditType: item?.creditType,
-      currencyId: item?.currencyId?._id,
-    })));
+    setValue(
+      "firstPeriodCredit",
+      data?.firstPeriodCredit?.map((item: any) => ({
+        amount: item?.amount,
+        creditType: item?.creditType,
+        currencyId: item?.currencyId?._id,
+      }))
+    );
   };
 
   return (
@@ -164,10 +162,7 @@ const AddEmployeesAccounts = () => {
                   name={"accountId"}
                 />
                 {errors?.accountId && (
-                  <Typography
-                    variant="caption"
-                    color="error"
-                  >
+                  <Typography variant="caption" color="error">
                     {errors?.accountId?.message}
                   </Typography>
                 )}
@@ -199,12 +194,15 @@ const AddEmployeesAccounts = () => {
                     <SelectWithInput
                       inputName={`firstPeriodCredit.${index}.amount`}
                       selectName={`firstPeriodCredit.${index}.creditType`}
-                      data={Object.values(CreditType).map((type) => ({ name: type, value: type }))}
+                      data={Object.values(CreditType).map((type) => ({
+                        name: type,
+                        value: type,
+                      }))}
                     />
                   </Grid>
                   <Grid item xs={4}>
                     <UserCurrenciesComponent
-                     name={`firstPeriodCredit.${index}.currencyId`}
+                      name={`firstPeriodCredit.${index}.currencyId`}
                       required={false}
                       dir={t("dir")}
                     />
@@ -240,7 +238,10 @@ const AddEmployeesAccounts = () => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("bank.description")}
                 </InputLabel>
                 <TextField
@@ -253,10 +254,7 @@ const AddEmployeesAccounts = () => {
                   error={!!errors?.description}
                 />
                 {errors?.description && (
-                  <Typography
-                    variant="caption"
-                    color="error"
-                  >
+                  <Typography variant="caption" color="error">
                     {errors?.description?.message}
                   </Typography>
                 )}
@@ -268,7 +266,7 @@ const AddEmployeesAccounts = () => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"
@@ -280,16 +278,16 @@ const AddEmployeesAccounts = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    
-        <Box>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenDialogFunction}
-          >
-            {t("bank.record_previous_balance")}
-          </Button>
-        </Box>
+
+      <Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenDialogFunction}
+        >
+          {t("bank.record_previous_balance")}
+        </Button>
+      </Box>
     </FormProvider>
   );
 };

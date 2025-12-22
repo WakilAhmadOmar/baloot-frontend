@@ -14,12 +14,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseCircle, CloseSquare, Edit } from "iconsax-react";
-import {
-  MouseEvent,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { MouseEvent, useContext, useMemo, useState } from "react";
 import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
 import { AppContext } from "@/provider/appContext";
@@ -34,28 +29,43 @@ interface IPropsAddCashBox {
   item: any;
 }
 
-export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
-  const t = useTranslations("pages")
+export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({ item }) => {
+  const t = useTranslations("pages");
 
-  const defaultValues: CreateFormType = useMemo(() => ({
-    accountId: item?._id,
-    description: item?.description || "",
-    firstPeriodCredit: item?.firstPeriodCredit?.length > 0 ? item?.firstPeriodCredit?.map((item: any) => ({
-      amount: item?.amount,
-      creditType: item?.creditType,
-      currencyId: item?.currencyId?._id,
-    })) : [{
-      amount: 0,
-      creditType: CreditType?.Credit,
-      currencyId: "",
-    }],
-  }), [item , item?.firstPeriodCredit?.length]);
+  const defaultValues: CreateFormType = useMemo(
+    () => ({
+      accountId: item?._id,
+      description: item?.description || "",
+      firstPeriodCredit:
+        item?.firstPeriodCredit?.length > 0
+          ? item?.firstPeriodCredit?.map((item: any) => ({
+              amount: item?.amount,
+              creditType: item?.creditType,
+              currencyId: item?.currencyId?._id,
+            }))
+          : [
+              {
+                amount: 0,
+                creditType: CreditType?.Credit,
+                currencyId: "",
+              },
+            ],
+    }),
+    [item, item?.firstPeriodCredit?.length]
+  );
 
   const methods: UseFormReturn<CreateFormType> = useForm({
-    resolver:yupResolver(useSchemaCrateForm(t)),
-    defaultValues:defaultValues,
+    resolver: yupResolver(useSchemaCrateForm(t)),
+    defaultValues: defaultValues,
   });
-  const { register, handleSubmit, reset ,formState:{errors} , setValue , watch } = methods;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setValue,
+    watch,
+  } = methods;
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { setHandleError } = useContext(AppContext);
@@ -78,7 +88,6 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
     setValue("firstPeriodCredit", newCredits);
   };
 
-
   const handleDeleteCredit = (event: MouseEvent) => {
     const deleteIndex = parseInt(event?.currentTarget?.id);
     const firstPeriodCredit = watchFirstPeriodCredit?.filter(
@@ -87,17 +96,15 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
     setValue("firstPeriodCredit", firstPeriodCredit);
   };
 
- 
   const onSubmitFunction = async (data: CreateFormType) => {
-    
     const variables = {
-      creditObject: watchFirstPeriodCredit?.map(
-        (item: any) => ({
+      creditObject: watchFirstPeriodCredit
+        ?.map((item: any) => ({
           amount: parseFloat(item?.amount),
           creditType: item?.creditType,
           currencyId: item?.currencyId,
-        })
-      )?.filter((item: any) => item?.amount > 0),
+        }))
+        ?.filter((item: any) => item?.amount > 0),
       description: data?.description,
       accountType: "Safe",
       accountId: data?.accountId,
@@ -149,8 +156,7 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
           }}
         >
           <Typography>
-            {t("cashbox.update_record_previous_safe_account")} (
-            {item?.name})
+            {t("cashbox.update_record_previous_safe_account")} ({item?.name})
           </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare size={20} color="gray" />
@@ -182,11 +188,12 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
                 >
                   <Grid item xs={7}>
                     <SelectWithInput
-
                       inputName={`firstPeriodCredit.${index}.amount`}
                       selectName={`firstPeriodCredit.${index}.creditType`}
                       defaultValue={item?.creditType}
-                      data={[{ name: CreditType?.Credit, value: CreditType?.Credit }]}
+                      data={[
+                        { name: CreditType?.Credit, value: CreditType?.Credit },
+                      ]}
                     />
                   </Grid>
                   <Grid item xs={4}>
@@ -234,8 +241,9 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
             </Grid>
             <Grid>
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} 
-                error={!!errors?.description}
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
                 >
                   {t("bank.description")}
                 </InputLabel>
@@ -261,7 +269,7 @@ export const UpdateSafeAccounts: React.FC<IPropsAddCashBox> = ({  item }) => {
           sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
         >
           <Button variant="outlined" onClick={handleOpenDialogFunction}>
-            {t("bank.Cancel")}
+            {t("bank.cancel")}
           </Button>
           <Button
             color="primary"
