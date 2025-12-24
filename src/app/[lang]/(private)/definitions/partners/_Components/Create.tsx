@@ -44,9 +44,7 @@ const CreatePartner = () => {
       partnerObject: {
         firstName: data?.firstName,
         ...(data?.lastName ? { lastName: data?.lastName } : {}),
-        ...(data?.phoneNumber ? { phoneNumber: data?.phoneNumber } : {}),
-        phoneNumber: data?.phoneNumber,
-
+        ...(data?.phoneNumber ? { contactNumber: data?.phoneNumber } : {}),
         ...(data?.invest
           ? {
               invest: {

@@ -13,116 +13,149 @@ import {
   InputLabel,
 } from "@mui/material";
 import { CloseSquare, Edit } from "iconsax-react";
-import { ChangeEvent, useContext, useMemo, useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useContext, useMemo, useState, useEffect } from "react";
+import { useForm, FormProvider, useFieldArray } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import UserCurrenciesComponent from "@/components/Auto/currencyAutoComplete";
-
 import ProductCategoriesComponent from "@/components/util/ProductCategory";
 import ProductMeansureComponent from "@/components/util/ProductMeansure";
 import { AppContext } from "@/provider/appContext";
 import { useUpdateProductMutation } from "@/hooks/api/definitions/product/mutations/use-update-mutation";
 import { useTranslations } from "next-intl";
+import useSchemaCreateForm, {
+  CreateProductFormSchema,
+} from "./create-form.schema";
 
 interface IPropsUpdateProduct {
   product?: any;
 }
 const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
   const t = useTranslations("product");
+  const schema = useSchemaCreateForm(t);
   const { mutate: updateProductMutation, isLoading } =
     useUpdateProductMutation();
   const theme = useTheme();
 
   const defaultValues = useMemo(() => {
+    const mappedMeasures =
+      product?.price?.map((priceItem: any, index: number) => {
+        let conversionFactor = 1;
+
+        if (index > 0) {
+          if (
+            product?.measuresExchange &&
+            product.measuresExchange.length > 0
+          ) {
+            const num =
+              product?.measuresExchange?.[index - 1]?.baseMeasureAmount;
+            const den = product?.measuresExchange?.[index]?.baseMeasureAmount;
+
+            if (num && den && den > 0) {
+              conversionFactor = num / den;
+            } else if (
+              product?.measuresExchange?.[index - 1]?.baseMeasureAmount
+            ) {
+              conversionFactor =
+                product?.measuresExchange?.[index - 1]?.baseMeasureAmount;
+            }
+          }
+        }
+
+        return {
+          measureId: priceItem?.measureId?._id,
+          measureName: priceItem?.measureId?.name,
+          buyPrice: priceItem?.buyPrice,
+          sellPrice: priceItem?.sellPrice,
+          conversionFactor: conversionFactor,
+        };
+      }) || [];
+
     return {
       name: product?.name,
-      buyPrice: product?.buyPrice,
       category: product?.category?._id,
-      // expirationDate: product?.expirationDate?.slice(0, 10),
-      barcode: product?.barcode,
       currencyId: product?.currencyId?._id,
-      product_measure: product?.price?.map(
-        (meas: any) => meas?.measureId?.name
-      ),
+      barcode: product?.barcode,
+      measures: mappedMeasures,
     };
   }, [product]);
-  const method = useForm<any>({
+
+  const method = useForm<CreateProductFormSchema>({
+    resolver: yupResolver(schema),
     defaultValues,
   });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
+    setValue,
+    reset,
   } = method;
 
+  useEffect(() => {
+    if (product) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset, product]);
+
+  const { fields, replace } = useFieldArray({
+    control,
+    name: "measures",
+  });
+
   const [openDialog, setOpenDialog] = useState(false);
-
-  const defaultMeasure = useMemo(() => {
-    return product?.price?.map((me: any) => ({
-      buyPrice: me?.buyPrice,
-      measure: me?.measureId?._id,
-      name: me?.measureId?.name,
-      sellPrice: me?.sellPrice,
-    }));
-  }, [product]);
-
-  const [selectedUnitProduct, setSelectedUnitProduct] =
-    useState<any[]>(defaultMeasure);
-
   const { setHandleError } = useContext(AppContext);
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
   };
 
-  const onSubmitFunction = async (data: any) => {
-    if (selectedUnitProduct?.length === 0) {
+  const onSubmitFunction = async (data: CreateProductFormSchema) => {
+    if (data.measures.length === 0) {
       return setHandleError({
         open: true,
         status: "info",
-        message: "please select one Unit",
+        message: t("please_add_at_least_one_credit"),
       });
     }
+
+    const measuresList = data.measures;
+
     const productObject = {
-      name: data?.name,
-      price: selectedUnitProduct?.map((item, index: number) => {
-        return {
-          measureId: item?.measure,
-          buyPrice: parseInt(item?.buyPrice),
-          sellPrice: parseInt(item?.sellPrice),
-          // measureSize:
-          //   index === 0 ? "Large" : index === 1 ? "Medium" : "Small",
-        };
-      }),
-      ...(selectedUnitProduct?.length > 1
+      name: data.name,
+      price: measuresList.map((item) => ({
+        measureId: item.measureId,
+        buyPrice: Number(item.buyPrice),
+        sellPrice: Number(item.sellPrice),
+      })),
+      ...(measuresList.length > 0
         ? {
-            measuresExchange: selectedUnitProduct
-              ?.map((item, index: number) => {
+            measuresExchange: measuresList
+              .map((item, index) => {
                 if (index === 0) return null;
+
                 let amountMeasure = 1;
-                selectedUnitProduct
-                  ?.filter((i, ind) => ind >= index)
-                  .forEach((ite, indexdata) => {
-                    amountMeasure =
-                      amountMeasure *
-                      parseInt(data?.["measure" + (index + indexdata)]);
-                  });
+                const relevantItems = measuresList.slice(index);
+                relevantItems.forEach((relItem) => {
+                  amountMeasure =
+                    amountMeasure * Number(relItem.conversionFactor || 1);
+                });
+
                 return {
-                  powerMeasureId: selectedUnitProduct[index - 1]?.measure,
+                  powerMeasureId: measuresList[index - 1]?.measureId,
                   powerMeasureAmount: 1,
                   baseMeasureId:
-                    selectedUnitProduct[selectedUnitProduct?.length - 1]
-                      .measure,
+                    measuresList[measuresList.length - 1].measureId,
                   baseMeasureAmount: amountMeasure,
                 };
               })
               .filter((item) => item !== null),
           }
         : {}),
-      category: data?.category,
-      // ...(data?.expirationDate ? { expirationDate: data?.expirationDate } : {}),
-      ...(data?.barcode ? { barcode: data?.barcode } : {}),
-      // isNewProduct: data?.isNewProduct === "newProduct",
-      currencyId: data?.currencyId,
+      category: data.category,
+      ...(data.barcode ? { barcode: data.barcode } : {}),
+      currencyId: data.currencyId,
     };
 
     updateProductMutation(
@@ -149,33 +182,28 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       }
     );
   };
+
   const handleGetMeasureFunction = (data: any[]) => {
-    setSelectedUnitProduct(data);
+    const mappedMeasures = data.map((item, index) => ({
+      measureId: item.measure,
+      measureName: item.name,
+      buyPrice: 0,
+      sellPrice: 0,
+      conversionFactor: 1,
+    }));
+
+    const currentFields = method.getValues("measures");
+    const newFields = mappedMeasures.map((newItem) => {
+      const existing = currentFields.find(
+        (f) => f.measureId === newItem.measureId
+      );
+      if (existing) return existing;
+      return newItem;
+    });
+
+    replace(newFields);
   };
 
-  const handleChangePriceMeasureFunction = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event?.currentTarget?.value;
-    const id = parseInt(event?.currentTarget?.id);
-    const name = event?.currentTarget?.name;
-    const newState = selectedUnitProduct?.map((item: any, index) => {
-      if (index === id) {
-        if (name?.split(" ")?.[0] === "buyPrice") {
-          return {
-            ...item,
-            buyPrice: value,
-          };
-        } else {
-          return {
-            ...item,
-            sellPrice: value,
-          };
-        }
-      } else return item;
-    });
-    setSelectedUnitProduct(newState);
-  };
   return (
     <FormProvider {...method}>
       <Dialog
@@ -206,11 +234,6 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12} mt={2}>
-                {/* <Grid container spacing={2}> */}
-                {/* <Grid item mt={2} xs={4}>
-                    <UploadComponent />
-                  </Grid> */}
-                {/* <Grid item mt={12} xs={18}> */}
                 <InputLabel
                   sx={{ paddingBottom: "5px" }}
                   required
@@ -223,124 +246,134 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("name", { required: true })}
-                  name="name"
+                  {...register("name")}
                   error={!!errors?.name}
                 />
-                {errors?.name?.type === "required" && (
+                {errors?.name && (
                   <Typography color="error" p={1}>
-                    {t("product_name_is_required")}
+                    {errors.name.message}
                   </Typography>
                 )}
                 <ProductMeansureComponent
                   getDataSelect={handleGetMeasureFunction}
-                  defaultValue={selectedUnitProduct}
+                  defaultValue={fields.map((f) => ({
+                    measure: f.measureId,
+                    name: f.measureName,
+                    buyPrice: f.buyPrice,
+                    sellPrice: f.sellPrice,
+                  }))}
                 />
-                {/* </Grid> */}
-                {/* </Grid> */}
+                {errors?.measures && (
+                  <Typography color="error" p={1}>
+                    {errors.measures.message}
+                  </Typography>
+                )}
               </Grid>
-              {selectedUnitProduct?.length > 1 &&
-                selectedUnitProduct?.map((item, index: number) => {
+              {fields.length > 1 &&
+                fields.map((item, index) => {
                   if (index === 0) {
                     return null;
                   }
                   return (
-                    <Grid item xs={12} md={6} key={item?.name}>
+                    <Grid item xs={12} md={6} key={item.id}>
                       <InputLabel
                         sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                        error={!!errors?.measures?.[index]?.conversionFactor}
                       >
                         <Typography component={"span"}>
                           {t("count")}{" "}
                         </Typography>
                         <Typography component={"span"}>
                           {" "}
-                          {item?.name}{" "}
+                          {item?.measureName}{" "}
                         </Typography>
                         <Typography component={"span"}>
                           {t("in_one")}
                         </Typography>
                         <Typography component={"span"}>
-                          {selectedUnitProduct?.[index - 1]?.name}
+                          {fields?.[index - 1]?.measureName}
                         </Typography>
                       </InputLabel>
                       <TextField
                         fullWidth
                         size="small"
                         type="number"
-                        {...register("measure" + index, {
-                          required: true,
-                        })}
-                        defaultValue={
-                          product?.measuresExchange?.[index ]?.baseMeasureAmount > 0
-                            ? product?.measuresExchange?.[index  -1 ]
-                                ?.baseMeasureAmount/
-                              product?.measuresExchange?.[index ]
-                                ?.baseMeasureAmount
-                            : product?.measuresExchange?.[index - 1]
-                                ?.baseMeasureAmount
-                        }
-                        name={"measure" + index}
-                        onChange={handleChangePriceMeasureFunction}
-                        id={`${index}`}
+                        {...register(`measures.${index}.conversionFactor`)}
+                        error={!!errors?.measures?.[index]?.conversionFactor}
                       />
+                      {errors?.measures?.[index]?.conversionFactor && (
+                        <Typography color="error" p={1}>
+                          {errors.measures[index]?.conversionFactor?.message}
+                        </Typography>
+                      )}
                     </Grid>
                   );
                 })}
               <Grid item xs={12}>
-                {selectedUnitProduct?.length > 0 &&
-                  selectedUnitProduct?.map((item: any, index: number) => {
+                {fields.length > 0 &&
+                  fields.map((item, index: number) => {
                     return (
-                      <Grid container key={item?.measuer} spacing={2}>
-                        <Grid item xs={6} key={item}>
+                      <Grid container key={item.id} spacing={2}>
+                        <Grid item xs={6}>
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                            error={!!errors?.measures?.[index]?.buyPrice}
                           >
-                            {t("bought_price")} {item?.name}
+                            {t("bought_price")} {item?.measureName}
                           </InputLabel>
                           <TextField
                             fullWidth
                             size="small"
                             type="number"
-                            {...register("buyPrice " + item?.name, {
-                              required: true,
-                            })}
-                            name={"buyPrice " + item?.name}
-                            onChange={handleChangePriceMeasureFunction}
-                            id={`${index}`}
-                            defaultValue={item?.buyPrice}
+                            {...register(`measures.${index}.buyPrice`)}
+                            error={!!errors?.measures?.[index]?.buyPrice}
                           />
+                          {errors?.measures?.[index]?.buyPrice && (
+                            <Typography color="error" p={1}>
+                              {errors.measures[index]?.buyPrice?.message}
+                            </Typography>
+                          )}
                         </Grid>
-                        <Grid item xs={6} key={item?.measuer}>
+                        <Grid item xs={6}>
                           <InputLabel
                             sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                            error={!!errors?.measures?.[index]?.sellPrice}
                           >
-                            {t("sale_price")} {item?.name}
+                            {t("sale_price")} {item?.measureName}
                           </InputLabel>
                           <TextField
                             fullWidth
                             type="number"
                             size="small"
-                            {...register("sellPrice " + item?.name, {
-                              required: true,
-                            })}
-                            onChange={handleChangePriceMeasureFunction}
-                            name={"sellPrice " + item?.name}
-                            id={`${index}`}
-                            defaultValue={item?.sellPrice}
+                            {...register(`measures.${index}.sellPrice`)}
+                            error={!!errors?.measures?.[index]?.sellPrice}
                           />
+                          {errors?.measures?.[index]?.sellPrice && (
+                            <Typography color="error" p={1}>
+                              {errors.measures[index]?.sellPrice?.message}
+                            </Typography>
+                          )}
                         </Grid>
                       </Grid>
                     );
                   })}
               </Grid>
               <Grid item xs={12} md={6}>
-                <InputLabel sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}>
+                <InputLabel
+                  sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}
+                  error={!!errors?.currencyId}
+                >
                   {t("currency")}
                 </InputLabel>
                 <UserCurrenciesComponent name={"currencyId"} />
+                {errors?.currencyId && (
+                  <Typography color="error" p={1}>
+                    {errors.currencyId.message}
+                  </Typography>
+                )}
               </Grid>
               <Grid item xs={12} md={6}>
-                <ProductCategoriesComponent  />
+                <ProductCategoriesComponent />
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -350,7 +383,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                 <TextField
                   fullWidth
                   size="small"
-                  {...register("barcode", { required: false })}
+                  {...register("barcode")}
                   name="barcode"
                 />
               </Grid>

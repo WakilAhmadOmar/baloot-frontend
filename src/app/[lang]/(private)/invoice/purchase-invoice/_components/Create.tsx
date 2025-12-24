@@ -29,14 +29,10 @@ import useSchemaCrateForm, { CreateFormSchema } from "./table-container.schema";
 import { AppContext } from "@/provider/appContext";
 import { PrintInvoice } from "./print-invoice";
 import { useTranslations } from "next-intl";
-import { useAddSellsBillMutation } from "@/hooks/api/invoice/mutations/use-add-sells-bill";
 import { PrintWarehouseReceipt } from "./print-warehouse-receipt";
-import EditableProductTable from "./Table";
-import { useAddReceiveCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-receive-customer-mutation";
 import CashBoxAutoComplete from "@/components/Auto/cashBoxAutoComplete";
 import { useAddBuyBillMutation } from "@/hooks/api/invoice/mutations/use-add-buy-bill";
 import { useAddPayToCustomerMutation } from "@/hooks/api/transactions/mutations/use-add-pay_to_customer-mutation";
-import { InvoiceStatus } from "@/types/invoice/invice.type";
 import { ContainerTable } from "./table-container";
 
 const Transition = forwardRef(function Transition(

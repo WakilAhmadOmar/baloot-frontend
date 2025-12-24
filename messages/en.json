@@ -503,7 +503,8 @@
       "id_number_is_require": "ID number is require",
       "description_to_much": "The max length of description is 255 characters.",
       "currency_is_required": "Currency is required",
-      "address_is_too_long": "Address must not exceed 255 characters."
+      "address_is_too_long": "Address must not exceed 255 characters.",
+      "employee_must_be_at_least_12_years_old": "Employee must be at least 12 years old."
     },
     "income": {
       "new_income": "New Income",

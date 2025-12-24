@@ -102,7 +102,10 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
             name: item?.name,
             ...item,
           }))}
-          value={selectedValue}
+          value={selectedValue || value}
+          isOptionEqualToValue={(option: any, value: any) =>
+            option?._id === (value?._id || value?.productId)
+          }
           getOptionLabel={(option: any) => (option?.name ? option?.name : "")} // Specify which property to display
           getOptionDisabled={(option: any) => {
             const filterItems = productIds?.filter(
@@ -110,7 +113,7 @@ const ProductsAutoComplete: React.FC<IPropsProduct> = ({
             );
             return (filterItems?.length as number) > 0;
           }}
-          loading={isLoading}
+          // loading={isLoading}
           renderInput={(params) => (
             <TextField
               {...params}

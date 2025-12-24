@@ -54,6 +54,7 @@ const CreateCustomer = () => {
           status: "success",
         });
         setOpenDialog(false);
+        method.reset();
       },
       onError: (error: any) => {
         setHandleError({

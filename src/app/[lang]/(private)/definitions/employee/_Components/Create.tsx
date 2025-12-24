@@ -147,8 +147,22 @@ const CreateEmployee = () => {
                     fullWidth
                     type="date"
                     size="small"
-                    {...register("dateOfBirth", { required: false })}
+                    {...register("dateOfBirth", {
+                      required: false,
+                      validate: (value) => {
+                        if (!value) return true;
+                        const selectedDate = new Date(value);
+                        const cutoffDate = new Date();
+                        cutoffDate.setFullYear(cutoffDate.getFullYear() - 12);
+                        return (
+                          selectedDate <= cutoffDate ||
+                          t("employee.employee_must_be_at_least_12_years_old")
+                        );
+                      },
+                    })}
                     name="dateOfBirth"
+                    error={!!errors?.dateOfBirth}
+                    helperText={errors?.dateOfBirth?.message as string}
                   />
                 </Grid>
                 <Grid item xs={6}>
