@@ -511,7 +511,8 @@
       "currency_is_required": "انتخاب ارز حتمی است.",
       "address_is_too_long": "آدرس نباید بیش از ۲۵۵ حرف باشد.",
       "amount_is_required": "مقدار حتمی است.",
-      "credit_type_is_required": "نوع کردیت حتمی است."
+      "credit_type_is_required": "نوع کردیت حتمی است.",
+      "employee_must_be_at_least_12_years_old": "کارمند باید حداقل ۱۲ سال داشته باشد."
     },
     "income": {
       "new_income": "عوایید جدید",

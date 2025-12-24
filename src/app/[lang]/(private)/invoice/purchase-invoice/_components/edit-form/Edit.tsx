@@ -26,15 +26,19 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AppContext } from "@/provider/appContext";
-import { EditForm } from "./edit-form";
+// import { EditForm } from "./edit-form";
 import { useTranslations } from "next-intl";
 import { useGetSellsBillByIdQuery } from "@/hooks/api/invoice/queries/get-sells-bill-by-id-query";
 import { useUpdateSellsBillMutation } from "@/hooks/api/invoice/mutations/use-update-sells-bill";
-import useSchemaEditForm, { EditFormSchema } from "./edit-form.schema";
+import useSchemaCreateForm, {
+  CreateFormSchema,
+} from "./table-container.schema";
 import { useGetBuyBillByIdQuery } from "@/hooks/api/invoice/queries/get-buy-bill-by-id";
+import { ContainerTable } from "./table-container";
+import { useUpdateBuyBillMutation } from "@/hooks/api/invoice/mutations/use-update-buy-bill";
 
 interface IProps {
   onCreated?: (billInfo: any) => void;
@@ -52,62 +56,68 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
     },
     openDialog
   );
-  const { mutate: updateSellsBillMutation, isLoading: isUpdating } =
-    useUpdateSellsBillMutation();
-
+  const { mutate: updateBuyBillMutation, isLoading: isUpdating } =
+    useUpdateBuyBillMutation();
   const defaultValues = useMemo(() => {
     if (billData?._id)
       return {
         customerId: billData?.customerId?._id,
         warehouseId: billData?.entrepotId?._id,
         currencyId: billData?.currencyId?._id,
-        totalPriceOfBillAfterConsumption:
-          billData?.totalPriceOfBillAfterConsumption,
+        // Map old field to new field name in schema
+        totalPriceAfterExpense: billData?.totalPriceOfBillAfterConsumption,
         totalPrice: billData?.totalPrice,
         contact_number: billData?.customerId?.contactNumber,
+        // Provide defaults for fields required by CreateFormSchema
+        paymentMethod: "cash",
+        payerId: "",
         products: billData?.products?.map((item: any) => {
-          const selectedMeasures = item?.productId?.measures?.map(
+          const measures = item?.productId?.measures?.map(
             (measure: any, measureIndex: number) => {
               const findSelectedMeasure = item?.productMeasures?.filter(
                 (m: any) => m?.measureId?._id === measure?.measureId?._id
               );
+              // Map to MeasureSchema in create-form.schema
               return {
-                measureId: measure?.measureId?._id,
-                amount: findSelectedMeasure?.[0]?.amountOfProduct || 1,
+                quantity: findSelectedMeasure?.[0]?.amountOfProduct || 1,
                 buyPrice:
                   findSelectedMeasure?.[0]?.pricePerMeasure ||
                   item?.productId?.price?.[measureIndex]?.buyPrice,
+                measureId: measure?.measureId,
+                // CreateFormSchema expects expense, totalExpense, total
                 expense: findSelectedMeasure?.[0]?.consumptionPrice || 0,
-                selected: findSelectedMeasure?.length > 0 ? true : false,
-                measureName: measure?.measureId?.name,
-                total:
-                  findSelectedMeasure?.length > 0
-                    ? findSelectedMeasure?.[0]?.amountOfProduct *
-                      findSelectedMeasure?.[0]?.pricePerMeasure
-                    : 0,
                 totalExpense:
                   findSelectedMeasure?.length > 0
                     ? findSelectedMeasure?.[0]?.amountOfProduct *
                       findSelectedMeasure?.[0]?.consumptionPrice
                     : 0,
+                total:
+                  findSelectedMeasure?.length > 0
+                    ? findSelectedMeasure?.[0]?.amountOfProduct *
+                      findSelectedMeasure?.[0]?.pricePerMeasure
+                    : 0,
+                selected: findSelectedMeasure?.length > 0 ? true : false,
               };
             }
           );
 
           return {
             productId: item?.productId?._id,
-            productName: item?.productId?.name,
-            measures: selectedMeasures,
             name: item?.productId?.name,
-            id: item?.productId?._id,
-            expireInDate: item?.expireInDate,
+            price: measures || [],
+            expireInDate: item?.expireInDate
+              ? new Date(item.expireInDate).toISOString().slice(0, 10)
+              : null,
+            warehouse: item?.warehouse?._id,
+            expense: 0,
+            totalExpense: 0,
           };
         }),
       };
   }, [billData?._id]);
 
-  const methods = useForm<EditFormSchema>({
-    resolver: yupResolver(useSchemaEditForm(t)),
+  const methods = useForm<CreateFormSchema>({
+    resolver: yupResolver(useSchemaCreateForm(t)) as Resolver<CreateFormSchema>,
     defaultValues,
   });
 
@@ -128,7 +138,6 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
   const onResetHandler = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-
       reset(defaultValues);
     },
     [defaultValues]
@@ -137,56 +146,53 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
   };
-  const onSubmitFunction = async (data: EditFormSchema) => {
+
+  const onSubmitFunction = async (data: CreateFormSchema) => {
     const variables = {
-      sellBillObject: {
+      buyBillObject: {
         billDate: new Date(billData?.billDate),
         currencyId: data?.currencyId,
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-          const [day, month, year] = item?.expireInDate.split("/").map(Number);
-          // const expireInDate = new Date(`${year}-${month}-${day + 1}`);
           const productMeasures = item?.measures
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
               return {
                 measureId: dataItem?.measureId,
                 amountOfProduct: dataItem?.amount,
-                pricePerMeasure: dataItem?.sellPrice,
-                discountPercentage: dataItem?.discount || 0,
+                pricePerMeasure: dataItem?.buyPrice,
+                consumptionPrice: dataItem?.expense, // Mapping expense to consumptionPrice
+                // discountPercentage: 0, // Not in schema, assuming 0
               };
             });
           return {
             productId: item?.productId,
             productMeasures,
-            entrepotId: item?.warehouse?._id || data?.warehouseId,
-            // expireInDate: expireInDate?.toISOString()?.split("T")[0],
             expireInDate: item?.expireInDate,
           };
         }),
-        totalPrice: data?.totalPrice,
-        totalPriceOfBillAfterConsumption:
-          data?.totalPriceOfBillAfterConsumption,
+        // totalPrice: data?.totalPrice,
+        totalPriceOfBillAfterConsumption: data?.totalPriceAfterExpense, // Mapping back
         transactionId: billData?.transactionId?._id,
       },
     };
-    updateSellsBillMutation(
+    updateBuyBillMutation(
       {
-        sellBillId: id,
-        sellBillObject: variables.sellBillObject,
+        billId: id,
+        buyBillObject: variables.buyBillObject,
       },
       {
         onSuccess: () => {
           setHandleError({
             message: "Action successfully recorded.",
-            type: "success",
+            status: "success",
             open: true,
           });
         },
         onError: (error: any) => {
           setHandleError({
-            type: "error",
+            status: "error",
             message: error?.message,
             open: true,
           });
@@ -194,7 +200,6 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
       }
     );
   };
-
   return (
     <FormProvider {...methods}>
       <IconButton onClick={handleOpenDialogBox} onReset={onResetHandler}>
@@ -240,6 +245,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
                     setValue("contact_number", customer?.contactNumber);
                   }}
                   dir={t("dir")}
+                  // defaultValue={defaultValues?.customerId}
                 />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
@@ -248,57 +254,29 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
                   fullWidth
                   size="small"
                   disabled
-                  // value={customer?.contactNumber ?? ""}
                   {...register("contact_number")}
                   name={"contact_number"}
                 />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("warehouse")} </InputLabel>
-                <WarehouseAutoComplete dir={t("dir")} />
+                <WarehouseAutoComplete
+                  dir={t("dir")}
+                  // defaultValue={defaultValues?.warehouseId}
+                />
               </Grid2>
               <Grid2 size={2} gap={1} display={"grid"}>
                 <InputLabel>{t("Currency")}</InputLabel>
-                <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
+                <CurrenciesAutoComplete
+                  dir={t("dir")}
+                  isBaseCurrency
+                  defaultValue={defaultValues?.currencyId}
+                />
               </Grid2>
             </Grid2>
           )}
 
-          <EditForm isLoadingData={isLoading} />
-          {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
-            <Grid2 size={3} gap={1} display={"grid"}>
-              <InputLabel>{t("customer_name")}</InputLabel>
-              <CustomerAutoComplete
-
-              // register={register}
-              // getCustomer={handleGetCustomer}
-              />
-            </Grid2>
-            <Grid2 size={2} gap={1} display={"grid"}>
-              <InputLabel>{t("Contact_Number")}</InputLabel>
-              <TextField
-                fullWidth
-                size="small"
-                disabled
-                value={customer?.contactNumber}
-              />
-            </Grid2>
-            <Grid2 size={2} gap={1} display={"grid"}>
-              <InputLabel>{t.invoice?.Warehouse} </InputLabel>
-              <WarehouseAutoComplete
-              // register={register}
-              // getWarehouse={handleGetWarehouse}
-              />
-            </Grid2>
-            <Grid2 size={2} gap={1} display={"grid"}>
-              <InputLabel>{t("Currency")}</InputLabel>
-              <CurrenciesAutoComplete
-              // register={register}
-              // onSelected={handleSelectCurrency}
-              />
-            </Grid2>
-          </Grid2>
-          <DataTable t={t} register={register} /> */}
+          {!isLoading && <ContainerTable />}
         </DialogContent>
         <DialogActions>
           <Box display={"flex"} justifyContent="space-between" width={"100%"}>
@@ -319,8 +297,6 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
               <Button variant="outlined" disabled>
                 {t("print_invoice")}
               </Button>
-              {/* <PrintInvoice  /> */}
-              {/* <PrintTable /> */}
               <Button variant="outlined" disabled>
                 {t("print_warehouse_receipt")}
               </Button>

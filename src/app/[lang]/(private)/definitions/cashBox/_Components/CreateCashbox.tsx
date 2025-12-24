@@ -123,7 +123,7 @@ const CreateCashBox = () => {
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t("cashbox.Cashier")}
                 </InputLabel>
-                <EmployeeAutoCompleteComponent />
+                <EmployeeAutoCompleteComponent dir={t("dir")} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>

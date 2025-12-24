@@ -14,7 +14,7 @@ const ADD_PARTNER = gql`
           symbol
         }
       }
-      phoneNumber
+      contactNumber
       createdAt
     }
   }
