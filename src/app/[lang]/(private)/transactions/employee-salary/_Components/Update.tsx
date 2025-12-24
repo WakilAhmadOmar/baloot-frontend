@@ -58,7 +58,7 @@ export const UpdateEmployeeSalary = ({
   const onSubmitFunction = (data: any) => {
     updateEmployeeSalaryMutation(
       {
-        transactionId:salary?._id,
+        transactionId: salary?._id,
         salaryObject: {
           ...data,
           amount: parseFloat(data?.amount),
@@ -92,7 +92,6 @@ export const UpdateEmployeeSalary = ({
       </IconButton>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -101,7 +100,7 @@ export const UpdateEmployeeSalary = ({
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px: 2, 
+            px: 2,
             py: 1,
             display: "flex",
             alignItems: "center",
@@ -111,7 +110,7 @@ export const UpdateEmployeeSalary = ({
         >
           <Typography> {t("update_employee_salary")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare size={20} color="gray"/>
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -185,8 +184,10 @@ export const UpdateEmployeeSalary = ({
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                  error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField

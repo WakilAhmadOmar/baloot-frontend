@@ -89,7 +89,7 @@ const CreateComponent = () => {
             message: error?.message,
             status: "error",
           });
-        }
+        },
       }
     );
   };
@@ -99,7 +99,6 @@ const CreateComponent = () => {
         <form onSubmit={handleSubmit(onSubmitFunction)}>
           <Dialog
             open={openDialog}
-            onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             dir={t("dir")}
@@ -118,7 +117,7 @@ const CreateComponent = () => {
             >
               <Typography>{t("cash_payment_to_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare size={20} color="gray"/>
+                <CloseSquare size={20} color="gray" />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -228,7 +227,10 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("description")}
                   </InputLabel>
                   <TextField

@@ -18,7 +18,6 @@ const UPDATE_EMPLOYEE = gql`
       startDate
       dateOfBirth
       email
-      phoneNumber
       address
       createdAt
     }

@@ -24,29 +24,29 @@ import { useUpdateExternalIncomeMutation } from "@/hooks/api/transactions/mutati
 import { useTranslations } from "next-intl";
 
 type CreateFormProps = {
-  item:any
+  item: any;
 };
 
 interface FormValues {
   amount: number;
   currencyId: string;
   receiver: string;
-  description?:string
-  externalIncomeTypeId:string
+  description?: string;
+  externalIncomeTypeId: string;
 }
-export const UpdateForm = ({ item}: CreateFormProps) => {
-  const t = useTranslations("transactions")
+export const UpdateForm = ({ item }: CreateFormProps) => {
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
-      return {
-        amount: item?.amount || 0,
-        currencyId: item?.currencyId?._id || "",
-        receiver: item?.receiver?._id || "", // Add this line
-        description:item?.description,
-        externalIncomeTypeId:item?.externalIncomeTypeId?._id || ""
-      };
-    }, [item]);
+    return {
+      amount: item?.amount || 0,
+      currencyId: item?.currencyId?._id || "",
+      receiver: item?.receiver?._id || "", // Add this line
+      description: item?.description,
+      externalIncomeTypeId: item?.externalIncomeTypeId?._id || "",
+    };
+  }, [item]);
   const methods = useForm<FormValues>({
     resolver: yupResolver(useSchemaCrateForm(t)),
     defaultValues,
@@ -66,7 +66,7 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
   const onSubmitFunction = (data: any) => {
     addUpdateExternalIncomeMutation(
       {
-        externalIncomeId:item?._id,
+        externalIncomeId: item?._id,
         externalIncomeObject: {
           currencyId: data?.currencyId,
           externalIncomeTypeId: data?.externalIncomeTypeId,
@@ -84,13 +84,13 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
             message: t("this_external_income_successfully_updated"),
           });
         },
-        onError:(error:any)=> {
-            setHandleError({
-                open:true,
-                status:"error",
-                message:error.message
-            })
-        }
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            status: "error",
+            message: error.message,
+          });
+        },
       }
     );
   };
@@ -101,7 +101,6 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
       </IconButton>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir="rtl"
@@ -120,13 +119,12 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
         >
           <Typography>{t("update_external_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare size={20} color="gray"/>
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
-              
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
@@ -134,7 +132,10 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
                 >
                   {t("external_income_type")}
                 </InputLabel>
-                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"}  dir={t("dir")}/>
+                <ExternalIncomeTypeSelectBox
+                  name={"externalIncomeTypeId"}
+                  dir={t("dir")}
+                />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
@@ -143,7 +144,7 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
                 >
                   {t("recipient")}
                 </InputLabel>
-                <CashBoxAutoComplete name="receiver" dir={t("dir")}/>
+                <CashBoxAutoComplete name="receiver" dir={t("dir")} />
               </Grid>
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
@@ -163,7 +164,10 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField

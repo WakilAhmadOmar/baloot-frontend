@@ -99,7 +99,6 @@ const CreateComponent = () => {
         <form onSubmit={handleSubmit(onSubmitFunction)}>
           <Dialog
             open={openDialog}
-            onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             dir={t("dir")}
@@ -183,7 +182,7 @@ const CreateComponent = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                 <AmountCalculated />
+                  <AmountCalculated />
                 </Grid>
                 <Grid item xs={12}>
                   <InputLabel sx={{ marginTop: "1rem" }}>
@@ -222,7 +221,10 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("description")}
                   </InputLabel>
                   <TextField

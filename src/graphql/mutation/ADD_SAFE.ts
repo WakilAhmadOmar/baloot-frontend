@@ -15,7 +15,6 @@ const ADD_SAFE = gql`
         startDate
         dateOfBirth
         email
-        phoneNumber
         address
         createdAt
       }

@@ -79,7 +79,6 @@ const UpdateCustomer: React.FC<IPropsCreateCustomer> = ({ item }) => {
     <FormProvider {...method}>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}

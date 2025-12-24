@@ -23,7 +23,6 @@ import { ExternalIncomeTypeSelectBox } from "@/components/Select/external-income
 import { useAddNewExternalIncomeMutation } from "@/hooks/api/transactions/mutations/use-add-new-external-income-mutation";
 import { useTranslations } from "next-intl";
 
-
 type FormInputType = {
   receiver: string;
   externalIncomeTypeId: string;
@@ -32,7 +31,7 @@ type FormInputType = {
   description?: string;
 };
 export const CreateCreate = () => {
-  const t = useTranslations("transactions")
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm<FormInputType>({
@@ -85,7 +84,6 @@ export const CreateCreate = () => {
       </Button>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir="rtl"
@@ -104,7 +102,7 @@ export const CreateCreate = () => {
         >
           <Typography>{t("add_external_income")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare size={20} color="gray"/>
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -117,7 +115,10 @@ export const CreateCreate = () => {
                 >
                   {t("external_income_type")}
                 </InputLabel>
-                <ExternalIncomeTypeSelectBox name={"externalIncomeTypeId"} dir={t("dir")}/>
+                <ExternalIncomeTypeSelectBox
+                  name={"externalIncomeTypeId"}
+                  dir={t("dir")}
+                />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
@@ -144,9 +145,12 @@ export const CreateCreate = () => {
                 </InputLabel>
                 <CurrenciesAutoComplete dir={t("dir")} />
               </Grid>
-              
+
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField

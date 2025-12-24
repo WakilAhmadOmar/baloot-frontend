@@ -65,7 +65,6 @@ const CreateExternalIncomeType = () => {
     <Box>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}

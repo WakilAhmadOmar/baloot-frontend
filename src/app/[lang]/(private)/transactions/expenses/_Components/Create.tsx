@@ -24,9 +24,8 @@ import ConsumptionTypeSelectBox from "@/components/Select/consumption-type";
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 export const CreateCreate = () => {
-  const t = useTranslations("transactions")
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const methods = useForm({
@@ -71,7 +70,7 @@ export const CreateCreate = () => {
       }
     );
   };
-  
+
   return (
     <FormProvider {...methods}>
       <Button variant="contained" onClick={handleOpenDialogFunction}>
@@ -79,7 +78,6 @@ export const CreateCreate = () => {
       </Button>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -102,7 +100,6 @@ export const CreateCreate = () => {
         <DialogContent>
           <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2}>
-              
               <Grid item xs={12}>
                 <InputLabel
                   sx={{ marginTop: "3rem", paddingBottom: "5px" }}
@@ -110,7 +107,10 @@ export const CreateCreate = () => {
                 >
                   {t("consumption_type")}
                 </InputLabel>
-                <ConsumptionTypeSelectBox dir={t("dir")} name={"consumptionTypeId"} />
+                <ConsumptionTypeSelectBox
+                  dir={t("dir")}
+                  name={"consumptionTypeId"}
+                />
               </Grid>
               <Grid item xs={12}>
                 <InputLabel
@@ -139,7 +139,10 @@ export const CreateCreate = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField
@@ -150,7 +153,6 @@ export const CreateCreate = () => {
                   {...register("description", { required: true })}
                   name="description"
                   error={!!errors?.description}
-
                 />
                 {errors?.description && (
                   <Typography variant="caption" color="error">

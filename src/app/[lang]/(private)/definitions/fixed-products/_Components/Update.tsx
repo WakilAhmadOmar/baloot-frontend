@@ -36,8 +36,8 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
       name: product?.name,
       price: product?.price,
       currencyId: product?.currencyId?._id,
-      amountPerMeasure:product?.amountPerMeasure,
-      measureId:product?.measureId?._id
+      amountPerMeasure: product?.amountPerMeasure,
+      measureId: product?.measureId?._id,
     };
   }, [product]);
   const method = useForm<any>({
@@ -51,7 +51,6 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
 
   const [openDialog, setOpenDialog] = useState(false);
 
-
   const { setHandleError } = useContext(AppContext);
 
   const handleOpenDialogFunction = () => {
@@ -59,13 +58,10 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
   };
 
   const onSubmitFunction = async (data: any) => {
-
     const productObject = {
       ...data,
-      amountPerMeasure:parseInt(data?.amountPerMeasure),
-      price:parseFloat(data.price)
-    
- 
+      amountPerMeasure: parseInt(data?.amountPerMeasure),
+      price: parseFloat(data.price),
     };
 
     updateProductMutation(
@@ -93,13 +89,10 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
     );
   };
 
-
- 
   return (
     <FormProvider {...method}>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -108,8 +101,8 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -122,7 +115,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-           <form onSubmit={handleSubmit(onSubmitFunction)}>
+          <form onSubmit={handleSubmit(onSubmitFunction)}>
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12} mt={2}>
                 <InputLabel
@@ -147,7 +140,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                   </Typography>
                 )}
               </Grid>
-          
+
               <Grid item xs={12} md={6}>
                 <InputLabel
                   sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}
@@ -178,10 +171,7 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                 >
                   {t("currency")}
                 </InputLabel>
-                <UserCurrenciesComponent
-                  dir={t("dir")}
-
-                />
+                <UserCurrenciesComponent dir={t("dir")} />
                 {errors?.currencyId?.type === "required" && (
                   <Typography color="error" p={1}>
                     {t("currency_is_required")}
@@ -199,7 +189,6 @@ const UpdateProduct: React.FC<IPropsUpdateProduct> = ({ product }) => {
                   fullWidth
                   type="number"
                   size="small"
-
                   InputLabelProps={{
                     shrink: true,
                   }}

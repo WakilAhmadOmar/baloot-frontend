@@ -50,8 +50,8 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
     return {
       amount: item?.amount || 0,
       currencyId: item?.currencyId?._id || "",
-      calculatedTo: item?.calculatedTo?._id ,
-      amountCalculated: item?.amountCalculated ,
+      calculatedTo: item?.calculatedTo?._id,
+      amountCalculated: item?.amountCalculated,
       receiver: item?.receiver?._id || "",
       invoiceType: item?.invoiceType || "",
       payerId: item?.payerId?._id || "", // Add this line
@@ -124,7 +124,6 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
         <form onSubmit={handleSubmit(onSubmitFunction)}>
           <Dialog
             open={openDialog}
-            onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             dir={t("dir")}
@@ -143,7 +142,7 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
             >
               <Typography>{t("update_cash_receipt_from_customer")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare size={20} color="gray"/>
+                <CloseSquare size={20} color="gray" />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -248,7 +247,10 @@ const UpdateForm = ({ item }: UpdateFormProps) => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("description")}
                   </InputLabel>
                   <TextField

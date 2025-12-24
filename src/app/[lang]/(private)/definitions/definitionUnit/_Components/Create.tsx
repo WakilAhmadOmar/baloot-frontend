@@ -20,29 +20,29 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function Create() {
-  const t = useTranslations("pages")
+  const t = useTranslations("pages");
   const theme = useTheme();
-  const {setHandleError}= useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const [openDialog, setOpenDialog] = useState(false);
-  const {mutate , isLoading} = useAddMeasureMutation()
+  const { mutate, isLoading } = useAddMeasureMutation();
 
   const handleOpenDialogFunction = () => {
-    setOpenDialog(!openDialog)
+    setOpenDialog(!openDialog);
   };
-  const onSubmitFunction = (data:any) => {
+  const onSubmitFunction = (data: any) => {
     mutate(data, {
       onSuccess: () => {
         setHandleError({
-          message:t("unit.create_successfully"),
+          message: t("unit.create_successfully"),
           status: "success",
           open: true,
         });
-        handleOpenDialogFunction()
+        handleOpenDialogFunction();
       },
       onError: (error: any) => {
         setHandleError({
@@ -52,7 +52,6 @@ export function Create() {
         });
       },
     });
-
   };
   return (
     <Box>
@@ -68,7 +67,6 @@ export function Create() {
       </Box>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}

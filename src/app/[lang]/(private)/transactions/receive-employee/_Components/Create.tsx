@@ -73,20 +73,18 @@ const CreateComponent = () => {
           setOpenDialog(false);
           setHandleError({
             open: true,
-            message:t("this_receive_successfully_saved"),
+            message: t("this_receive_successfully_saved"),
             status: "success",
           });
 
           // router.back()
         },
-        onError: (error:any) => {
-          
-            setHandleError({
-              open: true,
-              message: error?.message,
-              status: "error",
-            });
-          
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            status: "error",
+          });
         },
       }
     );
@@ -98,7 +96,6 @@ const CreateComponent = () => {
         <form onSubmit={handleSubmit(onSubmitFunction)}>
           <Dialog
             open={openDialog}
-            onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             dir={t("dir")}
@@ -117,7 +114,7 @@ const CreateComponent = () => {
             >
               <Typography>{t("cash_receipt_from_employees")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare size={20} color="gray"/>
+                <CloseSquare size={20} color="gray" />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -183,7 +180,6 @@ const CreateComponent = () => {
                     name="calculatedTo"
                     dir={t("dir")}
                     required={false}
-
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -226,8 +222,9 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                  error={!!errors?.description}
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
                   >
                     {t("description")}
                   </InputLabel>

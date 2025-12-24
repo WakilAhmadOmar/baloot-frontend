@@ -20,57 +20,56 @@ import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function UpdateUnit({  item}: {  item:any }) {
-  const t = useTranslations("pages")
+export function UpdateUnit({ item }: { item: any }) {
+  const t = useTranslations("pages");
   const theme = useTheme();
-  const {setHandleError}= useContext(AppContext)
+  const { setHandleError } = useContext(AppContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues:{
-        name:item?.name
-    }
+    defaultValues: {
+      name: item?.name,
+    },
   });
   const [openDialog, setOpenDialog] = useState(false);
-  const {mutate , isLoading} = useUpdateMeasureMutation()
+  const { mutate, isLoading } = useUpdateMeasureMutation();
 
   const handleOpenDialogFunction = () => {
-    setOpenDialog(!openDialog)
+    setOpenDialog(!openDialog);
   };
-  const onSubmitFunction = (data:any) => {
-    mutate({measureId:item?._id , name:data?.name}, {
-      onSuccess: () => {
-        setHandleError({
-          message:t("unit.create_successfully"),
-          status: "success",
-          open: true,
-        });
-        handleOpenDialogFunction()
-      },
-      onError: (error: any) => {
-        setHandleError({
-          open: true,
-          message: error?.message,
-          status: "error",
-        });
-      },
-    });
-
+  const onSubmitFunction = (data: any) => {
+    mutate(
+      { measureId: item?._id, name: data?.name },
+      {
+        onSuccess: () => {
+          setHandleError({
+            message: t("unit.create_successfully"),
+            status: "success",
+            open: true,
+          });
+          handleOpenDialogFunction();
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error?.message,
+            status: "error",
+          });
+        },
+      }
+    );
   };
   return (
     <Box>
-      <Box
-        
-      >
-         <IconButton onClick={handleOpenDialogFunction}>
+      <Box>
+        <IconButton onClick={handleOpenDialogFunction}>
           <Edit color={theme.palette.grey["A700"]} size={25} />
         </IconButton>
       </Box>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir="rtl"
@@ -87,7 +86,9 @@ export function UpdateUnit({  item}: {  item:any }) {
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">{t("unit.update_unit")}({item?.name})</Typography>
+          <Typography variant="button">
+            {t("unit.update_unit")}({item?.name})
+          </Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare size={20} color="gray" />
           </IconButton>

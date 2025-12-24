@@ -81,7 +81,6 @@ const UpdateWarehouse: React.FC<IPropsCreateWarehouse> = ({ item }) => {
     <FormProvider {...methods}>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
