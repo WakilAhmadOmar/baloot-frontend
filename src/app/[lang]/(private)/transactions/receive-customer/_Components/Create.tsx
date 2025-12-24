@@ -98,7 +98,6 @@ const CreateComponent = () => {
         <form onSubmit={handleSubmit(onSubmitFunction)}>
           <Dialog
             open={openDialog}
-            onClose={handleOpenDialogFunction}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             dir={t("dir")}
@@ -106,7 +105,6 @@ const CreateComponent = () => {
           >
             <DialogTitle
               id="alert-dialog-title"
-              
               sx={{
                 px: 2,
                 py: 1,
@@ -118,7 +116,7 @@ const CreateComponent = () => {
             >
               <Typography>{t("cash_receipt_from_customer")}</Typography>
               <IconButton size="medium" onClick={handleOpenDialogFunction}>
-                <CloseSquare size={20} color="gray"/>
+                <CloseSquare size={20} color="gray" />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -223,7 +221,10 @@ const CreateComponent = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("description")}
                   </InputLabel>
                   <TextField
@@ -233,7 +234,6 @@ const CreateComponent = () => {
                     size="small"
                     {...register("description", { required: false })}
                     error={!!errors?.description}
-
                   />
                   {errors?.description && (
                     <Typography variant="caption" color="error">

@@ -1,4 +1,3 @@
-
 import { useUpdateCategoryMutation } from "@/hooks/api/definitions/product-category/mutations/update-category";
 import { AppContext } from "@/provider/appContext";
 import {
@@ -21,11 +20,10 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface IPropsUpdate {
-
   item: any;
 }
-export const UpdateCategory = ({  item }: IPropsUpdate) => {
-  const t = useTranslations("product")
+export const UpdateCategory = ({ item }: IPropsUpdate) => {
+  const t = useTranslations("product");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -71,7 +69,6 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
       </IconButton>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -80,17 +77,15 @@ export const UpdateCategory = ({  item }: IPropsUpdate) => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             borderBottom: `1px solid ${theme.palette.grey[200]}`,
           }}
         >
-          <Typography variant="button">
-            {t("update_category")}
-          </Typography>
+          <Typography variant="button">{t("update_category")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
             <CloseSquare size={20} color="gray" />
           </IconButton>

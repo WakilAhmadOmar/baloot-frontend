@@ -47,7 +47,7 @@ const CreateEmployee = () => {
         ...(data?.email ? { email: data?.email } : {}),
         ...(data?.fathersName ? { fathersName: data?.fathersName } : {}),
         ...(data?.jobTitle ? { jobTitle: data?.jobTitle } : {}),
-        ...(data?.phoneNumber ? { phoneNumber: data?.phoneNumber } : {}),
+        ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
         ...(data?.startDate ? { startDate: data?.startDate } : {}),
         ...(data?.name ? { name: data?.name } : {}),
 
@@ -82,7 +82,6 @@ const CreateEmployee = () => {
       <FormProvider {...method}>
         <Dialog
           open={openDialog}
-          onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           dir={t("dir")}
@@ -242,8 +241,8 @@ const CreateEmployee = () => {
                     fullWidth
                     type="number"
                     size="small"
-                    {...register("phoneNumber", { required: false })}
-                    name="phoneNumber"
+                    {...register("contactNumber", { required: false })}
+                    name="contactNumber"
                   />
                 </Grid>
                 <Grid item xs={6}>

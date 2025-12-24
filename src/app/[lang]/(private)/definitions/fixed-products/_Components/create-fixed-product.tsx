@@ -24,7 +24,8 @@ import { useAddFixedProductMutation } from "@/hooks/api/definitions/product/muta
 
 const CreateFixedProduct = () => {
   const t = useTranslations("product");
-  const { mutate: addFixedProductMutation, isLoading } = useAddFixedProductMutation();
+  const { mutate: addFixedProductMutation, isLoading } =
+    useAddFixedProductMutation();
   const method = useForm();
   const theme = useTheme();
   const {
@@ -42,15 +43,13 @@ const CreateFixedProduct = () => {
   };
 
   const onSubmitFunction = async (data: any) => {
-
     const variables = {
       productObject: {
         name: data?.name,
         measureId: data?.measureId,
         price: parseFloat(data?.price),
         currencyId: data?.currencyId,
-        amountPerMeasure:Number(data?.amountPerMeasure)
-
+        amountPerMeasure: Number(data?.amountPerMeasure),
       },
     };
     addFixedProductMutation(variables, {
@@ -72,13 +71,10 @@ const CreateFixedProduct = () => {
     });
   };
 
-
-
   return (
     <FormProvider {...method}>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -87,8 +83,8 @@ const CreateFixedProduct = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -126,7 +122,7 @@ const CreateFixedProduct = () => {
                   </Typography>
                 )}
               </Grid>
-          
+
               <Grid item xs={12} md={6}>
                 <InputLabel
                   sx={{ marginTop: "1.1rem", paddingBottom: "5px" }}
@@ -157,10 +153,7 @@ const CreateFixedProduct = () => {
                 >
                   {t("currency")}
                 </InputLabel>
-                <UserCurrenciesComponent
-                  dir={t("dir")}
-
-                />
+                <UserCurrenciesComponent dir={t("dir")} />
                 {errors?.currencyId?.type === "required" && (
                   <Typography color="error" p={1}>
                     {t("currency_is_required")}
@@ -178,7 +171,6 @@ const CreateFixedProduct = () => {
                   fullWidth
                   type="number"
                   size="small"
-
                   InputLabelProps={{
                     shrink: true,
                   }}

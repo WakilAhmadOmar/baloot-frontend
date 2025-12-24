@@ -26,29 +26,29 @@ import { useUpdateConsumptionMutation } from "@/hooks/api/transactions/mutations
 import { useTranslations } from "next-intl";
 
 type CreateFormProps = {
-  item:any
+  item: any;
 };
 
 interface FormValues {
   amount: number;
   currencyId: string;
   payer: string;
-  description?:string
-  consumptionTypeId:string
+  description?: string;
+  consumptionTypeId: string;
 }
-export const UpdateForm = ({ item}: CreateFormProps) => {
-  const t = useTranslations("transactions")
+export const UpdateForm = ({ item }: CreateFormProps) => {
+  const t = useTranslations("transactions");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const defaultValues = useMemo(() => {
-      return {
-        amount: item?.amount || 0,
-        currencyId: item?.currencyId?._id || "",
-        payer: item?.payer?._id || "", // Add this line
-        description:item?.description,
-        consumptionTypeId:item?.consumptionTypeId?._id
-      };
-    }, [item]);
+    return {
+      amount: item?.amount || 0,
+      currencyId: item?.currencyId?._id || "",
+      payer: item?.payer?._id || "", // Add this line
+      description: item?.description,
+      consumptionTypeId: item?.consumptionTypeId?._id,
+    };
+  }, [item]);
   const methods = useForm<FormValues>({
     resolver: yupResolver(useSchemaCrateForm(t)),
     defaultValues,
@@ -68,7 +68,7 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
   const onSubmitFunction = (data: any) => {
     addUpdateConsumptionMutation(
       {
-        consumptionId:item?._id,
+        consumptionId: item?._id,
         consumptionObject: {
           currencyId: data?.currencyId,
           consumptionTypeId: data?.consumptionTypeId,
@@ -86,26 +86,24 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
             message: t("this_expense_successfully_updated"),
           });
         },
-        onError:(error:any)=> {
-            setHandleError({
-                open:true,
-                status:"error",
-                message:error.message
-            })
-        }
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            status: "error",
+            message: error.message,
+          });
+        },
       }
     );
   };
 
   return (
     <FormProvider {...methods}>
-
       <IconButton onClick={handleOpenDialogFunction}>
         <Edit size={20} color={theme.palette.primary.contrastText} />
       </IconButton>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir="rtl"
@@ -146,7 +144,7 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
                 </InputLabel>
                 <CashBoxAutoComplete name="payer" />
               </Grid>
-              
+
               <Grid item xs={6}>
                 <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }}>
                   {t("payed_amount")}
@@ -165,7 +163,10 @@ export const UpdateForm = ({ item}: CreateFormProps) => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField

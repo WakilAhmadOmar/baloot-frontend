@@ -94,7 +94,6 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
       <FormProvider {...methods}>
         <Dialog
           open={openDialog}
-          onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           dir={t("dir")}

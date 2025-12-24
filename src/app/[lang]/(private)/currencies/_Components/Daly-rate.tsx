@@ -17,7 +17,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { ArrowSwapVertical, CloseSquare, InfoCircle, Trash } from "iconsax-react";
+import {
+  ArrowSwapVertical,
+  CloseSquare,
+  InfoCircle,
+  Trash,
+} from "iconsax-react";
 import { useTranslations } from "next-intl";
 import { forwardRef, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,54 +38,54 @@ const Transition = forwardRef(function Transition(
 
 type IPropsCUrrency = {
   item: any;
-
 };
-export function DalyRateCurrency({ item}: IPropsCUrrency) {
+export function DalyRateCurrency({ item }: IPropsCUrrency) {
   const t = useTranslations("pages");
   const { setHandleError } = useContext(AppContext);
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-      setValue,
-    } = useForm({
-      defaultValues:{
-        rate:item?.rate,
-        baseRate:item?.baseRate
-      }
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    defaultValues: {
+      rate: item?.rate,
+      baseRate: item?.baseRate,
+    },
+  });
 
-   const {mutate:updateUserCurrencyRate} = useUpdateUserCurrencyRateMutation()
- 
-   const handleToDayPriceFunction = () => {
+  const { mutate: updateUserCurrencyRate } =
+    useUpdateUserCurrencyRateMutation();
+
+  const handleToDayPriceFunction = () => {
     setOpen(!open);
-  }
+  };
 
-    const onSubmitFunction = async (data: any) => {
+  const onSubmitFunction = async (data: any) => {
     const variables = {
       currencyId: item?._id,
       rate: parseFloat(data?.rate),
       baseRate: parseFloat(data?.baseRate),
     };
-    updateUserCurrencyRate(variables , {
-      onSuccess:() => {
+    updateUserCurrencyRate(variables, {
+      onSuccess: () => {
         setHandleError({
-          open:true,
-          status:"success",
-          message:t("currency.currency_rate_successfully_updated")
-        })
+          open: true,
+          status: "success",
+          message: t("currency.currency_rate_successfully_updated"),
+        });
         setOpen(false);
       },
-       onError:(error:any)=>{
+      onError: (error: any) => {
         setHandleError({
-          open:true,
-          status:"error",
-          message:error.message
-        })
-      }
-    })
+          open: true,
+          status: "error",
+          message: error.message,
+        });
+      },
+    });
   };
 
   return (
@@ -99,11 +104,10 @@ export function DalyRateCurrency({ item}: IPropsCUrrency) {
       >
         {t("currency.set_daily_price")}
       </Button>
-     <Dialog
+      <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleToDayPriceFunction}
         aria-describedby="alert-dialog-slide-description"
         dir={t("dir")}
         fullWidth
@@ -180,9 +184,8 @@ export function DalyRateCurrency({ item}: IPropsCUrrency) {
                       sx={{ paddingBottom: "5px", marginTop: "5px" }}
                       required
                     >
-                      {t("currency.to")} 
-                      {/* {baseCurrency?.symbol} */}
-                       (
+                      {t("currency.to")}
+                      {/* {baseCurrency?.symbol} */}(
                       {t("currency.base_currency")})
                     </InputLabel>
                     <TextField

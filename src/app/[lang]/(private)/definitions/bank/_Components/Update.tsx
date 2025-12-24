@@ -83,7 +83,6 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
       <FormProvider {...methods}>
         <Dialog
           open={openDialog}
-          onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           dir={t("dir")}
@@ -152,7 +151,10 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                  <InputLabel
+                    sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                    error={!!errors?.description}
+                  >
                     {t("bank.description")}
                   </InputLabel>
                   <TextField
@@ -166,7 +168,7 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
                     error={!!errors?.description}
                   />
                   {errors?.description && (
-                    <Typography color="error" >
+                    <Typography color="error">
                       {t("bank.description_to_much")}
                     </Typography>
                   )}
@@ -185,7 +187,9 @@ const UpdateBank: React.FC<IPropsCreateBank> = ({ item }) => {
             >
               {t("bank.Save")}
             </Button>
-            <Button variant="outlined">{t("bank.Cancel")}</Button>
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("bank.cancel")}
+            </Button>
           </DialogActions>
         </Dialog>
       </FormProvider>

@@ -70,7 +70,6 @@ const CreateBank = () => {
       <FormProvider {...methods}>
         <Dialog
           open={openDialog}
-          onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           dir={"dir"}
@@ -175,7 +174,9 @@ const CreateBank = () => {
             >
               {t("bank.save")}
             </Button>
-            <Button variant="outlined">{t("bank.cancel")}</Button>
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("bank.cancel")}
+            </Button>
           </DialogActions>
         </Dialog>
       </FormProvider>

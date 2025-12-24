@@ -19,9 +19,8 @@ import { useTranslations } from "next-intl";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
-
 export const CreateCategory = () => {
-  const t = useTranslations("product")
+  const t = useTranslations("product");
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
@@ -62,7 +61,6 @@ export const CreateCategory = () => {
       </Button>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -71,8 +69,8 @@ export const CreateCategory = () => {
         <DialogTitle
           id="alert-dialog-title"
           sx={{
-            px:2,
-            py:1,
+            px: 2,
+            py: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

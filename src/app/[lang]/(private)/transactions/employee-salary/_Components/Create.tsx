@@ -78,7 +78,6 @@ export const CreateCreate = () => {
       </Button>
       <Dialog
         open={openDialog}
-        onClose={handleOpenDialogFunction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         dir={t("dir")}
@@ -97,7 +96,7 @@ export const CreateCreate = () => {
         >
           <Typography> {t("monthly_employee_salary_entry")}</Typography>
           <IconButton size="medium" onClick={handleOpenDialogFunction}>
-            <CloseSquare size={20} color="gray"/>
+            <CloseSquare size={20} color="gray" />
           </IconButton>
         </DialogTitle>
         <DialogContent>
@@ -171,7 +170,10 @@ export const CreateCreate = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: "1rem", paddingBottom: "5px" }} error={!!errors?.description}>
+                <InputLabel
+                  sx={{ marginTop: "1rem", paddingBottom: "5px" }}
+                  error={!!errors?.description}
+                >
                   {t("description")}
                 </InputLabel>
                 <TextField

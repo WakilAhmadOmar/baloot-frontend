@@ -35,7 +35,7 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
       jobTitle: item?.jobTitle,
       startDate: item?.startDate,
       amount: item?.salary?.amount,
-      phoneNumber: item?.phoneNumber,
+      contactNumber: item?.contactNumber,
       currencyId: item?.salary?.currencyId?._id,
       email: item?.email,
       address: item?.address,
@@ -66,7 +66,7 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
         ...(data?.email ? { email: data?.email } : {}),
         ...(data?.fathersName ? { fathersName: data?.fathersName } : {}),
         ...(data?.jobTitle ? { jobTitle: data?.jobTitle } : {}),
-        ...(data?.phoneNumber ? { phoneNumber: data?.phoneNumber } : {}),
+        ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
         ...(data?.startDate ? { startDate: data?.startDate } : {}),
         ...(data?.name ? { name: data?.name } : {}),
 
@@ -101,7 +101,6 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
       <FormProvider {...method}>
         <Dialog
           open={openDialog}
-          onClose={handleOpenDialogFunction}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           dir={t("dir")}
@@ -247,8 +246,8 @@ const UpdateEmployee: React.FC<IPropsCreateEmployee> = ({ item }) => {
                     fullWidth
                     type="number"
                     size="small"
-                    {...register("phoneNumber", { required: false })}
-                    name="phoneNumber"
+                    {...register("contactNumber", { required: false })}
+                    name="contactNumber"
                   />
                 </Grid>
                 <Grid item xs={6}>
