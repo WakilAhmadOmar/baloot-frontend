@@ -91,8 +91,9 @@ const CreateExternalIncomeType = () => {
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={12}>
                 <InputLabel
+                  required
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
-                  error={!errors?.name}
+                  error={!!errors?.name}
                 >
                   {t("income.income_name")}
                 </InputLabel>
@@ -101,7 +102,7 @@ const CreateExternalIncomeType = () => {
                   size="small"
                   {...register("name", { required: true })}
                   name="name"
-                  error={!errors?.name}
+                  error={!!errors?.name}
                 />
                 {errors?.name?.type === "required" && (
                   <Typography color="error" p={1}>

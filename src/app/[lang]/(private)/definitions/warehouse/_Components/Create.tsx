@@ -95,10 +95,11 @@ const CreateWarehouse = () => {
             <Grid container spacing={2} sx={{ mt: "1rem" }}>
               <Grid item xs={6}>
                 <InputLabel
+                  required
                   sx={{ marginTop: "1rem", paddingBottom: "5px" }}
                   error={!!errors?.name}
                 >
-                  {t("warehouse.warehouses")}
+                  {t("warehouse.warehouse_name")}
                 </InputLabel>
                 <TextField
                   fullWidth
