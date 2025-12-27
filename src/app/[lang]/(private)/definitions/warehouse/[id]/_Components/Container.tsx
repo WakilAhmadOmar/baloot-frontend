@@ -47,7 +47,7 @@ const ContainerAddProduct: React.FC<IPropsContainer> = ({ id }) => {
   });
   const { mutate: addWareToEntrepot, isLoading: addLoading } =
     useAddWareToEntrepotMutation();
-console.log("getWareFromEntrepot",getWareFromEntrepot)
+  console.log("getWareFromEntrepot", getWareFromEntrepot);
   const defaultValues: FormType = useMemo(
     () => ({
       wareObject:
@@ -65,18 +65,17 @@ console.log("getWareFromEntrepot",getWareFromEntrepot)
     [getWareFromEntrepot?.ware]
   );
 
-  console.log("defaultValues" , defaultValues)
+  console.log("defaultValues", defaultValues);
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
-    watch
+    watch,
   } = useForm({
     resolver: yupResolver(useSchemaCrateForm(t)),
     defaultValues,
   });
-
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -128,20 +127,20 @@ console.log("getWareFromEntrepot",getWareFromEntrepot)
   useEffect(() => {
     if (getWareFromEntrepot?.ware?.length) {
       reset({
-        wareObject:  getWareFromEntrepot?.ware?.map((item: any) => ({
-          productId: item?.productId?._id,
-          productName: item?.productId?.name,
-          measures: item?.productId?.price?.map((measure: any) => ({
-            measureName: measure?.measureId?.name,
-            measureId: measure?.measureId?._id,
-            amountOfProduct: 0,
-          })),
-          expireInDate: new Date().toISOString().slice(0, 10), // ISO string for date input
-        })) || [],
+        wareObject:
+          getWareFromEntrepot?.ware?.map((item: any) => ({
+            productId: item?.productId?._id,
+            productName: item?.productId?.name,
+            measures: item?.productId?.price?.map((measure: any) => ({
+              measureName: measure?.measureId?.name,
+              measureId: measure?.measureId?._id,
+              amountOfProduct: 0,
+            })),
+            expireInDate: new Date().toISOString().slice(0, 10), // ISO string for date input
+          })) || [],
       });
     }
   }, [getWareFromEntrepot?.ware, reset]);
-
 
   const columns: GridColDef[] = [
     {
@@ -150,7 +149,7 @@ console.log("getWareFromEntrepot",getWareFromEntrepot)
       width: 70,
       sortable: false,
       filterable: false,
-      renderCell: ({ row  }) => {
+      renderCell: ({ row }) => {
         return row?._fieldIndex + 1;
       },
     },
@@ -254,20 +253,40 @@ console.log("getWareFromEntrepot",getWareFromEntrepot)
   const handleSaveProduct = async (data: any) => {
     const variables = {
       entrepotId: id,
-      wareObject: data?.wareObject?.map((item: any) => {
-        const measures = item?.measures?.filter((ware:any)=> ware?.amountOfProduct > 0)?.map((measure: any) => ({
-          measureId: measure?.measureId,
-          amountOfProduct: measure?.amountOfProduct,
-        }));
+      wareObject: data?.wareObject
+        ?.map((item: any) => {
+          const measures = item?.measures
+            ?.filter((ware: any) => ware?.amountOfProduct > 0)
+            ?.map((measure: any) => ({
+              measureId: measure?.measureId,
+              amountOfProduct: measure?.amountOfProduct,
+            }));
 
-        return {
-          productId: item?.productId,
-          measures,
-          expireInDate: item?.expireInDate,
-        };
-      }).filter((item:any) => item?.measures?.length > 0),
+          return {
+            productId: item?.productId,
+            measures,
+            expireInDate: item?.expireInDate,
+          };
+        })
+        .filter((item: any) => item?.measures?.length > 0),
       isFirstPeriodWare: true,
     };
+    // {
+    //   "entrepotId": null,
+    //   "wareObject": [
+    //     {
+    //       "productId": null,
+    //       "measures": [
+    //         {
+    //           "measureId": null,
+    //           "amountOfProduct": null
+    //         }
+    //       ],
+    //       "expireInDate": null
+    //     }
+    //   ]
+    // }
+
     addWareToEntrepot(variables, {
       onSuccess: () => {
         setHandleError({
@@ -292,8 +311,8 @@ console.log("getWareFromEntrepot",getWareFromEntrepot)
   ) => {
     setPage(page);
   };
-const wareObject = watch("wareObject") || []
-console.log("wareObjectdddddddddddd" , wareObject)
+  const wareObject = watch("wareObject") || [];
+  console.log("wareObjectdddddddddddd", wareObject);
   return (
     <Box>
       <Box>
@@ -322,7 +341,9 @@ console.log("wareObjectdddddddddddd" , wareObject)
           </Box>
           <Box></Box>
         </Box>
-        <Paper sx={{ width: "100%" }}>
+        <Paper
+          sx={{ width: "100%", bgcolor: theme.palette.background.default }}
+        >
           <DataGrid
             rows={wareObject?.map((item: any, index) => ({
               ...item,
