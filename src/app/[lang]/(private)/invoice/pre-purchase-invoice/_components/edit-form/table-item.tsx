@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { Controller } from "react-hook-form";
 import { Box, IconButton, TextField, Grid2, useTheme } from "@mui/material";
 import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
-import { ProductSchema } from "./table-container.schema";
+import { ProductSchema } from "../table-container.schema";
 import { CustomSelectMeasure } from "../select-measure";
 import { Trash } from "iconsax-react";
 import { InvoiceContext } from "../../../_components/invoiceContext";
