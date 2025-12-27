@@ -31,14 +31,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { AppContext } from "@/provider/appContext";
 // import { EditForm } from "./edit-form";
 import { useTranslations } from "next-intl";
-import { useGetSellsBillByIdQuery } from "@/hooks/api/invoice/queries/get-sells-bill-by-id-query";
-import { useUpdateSellsBillMutation } from "@/hooks/api/invoice/mutations/use-update-sells-bill";
 import useSchemaCreateForm, {
   CreateFormSchema,
 } from "./table-container.schema";
 import { useGetBuyBillByIdQuery } from "@/hooks/api/invoice/queries/get-buy-bill-by-id";
 import { ContainerTable } from "./table-container";
 import { useUpdateBuyBillMutation } from "@/hooks/api/invoice/mutations/use-update-buy-bill";
+import { FormInputSkeleton } from "./form-input-skeleton";
 
 interface IProps {
   onCreated?: (billInfo: any) => void;
@@ -56,6 +55,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
     },
     openDialog
   );
+  console.log("billData", billData);
   const { mutate: updateBuyBillMutation, isLoading: isUpdating } =
     useUpdateBuyBillMutation();
   const defaultValues = useMemo(() => {
@@ -200,6 +200,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
       }
     );
   };
+
   return (
     <FormProvider {...methods}>
       <IconButton onClick={handleOpenDialogBox} onReset={onResetHandler}>
@@ -236,10 +237,12 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
           </Toolbar>
         </AppBar>
         <DialogContent>
-          {defaultValues?.customerId && isLoading === false && (
-            <Grid2 container columnSpacing={3} rowSpacing={3}>
-              <Grid2 size={3} gap={1} display={"grid"}>
-                <InputLabel>{t("customer_name")}</InputLabel>
+          <Grid2 container columnSpacing={3} rowSpacing={3}>
+            <Grid2 size={3} gap={1} display={"grid"}>
+              <InputLabel>{t("customer_name")}</InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
                 <CustomerAutoComplete
                   getCustomer={(customer) => {
                     setValue("contact_number", customer?.contactNumber);
@@ -247,36 +250,44 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
                   dir={t("dir")}
                   // defaultValue={defaultValues?.customerId}
                 />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("Contact_Number")}</InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  disabled
-                  {...register("contact_number")}
-                  name={"contact_number"}
-                />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("warehouse")} </InputLabel>
+              )}
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Contact_Number")}</InputLabel>
+              <TextField
+                fullWidth
+                size="small"
+                disabled
+                {...register("contact_number")}
+                name={"contact_number"}
+              />
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("warehouse")} </InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
                 <WarehouseAutoComplete
                   dir={t("dir")}
                   // defaultValue={defaultValues?.warehouseId}
                 />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("Currency")}</InputLabel>
+              )}
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Currency")}</InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
                 <CurrenciesAutoComplete
                   dir={t("dir")}
                   isBaseCurrency
-                  defaultValue={defaultValues?.currencyId}
+                  // defaultValue={defaultValues?.currencyId}
                 />
-              </Grid2>
+              )}
             </Grid2>
-          )}
+          </Grid2>
 
-          {!isLoading && <ContainerTable />}
+          <ContainerTable isLoading={isLoading} />
         </DialogContent>
         <DialogActions>
           <Box display={"flex"} justifyContent="space-between" width={"100%"}>

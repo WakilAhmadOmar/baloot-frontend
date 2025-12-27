@@ -2,23 +2,25 @@
 import * as Yup from "yup";
 
 export interface MeasureSchema {
-  measureId: string;
-  amount: number;
+  measureId:{
+    _id:string
+    name?:string
+  },
+  quantity: number;
   buyPrice: number;
   expense: number ;
   totalExpense: number ;
   selected?: boolean | null;
-  measureName: string;
   total: number;
 }
 
 export interface ProductSchema {
-  productId: string;
-  measures: MeasureSchema[];
-  warehouse?: string | null;
-  expireInDate: Date;
-  totalExpense: number;
+  productId:string,
+  price: MeasureSchema[];
+  expireInDate: Date | null;
+  total: number;
   expense: number;
+  name?:string
 }
 
 export interface CreateFormSchema {
@@ -47,15 +49,18 @@ const useSchemaCrateForm = (t: any) =>
       .of(
         Yup.object().shape({
           productId: Yup.string().required(t("product_name_is_required")),
-          measures: Yup.array()
+          name: Yup.string().optional(),
+          price: Yup.array()
             .of(
               Yup.object().shape({
-                measureId: Yup.string().required(
-                  t("product_units_is_required")
-                ),
-                measureName: Yup.string().required(),
-                amount: Yup.number().required(t("product_count_is_required")),
-                buyPrice: Yup.number().required(t("product_price_is_required")),
+                  buyPrice: Yup.number().required(t("product_price_is_required")),
+                  measureId:Yup.object().shape({
+                    _id:Yup.string().required(
+                        t("product_units_is_required")
+                      ),
+                      name:Yup.string().optional()
+                  }),
+                quantity: Yup.number().required(t("product_count_is_required")),
                 expense: Yup.number().required().default(0),
                 totalExpense: Yup.number().required().default(0),
                 total: Yup.number().required().default(0),
@@ -64,10 +69,10 @@ const useSchemaCrateForm = (t: any) =>
             )
             .required()
             .default([]),
-          warehouse: Yup.string().notRequired().nullable(),
-          expireInDate: Yup.date().required(),
+         
+          expireInDate: Yup.date().nullable().required(t("expire_date_is_required")),
           expense: Yup.number().required().default(0),
-          totalExpense: Yup.number().required().default(0),
+          total: Yup.number().required().default(0),
         })
       )
       .min(1, t("at_least_one_product_is_require"))

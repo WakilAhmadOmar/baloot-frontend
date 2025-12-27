@@ -2,68 +2,79 @@
 import * as Yup from "yup";
 
 export interface MeasureSchema {
-  measureId: string;
-  amount: number;
-  sellPrice: number;
-  discount?: number | null;
-  discountPercentage?: number | null;
+  measureId: {
+    _id: string;
+    name?: string;
+  };
+  quantity: number;
+  buyPrice: number;
+  expense: number;
+  totalExpense: number;
   selected?: boolean | null;
-  measureName: string;
+  total: number;
 }
 
 export interface ProductSchema {
   productId: string;
-  productName: string;
-  measures: MeasureSchema[];
-  warehouse?: string | null;
-  expireInDate?: (string | undefined)[];
-  expireInDateSelected:string
+  price: MeasureSchema[];
+  expireInDate: Date | null;
+  total: number;
+  expense: number;
+  name?: string;
 }
 
-export interface EditFormSchema {
+export interface CreateFormSchema {
   customerId: string;
   warehouseId: string;
   currencyId: string;
   products: ProductSchema[];
   totalPrice: number;
-  totalPriceAfterDiscount: number;
+  totalPriceAfterExpense: number;
   contact_number?: string | null | undefined;
+  paymentMethod: string;
 }
 
-const useSchemaEditForm = (t: any) =>
+const useSchemaCrateForm = (t: any) =>
   Yup.object().shape({
     customerId: Yup.string().required(t("customer_name_is_required")),
     warehouseId: Yup.string().required(t("warehouse_is_required")),
     currencyId: Yup.string().required(t("currency_is_required")),
     totalPrice: Yup.number().required(),
-    totalPriceAfterDiscount: Yup.number().required(),
+    totalPriceAfterExpense: Yup.number().required(),
     contact_number: Yup.string().nullable().notRequired(),
+    paymentMethod: Yup.string().required(),
     products: Yup.array()
       .of(
         Yup.object().shape({
           productId: Yup.string().required(t("product_name_is_required")),
-          productName: Yup.string().required(),
-          measures: Yup.array()
+          name: Yup.string().optional(),
+          price: Yup.array()
             .of(
               Yup.object().shape({
-                measureId: Yup.string().required(t("product_units_is_required")),
-                measureName: Yup.string().required(),
-                amount: Yup.number().required(t("product_count_is_required")),
-                sellPrice: Yup.number().required(t("product_price_is_required")),
-                discount: Yup.number().nullable(),
-                discountPercentage: Yup.number().nullable(),
+                buyPrice: Yup.number().required(t("product_price_is_required")),
+                measureId: Yup.object().shape({
+                  _id: Yup.string().required(t("product_units_is_required")),
+                  name: Yup.string().optional(),
+                }),
+                quantity: Yup.number().required(t("product_count_is_required")),
+                expense: Yup.number().required().default(0),
+                totalExpense: Yup.number().required().default(0),
+                total: Yup.number().required().default(0),
                 selected: Yup.boolean().nullable(),
               })
             )
             .required()
             .default([]),
-          warehouse: Yup.string().notRequired().nullable(),
-          expireInDate: Yup.array().of(Yup.string()).optional(),
-          expireInDateSelected:Yup.string().required(t("expire_in_date_is_required"))
+
+          expireInDate: Yup.date()
+            .nullable()
+            .required(t("expire_date_is_required")),
+          expense: Yup.number().required().default(0),
+          total: Yup.number().required().default(0),
         })
       )
       .min(1, t("at_least_one_product_is_require"))
       .required(),
   });
 
-export default useSchemaEditForm;
+export default useSchemaCrateForm;

@@ -33,22 +33,15 @@ import { Add, Trash } from "iconsax-react";
 import PaymentReceiver from "./Payment";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { numberToWords } from "@/utils/numberToWords";
+import ProductItem from "./table-item";
+import { ProductSchema } from "./table-container.schema";
+import { CalculateTotal } from "./calculate-total";
 
 export default function BasicTable() {
   const t = useTranslations("invoice");
   const theme = useTheme();
   const { paymentOff } = useContext(InvoiceContext);
-  const [calculateSellBill, setCalculateSellBill] = useState<{
-    total: number;
-    expense: number;
-    receipt: number;
-    remain: number;
-  }>({
-    total: 0,
-    expense: 0,
-    receipt: 0,
-    remain: 0,
-  });
+  const [totalBill, setTotalBill] = useState(0);
   const [statusPayment, setStatusPayment] = useState<"cash" | "loan">("cash");
   const {
     control,
@@ -61,9 +54,6 @@ export default function BasicTable() {
     control,
     name: "products",
   });
- 
-
-
 
   const style = {
     width: "100%",
@@ -116,50 +106,68 @@ export default function BasicTable() {
       setStatusPayment(value);
     }
   };
-  const products: any = useWatch({ name: "products" });
-  useEffect(() => {
-    const initialValue = 0;
-    let expense = 0;
-    let price = 0;
-    const sumWithInitial = products?.reduce(
-      (accumulator: any, product: any) => {
-        const measures = 0;
-        const sumMeasures = product?.measures?.reduce(
-          (accum: number, measure: any) => {
-            if (measure?.selected) {
-              price = price + measure.buyPrice * (measure?.amount || 1);
-              expense =
-                expense +( measure?.expense * measure?.amount);
-              return accum + (measure?.total || measure?.buyPrice);
-            } else return accum;
-          },
-          measures
-        );
-        return accumulator + sumMeasures;
-      },
-      initialValue
-    );
+  // const products: any = useWatch({ name: "products" });
+  // useEffect(() => {
+  //   const initialValue = 0;
+  //   let expense = 0;
+  //   let price = 0;
+  //   const sumWithInitial = products?.reduce(
+  //     (accumulator: any, product: any) => {
+  //       const measures = 0;
+  //       const sumMeasures = product?.measures?.reduce(
+  //         (accum: number, measure: any) => {
+  //           if (measure?.selected) {
+  //             price = price + measure.buyPrice * (measure?.amount || 1);
+  //             expense = expense + measure?.expense * measure?.amount;
+  //             return accum + (measure?.total || measure?.buyPrice);
+  //           } else return accum;
+  //         },
+  //         measures
+  //       );
+  //       return accumulator + sumMeasures;
+  //     },
+  //     initialValue
+  //   );
 
-    setCalculateSellBill({
-      receipt: 0,
-      remain: price,
-      total: price,
-      expense:  expense,
-    });
-    setValue("totalPrice", price);
-    setValue("totalPriceAfterExpense", price - expense);
-  }, [JSON.stringify(products)]);
+  //   setCalculateSellBill({
+  //     receipt: 0,
+  //     remain: price,
+  //     total: price,
+  //     expense: expense,
+  //   });
+  //   setValue("totalPrice", price);
+  //   setValue("totalPriceAfterExpense", price - expense);
+  // }, [JSON.stringify(products)]);
 
-  const handleDeleteFunction = (event: MouseEvent<HTMLButtonElement>) => {
-    const id = parseInt(event?.currentTarget?.id);
-    remove(id);
+  const handleAddProduct = (product: any, indexProduct: number) => {
+    const myProduct: ProductSchema = {
+      name: product?.name,
+      price: product?.price?.map((item: any, index: number) => ({
+        measureId: item?.measureId,
+        quantity: 1,
+        buyPrice: item?.buyPrice,
+        expense: 0,
+        totalExpense: item?.buyPrice,
+        total: item?.buyPrice,
+        selected: index === 0,
+      })),
+      expireInDate: null,
+      total: product?.price?.length > 0 ? product?.price[0]?.buyPrice : 0,
+      expense: 0,
+      productId: product?._id,
+    };
+
+    update(indexProduct, myProduct);
   };
 
-  
-
+  const deleteProductBill = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const index = event?.currentTarget?.id;
+    const indexNumber = Number(index);
+    remove(indexNumber);
+  };
   return (
-    <Box sx={{ width: "100%", my: 3 , }}>
-      <TableContainer component={"div"} sx={{ backgroundColor: theme.palette.background.default }}>
+    <Box sx={{ width: "100%", my: 3 }}>
+      {/* <TableContainer component={"div"} sx={{ backgroundColor: theme.palette.background.default }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -461,7 +469,88 @@ export default function BasicTable() {
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
+
+      <Box
+        my={3}
+        pb={2}
+        bgcolor={theme.palette.background.default}
+        borderRadius={"10px"}
+        sx={{ overflow: "hidden" }}
+      >
+        <Grid2
+          container
+          columns={10}
+          columnSpacing={2}
+          px={3}
+          py={2}
+          borderBottom={`1px solid ${theme.palette.grey[200]}`}
+        >
+          <Grid2 size={2}>
+            <Typography fontWeight={400} fontSize={"14px"}>
+              {t("product_name")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"} textAlign={"center"}>
+              {t("unit")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"}>
+              {t("quantity")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"}>
+              {t("price")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"}>
+              {t("expense")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"} textAlign={"center"}>
+              {t("total_price")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1}>
+            <Typography fontWeight={400} fontSize={"14px"} textAlign={"center"}>
+              {t("total")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={1.5}>
+            <Typography fontWeight={400} fontSize={"14px"}>
+              {t("expiration_date")}
+            </Typography>
+          </Grid2>
+          <Grid2 size={0.5}>
+            <Typography fontWeight={400} fontSize={"14px"} textAlign={"end"}>
+              {t("actions")}
+            </Typography>
+          </Grid2>
+        </Grid2>
+        {fields.map((item, index) => {
+          return (
+            <ProductItem
+              control={control}
+              key={item.id}
+              index={index}
+              remove={remove}
+              watch={useFormContext().watch}
+              setValue={useFormContext().setValue}
+              product={item as unknown as ProductSchema}
+              productIds={fields?.map((item: any) => item?.productId)}
+              errors={useFormContext().formState.errors}
+              reset={useFormContext().reset}
+              handleAddProduct={handleAddProduct}
+              handleDeleteFunction={deleteProductBill}
+            />
+          );
+        })}
+      </Box>
       <Box
         sx={{
           backgroundColor: theme.palette.grey[100],
@@ -520,117 +609,18 @@ export default function BasicTable() {
           </FormControl>
           <PaymentReceiver
             customer={"Ahmad"}
-            amount={calculateSellBill?.total}
+            amount={totalBill}
             customerId={""}
             paymentStatus={statusPayment}
           />
         </Grid2>
-        <Grid2 size={4} marginTop={3}>
-          <Box
-            sx={{ borderBottom: `2px solid ${theme.palette?.grey[100]}` }}
-            display="grid"
-            gridTemplateColumns={"50% 50%"}
-            columnGap="1rem"
-          >
-            <Box
-              bgcolor={theme.palette?.grey[100]}
-              p={1}
-              paddingInlineStart={2}
-            >
-              {" "}
-              <Typography>{t("total_invoice_amount")}</Typography>
-            </Box>
-            <Typography alignItems={"center"} display="grid">
-              {calculateSellBill.total}
-            </Typography>
-          </Box>
-         
-          <Box
-            sx={{ borderBottom: `1px solid ${theme.palette?.grey[100]}` }}
-            display="grid"
-            gridTemplateColumns={"50% 50%"}
-            columnGap="1rem"
-          >
-            <Box
-              bgcolor={theme.palette?.grey[100]}
-              p={1}
-              paddingInlineStart={2}
-            >
-              {" "}
-              <Typography>
-                {t("expense")}
-              </Typography>
-            </Box>
-            <Typography alignItems={"center"} display="grid">
-              {calculateSellBill?.expense}
-            </Typography>
-          </Box>
-          <Box
-            sx={{ borderBottom: `1px solid ${theme.palette?.grey[100]}` }}
-            display="grid"
-            gridTemplateColumns={"50% 50%"}
-            columnGap="1rem"
-          >
-            <Box
-              bgcolor={theme.palette?.grey[100]}
-              p={1}
-              paddingInlineStart={2}
-            >
-              {" "}
-              <Typography>
-                {t("total_invoice_amount_after_discount")}
-              </Typography>
-            </Box>
-            <Typography alignItems={"center"} display="grid">
-              {calculateSellBill?.total + calculateSellBill?.expense}
-            </Typography>
-          </Box>
-          <Box
-            sx={{ borderBottom: `1px solid ${theme.palette?.grey[100]}` }}
-            display="grid"
-            gridTemplateColumns={"50% 50%"}
-            columnGap="1rem"
-            alignItems={"center"}
-          >
-            <Box
-              bgcolor={theme.palette?.grey[100]}
-              p={1}
-              paddingInlineStart={2}
-            >
-              {" "}
-              <Typography>{t("receipt")}</Typography>
-            </Box>
-            <Typography alignItems={"center"} display="grid">
-              {paymentOff?.payAmount || calculateSellBill?.receipt}
-            </Typography>
-          </Box>
-          <Box
-            sx={{ borderBottom: `1px solid ${theme.palette?.grey[100]}` }}
-            display="grid"
-            gridTemplateColumns={"50% 50%"}
-            columnGap="1rem"
-          >
-            <Box
-              bgcolor={theme.palette?.grey[100]}
-              p={1}
-              paddingInlineStart={2}
-            >
-              {" "}
-              <Typography>{t("remaining")}</Typography>
-            </Box>
-            <Typography>
-              {paymentOff?.payAmount ? calculateSellBill?.remain : 0}
-            </Typography>
-          </Box>
-        </Grid2>
+        <CalculateTotal getTotal={(total) => setTotalBill(total)} />
       </Grid2>
       <Box display="flex" columnGap={"1rem"}>
         <Typography variant="overline" bgcolor={theme.palette.grey[100]}>
           {t("total_invoice_after_discount_in_words")} :
         </Typography>
-        <Typography variant="overline">
-          {numberToWords(calculateSellBill?.total)}
-        </Typography>
+        <Typography variant="overline">{numberToWords(totalBill)}</Typography>
       </Box>
     </Box>
   );

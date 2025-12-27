@@ -27,6 +27,7 @@ const CreateEmployee = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = method;
   const theme = useTheme();
   const { setHandleError } = useContext(AppContext);
@@ -36,6 +37,7 @@ const CreateEmployee = () => {
 
   const handleOpenDialogFunction = () => {
     setOpenDialog(!openDialog);
+    reset();
   };
 
   const onSubmitFunction = async (data: any) => {

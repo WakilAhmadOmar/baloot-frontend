@@ -13,7 +13,7 @@ import {
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { useTranslations } from "next-intl";
-import { CreateFormSchema, ProductSchema } from "./table-container.schema";
+import { CreateFormSchema, ProductSchema } from "../table-container.schema";
 import { Add } from "iconsax-react";
 import ProductItem from "./table-item";
 import { useState } from "react";
@@ -80,7 +80,6 @@ export function ContainerTable({ isLoading }: { isLoading: boolean }) {
     const indexNumber = Number(index);
     remove(indexNumber);
   };
-  console.log("fields", fields);
 
   return (
     <Box>

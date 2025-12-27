@@ -22,13 +22,12 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AppContext } from "@/provider/appContext";
-import { EditForm } from "./edit-form";
 import { useTranslations } from "next-intl";
-import { useGetSellsBillByIdQuery } from "@/hooks/api/invoice/queries/get-sells-bill-by-id-query";
 import { useUpdateSellsBillMutation } from "@/hooks/api/invoice/mutations/use-update-sells-bill";
-import useSchemaEditForm, { EditFormSchema } from "./edit-form.schema";
-import { useGetBuyBillByIdQuery } from "@/hooks/api/invoice/queries/get-buy-bill-by-id";
+import useSchemaEditForm, { CreateFormSchema } from "./edit-form.schema";
 import { useGetPreBuyBillByIdQuery } from "@/hooks/api/invoice/queries/get-pre-buy-bill-by-id";
+import { FormInputSkeleton } from "./form-input-skeleton";
+import { ContainerTable } from "./table-container";
 
 interface IProps {
   onCreated?: (billInfo: any) => void;
@@ -51,45 +50,64 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
     useUpdateSellsBillMutation();
 
   const defaultValues = useMemo(() => {
-    return {
-      customerId: billData?.customerId?._id,
-      warehouseId: billData?.entrepotId?._id,
-      currencyId: billData?.currencyId?._id,
-      totalPriceAfterDiscount: billData?.totalPriceAfterDiscount,
-      totalPrice: billData?.totalPrice,
-      contact_number: billData?.customerId?.contactNumber,
-      products: billData?.products?.map((item: any) => {
-        const selectedMeasures = item?.productId?.price?.map((measure: any) => {
-          const findSelectedMeasure = item?.productMeasures?.filter(
-            (m: any) => m?.measureId?._id === measure?.measureId?._id
+    if (billData?._id)
+      return {
+        customerId: billData?.customerId?._id,
+        warehouseId: billData?.entrepotId?._id,
+        currencyId: billData?.currencyId?._id,
+        // Map old field to new field name in schema
+        totalPriceAfterExpense: billData?.totalPriceOfBillAfterConsumption,
+        totalPrice: billData?.totalPrice,
+        contact_number: billData?.customerId?.contactNumber,
+        // Provide defaults for fields required by CreateFormSchema
+        paymentMethod: "cash",
+        payerId: "",
+        products: billData?.products?.map((item: any) => {
+          const measures = item?.productId?.measures?.map(
+            (measure: any, measureIndex: number) => {
+              const findSelectedMeasure = item?.productMeasures?.filter(
+                (m: any) => m?.measureId?._id === measure?.measureId?._id
+              );
+              // Map to MeasureSchema in create-form.schema
+              return {
+                quantity: findSelectedMeasure?.[0]?.amountOfProduct || 1,
+                buyPrice:
+                  findSelectedMeasure?.[0]?.pricePerMeasure ||
+                  item?.productId?.price?.[measureIndex]?.buyPrice,
+                measureId: measure?.measureId,
+                expense: findSelectedMeasure?.[0]?.consumptionPrice || 0,
+                totalExpense:
+                  findSelectedMeasure?.length > 0
+                    ? findSelectedMeasure?.[0]?.amountOfProduct *
+                      findSelectedMeasure?.[0]?.consumptionPrice
+                    : 0,
+                total:
+                  findSelectedMeasure?.length > 0
+                    ? findSelectedMeasure?.[0]?.amountOfProduct *
+                      findSelectedMeasure?.[0]?.pricePerMeasure
+                    : 0,
+                selected: findSelectedMeasure?.length > 0 ? true : false,
+              };
+            }
           );
-          return {
-            measureId: measure?.measureId?._id,
-            amount: findSelectedMeasure?.[0]?.amountOfProduct,
-            buyPrice:
-              findSelectedMeasure?.[0]?.pricePerMeasure || measure?.buyPrice,
-            expense: findSelectedMeasure?.[0]?.consumptionPrice || 0,
-            selected: findSelectedMeasure?.length > 0,
-            measureName: measure?.measureId?.name,
-            total: findSelectedMeasure?.length > 0 ? findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.pricePerMeasure : measure?.buyPrice,
-            totalExpense: findSelectedMeasure?.length > 0 ? findSelectedMeasure?.[0]?.amountOfProduct * findSelectedMeasure?.[0]?.consumptionPrice : 0,
-          };
-        });
 
-        return {
-          productId: item?.productId?._id,
-          productName: item?.productId?.name,
-          measures: selectedMeasures,
-          name: item?.productId?.name,
-          id: item?.productId?._id,
-          expireInDate: item?.expireInDate,
-        };
-      }),
-    };
+          return {
+            productId: item?.productId?._id,
+            name: item?.productId?.name,
+            price: measures || [],
+            expireInDate: item?.expireInDate
+              ? new Date(item.expireInDate).toISOString().slice(0, 10)
+              : null,
+            warehouse: item?.warehouse?._id,
+            expense: 0,
+            totalExpense: 0,
+          };
+        }),
+      };
   }, [billData]);
 
-  const methods = useForm<EditFormSchema>({
-    resolver: yupResolver(useSchemaEditForm(t)),
+  const methods = useForm<CreateFormSchema>({
+    resolver: yupResolver(useSchemaEditForm(t)) as any,
     defaultValues,
   });
 
@@ -109,7 +127,7 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
   const handleOpenDialogBox = () => {
     setOpenDialog(!openDialog);
   };
-  const onSubmitFunction = async (data: EditFormSchema) => {
+  const onSubmitFunction = async (data: CreateFormSchema) => {
     const variables = {
       sellBillObject: {
         billDate: new Date(billData?.billDate),
@@ -117,29 +135,25 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-          const [day, month, year] = item?.expireInDateSelected
-            .split("/")
-            .map(Number);
-          const expireInDate = new Date(`${year}-${month}-${day + 1}`);
           const productMeasures = item?.measures
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
               return {
                 measureId: dataItem?.measureId,
                 amountOfProduct: dataItem?.amount,
-                pricePerMeasure: dataItem?.sellPrice,
-                discountPercentage: dataItem?.discount || 0,
+                pricePerMeasure: dataItem?.buyPrice,
+                consumptionPrice: dataItem?.expense, // Mapping expense to consumptionPrice
+                // discountPercentage: 0, // Not in schema, assuming 0
               };
             });
           return {
             productId: item?.productId,
             productMeasures,
-            entrepotId: item?.warehouse?._id || data?.warehouseId,
-            expireInDate: expireInDate?.toISOString()?.split("T")[0],
+            expireInDate: item?.expireInDate,
           };
         }),
-        totalPrice: data?.totalPrice,
-        totalPriceAfterDiscount: data?.totalPriceAfterDiscount,
+        // totalPrice: data?.totalPrice,
+        totalPriceOfBillAfterConsumption: data?.totalPriceAfterExpense, // Mapping back
         transactionId: billData?.transactionId?._id,
       },
     };
@@ -203,39 +217,50 @@ const EditSalesInvoice: React.FC<IProps> = ({ onCreated, id }) => {
           </Toolbar>
         </AppBar>
         <DialogContent>
-          {defaultValues?.customerId && isLoading === false && (
-            <Grid2 container columnSpacing={3} rowSpacing={3}>
-              <Grid2 size={3} gap={1} display={"grid"}>
-                <InputLabel>{t("customer_name")}</InputLabel>
+          <Grid2 container columnSpacing={3} rowSpacing={3}>
+            <Grid2 size={3} gap={1} display={"grid"}>
+              <InputLabel>{t("customer_name")}</InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
                 <CustomerAutoComplete
                   getCustomer={(customer) => {
                     setValue("contact_number", customer?.contactNumber);
                   }}
                   dir={t("dir")}
                 />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("Contact_Number")}</InputLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  disabled
-                  // value={customer?.contactNumber ?? ""}
-                  {...register("contact_number")}
-                  name={"contact_number"}
-                />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("warehouse")} </InputLabel>
-                <WarehouseAutoComplete dir={t("dir")} />
-              </Grid2>
-              <Grid2 size={2} gap={1} display={"grid"}>
-                <InputLabel>{t("Currency")}</InputLabel>
-                <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
-              </Grid2>
+              )}
             </Grid2>
-          )}
-          <EditForm isLoadingData={isLoading} />
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Contact_Number")}</InputLabel>
+              <TextField
+                fullWidth
+                size="small"
+                disabled
+                // value={customer?.contactNumber ?? ""}
+                {...register("contact_number")}
+                name={"contact_number"}
+              />
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("warehouse")} </InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
+                <WarehouseAutoComplete dir={t("dir")} />
+              )}
+            </Grid2>
+            <Grid2 size={2} gap={1} display={"grid"}>
+              <InputLabel>{t("Currency")}</InputLabel>
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
+                <CurrenciesAutoComplete dir={t("dir")} isBaseCurrency />
+              )}
+            </Grid2>
+          </Grid2>
+
+          <ContainerTable isLoading={isLoading} />
           {/* <Grid2 container columnSpacing={3} rowSpacing={3}>
             <Grid2 size={3} gap={1} display={"grid"}>
               <InputLabel>{t("customer_name")}</InputLabel>

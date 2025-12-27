@@ -1,4 +1,4 @@
-import { Theme, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Checkbox,
@@ -30,7 +30,7 @@ interface IPropsSelect {
   idNumber?: number;
 }
 
-const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
+export const CustomSelectMeasure: React.FC<IPropsSelect> = ({
   data,
   register,
   name,
@@ -44,14 +44,16 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
   useEffect(() => {
     // When data changes, set the first measure as selected
     if (data && data.length > 0 && personName?.length === 0) {
+      const filterData = data?.filter((item) => item?.selected);
+
       setPersonName(
-        data
-          ?.filter((item: any) => item?.selected)
-          ?.map((item: any) => item?.measureName)
+        filterData?.length > 0
+          ? filterData?.map((item) => item?.measureId?.name)
+          : [data?.[0]?.measureName]
       );
       if (getDataSelect)
         getDataSelect(
-          data?.filter((item: any) => item?.selected),
+          filterData?.length > 0 ? filterData : [data?.[0]],
           idNumber
         );
     }
@@ -62,12 +64,20 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
       target: { value },
     } = event;
 
-    setPersonName(value as string[]);
+    if (value?.length === 0) return;
+
     let measure: any = [];
     for (let index = 0; index < value.length; index++) {
       const dataArray: any = data?.filter(
-        (item) => item?.measureName === value[index]
+        (item) => item?.measureId?.name === value[index]
       );
+      if (data && data.length > 0) {
+        setPersonName(
+          data
+            ?.filter((item: any) => value?.includes(item?.measureId?.name))
+            .map((item: any) => item?.measureId?.name)
+        );
+      }
       measure = [...measure, ...dataArray];
     }
     if (getDataSelect) getDataSelect(measure, idNumber);
@@ -77,12 +87,9 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
       multiple
       fullWidth
       size="small"
-      //   {...register(name, { require: true })}
       value={personName}
       onChange={handleChange}
-      // placeholder={"واحد"}
       sx={{
-        // bgcolor: "gray",
         "&:hover fieldset": {
           borderColor: theme.palette.grey[100],
           border: "none",
@@ -91,7 +98,6 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
           borderColor: theme.palette.grey[100],
         },
       }}
-      //   input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
       renderValue={(selected: any) => (
         <Box
           sx={{
@@ -115,19 +121,17 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
     >
       {data?.map((name) => (
         <MenuItem
-          key={name?.measureId}
-          value={name?.measureName}
-          // style={getStyles(name?.measure?.name, personName, theme)}
+          key={name?.measureId?._id}
+          value={name?.measureId?.name}
           sx={{
             display: "flex",
             justifyContent: "start",
             direction: t("dir"),
           }}
         >
-          {/* {name?.measure?.name} */}
-          <Checkbox checked={personName.indexOf(name?.measureName) > -1} />
+          <Checkbox checked={personName.indexOf(name?.measureId?.name) > -1} />
           <ListItemText
-            primary={name?.measureName}
+            primary={name?.measureId?.name}
             sx={{ width: "fit-content", textAlign: "start" }}
           />
         </MenuItem>
@@ -135,5 +139,3 @@ const EditCustomSelectMeasure: React.FC<IPropsSelect> = ({
     </Select>
   );
 };
-
-export default EditCustomSelectMeasure;

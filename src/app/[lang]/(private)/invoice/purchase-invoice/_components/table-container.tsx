@@ -132,12 +132,12 @@ export function ContainerTable() {
               {t("total")}
             </Typography>
           </Grid2>
-          <Grid2 size={1}>
+          <Grid2 size={1.5}>
             <Typography fontWeight={400} fontSize={"14px"}>
               {t("expiration_date")}
             </Typography>
           </Grid2>
-          <Grid2 size={1}>
+          <Grid2 size={0.5}>
             <Typography fontWeight={400} fontSize={"14px"} textAlign={"end"}>
               {t("actions")}
             </Typography>

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import CreateEmployee from "./Create";
-import {  EmptyProductPageIcon } from "@/icons";
+import { EmptyProductPageIcon } from "@/icons";
 import { Box, Grid, Pagination, Stack, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { useGetEmployeeListQuery } from "@/hooks/api/definitions/employee/queries/use-get-employee-list-query";
@@ -13,56 +13,55 @@ import { useDeleteEmployeeMutation } from "@/hooks/api/definitions/employee/muta
 import { AppContext } from "@/provider/appContext";
 import { useTranslations } from "next-intl";
 
-
 const EmployeePage = () => {
-  const t = useTranslations("pages")
-  const {setHandleError} = useContext(AppContext)
- 
-  const [page , setPage] = useState(1)
+  const t = useTranslations("pages");
+  const { setHandleError } = useContext(AppContext);
 
-  const {data:employeeList , isLoading} = useGetEmployeeListQuery()
-  const {mutate , isLoading:deleteIsLoading} = useDeleteEmployeeMutation()
+  const [page, setPage] = useState(1);
 
-  const handleDeleteFunction = (employeeId:string) => {
-     mutate({employeeId}, {
-      onSuccess: ({message}) => {
-        setHandleError({
-          open: true,
-          message,
-          status: "success",
-        });
-      },
-      onError: (error: any) => {
-        setHandleError({
-          open: true,
-          message: error.message,
-          status: "error",
-        });
-      },
-    });
-  }
+  const { data: employeeList, isLoading } = useGetEmployeeListQuery();
+  const { mutate, isLoading: deleteIsLoading } = useDeleteEmployeeMutation();
 
+  const handleDeleteFunction = (employeeId: string) => {
+    mutate(
+      { employeeId },
+      {
+        onSuccess: ({ message }) => {
+          setHandleError({
+            open: true,
+            message,
+            status: "success",
+          });
+        },
+        onError: (error: any) => {
+          setHandleError({
+            open: true,
+            message: error.message,
+            status: "error",
+          });
+        },
+      }
+    );
+  };
 
-   const handleChangePage = (
-      event: React.ChangeEvent<unknown>,
-      page: number
-    ) => {
-      setPage(page)
-    };
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setPage(page);
+  };
   return (
     <Box>
-        <Typography variant="h3" mb={2}>
-          {t("employee.employees")}
-        </Typography>
+      <Typography variant="h3" mb={2}>
+        {t("employee.employees")}
+      </Typography>
       <Box
         mb={2}
         sx={{
           display: "flex",
-          
         }}
       >
-        <CreateEmployee
-        />
+        <CreateEmployee />
         {/* {employeeState?.count > 0 && (
           <Box>
             <CustomSearch getTextSearchFunction={getTextSearchFunction} t={t} />
@@ -85,58 +84,69 @@ const EmployeePage = () => {
             </Typography>
           </Box>
         )} */}
-           {employeeList?.map((item:any) => {
-          return (
-            <CollapseComponent
-              key={item?._id}
-              name={item?.name}
-              createdAt={item?.createdAt}
-              id={item?._id}
-              getIdToAddAction={handleDeleteFunction}
-              UpdateComponent= {<UpdateEmployee  item={item} />}
-              editTable
-              messageDescription={t("employee.delete_description")}
-              messageTitle={t("employee.delete_title")}
-              isLoading={deleteIsLoading}
-              isUsed={item?.isUsed}
-            >
-              <Grid container spacing={2}>
-                <Grid item xs={9} display="grid">
-                  <Box
-                    display={"grid"}
-                    gridTemplateColumns={"17rem auto"}
-                    rowGap={"1rem"}
-                  >
-                    <Typography variant="caption">{t("employee.job_title")}</Typography>
-                    <Typography variant="caption">{item?.jobTitle}</Typography>
-                    <Typography variant="caption">{t("employee.salary_amount")}</Typography>
-                    <Typography variant="caption">
-                      {item?.salary?.amount}
-                    </Typography>
-                    <Typography variant="caption">{t("employee.phone_number")}</Typography>
-                    <Typography variant="caption">{item?.phoneNumber}</Typography>
-                    <Typography variant="caption">{t("employee.email")}</Typography>
-                    <Typography variant="caption">{item?.email}</Typography>
-                  </Box>
-                </Grid>
-  
-                <Grid
-                  item
-                  xs={3}
-                  justifyContent={"flex-end"}
-                  display="flex"
-                  alignItems={"flex-end"}
+      {employeeList?.map((item: any) => {
+        return (
+          <CollapseComponent
+            key={item?._id}
+            name={item?.name}
+            createdAt={item?.createdAt}
+            id={item?._id}
+            getIdToAddAction={handleDeleteFunction}
+            UpdateComponent={<UpdateEmployee item={item} />}
+            editTable
+            messageDescription={t("employee.delete_description")}
+            messageTitle={t("employee.delete_title")}
+            isLoading={deleteIsLoading}
+            isUsed={item?.isUsed}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={9} display="grid">
+                <Box
+                  display={"grid"}
+                  gridTemplateColumns={"17rem auto"}
+                  rowGap={"1rem"}
                 >
-                  <Box>
-                    <EmployeeDetails item={item}/>
-                  </Box>
-                </Grid>
+                  <Typography variant="caption">
+                    {t("employee.job_title")}
+                  </Typography>
+                  <Typography variant="caption">{item?.jobTitle}</Typography>
+                  <Typography variant="caption">
+                    {t("employee.salary_amount")}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.salary?.amount}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t("employee.phone_number")}
+                  </Typography>
+                  <Typography variant="caption">
+                    {item?.contactNumber}
+                  </Typography>
+                  <Typography variant="caption">
+                    {t("employee.email")}
+                  </Typography>
+                  <Typography variant="caption">{item?.email}</Typography>
+                </Box>
               </Grid>
-            </CollapseComponent>
-          );
-        })}
-        {isLoading && <SkeletonComponent />}
-        {employeeList?.length === 0  && !isLoading && <Box className={"empty_page_content"}>
+
+              <Grid
+                item
+                xs={3}
+                justifyContent={"flex-end"}
+                display="flex"
+                alignItems={"flex-end"}
+              >
+                <Box>
+                  <EmployeeDetails item={item} />
+                </Box>
+              </Grid>
+            </Grid>
+          </CollapseComponent>
+        );
+      })}
+      {isLoading && <SkeletonComponent />}
+      {employeeList?.length === 0 && !isLoading && (
+        <Box className={"empty_page_content"}>
           <EmptyPage
             icon={<EmptyProductPageIcon />}
             title={t("employee.no_product_yet_title")}
@@ -144,7 +154,8 @@ const EmployeePage = () => {
             // buttonText={t.pages?.employee.add_new_employee}
             // onClick={handleOpenDialogFunction}
           />
-        </Box>}
+        </Box>
+      )}
     </Box>
   );
 };
