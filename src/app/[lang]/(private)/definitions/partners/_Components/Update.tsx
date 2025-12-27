@@ -33,7 +33,7 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
       lastName: item?.lastName,
       invest: item?.invest?.amount,
       currencyId: item?.invest?.currencyId?._id,
-      phoneNumber: item?.phoneNumber,
+      contactNumber: item?.contactNumber,
     },
   });
   const { mutate, isLoading } = useUpdatePartnerMutation();
@@ -56,9 +56,7 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
       partnerObject: {
         firstName: data?.firstName,
         ...(data?.lastName ? { lastName: data?.lastName } : {}),
-        ...(data?.phoneNumber ? { phoneNumber: data?.phoneNumber } : {}),
-        phoneNumber: data?.phoneNumber,
-
+        ...(data?.contactNumber ? { contactNumber: data?.contactNumber } : {}),
         ...(data?.invest
           ? {
               invest: {
@@ -190,8 +188,8 @@ const UpdatePartner: React.FC<IPropsCreateProduct> = ({ item }) => {
                     type="number"
                     fullWidth
                     size="small"
-                    {...register("phoneNumber", { required: false })}
-                    name="phoneNumber"
+                    {...register("contactNumber", { required: false })}
+                    name="contactNumber"
                   />
                 </Grid>
               </Grid>

@@ -25,7 +25,7 @@ import { forwardRef, useCallback, useContext, useState } from "react";
 import { InvoiceContext } from "../../_components/invoiceContext";
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import useSchemaCrateForm, { CreateFormSchema } from "./create-form.schema";
+import useSchemaCrateForm, { CreateFormSchema } from "./table-container.schema";
 import { AppContext } from "@/provider/appContext";
 import { PrintInvoice } from "./print-invoice";
 import { useTranslations } from "next-intl";
@@ -52,30 +52,10 @@ const CreatePurchaseInvoice = () => {
   const t = useTranslations("invoice");
 
   const methods = useForm<CreateFormSchema>({
-    resolver: yupResolver(useSchemaCrateForm(t)),
+    resolver: yupResolver(useSchemaCrateForm(t)) as any,
     defaultValues: {
-      customerId: "",
-      warehouseId: "",
-      currencyId: "",
-      totalPrice: 0,
-      contact_number: "",
-      totalPriceAfterExpense: 0,
+      products: [],
       paymentMethod: "cash",
-      payerId: "",
-      products: [
-        {
-          productId: "",
-
-          measures: [
-          ],
-          warehouse: null,
-          expireInDate: new Date(),
-           expense: 0,           // <-- Always a number
-    totalExpense: 0,      // <-- Always a number
-
-
-        },
-      ],
     },
   });
 
@@ -93,7 +73,8 @@ const CreatePurchaseInvoice = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const theme = useTheme();
 
-  const { mutate: addPreBuyBillMutation, isLoading } = useAddPreBuyBillMutation();
+  const { mutate: addPreBuyBillMutation, isLoading } =
+    useAddPreBuyBillMutation();
   const { mutate: addPayToCustomer, isLoading: isLoadingReceive } =
     useAddPayToCustomerMutation({
       onSuccess: (data) => {},
@@ -105,13 +86,11 @@ const CreatePurchaseInvoice = () => {
     resetInvoiceFunction();
   };
 
-  function formatToYMD(value:Date) {
-  
-   const d = new Date(value);
-  if (isNaN(d.getTime())) return null;
-  d.setHours(0, 0, 0, 0); // strip time
-  return d;
-  
+  function formatToYMD(value: Date) {
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return null;
+    d.setHours(0, 0, 0, 0); // strip time
+    return d;
   }
   const onSubmitFunction = async (data: CreateFormSchema) => {
     const variablesPayment = {
@@ -152,13 +131,12 @@ const CreatePurchaseInvoice = () => {
         customerId: data?.customerId,
         entrepotId: data?.warehouseId,
         products: data?.products?.map((item: any) => {
-
-          const productMeasures = item?.measures
+          const productMeasures = item?.price
             ?.filter((measure: any) => measure?.selected)
             ?.map((dataItem: any) => {
               return {
-                measureId: dataItem?.measureId,
-                amountOfProduct: dataItem?.amount,
+                measureId: dataItem?.measureId?._id,
+                amountOfProduct: dataItem?.quantity,
                 pricePerMeasure: dataItem?.buyPrice,
                 consumptionPrice: dataItem?.expense || 0,
               };
@@ -167,7 +145,7 @@ const CreatePurchaseInvoice = () => {
             productId: item?.productId,
             productMeasures,
             // entrepotId: item?.warehouse?._id || data?.warehouseId,
-            expireInDate: item?.expireInDate,
+            expireInDate: item?.expireInDate?.toISOString().slice(0, 10),
             // expireInDate:"2031-11-30",
           };
         }),
@@ -206,7 +184,7 @@ const CreatePurchaseInvoice = () => {
   console.log("errors", errors);
   return (
     <FormProvider {...methods}>
-      <Paper >
+      <Paper>
         <Button variant="contained" size="large" onClick={handleOpenDialogBox}>
           {t("add_new_pre_purchase_invoice")}
         </Button>

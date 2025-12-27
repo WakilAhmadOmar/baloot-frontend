@@ -18,8 +18,8 @@ interface ProductItemProps {
   product: ProductSchema;
   productIds: string[];
   reset: any;
-  handleAddProduct: (product: any, index: number) => void;
   handleDeleteFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleAddProduct: (product: any, index: number) => void;
 }
 
 export default function ProductItem({
@@ -29,8 +29,9 @@ export default function ProductItem({
   watch,
   product,
   productIds,
-  handleAddProduct,
+
   handleDeleteFunction,
+  handleAddProduct,
 }: ProductItemProps) {
   const [productPrice, setProductPrice] = useState(product?.price || []);
   const theme = useTheme();

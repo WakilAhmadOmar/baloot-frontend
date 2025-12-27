@@ -3,10 +3,11 @@ import React, { useContext, useState } from "react";
 import { Controller } from "react-hook-form";
 import { Box, IconButton, TextField, Grid2, useTheme } from "@mui/material";
 import ProductsAutoComplete from "@/components/Auto/productAutoComplete";
-import { ProductSchema } from "./table-container.schema";
-import { CustomSelectMeasure } from "./select-measure";
+import { ProductSchema } from "../table-container.schema";
+import { CustomSelectMeasure } from "../select-measure";
 import { Trash } from "iconsax-react";
-import { InvoiceContext } from "../../_components/invoiceContext";
+import { InvoiceContext } from "../../../_components/invoiceContext";
+import { FormInputSkeleton } from "./form-input-skeleton";
 
 interface ProductItemProps {
   control: any;
@@ -20,6 +21,7 @@ interface ProductItemProps {
   reset: any;
   handleAddProduct: (product: any, index: number) => void;
   handleDeleteFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isLoading: boolean;
 }
 
 export default function ProductItem({
@@ -31,6 +33,7 @@ export default function ProductItem({
   productIds,
   handleAddProduct,
   handleDeleteFunction,
+  isLoading,
 }: ProductItemProps) {
   const [productPrice, setProductPrice] = useState(product?.price || []);
   const theme = useTheme();
@@ -72,40 +75,48 @@ export default function ProductItem({
   return (
     <Grid2 container columns={10} columnSpacing={2} mt={2} key={index} px={3}>
       <Grid2 size={2} sx={{ display: "grid", alignContent: "space-around" }}>
-        <ProductsAutoComplete
-          getProduct={(product) => handleAddProduct(product, index)}
-          productIds={productIds}
-          name={`products.${index}.productId`}
-          defaultValue={product}
-          error={!!errors.products?.[index]?.productId}
-          helperText={errors.products?.[index]?.productId?.message}
-          limit={100}
-        />
+        {isLoading ? (
+          <FormInputSkeleton />
+        ) : (
+          <ProductsAutoComplete
+            getProduct={(product) => handleAddProduct(product, index)}
+            productIds={productIds}
+            name={`products.${index}.productId`}
+            defaultValue={product}
+            error={!!errors.products?.[index]?.productId}
+            helperText={errors.products?.[index]?.productId?.message}
+            limit={100}
+          />
+        )}
       </Grid2>
       <Grid2 size={1}>
-        <Controller
-          control={control}
-          name={`products.${index}.price`}
-          render={({ field }) => {
-            return (
-              <CustomSelectMeasure
-                data={product?.price || undefined}
-                getDataSelect={(selectedMeasures) => {
-                  const updatedMeasures = (product?.price || [])?.map(
-                    (measure: any) => ({
-                      ...measure,
-                      selected: selectedMeasures?.some(
-                        (sel) => sel.measureId === measure.measureId
-                      ),
-                    })
-                  );
-                  setProductPrice(updatedMeasures);
-                  field.onChange(updatedMeasures);
-                }}
-              />
-            );
-          }}
-        />
+        {isLoading ? (
+          <FormInputSkeleton />
+        ) : (
+          <Controller
+            control={control}
+            name={`products.${index}.price`}
+            render={({ field }) => {
+              return (
+                <CustomSelectMeasure
+                  data={product?.price || undefined}
+                  getDataSelect={(selectedMeasures) => {
+                    const updatedMeasures = (product?.price || [])?.map(
+                      (measure: any) => ({
+                        ...measure,
+                        selected: selectedMeasures?.some(
+                          (sel) => sel.measureId === measure.measureId
+                        ),
+                      })
+                    );
+                    setProductPrice(updatedMeasures);
+                    field.onChange(updatedMeasures);
+                  }}
+                />
+              );
+            }}
+          />
+        )}
       </Grid2>
       <Grid2 size={1} sx={{ display: "grid", alignContent: "space-around" }}>
         {productPrice
@@ -120,19 +131,23 @@ export default function ProductItem({
                   : 0
               }
             >
-              <Controller
-                name={`products.${index}.price.${measureIndex}.quantity`}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    onChange={(e) => field.onChange(e)}
-                    size="small"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
+                <Controller
+                  name={`products.${index}.price.${measureIndex}.quantity`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      {...field}
+                      onChange={(e) => field.onChange(e)}
+                      size="small"
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
+                />
+              )}
             </Box>
           ))}
       </Grid2>
@@ -149,19 +164,23 @@ export default function ProductItem({
                   : 0
               }
             >
-              <Controller
-                name={`products.${index}.price.${measureIndex}.buyPrice`}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    onChange={(e) => field.onChange(e)}
-                    size="small"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
+                <Controller
+                  name={`products.${index}.price.${measureIndex}.buyPrice`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      {...field}
+                      onChange={(e) => field.onChange(e)}
+                      size="small"
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
+                />
+              )}
             </Box>
           ))}
       </Grid2>
@@ -178,19 +197,23 @@ export default function ProductItem({
                   : 0
               }
             >
-              <Controller
-                name={`products.${index}.price.${measureIndex}.expense`}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    onChange={(e) => field.onChange(e)}
-                    size="small"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
+              {isLoading ? (
+                <FormInputSkeleton />
+              ) : (
+                <Controller
+                  name={`products.${index}.price.${measureIndex}.expense`}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      {...field}
+                      onChange={(e) => field.onChange(e)}
+                      size="small"
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                    />
+                  )}
+                />
+              )}
             </Box>
           ))}
       </Grid2>
@@ -232,20 +255,24 @@ export default function ProductItem({
           })}
       </Grid2>
       <Grid2 size={1.5} sx={{ display: "grid", alignContent: "space-around" }}>
-        <Controller
-          name={`products.${index}.expireInDate`}
-          control={control}
-          render={({ field, fieldState }) => (
-            <TextField
-              {...field}
-              type="date"
-              onChange={(e) => field.onChange(e)}
-              size="small"
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-            />
-          )}
-        />
+        {isLoading ? (
+          <FormInputSkeleton />
+        ) : (
+          <Controller
+            name={`products.${index}.expireInDate`}
+            control={control}
+            render={({ field, fieldState }) => (
+              <TextField
+                {...field}
+                type="date"
+                onChange={(e) => field.onChange(e)}
+                size="small"
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+              />
+            )}
+          />
+        )}
       </Grid2>
       <Grid2
         size={0.5}

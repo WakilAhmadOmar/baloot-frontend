@@ -166,6 +166,9 @@ const CreateBank = () => {
           <DialogActions
             sx={{ display: "flex", justifyContent: "end", columnGap: "1rem" }}
           >
+            <Button variant="outlined" onClick={handleOpenDialogFunction}>
+              {t("bank.cancel")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
@@ -173,9 +176,6 @@ const CreateBank = () => {
               loading={isLoading}
             >
               {t("bank.save")}
-            </Button>
-            <Button variant="outlined" onClick={handleOpenDialogFunction}>
-              {t("bank.cancel")}
             </Button>
           </DialogActions>
         </Dialog>
